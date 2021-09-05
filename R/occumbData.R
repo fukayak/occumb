@@ -1,11 +1,17 @@
 #' Validation for occumbData
 validate_occumbData <- function(object) {
     msg <- NULL
+
+    ## y is a 3D-array.
+    if (length(dim(object@y)) != 3)
+        msg <- c(msg,
+                 "y should be a 3D-array.")
+
     I   <- dim(object@y)[1] # Number of species
     J   <- dim(object@y)[2] # Number of sites
     K   <- dim(object@y)[3] # Number of replicates
 
-    ## y are integers.
+    ## y elements are integers.
     if (sum(object@y %% 1 != 0))
         msg <- c(msg,
                  "y contains non-integer value(s).")
