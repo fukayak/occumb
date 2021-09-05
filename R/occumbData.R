@@ -7,9 +7,9 @@ validate_occumbData <- function(object) {
         msg <- c(msg,
                  "'y' should be a 3D-array.")
 
-    I   <- dim(object@y)[1] # Number of species
-    J   <- dim(object@y)[2] # Number of sites
-    K   <- dim(object@y)[3] # Number of replicates
+    I <- dim(object@y)[1] # Number of species
+    J <- dim(object@y)[2] # Number of sites
+    K <- dim(object@y)[3] # Number of replicates
 
     ## y elements are integers.
     if (sum(object@y %% 1 != 0))
@@ -17,7 +17,9 @@ validate_occumbData <- function(object) {
                  "'y' contains non-integer value(s).")
 
     ## No overlap in the covariate names.
-    cov_names <- c(names(object@spec_cov), names(object@site_cov), names(object@repl_cov))
+    cov_names <- c(names(object@spec_cov),
+                   names(object@site_cov),
+                   names(object@repl_cov))
     if(sum(table(cov_names) > 1))
         msg <- c(msg,
                  sprintf("Duplicated covariate names are not allowed: '%s'",
@@ -58,4 +60,18 @@ setClass("occumbData",
                    site_cov = "optional_list",
                    repl_cov = "optional_list"),
          validity = validate_occumbData)
+
+# Constructor for occumbData
+occumbData <- function(y,
+                       spec_cov = NULL,
+                       site_cov = NULL,
+                       repl_cov = NULL) {
+
+    out <- methods::new("occumbData",
+                        y = y,
+                        spec_cov = spec_cov,
+                        site_cov = site_cov,
+                        repl_cov = repl_cov)
+    return(out)
+}
 
