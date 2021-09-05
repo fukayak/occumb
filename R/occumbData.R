@@ -1,11 +1,11 @@
-#' Validation for occumbData
+# Validation for occumbData
 validate_occumbData <- function(object) {
     msg <- NULL
 
     ## y is a 3D-array.
     if (length(dim(object@y)) != 3)
         msg <- c(msg,
-                 "y should be a 3D-array.")
+                 "'y' should be a 3D-array.")
 
     I   <- dim(object@y)[1] # Number of species
     J   <- dim(object@y)[2] # Number of sites
@@ -14,7 +14,7 @@ validate_occumbData <- function(object) {
     ## y elements are integers.
     if (sum(object@y %% 1 != 0))
         msg <- c(msg,
-                 "y contains non-integer value(s).")
+                 "'y' contains non-integer value(s).")
 
     ## No overlap in the covariate names.
     cov_names <- c(names(object@spec_cov), names(object@site_cov), names(object@repl_cov))
@@ -38,20 +38,20 @@ validate_occumbData <- function(object) {
                          names(object@repl_cov)[sapply(object@repl_cov, length) != K]))
 
     ## No missing values in covariates.
-    if (sum(is.na(object@spec_cov)) > 0)
+    if (sum(is.na(unlist(object@spec_cov))) > 0)
         msg <- c(msg,
                  "Missing values are not allowed in 'spec_cov'.")
-    if (sum(is.na(object@site_cov)) > 0)
+    if (sum(is.na(unlist(object@site_cov))) > 0)
         msg <- c(msg,
                  "Missing values are not allowed in 'site_cov'.")
-    if (sum(is.na(object@repl_cov)) > 0)
+    if (sum(is.na(unlist(object@repl_cov))) > 0)
         msg <- c(msg,
                  "Missing values are not allowed in 'repl_cov'.")
 
     ifelse(is.null(msg), TRUE, msg)
 }
 
-#' Data format class for occumb
+# Data format class for occumb
 setClass("occumbData",
          slots = c(y = "array",
                    spec_cov = "optional_list",
