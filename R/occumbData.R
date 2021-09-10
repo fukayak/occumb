@@ -61,7 +61,34 @@ setClass("occumbData",
                    repl_cov = "optional_list"),
          validity = validate_occumbData)
 
-# Constructor for occumbData
+#' Constructor for occumbData data class.
+#' 
+#' \code{occumbData} creates a data list compatible with the model-fitting function \code{occumb}.
+#' 
+#' @param y A 3-D array of sequence read counts (integer values).
+#'          Dimensions are ordered by species, site, and replicate.
+#'          Data for missing replicate must be represented by NA vectors.
+#' @param spec_cov A named list of species covariates.
+#'                 Each element must be a vector of numeric or factor whose
+#'                 length is equal to dim(y)\[1\] (i.e., the number of species).
+#'                 NAs are not allowed.
+#' @param site_cov A named list of site covariates.
+#'                 Each element must be a vector of numeric or factor whose
+#'                 length is equal to dim(y)\[2\] (i.e., the number of sites).
+#'                 NAs are not allowed.
+#' @param repl_cov A named list of replicate covariates.
+#'                 Currently not yet available.
+#' @section Details:
+#'      The element names for spec_cov, site_cov, and repl_cov must all be unique.
+#' @return  An S4 object of the `occumbData` class.
+#' @examples
+#' # Generate a small, random dataset
+#' data <- occumbData(
+#'     y = array(sample.int(8), dim = rep(2, 3)),
+#'     spec_cov = list(cov1 = rnorm(2)),
+#'     site_cov = list(cov2 = rnorm(2),
+#'                     cov3 = factor(1:2)))
+#' @export
 occumbData <- function(y,
                        spec_cov = NULL,
                        site_cov = NULL,
