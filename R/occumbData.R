@@ -11,6 +11,11 @@ validate_occumbData <- function(object) {
     J <- dim(object@y)[2] # Number of sites
     K <- dim(object@y)[3] # Number of replicates
 
+    ## No missing values in y.
+    if (sum(is.na(object@y)) > 0)
+        msg <- c(msg,
+                 "Missing values are not allowed in 'y'.")
+
     ## y elements are integers.
     if (sum(object@y %% 1 != 0))
         msg <- c(msg,
@@ -63,11 +68,13 @@ setClass("occumbData",
 
 #' Constructor for occumbData data class.
 #' 
-#' \code{occumbData} creates a data list compatible with the model-fitting function \code{occumb}.
+#' \code{occumbData} creates a data list compatible with the model-fitting
+#' function \code{occumb}.
 #' 
 #' @param y A 3-D array of sequence read counts (integer values).
 #'          Dimensions are ordered by species, site, and replicate.
-#'          Data for missing replicate must be represented by NA vectors.
+#'          Data for missing replicates must be represented by zero vectors.
+#'          NAs are not allowed.
 #' @param spec_cov A named list of species covariates.
 #'                 Each element must be a vector of numeric or factor whose
 #'                 length is equal to dim(y)\[1\] (i.e., the number of species).
