@@ -1,15 +1,22 @@
 Package: occumb
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Site Occupancy Modeling For Environmental DNA Metabarcoding
+Version: 0.1.0
 Authors@R: 
     person(given = "Keiichi",
            family = "Fukaya",
            role = c("aut", "cre"),
            email = "fukayak99@gmail.com")
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+Description: Fits multispecies site occupancy models to environmental DNA
+    metabarcoding data collected using spatially-replicated survey design.
+    Model fitting results can be used to evaluate and compare the effectiveness
+    of species detection to find an efficient survey design.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Imports: 
+    methods
