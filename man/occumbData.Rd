@@ -9,7 +9,8 @@ occumbData(y, spec_cov = NULL, site_cov = NULL, repl_cov = NULL)
 \arguments{
 \item{y}{A 3-D array of sequence read counts (integer values).
 Dimensions are ordered by species, site, and replicate.
-Data for missing replicate must be represented by NA vectors.}
+Data for missing replicates must be represented by zero vectors.
+NAs are not allowed.}
 
 \item{spec_cov}{A named list of species covariates.
 Each element must be a vector of numeric or factor whose
@@ -28,7 +29,8 @@ Currently not yet available.}
 An S4 object of the \code{occumbData} class.
 }
 \description{
-\code{occumbData} creates a data list compatible with the model-fitting function \code{occumb}.
+\code{occumbData} creates a data list compatible with the model-fitting
+function \code{occumb}.
 }
 \section{Details}{
 
