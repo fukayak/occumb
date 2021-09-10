@@ -11,15 +11,15 @@ validate_occumbData <- function(object) {
     J <- dim(object@y)[2] # Number of sites
     K <- dim(object@y)[3] # Number of replicates
 
-    ## No missing values in y.
-    if (sum(is.na(object@y)) > 0)
+    if (sum(is.na(object@y)) > 0) {
+        ## No missing values in y.
         msg <- c(msg,
                  "Missing values are not allowed in 'y'.")
-
-    ## y elements are integers.
-    if (sum(object@y %% 1 != 0))
+    } else if (sum(object@y %% 1 != 0)) {
+        ## y elements are integers.
         msg <- c(msg,
                  "'y' contains non-integer value(s).")
+    }
 
     ## No overlap in the covariate names.
     cov_names <- c(names(object@spec_cov),
