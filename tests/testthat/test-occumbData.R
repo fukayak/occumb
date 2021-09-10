@@ -6,6 +6,11 @@ test_that("Dimension check for y works", {
                  "'y' should be a 3D-array.")
 })
 
+test_that("Check for missing values for y works", {
+    expect_error(new("occumbData", y = array(c(NA, 1:7), dim = rep(2, 3))),
+                 "Missing values are not allowed in 'y'.")
+})
+
 test_that("Integer check works", {
     expect_error(new("occumbData", y = array(1:8 + 0.1, dim = rep(2, 3))),
                  "'y' contains non-integer value.")
