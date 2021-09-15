@@ -20,4 +20,5 @@ Suggests:
 Config/testthat/edition: 3
 Imports: 
     jagsUI,
+    stats,
     methods
