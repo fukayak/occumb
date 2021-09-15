@@ -71,37 +71,7 @@ occumb <- function(phi_formula = ~ 1,
     const <- set_const(data)
 
     # Define arguments for the specified model
-#    margs <- set_modargs(phi_formula, theta_formula, psi_formula, data)
-    M    <- 0           # Order of species effects
-    code <- "000000"    # Model code
-    if (phi_formula == ~ 1) {
-        cov_phi <- 1
-        M       <- M + 1
-        m_phi   <- 1
-        substr(code, 1, 1) <- "1"
-    } else {
-    }
-
-    if (theta_formula == ~ 1) {
-        cov_theta <- 1
-        M         <- M + 1
-        m_theta   <- seq(m_phi + 1, m_phi + 1)
-        substr(code, 2, 2) <- "1"
-    } else {
-    }
-
-    if (psi_formula == ~ 1) {
-        cov_psi <- 1
-        M       <- M + 1
-        m_psi   <- seq(m_theta + 1, m_theta + 1)
-        substr(code, 3, 3) <- "1"
-    } else {
-        cov_psi <- stats::model.matrix(stats::as.formula(psi_formula),
-                                       data@site_cov)
-        M       <- M + ncol(cov_psi)
-        m_psi   <- seq(m_theta + 1, m_theta + ncol(cov_psi))
-        substr(code, 3, 3) <- "2"
-    }
+    margs <- set_modargs(phi_formula, theta_formula, psi_formula, data)
 
     # Set data list
     dat <- list(I          = const$I,
@@ -109,13 +79,13 @@ occumb <- function(phi_formula = ~ 1,
                 K          = const$K,
                 N          = const$N,
                 y          = const$y,
-                cov_phi    = cov_phi,
-                cov_theta  = cov_theta,
-                cov_psi    = cov_psi,
-                M          = M,
-                m_phi      = m_phi,
-                m_theta    = m_theta,
-                m_psi      = m_psi,
+                cov_phi    = margs$cov_phi,
+                cov_theta  = margs$cov_theta,
+                cov_psi    = margs$cov_psi,
+                M          = margs$M,
+                m_phi      = margs$m_phi,
+                m_theta    = margs$m_theta,
+                m_psi      = margs$m_psi,
                 prior_prec = prior_prec,
                 prior_ulim = prior_ulim)
 
@@ -126,10 +96,12 @@ occumb <- function(phi_formula = ~ 1,
              x = array(stats::rnorm(const$I * const$J * const$K,
                                     mean = 1, sd = 0.1),
                        dim = c(const$I, const$J, const$K)),
-             spec_eff = matrix(stats::rnorm(const$I * M, sd = 0.1), const$I, M),
-             Mu       = stats::rnorm(M, sd = 0.1),
-             sigma    = stats::rnorm(M, mean = 1, sd = 0.1),
-             rho      = matrix(stats::rnorm(M * M, sd = 0.1), M, M))
+             spec_eff = matrix(stats::rnorm(const$I * margs$M, sd = 0.1),
+                               const$I, margs$M),
+             Mu       = stats::rnorm(margs$M, sd = 0.1),
+             sigma    = stats::rnorm(margs$M, mean = 1, sd = 0.1),
+             rho      = matrix(stats::rnorm(margs$M^2, sd = 0.1),
+                               margs$M, margs$M))
     }
 
     # Set parameters monitored
@@ -139,7 +111,9 @@ occumb <- function(phi_formula = ~ 1,
     # Run MCMC in JAGS
     fit <- jagsUI::jags(
         dat, inits, params,
-        system.file("jags", sprintf("occumb%s.jags", code), package = "occumb"),
+        system.file("jags",
+                    sprintf("occumb%s.jags", margs$code),
+                    package = "occumb"),
         n.chains = n.chains,
         n.adapt  = n.adapt,
         n.iter   = n.iter,
@@ -147,7 +121,7 @@ occumb <- function(phi_formula = ~ 1,
         n.thin   = n.thin,
         parallel = parallel)
 
-    # Embed result in a model-fit object class
+    # Output
     class(fit) <- "list"
     out <- methods::new("occumbFit", fit = fit)
     out
@@ -174,4 +148,52 @@ set_const <- function(data) {
     out <- list(y = y, I = I, J = J, K = K, N = N)
     out
 }
+
+# Set model-specific arguments
+set_modargs <- function(phi_formula, theta_formula, psi_formula, data) {
+    M    <- 0           # Order of species effects
+    code <- "000000"    # Model code
+
+    if (phi_formula == ~ 1) {
+        cov_phi <- 1
+        M       <- M + 1
+        m_phi   <- 1
+        substr(code, 1, 1) <- "1"
+    } else {
+        stop("Covariates in phi_formula are not yet supported, sorry.")
+    }
+
+    if (theta_formula == ~ 1) {
+        cov_theta <- 1
+        M         <- M + 1
+        m_theta   <- seq(m_phi + 1, m_phi + 1)
+        substr(code, 2, 2) <- "1"
+    } else {
+        stop("Covariates in theta_formula are not yet supported, sorry.")
+    }
+
+    if (psi_formula == ~ 1) {
+        cov_psi <- 1
+        M       <- M + 1
+        m_psi   <- seq(m_theta + 1, m_theta + 1)
+        substr(code, 3, 3) <- "1"
+    } else {
+        cov_psi <- stats::model.matrix(stats::as.formula(psi_formula),
+                                       data@site_cov)
+        M       <- M + ncol(cov_psi)
+        m_psi   <- seq(m_theta + 1, m_theta + ncol(cov_psi))
+        substr(code, 3, 3) <- "2"
+    }
+
+    out <- list(M         = M,
+                code      = code,
+                cov_phi   = cov_phi,
+                cov_theta = cov_theta,
+                cov_psi   = cov_psi,
+                m_phi     = m_phi,
+                m_theta   = m_theta,
+                m_psi     = m_psi)
+    out
+}
+
 
