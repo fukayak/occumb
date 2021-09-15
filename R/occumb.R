@@ -1,5 +1,7 @@
+setOldClass("jagsUI")
+
 # Class for model-fit results of occumb
-setClass("occumbFit", slots = c(fit = "list"))
+setClass("occumbFit", slots = c(fit = "jagsUI"))
 
 #' Model-fitting function.
 #' 
@@ -122,7 +124,6 @@ occumb <- function(phi_formula = ~ 1,
         parallel = parallel)
 
     # Output
-    class(fit) <- "list"
     out <- methods::new("occumbFit", fit = fit)
     out
 }
