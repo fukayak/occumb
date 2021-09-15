@@ -60,7 +60,6 @@ model {
     for (m in 1:M) {
         Mu[m] ~ dnorm(0, prior_prec)
     }
-    alpha1 ~ dnorm(0, prior_prec)
 
     for (m in 1:M) {
         Sigma[m, m] <- pow(sigma[m], 2)
