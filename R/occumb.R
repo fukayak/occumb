@@ -1,3 +1,6 @@
+# Class for model-fit results of occumb
+setClass("occumbFit", slots = c(fit = "list"))
+
 #' Model-fitting function.
 #' 
 #' \code{occumb()} fits a specified site-occupancy model to a dataset and returns
@@ -134,7 +137,7 @@ occumb <- function(phi_formula = ~ 1,
                 "phi", "theta", "psi", "z", "pi")
 
     # Run MCMC in JAGS
-    res <- jagsUI::jags(
+    fit <- jagsUI::jags(
         dat, inits, params,
         system.file("jags", sprintf("occumb%s.jags", code), package = "occumb"),
         n.chains = n.chains,
@@ -145,7 +148,9 @@ occumb <- function(phi_formula = ~ 1,
         parallel = parallel)
 
     # Embed result in a model-fit object class
-    res
+    class(fit) <- "list"
+    out <- methods::new("occumbFit", fit = fit)
+    out
 }
 
 # Extract constants for the model
