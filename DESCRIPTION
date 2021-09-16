@@ -22,3 +22,10 @@ Imports:
     jagsUI,
     stats,
     methods
+Collate: 
+    'classes.R'
+    'occumb.R'
+    'occumbData.R'
+    'plot.R'
+    'print.R'
+    'summary.R'

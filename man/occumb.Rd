@@ -81,7 +81,12 @@ formula in \code{phi_formula}, \code{theta_formula}, and
 The specified model and dataset are passed to JAGS via the
 interface provided by the jagsUI package, where Markov chain
 Monte Carlo methods are used to obtain posterior samples of model
-parameters.\preformatted{ Currently, occumb() supports covariate modeling only for
+parameters.\preformatted{ For the resulting object, the following methods and functions provided
+ by the jagsUI package can be applied:
+
+ plot(); print(); summary()
+
+ Currently, occumb() supports covariate modeling only for
  psi_formula in which site covariates can be incorporated.
 }
 }

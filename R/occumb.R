@@ -1,5 +1,8 @@
+#' @include classes.R
+NULL
+
 # Class for model-fit results of occumb
-setClass("occumbFit", slots = c(fit = "list"))
+setClass("occumbFit", slots = c(fit = "jagsUI"))
 
 #' Model-fitting function.
 #' 
@@ -47,6 +50,11 @@ setClass("occumbFit", slots = c(fit = "list"))
 #'      interface provided by the jagsUI package, where Markov chain
 #'      Monte Carlo methods are used to obtain posterior samples of model
 #'      parameters.
+#'
+#'      For the resulting object, the following methods and functions provided
+#'      by the jagsUI package can be applied:
+#'
+#'      plot(); print(); summary()
 #'
 #'      Currently, occumb() supports covariate modeling only for
 #'      psi_formula in which site covariates can be incorporated.
@@ -122,7 +130,6 @@ occumb <- function(phi_formula = ~ 1,
         parallel = parallel)
 
     # Output
-    class(fit) <- "list"
     out <- methods::new("occumbFit", fit = fit)
     out
 }
