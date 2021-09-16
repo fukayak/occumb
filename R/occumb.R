@@ -51,6 +51,11 @@ setClass("occumbFit", slots = c(fit = "jagsUI"))
 #'      Monte Carlo methods are used to obtain posterior samples of model
 #'      parameters.
 #'
+#'      For the resulting object, the following methods and functions provided
+#'      by the jagsUI package can be applied:
+#'
+#'      plot(); print(); summary()
+#'
 #'      Currently, occumb() supports covariate modeling only for
 #'      psi_formula in which site covariates can be incorporated.
 #' @return  An S4 object of the \code{occumbFit} class containing the results of
