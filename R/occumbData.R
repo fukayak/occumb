@@ -1,3 +1,6 @@
+#' @include classes.R
+NULL
+
 # Validation for occumbData
 validate_occumbData <- function(object) {
     msg <- NULL

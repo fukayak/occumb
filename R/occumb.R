@@ -1,4 +1,5 @@
-setOldClass("jagsUI")
+#' @include classes.R
+NULL
 
 # Class for model-fit results of occumb
 setClass("occumbFit", slots = c(fit = "jagsUI"))
