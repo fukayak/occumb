@@ -81,6 +81,10 @@ occumb <- function(phi_formula = ~ 1,
     # Define arguments for the specified model
     margs <- set_modargs(phi_formula, theta_formula, psi_formula, data)
 
+#    # Write model file
+#    model <- tempfile()
+#    writeLines(write_jags_model(margs$phi, margs$theta, margs$psi, margs$shared_effects))
+
     # Set data list
     dat <- list(I          = const$I,
                 J          = const$J,
@@ -118,6 +122,7 @@ occumb <- function(phi_formula = ~ 1,
 
     # Run MCMC in JAGS
     fit <- jagsUI::jags(
+#        dat, inits, params, model,
         dat, inits, params,
         system.file("jags",
                     sprintf("occumb%s.jags", margs$code),
@@ -252,32 +257,61 @@ write_jags_model <- function(phi, theta, psi, shared_effects) {
                                      "occumb_template4.jags",
                                      package = "occumb")))
 
-    if (phi == "i")
-        model <- c(model,
-                   "        log(phi[i])     <- inprod(alpha[i, ], cov_phi[])")
-    if (phi == "ij")
-        model <- c(model,
-                   "        log(phi[i, j])     <- inprod(alpha[i, ], cov_phi[i, j, ])")
-    if (phi == "ijk")
-        model <- c(model,
-                   "        log(phi[i, j, k])     <- inprod(alpha[i, ], cov_phi[i, j, k, ])")
+    if (shared_effects) {
+        if (phi == "i")
+            model <- c(model,
+                       "        log(phi[i]) <- inprod(alpha[i, ], cov_phi[]) + inprod(alpha_shared[], cov_phi_shared[i, ])")
+        if (phi == "ij")
+            model <- c(model,
+                       "        log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[i, j, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, ])")
+        if (phi == "ijk")
+            model <- c(model,
+                       "        log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[i, j, k, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, k, ])")
 
-    if (theta == "i")
-        model <- c(model,
-                   "        logit(theta[i]) <- inprod(beta[i, ], cov_theta[])")
-    if (theta == "ij")
-        model <- c(model,
-                   "        logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ])")
-    if (theta == "ijk")
-        model <- c(model,
-                   "        logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ])")
+        if (theta == "i")
+            model <- c(model,
+                       "        logit(theta[i]) <- inprod(beta[i, ], cov_theta[]) + inprod(beta_shared[], cov_theta_shared[i, ])")
+        if (theta == "ij")
+            model <- c(model,
+                       "        logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ]) + inprod(beta_shared[], cov_theta_shared[i, j, ])")
+        if (theta == "ijk")
+            model <- c(model,
+                       "        logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ]) + inprod(beta_shared[], cov_theta_shared[i, j, k, ])")
 
-    if (psi == "i")
-        model <- c(model,
-                   "        logit(psi[i])   <- inprod(gamma[i, ], cov_psi[])")
-    if (psi == "ij")
-        model <- c(model,
-                   "        logit(psi[i, j])   <- inprod(gamma[i, ], cov_psi[i, j, ])")
+        if (psi == "i")
+            model <- c(model,
+                       "        logit(psi[i]) <- inprod(gamma[i, ], cov_psi[]) + inprod(gamma_shared[], cov_psi_shared[i, ])")
+        if (psi == "ij")
+            model <- c(model,
+                       "        logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[i, j, ]) + inprod(gamma_shared[], cov_psi_shared[i, j, ])")
+    } else {
+        if (phi == "i")
+            model <- c(model,
+                       "        log(phi[i]) <- inprod(alpha[i, ], cov_phi[])")
+        if (phi == "ij")
+            model <- c(model,
+                       "        log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[i, j, ])")
+        if (phi == "ijk")
+            model <- c(model,
+                       "        log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[i, j, k, ])")
+
+        if (theta == "i")
+            model <- c(model,
+                       "        logit(theta[i]) <- inprod(beta[i, ], cov_theta[])")
+        if (theta == "ij")
+            model <- c(model,
+                       "        logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ])")
+        if (theta == "ijk")
+            model <- c(model,
+                       "        logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ])")
+
+        if (psi == "i")
+            model <- c(model,
+                       "        logit(psi[i]) <- inprod(gamma[i, ], cov_psi[])")
+        if (psi == "ij")
+            model <- c(model,
+                       "        logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[i, j, ])")
+    }
 
     model <- c(model,
                readLines(system.file("jags",
