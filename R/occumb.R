@@ -203,4 +203,88 @@ set_modargs <- function(phi_formula, theta_formula, psi_formula, data) {
     out
 }
 
+# Auto-generate JAGS model code
+write_jags_model <- function(phi, theta, psi, shared_effects) {
+
+    model <- readLines(system.file("jags",
+                                   "occumb_template1.jags",
+                                   package = "occumb"))
+
+    if (phi == "i")
+        model <- c(model,
+                   "                x[i, j, k] ~ dgamma(phi[i], 1)")
+    if (phi == "ij")
+        model <- c(model,
+                   "                x[i, j, k] ~ dgamma(phi[i, j], 1)")
+    if (phi == "ijk")
+        model <- c(model,
+                   "                x[i, j, k] ~ dgamma(phi[i, j, k], 1)")
+
+    model <- c(model,
+               readLines(system.file("jags",
+                                     "occumb_template2.jags",
+                                     package = "occumb")))
+
+    if (theta == "i")
+        model <- c(model,
+                   "                u[i, j, k] ~ dbern(z[i, j] * theta[i])")
+    if (theta == "ij")
+        model <- c(model,
+                   "                u[i, j, k] ~ dbern(z[i, j] * theta[i, j])")
+    if (theta == "ijk")
+        model <- c(model,
+                   "                u[i, j, k] ~ dbern(z[i, j] * theta[i, j, k])")
+
+    model <- c(model,
+               readLines(system.file("jags",
+                                     "occumb_template3.jags",
+                                     package = "occumb")))
+
+    if (psi == "i")
+        model <- c(model,
+                   "            z[i, j] ~ dbern(psi[i])")
+    if (psi == "ij")
+        model <- c(model,
+                   "            z[i, j] ~ dbern(psi[i, j])")
+
+    model <- c(model,
+               readLines(system.file("jags",
+                                     "occumb_template4.jags",
+                                     package = "occumb")))
+
+    if (phi == "i")
+        model <- c(model,
+                   "        log(phi[i])     <- inprod(alpha[i, ], cov_phi[])")
+    if (phi == "ij")
+        model <- c(model,
+                   "        log(phi[i, j])     <- inprod(alpha[i, ], cov_phi[i, j, ])")
+    if (phi == "ijk")
+        model <- c(model,
+                   "        log(phi[i, j, k])     <- inprod(alpha[i, ], cov_phi[i, j, k, ])")
+
+    if (theta == "i")
+        model <- c(model,
+                   "        logit(theta[i]) <- inprod(beta[i, ], cov_theta[])")
+    if (theta == "ij")
+        model <- c(model,
+                   "        logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ])")
+    if (theta == "ijk")
+        model <- c(model,
+                   "        logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ])")
+
+    if (psi == "i")
+        model <- c(model,
+                   "        logit(psi[i])   <- inprod(gamma[i, ], cov_psi[])")
+    if (psi == "ij")
+        model <- c(model,
+                   "        logit(psi[i, j])   <- inprod(gamma[i, ], cov_psi[i, j, ])")
+
+    model <- c(model,
+               readLines(system.file("jags",
+                                     sprintf("occumb_template5%s.jags",
+                                             ifelse(shared_effects, "b", "a")),
+                                     package = "occumb")))
+
+    model
+}
 

@@ -1,0 +1,7 @@
+            }
+        }
+    }
+
+    # Species site occupancy
+    for (i in 1:I) {
+        for (j in 1:J) {
