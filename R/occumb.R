@@ -209,7 +209,7 @@ set_modargs <- function(phi_formula, theta_formula, psi_formula, data) {
 }
 
 # Auto-generate JAGS model code
-write_jags_model <- function(phi, theta, psi, shared_effects) {
+write_jags_model <- function(phi, theta, psi, phi_shared, theta_shared, psi_shared) {
 
     model <- readLines(system.file("jags",
                                    "occumb_template1.jags",
@@ -257,7 +257,7 @@ write_jags_model <- function(phi, theta, psi, shared_effects) {
                                      "occumb_template4.jags",
                                      package = "occumb")))
 
-    if (shared_effects) {
+    if (phi_shared) {
         if (phi == "i")
             model <- c(model,
                        "        log(phi[i]) <- inprod(alpha[i, ], cov_phi[]) + inprod(alpha_shared[], cov_phi_shared[i, ])")
@@ -267,23 +267,6 @@ write_jags_model <- function(phi, theta, psi, shared_effects) {
         if (phi == "ijk")
             model <- c(model,
                        "        log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[i, j, k, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, k, ])")
-
-        if (theta == "i")
-            model <- c(model,
-                       "        logit(theta[i]) <- inprod(beta[i, ], cov_theta[]) + inprod(beta_shared[], cov_theta_shared[i, ])")
-        if (theta == "ij")
-            model <- c(model,
-                       "        logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ]) + inprod(beta_shared[], cov_theta_shared[i, j, ])")
-        if (theta == "ijk")
-            model <- c(model,
-                       "        logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ]) + inprod(beta_shared[], cov_theta_shared[i, j, k, ])")
-
-        if (psi == "i")
-            model <- c(model,
-                       "        logit(psi[i]) <- inprod(gamma[i, ], cov_psi[]) + inprod(gamma_shared[], cov_psi_shared[i, ])")
-        if (psi == "ij")
-            model <- c(model,
-                       "        logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[i, j, ]) + inprod(gamma_shared[], cov_psi_shared[i, j, ])")
     } else {
         if (phi == "i")
             model <- c(model,
@@ -294,7 +277,19 @@ write_jags_model <- function(phi, theta, psi, shared_effects) {
         if (phi == "ijk")
             model <- c(model,
                        "        log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[i, j, k, ])")
+    }
 
+    if (theta_shared) {
+        if (theta == "i")
+            model <- c(model,
+                       "        logit(theta[i]) <- inprod(beta[i, ], cov_theta[]) + inprod(beta_shared[], cov_theta_shared[i, ])")
+        if (theta == "ij")
+            model <- c(model,
+                       "        logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ]) + inprod(beta_shared[], cov_theta_shared[i, j, ])")
+        if (theta == "ijk")
+            model <- c(model,
+                       "        logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ]) + inprod(beta_shared[], cov_theta_shared[i, j, k, ])")
+    } else {
         if (theta == "i")
             model <- c(model,
                        "        logit(theta[i]) <- inprod(beta[i, ], cov_theta[])")
@@ -304,7 +299,16 @@ write_jags_model <- function(phi, theta, psi, shared_effects) {
         if (theta == "ijk")
             model <- c(model,
                        "        logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ])")
+    }
 
+    if (psi_shared) {
+        if (psi == "i")
+            model <- c(model,
+                       "        logit(psi[i]) <- inprod(gamma[i, ], cov_psi[]) + inprod(gamma_shared[], cov_psi_shared[i, ])")
+        if (psi == "ij")
+            model <- c(model,
+                       "        logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[i, j, ]) + inprod(gamma_shared[], cov_psi_shared[i, j, ])")
+    } else {
         if (psi == "i")
             model <- c(model,
                        "        logit(psi[i]) <- inprod(gamma[i, ], cov_psi[])")
@@ -315,9 +319,26 @@ write_jags_model <- function(phi, theta, psi, shared_effects) {
 
     model <- c(model,
                readLines(system.file("jags",
-                                     sprintf("occumb_template5%s.jags",
-                                             ifelse(shared_effects, "b", "a")),
+                                     "occumb_template5.jags",
                                      package = "occumb")))
+
+    if (phi_shared)
+        model <- c(model,
+                   "    for (m in 1:M_phi_shared) {",
+                   "        alpha_shared[m] ~ dnorm(0, prior_prec)",
+                   "    }")
+    if (theta_shared)
+        model <- c(model,
+                   "    for (m in 1:M_theta_shared) {",
+                   "        beta_shared[m] ~ dnorm(0, prior_prec)",
+                   "    }")
+    if (psi_shared)
+        model <- c(model,
+                   "    for (m in 1:M_psi_shared) {",
+                   "        gamma_shared[m] ~ dnorm(0, prior_prec)",
+                   "    }")
+
+    model <- c(model, "}", "")
 
     model
 }

@@ -97,14 +97,16 @@ test_that("Setup for varying-theta/phi model works", {
 })
 
 ### Test for write_jags_model() ------------------------------------------------
-phi   <- c("i", "ij", "ijk")
-theta <- c("i", "ij", "ijk")
-psi   <- c("i", "ij")
+test_that("JAGS codes are correct for 144 available models", {
+    phi <- theta <- c("i", "ij", "ijk")
+    psi <- c("i", "ij")
+    phi_shared <- theta_shared <- psi_shared <- c(FALSE, TRUE)
 
-test_conditions <- expand.grid(phi, theta, psi)
-colnames(test_conditions) <- c("phi", "theta", "psi")
+    test_conditions <- expand.grid(phi, theta, psi,
+                                   phi_shared, theta_shared, psi_shared)
+    colnames(test_conditions) <- c("phi", "theta", "psi",
+                                   "phi_shared", "theta_shared", "psi_shared")
 
-test_that("JAGS codes are correct for models without shared effects", {
     for (i in 1:nrow(test_conditions)) {
         ans <- readLines(system.file("jags",
                                      "occumb_template1.jags",
@@ -149,124 +151,94 @@ test_that("JAGS codes are correct for models without shared effects", {
                                             "occumb_template4.jags",
                                             package = "occumb")))
 
-        if (test_conditions$phi[i] == "i")
-            ans <- c(ans,
-                     "        log(phi[i]) <- inprod(alpha[i, ], cov_phi[])")
-        if (test_conditions$phi[i] == "ij")
-            ans <- c(ans,
-                     "        log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[i, j, ])")
-        if (test_conditions$phi[i] == "ijk")
-            ans <- c(ans,
-                     "        log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[i, j, k, ])")
+        if (test_conditions$phi_shared[i]) {
+            if (test_conditions$phi[i] == "i")
+                ans <- c(ans,
+                         "        log(phi[i]) <- inprod(alpha[i, ], cov_phi[]) + inprod(alpha_shared[], cov_phi_shared[i, ])")
+            if (test_conditions$phi[i] == "ij")
+                ans <- c(ans,
+                         "        log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[i, j, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, ])")
+            if (test_conditions$phi[i] == "ijk")
+                ans <- c(ans,
+                         "        log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[i, j, k, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, k, ])")
+        } else {
+            if (test_conditions$phi[i] == "i")
+                ans <- c(ans,
+                         "        log(phi[i]) <- inprod(alpha[i, ], cov_phi[])")
+            if (test_conditions$phi[i] == "ij")
+                ans <- c(ans,
+                         "        log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[i, j, ])")
+            if (test_conditions$phi[i] == "ijk")
+                ans <- c(ans,
+                         "        log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[i, j, k, ])")
+        }
 
-        if (test_conditions$theta[i] == "i")
-            ans <- c(ans,
-                     "        logit(theta[i]) <- inprod(beta[i, ], cov_theta[])")
-        if (test_conditions$theta[i] == "ij")
-            ans <- c(ans,
-                     "        logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ])")
-        if (test_conditions$theta[i] == "ijk")
-            ans <- c(ans,
-                     "        logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ])")
+        if (test_conditions$theta_shared[i]) {
+            if (test_conditions$theta[i] == "i")
+                ans <- c(ans,
+                         "        logit(theta[i]) <- inprod(beta[i, ], cov_theta[]) + inprod(beta_shared[], cov_theta_shared[i, ])")
+            if (test_conditions$theta[i] == "ij")
+                ans <- c(ans,
+                         "        logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ]) + inprod(beta_shared[], cov_theta_shared[i, j, ])")
+            if (test_conditions$theta[i] == "ijk")
+                ans <- c(ans,
+                         "        logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ]) + inprod(beta_shared[], cov_theta_shared[i, j, k, ])")
+        } else {
+            if (test_conditions$theta[i] == "i")
+                ans <- c(ans,
+                         "        logit(theta[i]) <- inprod(beta[i, ], cov_theta[])")
+            if (test_conditions$theta[i] == "ij")
+                ans <- c(ans,
+                         "        logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ])")
+            if (test_conditions$theta[i] == "ijk")
+                ans <- c(ans,
+                         "        logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ])")
+        }
 
-        if (test_conditions$psi[i] == "i")
-            ans <- c(ans,
-                     "        logit(psi[i]) <- inprod(gamma[i, ], cov_psi[])")
-        if (test_conditions$psi[i] == "ij")
-            ans <- c(ans,
-                     "        logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[i, j, ])")
-
-        ans <- c(ans, readLines(system.file("jags",
-                                            "occumb_template5a.jags",
-                                            package = "occumb")))
-
-        res <- write_jags_model(phi = test_conditions$phi[i],
-                                theta = test_conditions$theta[i],
-                                psi = test_conditions$psi[i],
-                                shared_effects = FALSE)
-        expect_equal(res, ans)
-    }
-})
-test_that("JAGS codes are correct for models with shared effects", {
-    for (i in 1:nrow(test_conditions)) {
-        ans <- readLines(system.file("jags",
-                                     "occumb_template1.jags",
-                                     package = "occumb"))
-
-        if (test_conditions$phi[i] == "i")
-            ans <- c(ans,
-                     "                x[i, j, k] ~ dgamma(phi[i], 1)")
-        if (test_conditions$phi[i] == "ij")
-            ans <- c(ans,
-                     "                x[i, j, k] ~ dgamma(phi[i, j], 1)")
-        if (test_conditions$phi[i] == "ijk")
-            ans <- c(ans,
-                     "                x[i, j, k] ~ dgamma(phi[i, j, k], 1)")
-
-        ans <- c(ans, readLines(system.file("jags",
-                                            "occumb_template2.jags",
-                                            package = "occumb")))
-
-        if (test_conditions$theta[i] == "i")
-            ans <- c(ans,
-                     "                u[i, j, k] ~ dbern(z[i, j] * theta[i])")
-        if (test_conditions$theta[i] == "ij")
-            ans <- c(ans,
-                     "                u[i, j, k] ~ dbern(z[i, j] * theta[i, j])")
-        if (test_conditions$theta[i] == "ijk")
-            ans <- c(ans,
-                     "                u[i, j, k] ~ dbern(z[i, j] * theta[i, j, k])")
+        if (test_conditions$psi_shared[i]) {
+            if (test_conditions$psi[i] == "i")
+                ans <- c(ans,
+                         "        logit(psi[i]) <- inprod(gamma[i, ], cov_psi[]) + inprod(gamma_shared[], cov_psi_shared[i, ])")
+            if (test_conditions$psi[i] == "ij")
+                ans <- c(ans,
+                         "        logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[i, j, ]) + inprod(gamma_shared[], cov_psi_shared[i, j, ])")
+        } else {
+            if (test_conditions$psi[i] == "i")
+                ans <- c(ans,
+                         "        logit(psi[i]) <- inprod(gamma[i, ], cov_psi[])")
+            if (test_conditions$psi[i] == "ij")
+                ans <- c(ans,
+                         "        logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[i, j, ])")
+        }
 
         ans <- c(ans, readLines(system.file("jags",
-                                            "occumb_template3.jags",
+                                            "occumb_template5.jags",
                                             package = "occumb")))
 
-        if (test_conditions$psi[i] == "i")
+        if (test_conditions$phi_shared[i])
             ans <- c(ans,
-                     "            z[i, j] ~ dbern(psi[i])")
-        if (test_conditions$psi[i] == "ij")
+                     "    for (m in 1:M_phi_shared) {",
+                     "        alpha_shared[m] ~ dnorm(0, prior_prec)",
+                     "    }")
+        if (test_conditions$theta_shared[i])
             ans <- c(ans,
-                     "            z[i, j] ~ dbern(psi[i, j])")
+                     "    for (m in 1:M_theta_shared) {",
+                     "        beta_shared[m] ~ dnorm(0, prior_prec)",
+                     "    }")
+        if (test_conditions$psi_shared[i])
+            ans <- c(ans,
+                     "    for (m in 1:M_psi_shared) {",
+                     "        gamma_shared[m] ~ dnorm(0, prior_prec)",
+                     "    }")
 
-        ans <- c(ans, readLines(system.file("jags",
-                                            "occumb_template4.jags",
-                                            package = "occumb")))
+        ans <- c(ans, "}", "")
 
-        if (test_conditions$phi[i] == "i")
-            ans <- c(ans,
-                     "        log(phi[i]) <- inprod(alpha[i, ], cov_phi[]) + inprod(alpha_shared[], cov_phi_shared[i, ])")
-        if (test_conditions$phi[i] == "ij")
-            ans <- c(ans,
-                     "        log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[i, j, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, ])")
-        if (test_conditions$phi[i] == "ijk")
-            ans <- c(ans,
-                     "        log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[i, j, k, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, k, ])")
-
-        if (test_conditions$theta[i] == "i")
-            ans <- c(ans,
-                     "        logit(theta[i]) <- inprod(beta[i, ], cov_theta[]) + inprod(beta_shared[], cov_theta_shared[i, ])")
-        if (test_conditions$theta[i] == "ij")
-            ans <- c(ans,
-                     "        logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ]) + inprod(beta_shared[], cov_theta_shared[i, j, ])")
-        if (test_conditions$theta[i] == "ijk")
-            ans <- c(ans,
-                     "        logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ]) + inprod(beta_shared[], cov_theta_shared[i, j, k, ])")
-
-        if (test_conditions$psi[i] == "i")
-            ans <- c(ans,
-                     "        logit(psi[i]) <- inprod(gamma[i, ], cov_psi[]) + inprod(gamma_shared[], cov_psi_shared[i, ])")
-        if (test_conditions$psi[i] == "ij")
-            ans <- c(ans,
-                     "        logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[i, j, ]) + inprod(gamma_shared[], cov_psi_shared[i, j, ])")
-
-        ans <- c(ans, readLines(system.file("jags",
-                                            "occumb_template5b.jags",
-                                            package = "occumb")))
-
-        res <- write_jags_model(phi = test_conditions$phi[i],
-                                theta = test_conditions$theta[i],
-                                psi = test_conditions$psi[i],
-                                shared_effects = TRUE)
+        res <- write_jags_model(phi          = test_conditions$phi[i],
+                                theta        = test_conditions$theta[i],
+                                psi          = test_conditions$psi[i],
+                                phi_shared   = test_conditions$phi_shared[i],
+                                theta_shared = test_conditions$theta_shared[i],
+                                psi_shared   = test_conditions$psi_shared[i])
         expect_equal(res, ans)
     }
 })
