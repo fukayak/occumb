@@ -1,4 +1,4 @@
-### Test for set_const() -------------------------------------------------------
+### Tests for set_const() ------------------------------------------------------
 test_that("Replacement of missing y to NA works", {
     y         <- array(1:8, dim = rep(2, 3))
     y[, 1, 1] <- 0
@@ -18,7 +18,7 @@ test_that("Replacement of sequence depth 0 to 1 works", {
     expect_equal(result$N[2, 2], sum(7:8))
 })
 
-### Test for set_modargs() -----------------------------------------------------
+### Tests for set_modargs() ----------------------------------------------------
 test_that("Setup for a null model works", {
     result <- set_modargs(~ 1, ~ 1, ~ 1,
                           occumbData(y = array(0, dim = rep(2, 3))))
@@ -106,8 +106,8 @@ cases <- expand.grid(phi, theta, psi, phi_shared, theta_shared, psi_shared)
 colnames(cases) <- c("phi", "theta", "psi",
                      "phi_shared", "theta_shared", "psi_shared")
 
-### Test for write_jags_model() ------------------------------------------------
-test_that("JAGS codes are correct for 144 available models", {
+### Tests for write_jags_model() -----------------------------------------------
+test_that("JAGS code is correct for 144 available models", {
     for (i in 1:nrow(cases)) {
         ans <- readLines(system.file("jags",
                                      "occumb_template1.jags",
