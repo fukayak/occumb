@@ -34,10 +34,10 @@ test_that("Dimension check for covariates works", {
                  "Length of 'b' should match the number of sites.")
     expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
                                    repl_cov = list(c = rep(1, 3))),
-                 "'c' should have J rows and K columns.")
+                 "'c' should be a matrix with J rows and K columns.")
     expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
                                    repl_cov = list(c = matrix(1:2, 1, 2))),
-                 "'c' should have J rows and K columns.")
+                 "'c' should be a matrix with J rows and K columns.")
 })
 
 test_that("Check for covariate missing values works", {
