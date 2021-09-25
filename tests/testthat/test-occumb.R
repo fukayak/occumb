@@ -244,3 +244,24 @@ test_that("JAGS code is correct for 144 available models", {
     }
 })
 
+### Tests for set_params_monitored() -------------------------------------------
+test_that("Parameter list is correct for 144 available models", {
+    for (i in 1:nrow(cases)) {
+        ans <- c("Mu", "sigma", "rho", "alpha", "beta", "gamma")
+
+        if (cases$phi_shared[i])
+            ans <- c(ans, "alpha_shared")
+        if (cases$theta_shared[i])
+            ans <- c(ans, "beta_shared")
+        if (cases$psi_shared[i])
+            ans <- c(ans, "gamma_shared")
+
+        ans <- c(ans, c("phi", "theta", "psi", "z", "pi"))
+
+        res <- set_params_monitored(phi_shared   = cases$phi_shared[i],
+                                    theta_shared = cases$theta_shared[i],
+                                    psi_shared   = cases$psi_shared[i])
+        expect_equal(res, ans)
+    }
+})
+

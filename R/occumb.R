@@ -64,6 +64,12 @@ setClass("occumbFit", slots = c(fit = "jagsUI"))
 occumb <- function(phi_formula = ~ 1,
                    theta_formula = ~ 1,
                    psi_formula = ~ 1,
+#occumb <- function(formula_phi = ~ 1,
+#                   formula_theta = ~ 1,
+#                   formula_psi = ~ 1,
+#                   formula_phi_shared = NULL,
+#                   formula_theta_shared = NULL,
+#                   formula_psi_shared = NULL,
                    data,
                    prior_prec = 1E-3,
                    prior_ulim = 1E3,
@@ -80,12 +86,23 @@ occumb <- function(phi_formula = ~ 1,
 
     # Define arguments for the specified model
     margs <- set_modargs(phi_formula, theta_formula, psi_formula, data)
+#    margs <- set_modargs(formula_phi,
+#                         formula_theta,
+#                         formula_psi,
+#                         formula_phi_shared,
+#                         formula_theta_shared,
+#                         formula_psi_shared,
+#                         data)
 
 #    # Write model file
 #    model <- tempfile()
-#    writeLines(write_jags_model(margs$phi, margs$theta, margs$psi, margs$shared_effects))
+#    writeLines(write_jags_model(margs$phi, margs$theta, margs$psi,
+#                                margs$phi_shared,
+#                                margs$phi_shared,
+#                                margs$phi_shared), model)
 
     # Set data list
+#    dat <- set_data(const, margs, prior_prec, prior_ulim)
     dat <- list(I          = const$I,
                 J          = const$J,
                 K          = const$K,
@@ -102,6 +119,7 @@ occumb <- function(phi_formula = ~ 1,
                 prior_ulim = prior_ulim)
 
     # Set initial values
+#    inits <- set_inits(const, margs)
     inits <- function() {
         list(z = matrix(1, const$I, const$J),
              u = array(1, dim = c(const$I, const$J, const$K)),
@@ -117,6 +135,9 @@ occumb <- function(phi_formula = ~ 1,
     }
 
     # Set parameters monitored
+#    params <- set_params_monitored(margs$phi_shared,
+#                                   margs$theta_shared,
+#                                   margs$psi_shared)
     params <- c("Mu", "sigma", "rho", "alpha", "beta", "gamma",
                 "phi", "theta", "psi", "z", "pi")
 
@@ -341,5 +362,21 @@ write_jags_model <- function(phi, theta, psi, phi_shared, theta_shared, psi_shar
     model <- c(model, "}", "")
 
     model
+}
+
+# Auto-generate the list of parameters monitored
+set_params_monitored <- function(phi_shared, theta_shared, psi_shared) {
+    params <- c("Mu", "sigma", "rho", "alpha", "beta", "gamma")
+
+    if (phi_shared)
+        params <- c(params, "alpha_shared")
+    if (theta_shared)
+        params <- c(params, "beta_shared")
+    if (psi_shared)
+        params <- c(params, "gamma_shared")
+
+    params <- c(params, c("phi", "theta", "psi", "z", "pi"))
+
+    params
 }
 
