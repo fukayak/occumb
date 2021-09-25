@@ -223,7 +223,7 @@ set_modargs <- function(formula_phi,
         m_psi   <- seq(m_theta + 1, m_theta + 1)
     } else {
         # Stop when formula_psi includes a term not in the site covariates
-        psi_terms <- attr(terms(formula_psi), which = "term.labels")
+        psi_terms <- attr(stats::terms(formula_psi), which = "term.labels")
         wrong_psi_terms <- psi_terms %!in% names(data@site_cov)
         if (any(wrong_psi_terms))
             stop(sprintf("Unexpected terms in formula_psi: %s \n
