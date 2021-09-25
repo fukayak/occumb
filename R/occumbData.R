@@ -42,10 +42,18 @@ validate_occumbData <- function(object) {
         msg <- c(msg,
                  sprintf("Length of '%s' should match the number of sites.",
                          names(object@site_cov)[sapply(object@site_cov, length) != J]))
-    if (sum(sapply(object@repl_cov, length) != K))
+
+    check_repl_cov <- vector(length = length(object@repl_cov))
+    for (i in seq_along(object@repl_cov)) {
+        if (is.matrix(object@repl_cov[[i]]))
+            check_repl_cov[i] <- !identical(dim(object@repl_cov[[i]]), c(J, K))
+        else
+            check_repl_cov[i] <- TRUE
+    }
+    if (sum(check_repl_cov))
         msg <- c(msg,
-                 sprintf("Length of '%s' should match the number of replicates.",
-                         names(object@repl_cov)[sapply(object@repl_cov, length) != K]))
+                 sprintf("'%s' should have J rows and K columns.",
+                         names(object@repl_cov)[check_repl_cov]))
 
     ## No missing values in covariates.
     if (sum(is.na(unlist(object@spec_cov))) > 0)
@@ -79,15 +87,21 @@ setClass("occumbData",
 #'          Data for missing replicates must be represented by zero vectors.
 #'          NAs are not allowed.
 #' @param spec_cov A named list of species covariates.
-#'                 Each element must be a vector of numeric or factor whose
-#'                 length is equal to dim(y)\[1\] (i.e., the number of species).
-#'                 NAs are not allowed.
+#'                 Each element must be a vector of numeric, factor, or
+#'                 character whose length is equal to dim(y)\[1\] (i.e., the
+#'                 number of species). Covariates in character are automatically
+#'                 converted to factors. NAs are not allowed.
 #' @param site_cov A named list of site covariates.
-#'                 Each element must be a vector of numeric or factor whose
-#'                 length is equal to dim(y)\[2\] (i.e., the number of sites).
-#'                 NAs are not allowed.
+#'                 Each element must be a vector of numeric, factor, or
+#'                 character whose length is equal to dim(y)\[2\] (i.e., the
+#'                 number of sites). Covariates in character are automatically
+#'                 converted to factors. NAs are not allowed.
 #' @param repl_cov A named list of replicate covariates.
-#'                 Currently not yet available.
+#'                 Each element must be a matrix of numeric, factor, or
+#'                 character whose dimension is equal to dim(y)\[2:3\] (i.e.,
+#'                 the number of sites * number of replicates). Covariates in
+#'                 character are automatically converted to factors. NAs are
+#'                 not allowed.
 #' @section Details:
 #'      The element names for spec_cov, site_cov, and repl_cov must all be unique.
 #' @return  An S4 object of the `occumbData` class.
@@ -103,6 +117,8 @@ occumbData <- function(y,
                        spec_cov = NULL,
                        site_cov = NULL,
                        repl_cov = NULL) {
+
+    # Convert character covariates to factor
 
     out <- methods::new("occumbData",
                         y = y,

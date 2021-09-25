@@ -13,17 +13,23 @@ Data for missing replicates must be represented by zero vectors.
 NAs are not allowed.}
 
 \item{spec_cov}{A named list of species covariates.
-Each element must be a vector of numeric or factor whose
-length is equal to dim(y)[1] (i.e., the number of species).
-NAs are not allowed.}
+Each element must be a vector of numeric, factor, or
+character whose length is equal to dim(y)[1] (i.e., the
+number of species). Covariates in character are automatically
+converted to factors. NAs are not allowed.}
 
 \item{site_cov}{A named list of site covariates.
-Each element must be a vector of numeric or factor whose
-length is equal to dim(y)[2] (i.e., the number of sites).
-NAs are not allowed.}
+Each element must be a vector of numeric, factor, or
+character whose length is equal to dim(y)[2] (i.e., the
+number of sites). Covariates in character are automatically
+converted to factors. NAs are not allowed.}
 
 \item{repl_cov}{A named list of replicate covariates.
-Currently not yet available.}
+Each element must be a matrix of numeric, factor, or
+character whose dimension is equal to dim(y)[2:3] (i.e.,
+the number of sites * number of replicates). Covariates in
+character are automatically converted to factors. NAs are
+not allowed.}
 }
 \value{
 An S4 object of the \code{occumbData} class.
