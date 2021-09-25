@@ -268,18 +268,18 @@ test_that("Data list is correct for 144 available models", {
                       m_phi            = sample.int(1E3, 1),
                       m_theta          = sample.int(1E3, 1),
                       m_psi            = sample.int(1E3, 1),
-                      phi_shared = cases$phi_shared[i],
-                      theta_shared = cases$theta_shared[i],
-                      psi_shared = cases$psi_shared[i])
+                      phi_shared       = cases$phi_shared[i],
+                      theta_shared     = cases$theta_shared[i],
+                      psi_shared       = cases$psi_shared[i])
 
-        ans <- list(I         = const$I,
-                    J         = const$J,
-                    K         = const$K,
-                    N         = const$N,
-                    y         = const$y,
-                    cov_phi   = margs$cov_phi,
-                    cov_theta = margs$cov_theta,
-                    cov_psi   = margs$cov_psi,
+        ans <- list(I          = const$I,
+                    J          = const$J,
+                    K          = const$K,
+                    N          = const$N,
+                    y          = const$y,
+                    cov_phi    = margs$cov_phi,
+                    cov_theta  = margs$cov_theta,
+                    cov_psi    = margs$cov_psi,
                     M          = margs$M,
                     m_phi      = margs$m_phi,
                     m_theta    = margs$m_theta,
@@ -296,6 +296,64 @@ test_that("Data list is correct for 144 available models", {
 
         res <- set_data(const, margs, prior_prec, prior_ulim)
         expect_equal(res, ans)
+    }
+})
+
+### Tests for inits_code() -----------------------------------------------------
+test_that("Code for initial value function is correct for 144 available models", {
+    const <- list(I = sample.int(1E3, 1),
+                  J = sample.int(1E3, 1),
+                  K = sample.int(1E3, 1),
+                  N = sample.int(1E3, 1),
+                  y = sample.int(1E3, 1))
+    prior_prec <- rnorm(1)
+    prior_ulim <- rnorm(1)
+
+    for (i in 1:nrow(cases)) {
+        margs <- list(cov_phi          = rnorm(1),
+                      cov_theta        = rnorm(1),
+                      cov_psi          = rnorm(1),
+                      cov_phi_shared   = rnorm(1),
+                      cov_theta_shared = rnorm(1),
+                      cov_psi_shared   = rnorm(1),
+                      M                = sample.int(1E3, 1),
+                      M_phi_shared     = sample.int(1E3, 1),
+                      M_theta_shared   = sample.int(1E3, 1),
+                      M_psi_shared     = sample.int(1E3, 1),
+                      m_phi            = sample.int(1E3, 1),
+                      m_theta          = sample.int(1E3, 1),
+                      m_psi            = sample.int(1E3, 1),
+                      phi_shared       = cases$phi_shared[i],
+                      theta_shared     = cases$theta_shared[i],
+                      psi_shared       = cases$psi_shared[i])
+
+        ans <- c(
+            "function() {",
+            "    list(z = matrix(1, const$I, const$J),",
+            "         u = array(1, dim = c(const$I, const$J, const$K)),",
+            "         x = array(stats::rnorm(const$I * const$J * const$K,",
+            "                                mean = 1, sd = 0.1),",
+            "                   dim = c(const$I, const$J, const$K)),")
+
+        if (cases$phi_shared[i])
+            ans <- c(ans, "         alpha_shared = stats::rnorm(margs$M_phi_shared, sd = 0.1),")
+        if (cases$theta_shared[i])
+            ans <- c(ans, "         beta_shared  = stats::rnorm(margs$M_theta_shared, sd = 0.1),")
+        if (cases$psi_shared[i])
+            ans <- c(ans, "         gamma_shared = stats::rnorm(margs$M_psi_shared, sd = 0.1),")
+
+        ans <- c(ans,
+            "         spec_eff = matrix(stats::rnorm(const$I * margs$M, sd = 0.1),",
+            "                           const$I, margs$M),",
+            "         Mu       = stats::rnorm(margs$M, sd = 0.1),",
+            "         sigma    = stats::rnorm(margs$M, mean = 1, sd = 0.1),",
+            "         rho      = matrix(stats::rnorm(margs$M^2, sd = 0.1),",
+            "                           margs$M, margs$M))",
+            "}")
+
+        res <- inits_code(const, margs)
+        expect_equal(res, ans)
+
     }
 })
 

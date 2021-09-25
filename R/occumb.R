@@ -397,6 +397,42 @@ set_data <- function(const, margs, prior_prec, prior_ulim) {
     dat
 }
 
+# Auto-generate the initial value function
+set_inits <- function(const, margs) {
+    inits <- eval(parse(text = inits_code(const, margs)))
+    inits
+}
+
+# Auto-generate codes for the initial value function
+inits_code <- function(const, margs) {
+
+    out <- c(
+        "function() {",
+        "    list(z = matrix(1, const$I, const$J),",
+        "         u = array(1, dim = c(const$I, const$J, const$K)),",
+        "         x = array(stats::rnorm(const$I * const$J * const$K,",
+        "                                mean = 1, sd = 0.1),",
+        "                   dim = c(const$I, const$J, const$K)),")
+
+    if (margs$phi_shared)
+        out <- c(out, "         alpha_shared = stats::rnorm(margs$M_phi_shared, sd = 0.1),")
+    if (margs$theta_shared)
+        out <- c(out, "         beta_shared  = stats::rnorm(margs$M_theta_shared, sd = 0.1),")
+    if (margs$psi_shared)
+        out <- c(out, "         gamma_shared = stats::rnorm(margs$M_psi_shared, sd = 0.1),")
+
+    out <- c(out,
+        "         spec_eff = matrix(stats::rnorm(const$I * margs$M, sd = 0.1),",
+        "                           const$I, margs$M),",
+        "         Mu       = stats::rnorm(margs$M, sd = 0.1),",
+        "         sigma    = stats::rnorm(margs$M, mean = 1, sd = 0.1),",
+        "         rho      = matrix(stats::rnorm(margs$M^2, sd = 0.1),",
+        "                           margs$M, margs$M))",
+        "}")
+
+    out
+}
+
 # Auto-generate the list of parameters monitored
 set_params_monitored <- function(phi_shared, theta_shared, psi_shared) {
     params <- c("Mu", "sigma", "rho", "alpha", "beta", "gamma")
