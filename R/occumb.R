@@ -399,8 +399,7 @@ set_data <- function(const, margs, prior_prec, prior_ulim) {
 
 # Auto-generate the initial value function
 set_inits <- function(const, margs) {
-    inits <- eval(parse(text = inits_code(const, margs)))
-    inits
+    eval(parse(text = inits_code(const, margs)))
 }
 
 # Auto-generate codes for the initial value function
