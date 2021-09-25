@@ -42,18 +42,17 @@ validate_occumbData <- function(object) {
         msg <- c(msg,
                  sprintf("Length of '%s' should match the number of sites.",
                          names(object@site_cov)[sapply(object@site_cov, length) != J]))
-
-    check_repl_cov <- vector(length = length(object@repl_cov))
+    wrong_repl_cov <- vector(length = length(object@repl_cov))
     for (i in seq_along(object@repl_cov)) {
         if (is.matrix(object@repl_cov[[i]]))
-            check_repl_cov[i] <- !identical(dim(object@repl_cov[[i]]), c(J, K))
+            wrong_repl_cov[i] <- !identical(dim(object@repl_cov[[i]]), c(J, K))
         else
-            check_repl_cov[i] <- TRUE
+            wrong_repl_cov[i] <- TRUE
     }
-    if (sum(check_repl_cov))
+    if (sum(wrong_repl_cov))
         msg <- c(msg,
-                 sprintf("'%s' should have J rows and K columns.",
-                         names(object@repl_cov)[check_repl_cov]))
+                 sprintf("'%s' should be a matrix with J rows and K columns.",
+                         names(object@repl_cov)[wrong_repl_cov]))
 
     ## No missing values in covariates.
     if (sum(is.na(unlist(object@spec_cov))) > 0)
