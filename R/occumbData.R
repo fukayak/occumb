@@ -118,6 +118,9 @@ occumbData <- function(y,
                        site_cov = NULL,
                        repl_cov = NULL) {
 
+    ## The mode of covariates is numeric, factor, or character.
+    check_covariate_mode(spec_cov, site_cov, repl_cov)
+
     # Convert character covariates to factor
 
     out <- methods::new("occumbData",
@@ -126,5 +129,46 @@ occumbData <- function(y,
                         site_cov = site_cov,
                         repl_cov = repl_cov)
     return(out)
+}
+
+# Check for the mode of each covariate
+check_covariate_mode <- function(spec_cov, site_cov, repl_cov) {
+    check_spec_cov_mode <- vector(length = length(spec_cov))
+    for (i in seq_along(spec_cov)) {
+        if (!(mode(spec_cov[[i]]) == "numeric" |
+              mode(spec_cov[[i]]) == "factor" | 
+              mode(spec_cov[[i]]) == "character"))
+            check_spec_cov_mode[i] <- TRUE
+    }
+    check_site_cov_mode <- vector(length = length(site_cov))
+    for (i in seq_along(site_cov)) {
+        if (!(mode(site_cov[[i]]) == "numeric" |
+              mode(site_cov[[i]]) == "factor" | 
+              mode(site_cov[[i]]) == "character"))
+            check_site_cov_mode[i] <- TRUE
+    }
+    check_repl_cov_mode <- vector(length = length(repl_cov))
+    for (i in seq_along(repl_cov)) {
+        if (!(mode(repl_cov[[i]]) == "numeric" |
+              mode(repl_cov[[i]]) == "factor" | 
+              mode(repl_cov[[i]]) == "character"))
+            check_repl_cov_mode[i] <- TRUE
+    }
+
+    if (sum(c(check_spec_cov_mode, check_site_cov_mode, check_repl_cov_mode))) {
+        var <- c(names(spec_cov)[check_spec_cov_mode],
+                 names(site_cov)[check_site_cov_mode],
+                 names(repl_cov)[check_repl_cov_mode])
+        mod <- NULL
+        for (i in seq_len(sum(check_spec_cov_mode)))
+            mod <- c(mod, mode(spec_cov[[which(check_spec_cov_mode)[i]]]))
+        for (i in seq_len(sum(check_site_cov_mode)))
+            mod <- c(mod, mode(site_cov[[which(check_site_cov_mode)[i]]]))
+        for (i in seq_len(sum(check_repl_cov_mode)))
+            mod <- c(mod, mode(repl_cov[[which(check_repl_cov_mode)[i]]]))
+
+        stop(message = sprintf("Unacceptable mode: the following covariates must be numeric, factor, or character. \n %s",
+                               paste(sprintf("%s: %s", var, mod), collapse = "; ")))
+    }
 }
 
