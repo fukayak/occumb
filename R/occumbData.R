@@ -118,10 +118,8 @@ occumbData <- function(y,
                        site_cov = NULL,
                        repl_cov = NULL) {
 
-    ## The mode of covariates is numeric, factor, or character.
+    # The mode of covariates is numeric, factor, or character.
     check_covariate_mode(spec_cov, site_cov, repl_cov)
-
-    # Convert character covariates to factor
 
     out <- methods::new("occumbData",
                         y = y,
