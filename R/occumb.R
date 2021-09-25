@@ -193,6 +193,10 @@ set_modargs <- function(formula_phi,
 
     `%!in%` <- Negate(`%in%`)
 
+    phi_shared   <- !is.null(formula_phi_shared)
+    theta_shared <- !is.null(formula_theta_shared)
+    psi_shared   <- !is.null(formula_psi_shared)
+
     M <- 0      # Order of species effects
 
     ## phi
@@ -216,7 +220,6 @@ set_modargs <- function(formula_phi,
     }
 
     ## psi
-    psi_shared <- !is.null(formula_psi_shared)
     if (psi_shared) {
         # only accepts site_cov and spec_cov
         # intercept term?
@@ -245,8 +248,8 @@ set_modargs <- function(formula_phi,
     out <- list(phi              = "ijk",
                 theta            = "ijk",
                 psi              = set_psi(formula_psi),
-                phi_shared       = TRUE,
-                theta_shared     = TRUE,
+                phi_shared       = phi_shared,
+                theta_shared     = theta_shared,
                 psi_shared       = psi_shared,
                 M                = M,
                 M_phi_shared     = 0,
