@@ -216,8 +216,13 @@ set_modargs <- function(formula_phi,
     }
 
     ## psi
+    psi_shared <- !is.null(formula_psi_shared)
+    if (psi_shared) {
+        # only accepts site_cov and spec_cov
+        # intercept term?
+    }
+
     if (formula_psi == ~ 1) {
-        psi     <- "i"
         cov_psi <- 1
         M       <- M + 1
         m_psi   <- seq(m_theta + 1, m_theta + 1)
@@ -230,7 +235,8 @@ set_modargs <- function(formula_phi,
                          Only site covariates are allowed for formula_psi.",
                          psi_terms[wrong_psi_terms])) 
 
-        psi     <- "ij"
+        # Convert character to factor??
+
         cov_psi <- stats::model.matrix(formula_psi, data@site_cov)
         M       <- M + ncol(cov_psi)
         m_psi   <- seq(m_theta + 1, m_theta + ncol(cov_psi))
@@ -238,10 +244,10 @@ set_modargs <- function(formula_phi,
 
     out <- list(phi              = "ijk",
                 theta            = "ijk",
-                psi              = psi,
+                psi              = set_psi(formula_psi),
                 phi_shared       = TRUE,
                 theta_shared     = TRUE,
-                psi_shared       = TRUE,
+                psi_shared       = psi_shared,
                 M                = M,
                 M_phi_shared     = 0,
                 M_theta_shared   = 0,
@@ -303,6 +309,11 @@ set_modargs <- function(formula_phi,
 #                m_psi     = m_psi)
 #    out
 #}
+
+set_psi <- function(formula_psi) {
+    if (formula_psi == ~ 1) psi <- "i"
+    else psi <- "ij"
+}
 
 # Auto-generate JAGS model code
 write_jags_model <- function(phi, theta, psi, phi_shared, theta_shared, psi_shared) {
