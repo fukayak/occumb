@@ -183,51 +183,126 @@ set_const <- function(data) {
 }
 
 # Set model-specific arguments
-set_modargs <- function(phi_formula, theta_formula, psi_formula, data) {
-    M    <- 0           # Order of species effects
-    code <- "000000"    # Model code
+set_modargs <- function(formula_phi,
+                        formula_theta,
+                        formula_psi,
+                        formula_phi_shared,
+                        formula_theta_shared,
+                        formula_psi_shared,
+                        data) {
 
-    if (phi_formula == ~ 1) {
+    `%!in%` <- Negate(`%in%`)
+
+    M <- 0      # Order of species effects
+
+    ## phi
+
+    if (formula_phi == ~ 1) {
         cov_phi <- 1
         M       <- M + 1
         m_phi   <- 1
-        substr(code, 1, 1) <- "1"
     } else {
-        stop("Covariates in phi_formula are not yet supported, sorry.")
+        stop("Covariates in formula_phi are not yet supported, sorry.")
     }
 
-    if (theta_formula == ~ 1) {
+    ## theta
+
+    if (formula_theta == ~ 1) {
         cov_theta <- 1
         M         <- M + 1
         m_theta   <- seq(m_phi + 1, m_phi + 1)
-        substr(code, 2, 2) <- "1"
     } else {
-        stop("Covariates in theta_formula are not yet supported, sorry.")
+        stop("Covariates in formula_theta are not yet supported, sorry.")
     }
 
-    if (psi_formula == ~ 1) {
+    ## psi
+    if (formula_psi == ~ 1) {
+        psi     <- "i"
         cov_psi <- 1
         M       <- M + 1
         m_psi   <- seq(m_theta + 1, m_theta + 1)
-        substr(code, 3, 3) <- "1"
     } else {
-        cov_psi <- stats::model.matrix(stats::as.formula(psi_formula),
-                                       data@site_cov)
+        # Stop when formula_psi includes a term not in the site covariates
+        psi_terms <- attr(terms(formula_psi), which = "term.labels")
+        wrong_psi_terms <- psi_terms %!in% names(data@site_cov)
+        if (any(wrong_psi_terms))
+            stop(sprintf("Unexpected terms in formula_psi: %s \n
+                         Only site covariates are allowed for formula_psi.",
+                         psi_terms[wrong_psi_terms])) 
+
+        psi     <- "ij"
+        cov_psi <- stats::model.matrix(formula_psi, data@site_cov)
         M       <- M + ncol(cov_psi)
         m_psi   <- seq(m_theta + 1, m_theta + ncol(cov_psi))
-        substr(code, 3, 3) <- "2"
     }
 
-    out <- list(M         = M,
-                code      = code,
-                cov_phi   = cov_phi,
-                cov_theta = cov_theta,
-                cov_psi   = cov_psi,
-                m_phi     = m_phi,
-                m_theta   = m_theta,
-                m_psi     = m_psi)
+    out <- list(phi              = "ijk",
+                theta            = "ijk",
+                psi              = psi,
+                phi_shared       = TRUE,
+                theta_shared     = TRUE,
+                psi_shared       = TRUE,
+                M                = M,
+                M_phi_shared     = ,
+                M_theta_shared   = ,
+                M_psi_shared     = ,
+                cov_phi          = cov_phi,
+                cov_theta        = cov_theta,
+                cov_psi          = cov_psi,
+                cov_phi_shared   = ,
+                cov_theta_shared = ,
+                cov_psi_shared   = ,
+                m_phi            = m_phi,
+                m_theta          = m_theta,
+                m_psi            = m_psi)
+
     out
 }
+#set_modargs <- function(phi_formula, theta_formula, psi_formula, data) {
+#    M    <- 0           # Order of species effects
+#    code <- "000000"    # Model code
+#
+#    if (phi_formula == ~ 1) {
+#        cov_phi <- 1
+#        M       <- M + 1
+#        m_phi   <- 1
+#        substr(code, 1, 1) <- "1"
+#    } else {
+#        stop("Covariates in phi_formula are not yet supported, sorry.")
+#    }
+#
+#    if (theta_formula == ~ 1) {
+#        cov_theta <- 1
+#        M         <- M + 1
+#        m_theta   <- seq(m_phi + 1, m_phi + 1)
+#        substr(code, 2, 2) <- "1"
+#    } else {
+#        stop("Covariates in theta_formula are not yet supported, sorry.")
+#    }
+#
+#    if (psi_formula == ~ 1) {
+#        cov_psi <- 1
+#        M       <- M + 1
+#        m_psi   <- seq(m_theta + 1, m_theta + 1)
+#        substr(code, 3, 3) <- "1"
+#    } else {
+#        cov_psi <- stats::model.matrix(stats::as.formula(psi_formula),
+#                                       data@site_cov)
+#        M       <- M + ncol(cov_psi)
+#        m_psi   <- seq(m_theta + 1, m_theta + ncol(cov_psi))
+#        substr(code, 3, 3) <- "2"
+#    }
+#
+#    out <- list(M         = M,
+#                code      = code,
+#                cov_phi   = cov_phi,
+#                cov_theta = cov_theta,
+#                cov_psi   = cov_psi,
+#                m_phi     = m_phi,
+#                m_theta   = m_theta,
+#                m_psi     = m_psi)
+#    out
+#}
 
 # Auto-generate JAGS model code
 write_jags_model <- function(phi, theta, psi, phi_shared, theta_shared, psi_shared) {
