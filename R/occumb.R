@@ -404,7 +404,6 @@ set_inits <- function(const, margs) {
 
 # Auto-generate codes for the initial value function
 inits_code <- function(const, margs) {
-
     out <- c(
         "function() {",
         "    list(z = matrix(1, const$I, const$J),",
