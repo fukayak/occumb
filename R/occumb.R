@@ -191,8 +191,6 @@ set_modargs <- function(formula_phi,
                         formula_psi_shared,
                         data) {
 
-    `%!in%` <- Negate(`%in%`)
-
     phi_shared   <- !is.null(formula_phi_shared)
     theta_shared <- !is.null(formula_theta_shared)
     psi_shared   <- !is.null(formula_psi_shared)
@@ -200,17 +198,14 @@ set_modargs <- function(formula_phi,
     # psi_shared
     # TODO: fix to handle categorical covariates
     if (psi_shared) {
+        psi_shared_terms <- terms(formula_psi_shared)
+        psi_shared_main_effects <- main_effects(psi_shared_terms)
+
         # Stop when formula_psi_shared includes a term other than
         # site_cov, spec_cov, and their interaction
-        psi_shared_terms <- attr(stats::terms(formula_psi_shared),
-                                 which = "term.labels")
-        psi_shared_main_effects <- unique(unlist(strsplit(psi_shared_terms, split = ":")))
-        wrong_psi_shared_terms <- 
-            psi_shared_main_effects %!in% c(names(data@site_cov), names(data@spec_cov))
-        if (any(wrong_psi_shared_terms))
-            stop(sprintf("Unexpected terms in formula_psi_shared: %s
-Only site covariates, species covariates, or their interactions are allowed for formula_psi_shared.",
-                         psi_shared_terms[wrong_psi_shared_terms])) 
+        check_wrong_terms(formula_psi_shared,
+                          c(names(data@site_cov), names(data@spec_cov)),
+                          "psi_shared")
 
         # cov_psi_shared[i, j, ]
         if (any(psi_shared_main_effects %in% names(data@site_cov))) {
@@ -407,6 +402,20 @@ extract_covariate <- function(cov_name, data) {
         cov_type <- "repl_cov"
 
     eval(parse(text = sprintf("data@%s$%s", cov_type, cov_name)))
+}
+
+`%!in%` <- Negate(`%in%`)
+
+check_wrong_terms <- function(formula, correct_terms, type = c("psi_shared")) {
+    test_terms <- terms(formula)
+    wrong_terms <- main_effects(test_terms) %!in% correct_terms
+
+    if (any(wrong_terms)) {
+        if (type == "psi_shared")
+        stop(sprintf("Unexpected terms in formula_psi_shared: %s
+Only site covariates, species covariates, or their interactions are allowed for formula_psi_shared.",
+                     test_terms[wrong_terms])) 
+    }
 }
 
 
