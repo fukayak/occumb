@@ -267,7 +267,7 @@ set_modargs <- function(formula_phi,
         # Stop when formula_psi includes a term not in the site covariates
         check_wrong_terms(formula_psi, names(data@site_cov), "psi")
 
-        cov_psi <- stats::model.matrix(formula_psi, data@site_cov)
+        cov_psi <- stats::model.matrix(formula_psi)
         M       <- M + ncol(cov_psi)
         m_psi   <- seq(m_theta + 1, m_theta + ncol(cov_psi))
     }
