@@ -197,7 +197,8 @@ set_modargs <- function(formula_phi,
     theta_shared <- !is.null(formula_theta_shared)
     psi_shared   <- !is.null(formula_psi_shared)
 
-    # Check if formula_psi_shared is good
+    # psi_shared
+    # TODO: fix to handle categorical covariates
     if (psi_shared) {
         # Stop when formula_psi_shared includes a term other than
         # site_cov, spec_cov, and their interaction
@@ -229,7 +230,7 @@ Only site covariates, species covariates, or their interactions are allowed for 
                 warning("formula_psi_shared should not include an intercept term: it will be removed.")
             }
 
-            cov_psi_shared <- array(tmp, c(dim(data@y)[1], dim(data@y)[2], length(psi_shared_terms)))
+            cov_psi_shared <- array(tmp, c(dim(data@y)[1], dim(data@y)[2], ncol(tmp)))
             M_psi_shared   <- dim(cov_psi_shared)[3]
 
         # cov_psi_shared[i, ]

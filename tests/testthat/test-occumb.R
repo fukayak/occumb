@@ -73,14 +73,15 @@ Only site covariates, species covariates, or their interactions are allowed for 
     }
     expect_equal(result$cov_psi_shared, ans_cov)
 
-    # site_cov (factor)  <- not pass
+#   TODO: Fix this 
+#    # site_cov (factor) <- should be fixed to remove reference category
 #    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ -1 + cov3, data)
 #    expect_true(result$psi_shared)
 #    expect_equal(result$M_psi_shared, 1)
 #    ans_cov <- array(dim = c(I, J, 1))
 #    for (i in 1:I) {
 #        for (j in 1:J) {
-#        ans_cov[i, j, 1] <- cov2[j]
+#        ans_cov[i, j, 1] <- cov3[j]
 #        }
 #    }
 #    expect_equal(result$cov_psi_shared, ans_cov)
