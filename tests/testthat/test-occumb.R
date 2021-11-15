@@ -34,6 +34,71 @@ test_that("Temp: psi correct", {
                          Only site covariates are allowed for formula_psi.",
                          "cov1"))
 })
+test_that("Temp: psi_shared correct", {
+    I <- 2; J <- 3; K <- 1
+    cov1 <- rnorm(I)
+    cov2 <- rnorm(J)
+    cov3 <- factor(1:J)
+    data <- occumbData(y = array(0, dim = c(I, J, K)),
+                       spec_cov = list(cov1 = cov1),
+                       site_cov = list(cov2 = cov2,
+                                       cov3 = cov3))
+
+    # Errors and Warnings
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov4, data),
+                             sprintf("Unexpected terms in formula_psi_shared: %s
+Only site covariates, species covariates, or their interactions are allowed for formula_psi_shared.", "cov4"))
+    expect_warning(set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov1, data),
+                   "formula_psi_shared should not include an intercept term: it will be removed.")
+
+    # spec_cov
+    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ -1 + cov1, data)
+    expect_true(result$psi_shared)
+    expect_equal(result$M_psi_shared, 1)
+    ans_cov <- array(dim = c(I, 1))
+    for (i in 1:I) {
+        ans_cov[i, 1] <- cov1[i]
+    }
+    expect_equal(result$cov_psi_shared, ans_cov)
+
+    # site_cov (continuous)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ -1 + cov2, data)
+    expect_true(result$psi_shared)
+    expect_equal(result$M_psi_shared, 1)
+    ans_cov <- array(dim = c(I, J, 1))
+    for (i in 1:I) {
+        for (j in 1:J) {
+        ans_cov[i, j, 1] <- cov2[j]
+        }
+    }
+    expect_equal(result$cov_psi_shared, ans_cov)
+
+    # site_cov (factor)  <- not pass
+#    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ -1 + cov3, data)
+#    expect_true(result$psi_shared)
+#    expect_equal(result$M_psi_shared, 1)
+#    ans_cov <- array(dim = c(I, J, 1))
+#    for (i in 1:I) {
+#        for (j in 1:J) {
+#        ans_cov[i, j, 1] <- cov2[j]
+#        }
+#    }
+#    expect_equal(result$cov_psi_shared, ans_cov)
+
+    # spec_cov * site_cov
+    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ -1 + cov1 * cov2, data)
+    expect_true(result$psi_shared)
+    expect_equal(result$M_psi_shared, 3)
+    ans_cov <- array(dim = c(I, J, 3))
+    for (i in 1:I) {
+        for (j in 1:J) {
+            ans_cov[i, j, 1] <- cov1[i]
+            ans_cov[i, j, 2] <- cov2[j]
+            ans_cov[i, j, 3] <- cov1[i] * cov2[j]
+        }
+    }
+    expect_equal(result$cov_psi_shared, ans_cov)
+})
 #test_that("Setup for a null model works", {
 #    result <- set_modargs(~ 1, ~ 1, ~ 1,
 #                          occumbData(y = array(0, dim = rep(2, 3))))

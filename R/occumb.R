@@ -197,6 +197,63 @@ set_modargs <- function(formula_phi,
     theta_shared <- !is.null(formula_theta_shared)
     psi_shared   <- !is.null(formula_psi_shared)
 
+    # Check if formula_psi_shared is good
+    if (psi_shared) {
+        # Stop when formula_psi_shared includes a term other than
+        # site_cov, spec_cov, and their interaction
+        psi_shared_terms <- attr(stats::terms(formula_psi_shared),
+                                 which = "term.labels")
+        psi_shared_main_effects <- unique(unlist(strsplit(psi_shared_terms, split = ":")))
+        wrong_psi_shared_terms <- 
+            psi_shared_main_effects %!in% c(names(data@site_cov), names(data@spec_cov))
+        if (any(wrong_psi_shared_terms))
+            stop(sprintf("Unexpected terms in formula_psi_shared: %s
+Only site covariates, species covariates, or their interactions are allowed for formula_psi_shared.",
+                         psi_shared_terms[wrong_psi_shared_terms])) 
+
+        # cov_psi_shared[i, j, ]
+        if (any(psi_shared_main_effects %in% names(data@site_cov))) {
+
+            for (n in seq_along(psi_shared_main_effects)) {
+                if (psi_shared_main_effects[n] %in% names(data@spec_cov))
+                    eval(parse(text = sprintf("%s <- rep(extract_covariate(psi_shared_main_effects[%s], data), dim(data@y)[2])", psi_shared_main_effects[n], n)))
+                if (psi_shared_main_effects[n] %in% names(data@site_cov))
+                    eval(parse(text = sprintf("%s <- rep(extract_covariate(psi_shared_main_effects[%s], data), each = dim(data@y)[1])", psi_shared_main_effects[n], n)))
+            }
+
+            tmp <- stats::model.matrix(formula_psi_shared, environment())
+            # When formula_psi_shared includes an intercept term,
+            # remove it and issue a warning
+            if (any(colnames(tmp) %in% "(Intercept)")) {
+                tmp <- tmp[, colnames(tmp) %!in% "(Intercept)"]
+                warning("formula_psi_shared should not include an intercept term: it will be removed.")
+            }
+
+            cov_psi_shared <- array(tmp, c(dim(data@y)[1], dim(data@y)[2], length(psi_shared_terms)))
+            M_psi_shared   <- dim(cov_psi_shared)[3]
+
+        # cov_psi_shared[i, ]
+        } else {
+            for (n in seq_along(psi_shared_main_effects)) {
+                eval(parse(text = sprintf("%s <- extract_covariate(psi_shared_main_effects[%s], data)", psi_shared_main_effects[n], n)))
+            }
+
+            tmp <- stats::model.matrix(formula_psi_shared, environment())
+            # When formula_psi_shared includes an intercept term,
+            # remove it and issue a warning
+            if (any(colnames(tmp) %in% "(Intercept)")) {
+                tmp <- tmp[, colnames(tmp) %!in% "(Intercept)"]
+                warning("formula_psi_shared should not include an intercept term: it will be removed.")
+            }
+
+            cov_psi_shared <- matrix(tmp, nrow = dim(data@y)[1])
+            M_psi_shared   <- ncol(cov_psi_shared)
+        }
+    } else {
+        cov_psi_shared <- NULL
+        M_psi_shared   <- 0
+    }
+
     M <- 0      # Order of species effects
 
     ## phi
@@ -220,10 +277,6 @@ set_modargs <- function(formula_phi,
     }
 
     ## psi
-    if (psi_shared) {
-        # only accepts site_cov and spec_cov
-        # intercept term?
-    }
 
     if (formula_psi == ~ 1) {
         cov_psi <- 1
@@ -254,13 +307,13 @@ set_modargs <- function(formula_phi,
                 M                = M,
                 M_phi_shared     = 0,
                 M_theta_shared   = 0,
-                M_psi_shared     = 0,
+                M_psi_shared     = M_psi_shared,
                 cov_phi          = cov_phi,
                 cov_theta        = cov_theta,
                 cov_psi          = cov_psi,
                 cov_phi_shared   = 0,
                 cov_theta_shared = 0,
-                cov_psi_shared   = 0,
+                cov_psi_shared   = cov_psi_shared,
                 m_phi            = m_phi,
                 m_theta          = m_theta,
                 m_psi            = m_psi)
@@ -317,6 +370,19 @@ set_psi <- function(formula_psi) {
     if (formula_psi == ~ 1) psi <- "i"
     else psi <- "ij"
 }
+
+extract_covariate <- function(cov_name, data) {
+    if (cov_name %in% names(data@spec_cov))
+        cov_type <- "spec_cov"
+    if (cov_name %in% names(data@site_cov))
+        cov_type <- "site_cov"
+    if (cov_name %in% names(data@repl_cov))
+        cov_type <- "repl_cov"
+
+    eval(parse(text = sprintf("data@%s$%s", cov_type, cov_name)))
+}
+
+
 
 # Auto-generate JAGS model code
 write_jags_model <- function(phi, theta, psi, phi_shared, theta_shared, psi_shared) {
