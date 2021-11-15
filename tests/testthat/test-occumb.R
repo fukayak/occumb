@@ -53,6 +53,7 @@ Only site covariates, species covariates, or their interactions are allowed for 
 
     # spec_cov
     result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ -1 + cov1, data)
+    expect_equal(result$psi, "i")
     expect_true(result$psi_shared)
     expect_equal(result$M_psi_shared, 1)
     ans_cov <- array(dim = c(I, 1))
@@ -63,6 +64,7 @@ Only site covariates, species covariates, or their interactions are allowed for 
 
     # site_cov (continuous)
     result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ -1 + cov2, data)
+    expect_equal(result$psi, "ij")
     expect_true(result$psi_shared)
     expect_equal(result$M_psi_shared, 1)
     ans_cov <- array(dim = c(I, J, 1))
@@ -86,8 +88,9 @@ Only site covariates, species covariates, or their interactions are allowed for 
 #    }
 #    expect_equal(result$cov_psi_shared, ans_cov)
 
-    # spec_cov * site_cov
+    # spec_cov * site_cov (continuous)
     result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ -1 + cov1 * cov2, data)
+    expect_equal(result$psi, "ij")
     expect_true(result$psi_shared)
     expect_equal(result$M_psi_shared, 3)
     ans_cov <- array(dim = c(I, J, 3))

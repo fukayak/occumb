@@ -301,7 +301,7 @@ Only site covariates, species covariates, or their interactions are allowed for 
 
     out <- list(phi              = "ijk",
                 theta            = "ijk",
-                psi              = set_psi(formula_psi),
+                psi              = set_psi(formula_psi, formula_psi_shared, data),
                 phi_shared       = phi_shared,
                 theta_shared     = theta_shared,
                 psi_shared       = psi_shared,
@@ -367,9 +367,35 @@ Only site covariates, species covariates, or their interactions are allowed for 
 #    out
 #}
 
-set_psi <- function(formula_psi) {
-    if (formula_psi == ~ 1) psi <- "i"
-    else psi <- "ij"
+# Redefine the terms() function (!! DO NOT EXPORT !!)
+terms <- function(formula) {
+    if (is.null(formula))
+        NULL
+    else
+        attr(stats::terms(formula), which = "term.labels")
+}
+
+main_effects <- function(terms) {
+    if (is.null(terms))
+        NULL
+    else
+        unique(unlist(strsplit(terms, split = ":")))
+}
+
+set_psi <- function(formula_psi, formula_psi_shared, data) {
+    shared_main_effects <- main_effects(terms(formula_psi_shared))
+
+    if (formula_psi == ~ 1) {
+        if (is.null(shared_main_effects)) {
+            psi <- "i"
+        } else if (any(shared_main_effects %in% names(data@site_cov))) {
+            psi <- "ij"
+        } else {
+            psi <- "i"
+        }
+    } else {
+        psi <- "ij"
+    }
 }
 
 extract_covariate <- function(cov_name, data) {
