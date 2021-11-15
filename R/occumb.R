@@ -265,14 +265,7 @@ set_modargs <- function(formula_phi,
         m_psi   <- seq(m_theta + 1, m_theta + 1)
     } else {
         # Stop when formula_psi includes a term not in the site covariates
-        psi_terms <- attr(stats::terms(formula_psi), which = "term.labels")
-        wrong_psi_terms <- psi_terms %!in% names(data@site_cov)
-        if (any(wrong_psi_terms))
-            stop(sprintf("Unexpected terms in formula_psi: %s \n
-                         Only site covariates are allowed for formula_psi.",
-                         psi_terms[wrong_psi_terms])) 
-
-        # Convert character to factor??
+        check_wrong_terms(formula_psi, names(data@site_cov), "psi")
 
         cov_psi <- stats::model.matrix(formula_psi, data@site_cov)
         M       <- M + ncol(cov_psi)
@@ -391,59 +384,64 @@ extract_covariate <- function(cov_name, data) {
 
 `%!in%` <- Negate(`%in%`)
 
-check_wrong_terms <- function(formula, correct_terms, type = c("psi_shared")) {
+check_wrong_terms <- function(formula, correct_terms,
+                              type = c("psi", "psi_shared")) {
     test_terms <- terms(formula)
     wrong_terms <- main_effects(test_terms) %!in% correct_terms
 
     if (any(wrong_terms)) {
+        if (type == "psi")
+            stop(sprintf("Unexpected terms in formula_psi: %s
+Only site covariates are allowed for formula_psi.",
+                         test_terms[wrong_terms])) 
         if (type == "psi_shared")
-        stop(sprintf("Unexpected terms in formula_psi_shared: %s
+            stop(sprintf("Unexpected terms in formula_psi_shared: %s
 Only site covariates, species covariates, or their interactions are allowed for formula_psi_shared.",
-                     test_terms[wrong_terms])) 
+                         test_terms[wrong_terms])) 
     }
 }
 
-xxxx <- function(formula, data, type = "psi_shared") {
-
-    # Generate covariate objects
-    m_eff <- main_effects(terms(formula))
-
-    if (type == "psi_shared") {
-        # For psi = "ij"
-        if (any(m_eff %in% names(data@site_cov))) {
-            for (n in seq_along(m_eff)) {
-                if (m_eff[n] %in% names(data@spec_cov))
-                    eval(parse(text = sprintf("%s <- rep(extract_covariate(m_eff[%s], data), dim(data@y)[2])", m_eff[n], n)))
-                if (m_eff[n] %in% names(data@site_cov))
-                    eval(parse(text = sprintf("%s <- rep(extract_covariate(m_eff[%s], data), each = dim(data@y)[1])", m_eff[n], n)))
-            }
-
-            tmp <- set_design_matrix(formula, type)
-            cov_psi_shared <- array(tmp, c(dim(data@y)[1], dim(data@y)[2], ncol(tmp)))
-            M_psi_shared   <- dim(cov_psi_shared)[3]
-
-        # For psi = "i"
-        } else {
-            for (n in seq_along(m_eff)) {
-                eval(parse(text = sprintf("%s <- extract_covariate(m_eff[%s], data)", m_eff[n], n)))
-            }
-
-            tmp <- set_design_matrix(formula, type)
-            cov_psi_shared <- matrix(tmp, nrow = dim(data@y)[1])
-            M_psi_shared   <- ncol(cov_psi_shared)
-        }
-    }
-
-#    # Set design matrix
-#    out <- stats::model.matrix(formula, parent.frame())
-#    # When formula includes an intercept term, remove it and issue a warning
-#    if (any(colnames(out) %in% "(Intercept)")) {
-#        out <- out[, colnames(out) %!in% "(Intercept)"]
-#        warning(sprintf("formula_%s should not include an intercept term: it will be removed.", type))
+#xxxx <- function(formula, data, type = "psi_shared") {
+#
+#    # Generate covariate objects
+#    m_eff <- main_effects(terms(formula))
+#
+#    if (type == "psi_shared") {
+#        # For psi = "ij"
+#        if (any(m_eff %in% names(data@site_cov))) {
+#            for (n in seq_along(m_eff)) {
+#                if (m_eff[n] %in% names(data@spec_cov))
+#                    eval(parse(text = sprintf("%s <- rep(extract_covariate(m_eff[%s], data), dim(data@y)[2])", m_eff[n], n)))
+#                if (m_eff[n] %in% names(data@site_cov))
+#                    eval(parse(text = sprintf("%s <- rep(extract_covariate(m_eff[%s], data), each = dim(data@y)[1])", m_eff[n], n)))
+#            }
+#
+#            tmp <- set_design_matrix(formula, type)
+#            cov_psi_shared <- array(tmp, c(dim(data@y)[1], dim(data@y)[2], ncol(tmp)))
+#            M_psi_shared   <- dim(cov_psi_shared)[3]
+#
+#        # For psi = "i"
+#        } else {
+#            for (n in seq_along(m_eff)) {
+#                eval(parse(text = sprintf("%s <- extract_covariate(m_eff[%s], data)", m_eff[n], n)))
+#            }
+#
+#            tmp <- set_design_matrix(formula, type)
+#            cov_psi_shared <- matrix(tmp, nrow = dim(data@y)[1])
+#            M_psi_shared   <- ncol(cov_psi_shared)
+#        }
 #    }
 #
-#    out
-}
+##    # Set design matrix
+##    out <- stats::model.matrix(formula, parent.frame())
+##    # When formula includes an intercept term, remove it and issue a warning
+##    if (any(colnames(out) %in% "(Intercept)")) {
+##        out <- out[, colnames(out) %!in% "(Intercept)"]
+##        warning(sprintf("formula_%s should not include an intercept term: it will be removed.", type))
+##    }
+##
+##    out
+#}
 
 set_design_matrix <- function(formula, type) {
     out <- stats::model.matrix(formula, parent.frame())

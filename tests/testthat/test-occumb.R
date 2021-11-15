@@ -30,8 +30,8 @@ test_that("Temp: psi correct", {
     result <- set_modargs(~ 1, ~ 1, ~ cov2, NULL, NULL, NULL, data)
     expect_equal(result$psi, "ij")
     expect_error(set_modargs(~ 1, ~ 1, ~ cov1, NULL, NULL, NULL, data),
-                 sprintf("Unexpected terms in formula_psi: %s \n
-                         Only site covariates are allowed for formula_psi.",
+                 sprintf("Unexpected terms in formula_psi: %s
+Only site covariates are allowed for formula_psi.",
                          "cov1"))
 })
 test_that("Temp: psi_shared correct", {
