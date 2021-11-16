@@ -93,7 +93,7 @@ test_that("Temp: psi correct", {
                  sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "psi"))
     expect_error(set_modargs(~ 1, ~ 1, ~ xxx, NULL, NULL, NULL, data),
                  sprintf("Unexpected terms in formula_psi: %s
-Only site covariates are allowed for formula_psi.",
+Note that only site covariates are allowed for formula_psi.",
                          "xxx"))
 })
 test_that("Temp: psi_shared correct", {
@@ -217,7 +217,7 @@ test_that("Temp: psi_shared correct", {
                  sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "psi_shared"))
     expect_error(set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ xxx, data),
                              sprintf("Unexpected terms in formula_psi_shared: %s
-Only site covariates, species covariates, or their interactions are allowed for formula_psi_shared.", "xxx"))
+Note that only site covariates, species covariates, or their interactions are allowed for formula_psi_shared.", "xxx"))
 })
 
 test_that("Temp: theta correct", {

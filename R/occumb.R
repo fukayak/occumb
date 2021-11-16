@@ -417,14 +417,14 @@ check_wrong_terms <- function(formula, correct_terms,
     if (any(wrong_terms)) {
         if (type == "psi")
             stop(sprintf("Unexpected terms in formula_%s: %s
-Only site covariates are allowed for formula_%s.",
+Note that only site covariates are allowed for formula_%s.",
                          type, test_terms[wrong_terms], type)) 
         if (type == "theta")
             stop(sprintf("Unexpected terms in formula_%s: %s",
                          type, test_terms[wrong_terms])) 
         if (type == "psi_shared")
             stop(sprintf("Unexpected terms in formula_psi_shared: %s
-Only site covariates, species covariates, or their interactions are allowed for formula_psi_shared.",
+Note that only site covariates, species covariates, or their interactions are allowed for formula_psi_shared.",
                          test_terms[wrong_terms])) 
     }
 }
