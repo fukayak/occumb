@@ -106,15 +106,9 @@ test_that("Temp: psi_shared correct", {
                        site_cov = list(cov2 = cov2,
                                        cov3 = cov3))
 
-    # Errors and Warnings
-    expect_error(set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov4, data),
-                             sprintf("Unexpected terms in formula_psi_shared: %s
-Only site covariates, species covariates, or their interactions are allowed for formula_psi_shared.", "cov4"))
-    expect_warning(set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov1, data),
-                   "formula_psi_shared should not include an intercept term: it will be removed.")
-
+    ## Output
     # spec_cov
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ -1 + cov1, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov1, data)
     expect_equal(result$psi, "i")
     expect_true(result$psi_shared)
     expect_equal(result$M_psi_shared, 1)
@@ -126,7 +120,7 @@ Only site covariates, species covariates, or their interactions are allowed for 
     expect_equal(result$cov_psi_shared, ans_cov)
 
     # site_cov (continuous)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ -1 + cov2, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov2, data)
     expect_equal(result$psi, "ij")
     expect_true(result$psi_shared)
     expect_equal(result$M_psi_shared, 1)
@@ -139,21 +133,22 @@ Only site covariates, species covariates, or their interactions are allowed for 
     dimnames(ans_cov)[[3]] <- "cov2"
     expect_equal(result$cov_psi_shared, ans_cov)
 
-#   TODO: Fix this 
-#    # site_cov (factor) <- should be fixed to remove reference category
-#    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ -1 + cov3, data)
-#    expect_true(result$psi_shared)
-#    expect_equal(result$M_psi_shared, 1)
-#    ans_cov <- array(dim = c(I, J, 1))
-#    for (i in 1:I) {
-#        for (j in 1:J) {
-#        ans_cov[i, j, 1] <- cov3[j]
-#        }
-#    }
-#    expect_equal(result$cov_psi_shared, ans_cov)
+    # site_cov (factor)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov3, data)
+    expect_true(result$psi_shared)
+    expect_equal(result$M_psi_shared, 2)
+    ans_cov <- array(dim = c(I, J, 2))
+    for (i in 1:I) {
+        for (j in 1:J) {
+        ans_cov[i, j, 1] <- as.numeric(cov3[j] == 2)
+        ans_cov[i, j, 2] <- as.numeric(cov3[j] == 3)
+        }
+    }
+    dimnames(ans_cov)[[3]] <- c("cov32", "cov33")
+    expect_equal(result$cov_psi_shared, ans_cov)
 
     # spec_cov * site_cov (continuous)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ -1 + cov1 * cov2, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov1 * cov2, data)
     expect_equal(result$psi, "ij")
     expect_true(result$psi_shared)
     expect_equal(result$M_psi_shared, 3)
@@ -167,6 +162,13 @@ Only site covariates, species covariates, or their interactions are allowed for 
     }
     dimnames(ans_cov)[[3]] <- c("cov1", "cov2", "cov1:cov2")
     expect_equal(result$cov_psi_shared, ans_cov)
+
+    ## Errors and Warnings
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov4, data),
+                             sprintf("Unexpected terms in formula_psi_shared: %s
+Only site covariates, species covariates, or their interactions are allowed for formula_psi_shared.", "cov4"))
+#    expect_warning(set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov1, data),
+#                   "formula_psi_shared should not include an intercept term: it will be removed.")
 })
 #test_that("Setup for a null model works", {
 #    result <- set_modargs(~ 1, ~ 1, ~ 1,

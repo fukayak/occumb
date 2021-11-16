@@ -196,7 +196,6 @@ set_modargs <- function(formula_phi,
     psi_shared   <- !is.null(formula_psi_shared)
 
     # psi_shared
-    # TODO: fix to handle categorical covariates
     if (psi_shared) {
         # Stop when formula_psi_shared includes a term other than
         # site_cov, spec_cov, and their interaction
@@ -218,7 +217,7 @@ set_modargs <- function(formula_phi,
             }
 
             # Set design matrix
-            dm <- set_design_matrix(formula_psi_shared, "psi_shared")
+            dm <- set_design_matrix3(formula_psi_shared, omit_intercept = TRUE)
             cov_psi_shared <- array(dm, c(dim(data@y)[1], dim(data@y)[2], ncol(dm)))
             dimnames(cov_psi_shared)[[3]] <- colnames(dm)
             M_psi_shared   <- dim(cov_psi_shared)[3]
@@ -231,7 +230,7 @@ set_modargs <- function(formula_phi,
             }
 
             # Set design matrix
-            dm <- set_design_matrix(formula_psi_shared, "psi_shared")
+            dm <- set_design_matrix3(formula_psi_shared, omit_intercept = TRUE)
             cov_psi_shared <- matrix(dm, nrow = dim(data@y)[1])
             colnames(cov_psi_shared) <- colnames(dm)
             M_psi_shared   <- ncol(cov_psi_shared)
@@ -483,6 +482,22 @@ set_design_matrix2 <- function(formula, type) {
     out <- stats::model.matrix(formula, parent.frame())
     out
 }
+set_design_matrix3 <- function(formula, omit_intercept) {
+    out <- stats::model.matrix(formula, parent.frame())
+
+    if (omit_intercept) {
+        if (sum(colnames(out) %!in% "(Intercept)") > 1) {
+            out <- out[, colnames(out) %!in% "(Intercept)"]
+        } else {
+            cn <- colnames(out)[colnames(out) %!in% "(Intercept)"]
+            out <- matrix(out[, colnames(out) %!in% "(Intercept)"], ncol = 1)
+            colnames(out) <- cn
+        }
+    }
+
+    out
+}
+
 
 # Auto-generate JAGS model code
 write_jags_model <- function(phi, theta, psi, phi_shared, theta_shared, psi_shared) {
