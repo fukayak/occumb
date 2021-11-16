@@ -298,7 +298,9 @@ test_that("Temp: theta correct", {
     expect_error(set_modargs(~ 1, ~ -1, ~ 1, NULL, NULL, NULL, data),
                  sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "theta"))
     expect_error(set_modargs(~ 1, ~ xxx, ~ 1, NULL, NULL, NULL, data),
-                 sprintf("Unexpected terms in formula_theta: %s", "xxx"))
+                 sprintf("Unexpected terms in formula_theta: %s
+Note that species covariates are not allowed for formula_%s.",
+                         "xxx", "theta"))
 })
 
 

@@ -441,8 +441,9 @@ check_wrong_terms <- function(formula, correct_terms,
 Note that only site covariates are allowed for formula_%s.",
                          type, test_terms[wrong_terms], type)) 
         if (type == "theta")
-            stop(sprintf("Unexpected terms in formula_%s: %s",
-                         type, test_terms[wrong_terms])) 
+            stop(sprintf("Unexpected terms in formula_%s: %s
+Note that species covariates are not allowed for formula_%s.",
+                         type, test_terms[wrong_terms], type)) 
         if (type == "psi_shared")
             stop(sprintf("Unexpected terms in formula_psi_shared: %s
 Note that only site covariates, species covariates, or their interactions are allowed for formula_psi_shared.",
