@@ -60,6 +60,7 @@ Only site covariates, species covariates, or their interactions are allowed for 
     for (i in 1:I) {
         ans_cov[i, 1] <- cov1[i]
     }
+    colnames(ans_cov) <- "cov1"
     expect_equal(result$cov_psi_shared, ans_cov)
 
     # site_cov (continuous)
@@ -73,6 +74,7 @@ Only site covariates, species covariates, or their interactions are allowed for 
         ans_cov[i, j, 1] <- cov2[j]
         }
     }
+    dimnames(ans_cov)[[3]] <- "cov2"
     expect_equal(result$cov_psi_shared, ans_cov)
 
 #   TODO: Fix this 
@@ -101,6 +103,7 @@ Only site covariates, species covariates, or their interactions are allowed for 
             ans_cov[i, j, 3] <- cov1[i] * cov2[j]
         }
     }
+    dimnames(ans_cov)[[3]] <- c("cov1", "cov2", "cov1:cov2")
     expect_equal(result$cov_psi_shared, ans_cov)
 })
 #test_that("Setup for a null model works", {

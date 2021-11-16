@@ -218,6 +218,7 @@ set_modargs <- function(formula_phi,
 
             dm <- set_design_matrix(formula_psi_shared, "psi_shared")
             cov_psi_shared <- array(dm, c(dim(data@y)[1], dim(data@y)[2], ncol(dm)))
+            dimnames(cov_psi_shared)[[3]] <- colnames(dm)
             M_psi_shared   <- dim(cov_psi_shared)[3]
 
         # For psi = "i"
@@ -228,6 +229,7 @@ set_modargs <- function(formula_phi,
 
             dm <- set_design_matrix(formula_psi_shared, "psi_shared")
             cov_psi_shared <- matrix(dm, nrow = dim(data@y)[1])
+            colnames(cov_psi_shared) <- colnames(dm)
             M_psi_shared   <- ncol(cov_psi_shared)
         }
     } else {
