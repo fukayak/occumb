@@ -266,8 +266,7 @@ set_modargs <- function(formula_phi,
         check_intercept(formula_theta, "theta")
         # Stop when formula_psi includes a term not in the site covariates
         check_wrong_terms(formula_theta,
-                          c(names(data@spec_cov),
-                            names(data@site_cov),
+                          c(names(data@site_cov),
                             names(data@repl_cov)),
                           "theta")
     }

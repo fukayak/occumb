@@ -241,22 +241,13 @@ test_that("Temp: theta correct", {
     expect_equal(result$cov_theta, 1)
     expect_equal(result$m_theta, 2)
 
-#    # site_cov (continuous)
-#    result <- set_modargs(~ 1, ~ 1, ~ cov1, NULL, NULL, NULL, data)
-#    expect_equal(result$psi, "ij")
-#    expect_equal(result$M, 4)
-#    ans_cov <- array(dim = c(I, J, 2))
-#    for (i in 1:I) {
-#        for (j in 1:J) {
-#        ans_cov[i, j, 1] <- 1
-#        ans_cov[i, j, 2] <- cov1[j]
-#        }
-#    }
-#    dimnames(ans_cov)[[3]] <- c("(Intercept)", "cov1")
-#    expect_equal(result$cov_psi, ans_cov)
-#    expect_equal(result$m_psi, 3:4)
-#
-#    # site_cov (factor)
+    # spec_cov (not allowed)
+    expect_error(set_modargs(~ 1, ~ cov1, ~ 1, NULL, NULL, NULL, data),
+                 sprintf("Unexpected terms in formula_theta: %s
+Note that species covariates are not allowed for formula_theta.",
+                         "cov1"))
+
+#    # spec_cov (factor)
 #    result <- set_modargs(~ 1, ~ 1, ~ cov2, NULL, NULL, NULL, data)
 #    expect_equal(result$psi, "ij")
 #    expect_equal(result$M, 5)
@@ -272,7 +263,7 @@ test_that("Temp: theta correct", {
 #    expect_equal(result$cov_psi, ans_cov)
 #    expect_equal(result$m_psi, 3:5)
 #
-#    # site_cov (interaction)
+#    # spec_cov (interaction)
 #    result <- set_modargs(~ 1, ~ 1, ~ cov1 * cov2, NULL, NULL, NULL, data)
 #    expect_equal(result$psi, "ij")
 #    expect_equal(result$M, 8)
@@ -299,8 +290,8 @@ test_that("Temp: theta correct", {
                  sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "theta"))
     expect_error(set_modargs(~ 1, ~ xxx, ~ 1, NULL, NULL, NULL, data),
                  sprintf("Unexpected terms in formula_theta: %s
-Note that species covariates are not allowed for formula_%s.",
-                         "xxx", "theta"))
+Note that species covariates are not allowed for formula_theta.",
+                         "xxx"))
 })
 
 
