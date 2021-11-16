@@ -611,7 +611,6 @@ test_that("Temp: theta_shared correct", {
                                 "cov1:cov42:cov5", "cov1:cov43:cov5")
     expect_equal(result$cov_theta_shared, ans_cov)
 
-
     ## Errors and Warnings
     expect_error(set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ 0, NULL, data),
                  "No intercept in formula_theta_shared: remove 0 or -1 from the formula")
@@ -782,7 +781,230 @@ Note that species covariates are not allowed for formula_phi.",
 Note that species covariates are not allowed for formula_phi",
                          "xxx"))
 })
+test_that("Temp: phi_shared correct", {
+    ## Output
+    # spec_cov (continuous)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov1, NULL, NULL, data)
+    expect_equal(result$phi, "i")
+    expect_true(result$phi_shared)
+    expect_equal(result$M_phi_shared, 1)
+    ans_cov <- array(dim = c(I, 1))
+    for (i in 1:I) {
+        ans_cov[i, 1] <- cov1[i]
+    }
+    colnames(ans_cov) <- "cov1"
+    expect_equal(result$cov_phi_shared, ans_cov)
 
+    # spec_cov (factor)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov2, NULL, NULL, data)
+    expect_equal(result$phi, "i")
+    expect_true(result$phi_shared)
+    expect_equal(result$M_phi_shared, 1)
+    ans_cov <- array(dim = c(I, 1))
+    for (i in 1:I) {
+        ans_cov[i, 1] <- as.numeric((cov2[i] == 2))
+    }
+    colnames(ans_cov) <- c("cov22")
+    expect_equal(result$cov_phi_shared, ans_cov)
+
+    # spec_cov (interaction)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov1 * cov2, NULL, NULL, data)
+    expect_equal(result$phi, "i")
+    expect_true(result$phi_shared)
+    expect_equal(result$M_phi_shared, 3)
+    ans_cov <- array(dim = c(I, 3))
+    for (i in 1:I) {
+        ans_cov[i, 1] <- cov1[i]
+        ans_cov[i, 2] <- as.numeric((cov2[i] == 2))
+        ans_cov[i, 3] <- cov1[i] * as.numeric((cov2[i] == 2))
+    }
+    colnames(ans_cov) <- c("cov1", "cov22", "cov1:cov22")
+    expect_equal(result$cov_phi_shared, ans_cov)
+
+#    # site_cov (continuous)
+#    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ cov3, NULL, data)
+#    expect_equal(result$theta, "ij")
+#    expect_true(result$theta_shared)
+#    expect_equal(result$M_theta_shared, 1)
+#    ans_cov <- array(dim = c(I, J, 1))
+#    for (i in 1:I) {
+#        for (j in 1:J) {
+#            ans_cov[i, j, 1] <- cov3[j]
+#        }
+#    }
+#    dimnames(ans_cov)[[3]] <- "cov3"
+#    expect_equal(result$cov_theta_shared, ans_cov)
+#
+#    # site_cov (factor)
+#    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ cov4, NULL, data)
+#    expect_true(result$theta_shared)
+#    expect_equal(result$M_theta_shared, 2)
+#    ans_cov <- array(dim = c(I, J, 2))
+#    for (i in 1:I) {
+#        for (j in 1:J) {
+#            ans_cov[i, j, 1] <- as.numeric(cov4[j] == 2)
+#            ans_cov[i, j, 2] <- as.numeric(cov4[j] == 3)
+#        }
+#    }
+#    dimnames(ans_cov)[[3]] <- c("cov42", "cov43")
+#    expect_equal(result$cov_theta_shared, ans_cov)
+#
+#    # site_cov (interaction)
+#    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ cov3 * cov4, NULL, data)
+#    expect_true(result$theta_shared)
+#    expect_equal(result$M_theta_shared, 5)
+#    ans_cov <- array(dim = c(I, J, 5))
+#    for (i in 1:I) {
+#        for (j in 1:J) {
+#            ans_cov[i, j, 1] <- cov3[j]
+#            ans_cov[i, j, 2] <- as.numeric(cov4[j] == 2)
+#            ans_cov[i, j, 3] <- as.numeric(cov4[j] == 3)
+#            ans_cov[i, j, 4] <- cov3[j] * as.numeric(cov4[j] == 2)
+#            ans_cov[i, j, 5] <- cov3[j] * as.numeric(cov4[j] == 3)
+#        }
+#    }
+#    dimnames(ans_cov)[[3]] <- c("cov3", "cov42", "cov43",
+#                                "cov3:cov42", "cov3:cov43")
+#    expect_equal(result$cov_theta_shared, ans_cov)
+#
+#    # spec_cov * site_cov (interaction)
+#    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ cov1 * cov4, NULL, data)
+#    expect_equal(result$theta, "ij")
+#    expect_true(result$theta_shared)
+#    expect_equal(result$M_theta_shared, 5)
+#    ans_cov <- array(dim = c(I, J, 5))
+#    for (i in 1:I) {
+#        for (j in 1:J) {
+#            ans_cov[i, j, 1] <- cov1[i]
+#            ans_cov[i, j, 2] <- as.numeric(cov4[j] == 2)
+#            ans_cov[i, j, 3] <- as.numeric(cov4[j] == 3)
+#            ans_cov[i, j, 4] <- cov1[i] * as.numeric(cov4[j] == 2)
+#            ans_cov[i, j, 5] <- cov1[i] * as.numeric(cov4[j] == 3)
+#        }
+#    }
+#    dimnames(ans_cov)[[3]] <- c("cov1", "cov42", "cov43",
+#                                "cov1:cov42", "cov1:cov43")
+#    expect_equal(result$cov_theta_shared, ans_cov)
+#
+#    # repl_cov (continuous)
+#    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ cov5, NULL, data)
+#    expect_equal(result$theta, "ijk")
+#    expect_true(result$theta_shared)
+#    expect_equal(result$M_theta_shared, 1)
+#    ans_cov <- array(dim = c(I, J, K, 1))
+#    for (i in 1:I) {
+#        for (j in 1:J) {
+#            for (k in 1:K) {
+#                ans_cov[i, j, k, 1] <- cov5[j, k]
+#            }
+#        }
+#    }
+#    dimnames(ans_cov)[[4]] <- "cov5"
+#    expect_equal(result$cov_theta_shared, ans_cov)
+#
+#    # repl_cov (factor)
+#    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ cov6, NULL, data)
+#    expect_equal(result$theta, "ijk")
+#    expect_true(result$theta_shared)
+#    expect_equal(result$M_theta_shared, 3)
+#    ans_cov <- array(dim = c(I, J, K, 3))
+#    for (i in 1:I) {
+#        for (j in 1:J) {
+#            for (k in 1:K) {
+#                ans_cov[i, j, k, 1] <- as.numeric(cov6[j, k] == 2)
+#                ans_cov[i, j, k, 2] <- as.numeric(cov6[j, k] == 3)
+#                ans_cov[i, j, k, 3] <- as.numeric(cov6[j, k] == 4)
+#            }
+#        }
+#    }
+#    dimnames(ans_cov)[[4]] <- c("cov62", "cov63", "cov64")
+#    expect_equal(result$cov_theta_shared, ans_cov)
+#
+#    # repl_cov (interaction)
+#    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ cov5 * cov6, NULL, data)
+#    expect_equal(result$theta, "ijk")
+#    expect_true(result$theta_shared)
+#    expect_equal(result$M_theta_shared, 7)
+#    ans_cov <- array(dim = c(I, J, K, 7))
+#    for (i in 1:I) {
+#        for (j in 1:J) {
+#            for (k in 1:K) {
+#                ans_cov[i, j, k, 1] <- cov5[j, k]
+#                ans_cov[i, j, k, 2] <- as.numeric(cov6[j, k] == 2)
+#                ans_cov[i, j, k, 3] <- as.numeric(cov6[j, k] == 3)
+#                ans_cov[i, j, k, 4] <- as.numeric(cov6[j, k] == 4)
+#                ans_cov[i, j, k, 5] <- cov5[j, k] * as.numeric(cov6[j, k] == 2)
+#                ans_cov[i, j, k, 6] <- cov5[j, k] * as.numeric(cov6[j, k] == 3)
+#                ans_cov[i, j, k, 7] <- cov5[j, k] * as.numeric(cov6[j, k] == 4)
+#            }
+#        }
+#    }
+#    dimnames(ans_cov)[[4]] <- c("cov5", "cov62", "cov63", "cov64",
+#                                "cov5:cov62", "cov5:cov63", "cov5:cov64")
+#    expect_equal(result$cov_theta_shared, ans_cov)
+#
+#    # spec_cov * site_cov * repl_cov (interaction)
+#    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ cov2 * cov3 * cov5, NULL, data)
+#    expect_equal(result$theta, "ijk")
+#    expect_true(result$theta_shared)
+#    expect_equal(result$M_theta_shared, 7)
+#    ans_cov <- array(dim = c(I, J, K, 7))
+#    for (i in 1:I) {
+#        for (j in 1:J) {
+#            for (k in 1:K) {
+#                ans_cov[i, j, k, 1] <- as.numeric(cov2[i] == 2)
+#                ans_cov[i, j, k, 2] <- cov3[j]
+#                ans_cov[i, j, k, 3] <- cov5[j, k]
+#                ans_cov[i, j, k, 4] <- as.numeric(cov2[i] == 2) * cov3[j]
+#                ans_cov[i, j, k, 5] <- as.numeric(cov2[i] == 2) * cov5[j, k]
+#                ans_cov[i, j, k, 6] <- cov3[j] * cov5[j, k]
+#                ans_cov[i, j, k, 7] <- as.numeric(cov2[i] == 2) * cov3[j] * cov5[j, k]
+#            }
+#        }
+#    }
+#    dimnames(ans_cov)[[4]] <- c("cov22", "cov3", "cov5",
+#                                "cov22:cov3", "cov22:cov5", "cov3:cov5",
+#                                "cov22:cov3:cov5")
+#    expect_equal(result$cov_theta_shared, ans_cov)
+#
+#    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ cov1 * cov4 * cov5, NULL, data)
+#    expect_equal(result$theta, "ijk")
+#    expect_true(result$theta_shared)
+#    expect_equal(result$M_theta_shared, 11)
+#    ans_cov <- array(dim = c(I, J, K, 11))
+#    for (i in 1:I) {
+#        for (j in 1:J) {
+#            for (k in 1:K) {
+#                ans_cov[i, j, k, 1] <- cov1[i]
+#                ans_cov[i, j, k, 2] <- as.numeric(cov4[j] == 2)
+#                ans_cov[i, j, k, 3] <- as.numeric(cov4[j] == 3)
+#                ans_cov[i, j, k, 4] <- cov5[j, k]
+#                ans_cov[i, j, k, 5] <- cov1[i] * as.numeric(cov4[j] == 2)
+#                ans_cov[i, j, k, 6] <- cov1[i] * as.numeric(cov4[j] == 3)
+#                ans_cov[i, j, k, 7] <- cov1[i] * cov5[j, k]
+#                ans_cov[i, j, k, 8] <- as.numeric(cov4[j] == 2) * cov5[j, k]
+#                ans_cov[i, j, k, 9] <- as.numeric(cov4[j] == 3) * cov5[j, k]
+#                ans_cov[i, j, k, 10] <- cov1[i] * as.numeric(cov4[j] == 2) * cov5[j, k]
+#                ans_cov[i, j, k, 11] <- cov1[i] * as.numeric(cov4[j] == 3) * cov5[j, k]
+#            }
+#        }
+#    }
+#    dimnames(ans_cov)[[4]] <- c("cov1", "cov42", "cov43", "cov5",
+#                                "cov1:cov42", "cov1:cov43",
+#                                "cov1:cov5",
+#                                "cov42:cov5", "cov43:cov5",
+#                                "cov1:cov42:cov5", "cov1:cov43:cov5")
+#    expect_equal(result$cov_theta_shared, ans_cov)
+
+    ## Errors and Warnings
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 0, NULL, NULL, data),
+                 "No intercept in formula_phi_shared: remove 0 or -1 from the formula")
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ -1, NULL, NULL, data),
+                 "No intercept in formula_phi_shared: remove 0 or -1 from the formula")
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ xxx, NULL, NULL, data),
+                             sprintf("Unexpected terms in formula_phi_shared: %s
+Make sure they are found in either spec_cov, site_cov, or repl_cov.", "xxx"))
+})
 
 #test_that("Setup for a null model works", {
 #    result <- set_modargs(~ 1, ~ 1, ~ 1,
