@@ -164,11 +164,13 @@ test_that("Temp: psi_shared correct", {
     expect_equal(result$cov_psi_shared, ans_cov)
 
     ## Errors and Warnings
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ 0, data),
+                 sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "psi_shared"))
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ -1, data),
+                 sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "psi_shared"))
     expect_error(set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov4, data),
                              sprintf("Unexpected terms in formula_psi_shared: %s
 Only site covariates, species covariates, or their interactions are allowed for formula_psi_shared.", "cov4"))
-#    expect_warning(set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov1, data),
-#                   "formula_psi_shared should not include an intercept term: it will be removed.")
 })
 #test_that("Setup for a null model works", {
 #    result <- set_modargs(~ 1, ~ 1, ~ 1,

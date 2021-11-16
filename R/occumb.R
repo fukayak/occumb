@@ -197,6 +197,8 @@ set_modargs <- function(formula_phi,
 
     # psi_shared
     if (psi_shared) {
+        # Stop when formula_psi_shared does not have an intercept
+        check_intercept(formula_psi_shared, "psi_shared")
         # Stop when formula_psi_shared includes a term other than
         # site_cov, spec_cov, and their interaction
         check_wrong_terms(formula_psi_shared,
@@ -420,7 +422,7 @@ has_intercept <- function(formula) {
     as.logical(attributes(stats::terms(formula))$intercept)
 }
 
-check_intercept <- function(formula, type = c("psi")) {
+check_intercept <- function(formula, type = c("psi", "psi_shared")) {
     if (!has_intercept(formula))
         stop(sprintf("No intercept in formula_%s: remove 0 or -1 from the formula",
                      type))
