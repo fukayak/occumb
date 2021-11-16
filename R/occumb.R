@@ -80,6 +80,7 @@ occumb <- function(formula_phi = ~ 1,
                    n.iter = 500 * n.thin + n.burnin,
                    parallel = TRUE) {
     # QC
+    # Check if the mode of arguments is correct
 
     # Set constants
     const <- set_const(data)
@@ -104,8 +105,8 @@ occumb <- function(formula_phi = ~ 1,
     model <- tempfile()
     writeLines(write_jags_model(margs$phi, margs$theta, margs$psi,
                                 margs$phi_shared,
-                                margs$phi_shared,
-                                margs$phi_shared), model)
+                                margs$theta_shared,
+                                margs$psi_shared), model)
 
     # Set data list
     dat <- set_data(const, margs, prior_prec, prior_ulim)
@@ -931,17 +932,17 @@ set_data <- function(const, margs, prior_prec, prior_ulim) {
                 prior_ulim = prior_ulim)
 
     if (margs$phi_shared)
-        dat <- c(dat,
-                 cov_phi_shared = margs$cov_phi_shared,
-                 M_phi_shared   = margs$M_phi_shared)
+        dat <- list(dat,
+                    cov_phi_shared = margs$cov_phi_shared,
+                    M_phi_shared   = margs$M_phi_shared)
     if (margs$theta_shared)
-        dat <- c(dat,
-                 cov_theta_shared = margs$cov_theta_shared,
-                 M_theta_shared   = margs$M_theta_shared)
+        dat <- list(dat,
+                    cov_theta_shared = margs$cov_theta_shared,
+                    M_theta_shared   = margs$M_theta_shared)
     if (margs$psi_shared)
-        dat <- c(dat,
-                 cov_psi_shared = margs$cov_psi_shared,
-                 M_psi_shared   = margs$M_psi_shared)
+        dat <- list(dat,
+                    cov_psi_shared = margs$cov_psi_shared,
+                    M_psi_shared   = margs$M_psi_shared)
 
     dat
 }

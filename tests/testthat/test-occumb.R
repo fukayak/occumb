@@ -1303,17 +1303,17 @@ test_that("Data list is correct for 144 available models", {
                     prior_ulim = prior_ulim)
 
         if (cases$phi_shared[i])
-            ans <- c(ans,
-                     cov_phi_shared = margs$cov_phi_shared,
-                     M_phi_shared   = margs$M_phi_shared)
+            ans <- list(ans,
+                        cov_phi_shared = margs$cov_phi_shared,
+                        M_phi_shared   = margs$M_phi_shared)
         if (cases$theta_shared[i])
-            ans <- c(ans,
-                     cov_theta_shared = margs$cov_theta_shared,
-                     M_theta_shared   = margs$M_theta_shared)
+            ans <- list(ans,
+                        cov_theta_shared = margs$cov_theta_shared,
+                        M_theta_shared   = margs$M_theta_shared)
         if (cases$psi_shared[i])
-            ans <- c(ans,
-                     cov_psi_shared = margs$cov_psi_shared,
-                     M_psi_shared   = margs$M_psi_shared)
+            ans <- list(ans,
+                        cov_psi_shared = margs$cov_psi_shared,
+                        M_psi_shared   = margs$M_psi_shared)
 
         res <- set_data(const, margs, prior_prec, prior_ulim)
         expect_equal(res, ans)
