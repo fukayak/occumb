@@ -26,6 +26,9 @@ cov3 <- rnorm(J)
 cov4 <- factor(1:J)
 cov5 <- matrix(rnorm(J * K), nrow = J)
 cov6 <- matrix(rep(factor(1:K), each = J), nrow = J)
+#cov2 <- as.character(1:I)
+#cov4 <- as.character(factor(1:J))
+#cov6 <- matrix(rep(as.character(1:K), each = J), nrow = J)
 data <- occumbData(y = array(0, dim = c(I, J, K)),
                    spec_cov = list(cov1 = cov1, cov2 = cov2),
                    site_cov = list(cov3 = cov3, cov4 = cov4),
@@ -685,89 +688,89 @@ Note that species covariates are not allowed for formula_phi.",
     expect_equal(result$cov_phi, ans_cov)
     expect_equal(result$m_phi, 1:6)
 
-#    # repl_cov (continuous)
-#    result <- set_modargs(~ 1, ~ cov5, ~ 1, NULL, NULL, NULL, data)
-#    expect_equal(result$theta, "ijk")
-#    expect_equal(result$M, 4)
-#    ans_cov <- array(dim = c(I, J, K, 2))
-#    for (i in 1:I) {
-#        for (j in 1:J) {
-#            for (k in 1:K) {
-#                ans_cov[i, j, k, 1] <- 1
-#                ans_cov[i, j, k, 2] <- cov5[j, k]
-#            }
-#        }
-#    }
-#    dimnames(ans_cov)[[4]] <- c("(Intercept)", "cov5")
-#    expect_equal(result$cov_theta, ans_cov)
-#    expect_equal(result$m_theta, 2:3)
-#
-#    # repl_cov (factor)
-#    result <- set_modargs(~ 1, ~ cov6, ~ 1, NULL, NULL, NULL, data)
-#    expect_equal(result$theta, "ijk")
-#    expect_equal(result$M, 6)
-#    ans_cov <- array(dim = c(I, J, K, 4))
-#    for (i in 1:I) {
-#        for (j in 1:J) {
-#            for (k in 1:K) {
-#                ans_cov[i, j, k, 1] <- 1
-#                ans_cov[i, j, k, 2] <- as.numeric((cov6[j, k] == 2))
-#                ans_cov[i, j, k, 3] <- as.numeric((cov6[j, k] == 3))
-#                ans_cov[i, j, k, 4] <- as.numeric((cov6[j, k] == 4))
-#            }
-#        }
-#    }
-#    dimnames(ans_cov)[[4]] <- c("(Intercept)", "cov62", "cov63", "cov64")
-#    expect_equal(result$cov_theta, ans_cov)
-#    expect_equal(result$m_theta, 2:5)
-#
-#    # repl_cov (interaction)
-#    result <- set_modargs(~ 1, ~ cov5 * cov6, ~ 1, NULL, NULL, NULL, data)
-#    expect_equal(result$theta, "ijk")
-#    expect_equal(result$M, 10)
-#    ans_cov <- array(dim = c(I, J, K, 8))
-#    for (i in 1:I) {
-#        for (j in 1:J) {
-#            for (k in 1:K) {
-#                ans_cov[i, j, k, 1] <- 1
-#                ans_cov[i, j, k, 2] <- cov5[j, k]
-#                ans_cov[i, j, k, 3] <- as.numeric(cov6[j, k] == 2)
-#                ans_cov[i, j, k, 4] <- as.numeric(cov6[j, k] == 3)
-#                ans_cov[i, j, k, 5] <- as.numeric(cov6[j, k] == 4)
-#                ans_cov[i, j, k, 6] <- cov5[j, k] * as.numeric(cov6[j, k] == 2)
-#                ans_cov[i, j, k, 7] <- cov5[j, k] * as.numeric(cov6[j, k] == 3)
-#                ans_cov[i, j, k, 8] <- cov5[j, k] * as.numeric(cov6[j, k] == 4)
-#            }
-#        }
-#    }
-#    dimnames(ans_cov)[[4]] <- c("(Intercept)", "cov5", "cov62", "cov63", "cov64",
-#                                "cov5:cov62", "cov5:cov63", "cov5:cov64")
-#    expect_equal(result$cov_theta, ans_cov)
-#    expect_equal(result$m_theta, 2:9)
-#
-#    # site_cov * repl_cov (interaction)
-#    result <- set_modargs(~ 1, ~ cov3 * cov6, ~ 1, NULL, NULL, NULL, data)
-#    expect_equal(result$theta, "ijk")
-#    expect_equal(result$M, 10)
-#    ans_cov <- array(dim = c(I, J, K, 8))
-#    for (i in 1:I) {
-#        for (j in 1:J) {
-#            for (k in 1:K) {
-#                ans_cov[i, j, k, 1] <- 1
-#                ans_cov[i, j, k, 2] <- cov3[j]
-#                ans_cov[i, j, k, 3] <- as.numeric(cov6[j, k] == 2)
-#                ans_cov[i, j, k, 4] <- as.numeric(cov6[j, k] == 3)
-#                ans_cov[i, j, k, 5] <- as.numeric(cov6[j, k] == 4)
-#                ans_cov[i, j, k, 6] <- cov3[j] * as.numeric(cov6[j, k] == 2)
-#                ans_cov[i, j, k, 7] <- cov3[j] * as.numeric(cov6[j, k] == 3)
-#                ans_cov[i, j, k, 8] <- cov3[j] * as.numeric(cov6[j, k] == 4)
-#            }
-#        }
-#    }
-#    dimnames(ans_cov)[[4]] <- c("(Intercept)", "cov3", "cov62", "cov63", "cov64",
-#                                "cov3:cov62", "cov3:cov63", "cov3:cov64")
-#    expect_equal(result$cov_theta, ans_cov)
-#    expect_equal(result$m_theta, 2:9)
+    # repl_cov (continuous)
+    result <- set_modargs(~ cov5, ~ 1, ~ 1, NULL, NULL, NULL, data)
+    expect_equal(result$phi, "ijk")
+    expect_equal(result$M, 4)
+    ans_cov <- array(dim = c(I, J, K, 2))
+    for (i in 1:I) {
+        for (j in 1:J) {
+            for (k in 1:K) {
+                ans_cov[i, j, k, 1] <- 1
+                ans_cov[i, j, k, 2] <- cov5[j, k]
+            }
+        }
+    }
+    dimnames(ans_cov)[[4]] <- c("(Intercept)", "cov5")
+    expect_equal(result$cov_phi, ans_cov)
+    expect_equal(result$m_phi, 1:2)
+
+    # repl_cov (factor)
+    result <- set_modargs(~ cov6, ~ 1, ~ 1, NULL, NULL, NULL, data)
+    expect_equal(result$phi, "ijk")
+    expect_equal(result$M, 6)
+    ans_cov <- array(dim = c(I, J, K, 4))
+    for (i in 1:I) {
+        for (j in 1:J) {
+            for (k in 1:K) {
+                ans_cov[i, j, k, 1] <- 1
+                ans_cov[i, j, k, 2] <- as.numeric((cov6[j, k] == 2))
+                ans_cov[i, j, k, 3] <- as.numeric((cov6[j, k] == 3))
+                ans_cov[i, j, k, 4] <- as.numeric((cov6[j, k] == 4))
+            }
+        }
+    }
+    dimnames(ans_cov)[[4]] <- c("(Intercept)", "cov62", "cov63", "cov64")
+    expect_equal(result$cov_phi, ans_cov)
+    expect_equal(result$m_phi, 1:4)
+
+    # repl_cov (interaction)
+    result <- set_modargs(~ cov5 * cov6, ~ 1, ~ 1, NULL, NULL, NULL, data)
+    expect_equal(result$phi, "ijk")
+    expect_equal(result$M, 10)
+    ans_cov <- array(dim = c(I, J, K, 8))
+    for (i in 1:I) {
+        for (j in 1:J) {
+            for (k in 1:K) {
+                ans_cov[i, j, k, 1] <- 1
+                ans_cov[i, j, k, 2] <- cov5[j, k]
+                ans_cov[i, j, k, 3] <- as.numeric(cov6[j, k] == 2)
+                ans_cov[i, j, k, 4] <- as.numeric(cov6[j, k] == 3)
+                ans_cov[i, j, k, 5] <- as.numeric(cov6[j, k] == 4)
+                ans_cov[i, j, k, 6] <- cov5[j, k] * as.numeric(cov6[j, k] == 2)
+                ans_cov[i, j, k, 7] <- cov5[j, k] * as.numeric(cov6[j, k] == 3)
+                ans_cov[i, j, k, 8] <- cov5[j, k] * as.numeric(cov6[j, k] == 4)
+            }
+        }
+    }
+    dimnames(ans_cov)[[4]] <- c("(Intercept)", "cov5", "cov62", "cov63", "cov64",
+                                "cov5:cov62", "cov5:cov63", "cov5:cov64")
+    expect_equal(result$cov_phi, ans_cov)
+    expect_equal(result$m_phi, 1:8)
+
+    # site_cov * repl_cov (interaction)
+    result <- set_modargs(~ cov3 * cov6, ~ 1, ~ 1, NULL, NULL, NULL, data)
+    expect_equal(result$phi, "ijk")
+    expect_equal(result$M, 10)
+    ans_cov <- array(dim = c(I, J, K, 8))
+    for (i in 1:I) {
+        for (j in 1:J) {
+            for (k in 1:K) {
+                ans_cov[i, j, k, 1] <- 1
+                ans_cov[i, j, k, 2] <- cov3[j]
+                ans_cov[i, j, k, 3] <- as.numeric(cov6[j, k] == 2)
+                ans_cov[i, j, k, 4] <- as.numeric(cov6[j, k] == 3)
+                ans_cov[i, j, k, 5] <- as.numeric(cov6[j, k] == 4)
+                ans_cov[i, j, k, 6] <- cov3[j] * as.numeric(cov6[j, k] == 2)
+                ans_cov[i, j, k, 7] <- cov3[j] * as.numeric(cov6[j, k] == 3)
+                ans_cov[i, j, k, 8] <- cov3[j] * as.numeric(cov6[j, k] == 4)
+            }
+        }
+    }
+    dimnames(ans_cov)[[4]] <- c("(Intercept)", "cov3", "cov62", "cov63", "cov64",
+                                "cov3:cov62", "cov3:cov63", "cov3:cov64")
+    expect_equal(result$cov_phi, ans_cov)
+    expect_equal(result$m_phi, 1:8)
 
     ## Errors and Warnings
     expect_error(set_modargs(~ 0, ~ 1, ~ 1, NULL, NULL, NULL, data),
