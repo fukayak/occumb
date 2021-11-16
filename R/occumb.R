@@ -405,8 +405,8 @@ set_modargs <- function(formula_phi,
         m_psi   <- seq(m_theta + 1, m_theta + dim(cov_psi)[[3]])
     }
 
-    out <- list(phi              = "ijk",
-                theta            = set_theta(formula_theta, formula_theta_shared, data),
+    out <- list(phi              = set_phi_theta(formula_phi, formula_phi_shared, data),
+                theta            = set_phi_theta(formula_theta, formula_theta_shared, data),
                 psi              = set_psi(formula_psi, formula_psi_shared, data),
                 phi_shared       = phi_shared,
                 theta_shared     = theta_shared,
@@ -502,27 +502,31 @@ set_psi <- function(formula_psi, formula_psi_shared, data) {
     } else {
         psi <- "ij"
     }
+
+    psi
 }
 
-set_theta <- function(formula_theta, formula_theta_shared, data) {
-    m_eff  <- main_effects(terms(formula_theta))
-    sm_eff <- main_effects(terms(formula_theta_shared))
+set_phi_theta <- function(formula, formula_shared, data) {
+    m_eff  <- main_effects(terms(formula))
+    sm_eff <- main_effects(terms(formula_shared))
 
     if (any(c(m_eff, sm_eff) %in% names(data@repl_cov))) {
-        theta <- "ijk"
+        out <- "ijk"
     } else {
-        if (formula_theta == ~ 1) {
+        if (formula == ~ 1) {
             if (is.null(sm_eff)) {
-                theta <- "i"
+                out <- "i"
             } else if (any(sm_eff %in% names(data@site_cov))) {
-                theta <- "ij"
+                out <- "ij"
             } else {
-                theta <- "i"
+                out <- "i"
             }
         } else {
-            theta <- "ij"
+            out <- "ij"
         }
     }
+
+    out
 }
 
 extract_covariate <- function(cov_name, data) {

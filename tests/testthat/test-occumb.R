@@ -620,14 +620,14 @@ Make sure they are found in either spec_cov, site_cov, or repl_cov.", "xxx"))
 })
 
 test_that("Temp: phi correct", {
-#    ## Output
-#    # null model
-#    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, NULL, data)
-#    expect_equal(result$theta, "i")
-#    expect_equal(result$M, 3)
-#    expect_equal(result$cov_theta, 1)
-#    expect_equal(result$m_theta, 2)
-#
+    ## Output
+    # null model
+    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, NULL, data)
+    expect_equal(result$phi, "i")
+    expect_equal(result$M, 3)
+    expect_equal(result$cov_phi, 1)
+    expect_equal(result$m_phi, 1)
+
 #    # spec_cov (not allowed)
 #    expect_error(set_modargs(~ 1, ~ cov1, ~ 1, NULL, NULL, NULL, data),
 #                 sprintf("Unexpected terms in formula_theta: %s
