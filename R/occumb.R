@@ -274,7 +274,22 @@ set_modargs <- function(formula_phi,
 
         # For theta = "ijk"
         if ((any(theta_main_effects %in% names(data@repl_cov)))) {
-        
+            # Generate covariate objects
+
+            for (n in seq_along(theta_main_effects)) {
+                if (theta_main_effects[n] %in% names(data@site_cov))
+                    eval(parse(text = sprintf("%s <- rep(extract_covariate(theta_main_effects[%s], data), each = dim(data@y)[1])", theta_main_effects[n], n)))
+                if (theta_main_effects[n] %in% names(data@repl_cov))
+                    eval(parse(text = sprintf("%s <- rep(extract_covariate(theta_main_effects[%s], data), each = dim(data@y)[1])", theta_main_effects[n], n)))
+            }
+
+            # Set design matrix
+            dm <- set_design_matrix(formula_theta)
+            cov_theta <- array(dm, c(dim(data@y)[1], dim(data@y)[2], dim(data@y)[3], ncol(dm)))
+            dimnames(cov_theta)[[4]] <- colnames(dm)
+            M       <- M + dim(cov_theta)[4]
+            m_theta <- seq(m_phi + 1, m_phi + dim(cov_theta)[4])
+
         # For theta = "ij"
         } else {
             # Generate covariate objects
