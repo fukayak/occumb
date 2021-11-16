@@ -1145,20 +1145,32 @@ test_that("JAGS code is correct for 144 available models", {
                          "        log(phi[i]) <- inprod(alpha[i, ], cov_phi[]) + inprod(alpha_shared[], cov_phi_shared[i, ])")
             if (cases$phi[i] == "ij")
                 ans <- c(ans,
-                         "        log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[i, j, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, ])")
+                         "        for (j in 1:J) {",
+                         "            log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[i, j, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, ])",
+                         "        }")
             if (cases$phi[i] == "ijk")
                 ans <- c(ans,
-                         "        log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[i, j, k, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, k, ])")
+                         "        for (j in 1:J) {",
+                         "            for (k in 1:K) {",
+                         "                log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[i, j, k, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, k, ])",
+                         "            }",
+                         "        }")
         } else {
             if (cases$phi[i] == "i")
                 ans <- c(ans,
                          "        log(phi[i]) <- inprod(alpha[i, ], cov_phi[])")
             if (cases$phi[i] == "ij")
                 ans <- c(ans,
-                         "        log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[i, j, ])")
+                         "        for (j in 1:J) {",
+                         "            log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[i, j, ])",
+                         "        }")
             if (cases$phi[i] == "ijk")
                 ans <- c(ans,
-                         "        log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[i, j, k, ])")
+                         "        for (j in 1:J) {",
+                         "            for (k in 1:K) {",
+                         "                log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[i, j, k, ])",
+                         "            }",
+                         "        }")
         }
 
         if (cases$theta_shared[i]) {
@@ -1167,20 +1179,32 @@ test_that("JAGS code is correct for 144 available models", {
                          "        logit(theta[i]) <- inprod(beta[i, ], cov_theta[]) + inprod(beta_shared[], cov_theta_shared[i, ])")
             if (cases$theta[i] == "ij")
                 ans <- c(ans,
-                         "        logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ]) + inprod(beta_shared[], cov_theta_shared[i, j, ])")
+                         "        for (j in 1:J) {",
+                         "            logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ]) + inprod(beta_shared[], cov_theta_shared[i, j, ])",
+                         "        }")
             if (cases$theta[i] == "ijk")
                 ans <- c(ans,
-                         "        logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ]) + inprod(beta_shared[], cov_theta_shared[i, j, k, ])")
+                         "        for (j in 1:J) {",
+                         "            for (k in 1:K) {",
+                         "                logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ]) + inprod(beta_shared[], cov_theta_shared[i, j, k, ])",
+                         "            }",
+                         "        }")
         } else {
             if (cases$theta[i] == "i")
                 ans <- c(ans,
                          "        logit(theta[i]) <- inprod(beta[i, ], cov_theta[])")
             if (cases$theta[i] == "ij")
                 ans <- c(ans,
-                         "        logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ])")
+                         "        for (j in 1:J) {",
+                         "            logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ])",
+                         "        }")
             if (cases$theta[i] == "ijk")
                 ans <- c(ans,
-                         "        logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ])")
+                         "        for (j in 1:J) {",
+                         "            for (k in 1:K) {",
+                         "                logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ])",
+                         "            }",
+                         "        }")
         }
 
         if (cases$psi_shared[i]) {
@@ -1189,14 +1213,18 @@ test_that("JAGS code is correct for 144 available models", {
                          "        logit(psi[i]) <- inprod(gamma[i, ], cov_psi[]) + inprod(gamma_shared[], cov_psi_shared[i, ])")
             if (cases$psi[i] == "ij")
                 ans <- c(ans,
-                         "        logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[i, j, ]) + inprod(gamma_shared[], cov_psi_shared[i, j, ])")
+                         "        for (j in 1:J) {",
+                         "            logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[i, j, ]) + inprod(gamma_shared[], cov_psi_shared[i, j, ])",
+                         "        }")
         } else {
             if (cases$psi[i] == "i")
                 ans <- c(ans,
                          "        logit(psi[i]) <- inprod(gamma[i, ], cov_psi[])")
             if (cases$psi[i] == "ij")
                 ans <- c(ans,
-                         "        logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[i, j, ])")
+                         "        for (j in 1:J) {",
+                         "            logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[i, j, ])",
+                         "        }")
         }
 
         ans <- c(ans, readLines(system.file("jags",

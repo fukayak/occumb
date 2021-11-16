@@ -61,15 +61,15 @@ setClass("occumbFit", slots = c(fit = "jagsUI"))
 #' @return  An S4 object of the \code{occumbFit} class containing the results of
 #'          model fitting.
 #' @export
-occumb <- function(phi_formula = ~ 1,
-                   theta_formula = ~ 1,
-                   psi_formula = ~ 1,
-#occumb <- function(formula_phi = ~ 1,
-#                   formula_theta = ~ 1,
-#                   formula_psi = ~ 1,
-#                   formula_phi_shared = NULL,
-#                   formula_theta_shared = NULL,
-#                   formula_psi_shared = NULL,
+#occumb <- function(phi_formula = ~ 1,
+#                   theta_formula = ~ 1,
+#                   psi_formula = ~ 1,
+occumb <- function(formula_phi = ~ 1,
+                   formula_theta = ~ 1,
+                   formula_psi = ~ 1,
+                   formula_phi_shared = NULL,
+                   formula_theta_shared = NULL,
+                   formula_psi_shared = NULL,
                    data,
                    prior_prec = 1E-3,
                    prior_ulim = 1E3,
@@ -85,69 +85,76 @@ occumb <- function(phi_formula = ~ 1,
     const <- set_const(data)
 
     # Define arguments for the specified model
-    margs <- set_modargs(phi_formula, theta_formula, psi_formula, data)
-#    margs <- set_modargs(formula_phi,
-#                         formula_theta,
-#                         formula_psi,
-#                         formula_phi_shared,
-#                         formula_theta_shared,
-#                         formula_psi_shared,
-#                         data)
+#    margs <- set_modargs(phi_formula, theta_formula, psi_formula, data)
+    margs <- set_modargs(formula_phi,
+                         formula_theta,
+                         formula_psi,
+                         formula_phi_shared,
+                         formula_theta_shared,
+                         formula_psi_shared,
+                         data)
 
 #    # Write model file
-#    model <- tempfile()
-#    writeLines(write_jags_model(margs$phi, margs$theta, margs$psi,
-#                                margs$phi_shared,
-#                                margs$phi_shared,
-#                                margs$phi_shared), model)
+#    model <- write_jags_model(margs$phi,
+#                              margs$theta,
+#                              margs$psi,
+#                              margs$phi_shared,
+#                              margs$theta_shared,
+#                              margs$psi_shared)
+    model <- tempfile()
+    writeLines(write_jags_model(margs$phi, margs$theta, margs$psi,
+                                margs$phi_shared,
+                                margs$phi_shared,
+                                margs$phi_shared), model)
 
     # Set data list
-#    dat <- set_data(const, margs, prior_prec, prior_ulim)
-    dat <- list(I          = const$I,
-                J          = const$J,
-                K          = const$K,
-                N          = const$N,
-                y          = const$y,
-                cov_phi    = margs$cov_phi,
-                cov_theta  = margs$cov_theta,
-                cov_psi    = margs$cov_psi,
-                M          = margs$M,
-                m_phi      = margs$m_phi,
-                m_theta    = margs$m_theta,
-                m_psi      = margs$m_psi,
-                prior_prec = prior_prec,
-                prior_ulim = prior_ulim)
+    dat <- set_data(const, margs, prior_prec, prior_ulim)
+#    dat <- list(I          = const$I,
+#                J          = const$J,
+#                K          = const$K,
+#                N          = const$N,
+#                y          = const$y,
+#                cov_phi    = margs$cov_phi,
+#                cov_theta  = margs$cov_theta,
+#                cov_psi    = margs$cov_psi,
+#                M          = margs$M,
+#                m_phi      = margs$m_phi,
+#                m_theta    = margs$m_theta,
+#                m_psi      = margs$m_psi,
+#                prior_prec = prior_prec,
+#                prior_ulim = prior_ulim)
 
     # Set initial values
-#    inits <- set_inits(const, margs)
-    inits <- function() {
-        list(z = matrix(1, const$I, const$J),
-             u = array(1, dim = c(const$I, const$J, const$K)),
-             x = array(stats::rnorm(const$I * const$J * const$K,
-                                    mean = 1, sd = 0.1),
-                       dim = c(const$I, const$J, const$K)),
-             spec_eff = matrix(stats::rnorm(const$I * margs$M, sd = 0.1),
-                               const$I, margs$M),
-             Mu       = stats::rnorm(margs$M, sd = 0.1),
-             sigma    = stats::rnorm(margs$M, mean = 1, sd = 0.1),
-             rho      = matrix(stats::rnorm(margs$M^2, sd = 0.1),
-                               margs$M, margs$M))
-    }
+    inits <- set_inits(const, margs)
+#    inits <- function() {
+#        list(z = matrix(1, const$I, const$J),
+#             u = array(1, dim = c(const$I, const$J, const$K)),
+#             x = array(stats::rnorm(const$I * const$J * const$K,
+#                                    mean = 1, sd = 0.1),
+#                       dim = c(const$I, const$J, const$K)),
+#             spec_eff = matrix(stats::rnorm(const$I * margs$M, sd = 0.1),
+#                               const$I, margs$M),
+#             Mu       = stats::rnorm(margs$M, sd = 0.1),
+#             sigma    = stats::rnorm(margs$M, mean = 1, sd = 0.1),
+#             rho      = matrix(stats::rnorm(margs$M^2, sd = 0.1),
+#                               margs$M, margs$M))
+#    }
 
     # Set parameters monitored
-#    params <- set_params_monitored(margs$phi_shared,
-#                                   margs$theta_shared,
-#                                   margs$psi_shared)
-    params <- c("Mu", "sigma", "rho", "alpha", "beta", "gamma",
-                "phi", "theta", "psi", "z", "pi")
+    params <- set_params_monitored(margs$phi_shared,
+                                   margs$theta_shared,
+                                   margs$psi_shared)
+#    params <- c("Mu", "sigma", "rho", "alpha", "beta", "gamma",
+#                "phi", "theta", "psi", "z", "pi")
 
     # Run MCMC in JAGS
     fit <- jagsUI::jags(
-#        dat, inits, params, model,
-        dat, inits, params,
-        system.file("jags",
-                    sprintf("occumb%s.jags", margs$code),
-                    package = "occumb"),
+        dat, inits, params, model,
+#        dat, inits, params, model = tf,
+#        dat, inits, params,
+#        system.file("jags",
+#                    sprintf("occumb%s.jags", margs$code),
+#                    package = "occumb"),
         n.chains = n.chains,
         n.adapt  = n.adapt,
         n.iter   = n.iter,
@@ -798,20 +805,32 @@ write_jags_model <- function(phi, theta, psi, phi_shared, theta_shared, psi_shar
                        "        log(phi[i]) <- inprod(alpha[i, ], cov_phi[]) + inprod(alpha_shared[], cov_phi_shared[i, ])")
         if (phi == "ij")
             model <- c(model,
-                       "        log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[i, j, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, ])")
+                       "        for (j in 1:J) {",
+                       "            log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[i, j, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, ])",
+                       "        }")
         if (phi == "ijk")
             model <- c(model,
-                       "        log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[i, j, k, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, k, ])")
+                       "        for (j in 1:J) {",
+                       "            for (k in 1:K) {",
+                       "                log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[i, j, k, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, k, ])",
+                       "            }",
+                       "        }")
     } else {
         if (phi == "i")
             model <- c(model,
                        "        log(phi[i]) <- inprod(alpha[i, ], cov_phi[])")
         if (phi == "ij")
             model <- c(model,
-                       "        log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[i, j, ])")
+                       "        for (j in 1:J) {",
+                       "            log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[i, j, ])",
+                       "        }")
         if (phi == "ijk")
             model <- c(model,
-                       "        log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[i, j, k, ])")
+                       "        for (j in 1:J) {",
+                       "            for (k in 1:K) {",
+                       "                log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[i, j, k, ])",
+                       "            }",
+                       "        }")
     }
 
     if (theta_shared) {
@@ -820,20 +839,32 @@ write_jags_model <- function(phi, theta, psi, phi_shared, theta_shared, psi_shar
                        "        logit(theta[i]) <- inprod(beta[i, ], cov_theta[]) + inprod(beta_shared[], cov_theta_shared[i, ])")
         if (theta == "ij")
             model <- c(model,
-                       "        logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ]) + inprod(beta_shared[], cov_theta_shared[i, j, ])")
+                       "        for (j in 1:J) {",
+                       "            logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ]) + inprod(beta_shared[], cov_theta_shared[i, j, ])",
+                       "        }")
         if (theta == "ijk")
             model <- c(model,
-                       "        logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ]) + inprod(beta_shared[], cov_theta_shared[i, j, k, ])")
+                       "        for (j in 1:J) {",
+                       "            for (k in 1:K) {",
+                       "                logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ]) + inprod(beta_shared[], cov_theta_shared[i, j, k, ])",
+                       "            }",
+                       "        }")
     } else {
         if (theta == "i")
             model <- c(model,
                        "        logit(theta[i]) <- inprod(beta[i, ], cov_theta[])")
         if (theta == "ij")
             model <- c(model,
-                       "        logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ])")
+                       "        for (j in 1:J) {",
+                       "            logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ])",
+                       "        }")
         if (theta == "ijk")
             model <- c(model,
-                       "        logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ])")
+                       "        for (j in 1:J) {",
+                       "            for (k in 1:K) {",
+                       "                logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ])",
+                       "            }",
+                       "        }")
     }
 
     if (psi_shared) {
@@ -842,14 +873,18 @@ write_jags_model <- function(phi, theta, psi, phi_shared, theta_shared, psi_shar
                        "        logit(psi[i]) <- inprod(gamma[i, ], cov_psi[]) + inprod(gamma_shared[], cov_psi_shared[i, ])")
         if (psi == "ij")
             model <- c(model,
-                       "        logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[i, j, ]) + inprod(gamma_shared[], cov_psi_shared[i, j, ])")
+                       "        for (j in 1:J) {",
+                       "            logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[i, j, ]) + inprod(gamma_shared[], cov_psi_shared[i, j, ])",
+                       "        }")
     } else {
         if (psi == "i")
             model <- c(model,
                        "        logit(psi[i]) <- inprod(gamma[i, ], cov_psi[])")
         if (psi == "ij")
             model <- c(model,
-                       "        logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[i, j, ])")
+                       "        for (j in 1:J) {",
+                       "            logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[i, j, ])",
+                       "        }")
     }
 
     model <- c(model,
