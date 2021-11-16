@@ -212,6 +212,21 @@ set_modargs <- function(formula_phi,
 
         # For theta = "ijk"
         if (any(theta_shared_main_effects %in% names(data@repl_cov))) {
+            # Generate covariate objects
+            for (n in seq_along(theta_shared_main_effects)) {
+                if (theta_shared_main_effects[n] %in% names(data@spec_cov))
+                    eval(parse(text = sprintf("%s <- rep(rep(extract_covariate(theta_shared_main_effects[%s], data), dim(data@y)[2]), dim(data@y)[3])", theta_shared_main_effects[n], n)))
+                if (theta_shared_main_effects[n] %in% names(data@site_cov))
+                    eval(parse(text = sprintf("%s <- rep(rep(extract_covariate(theta_shared_main_effects[%s], data), each = dim(data@y)[1]), dim(data@y)[3])", theta_shared_main_effects[n], n)))
+                if (theta_shared_main_effects[n] %in% names(data@repl_cov))
+                    eval(parse(text = sprintf("%s <- rep(extract_covariate(theta_shared_main_effects[%s], data), each = dim(data@y)[1])", theta_shared_main_effects[n], n)))
+            }
+
+            # Set design matrix
+            dm <- set_design_matrix(formula_theta_shared, omit_intercept = TRUE)
+            cov_theta_shared <- array(dm, c(dim(data@y)[1], dim(data@y)[2], dim(data@y)[3], ncol(dm)))
+            dimnames(cov_theta_shared)[[4]] <- colnames(dm)
+            M_theta_shared <- dim(cov_theta_shared)[4]
 
         # For theta = "ij"
         } else if (any(theta_shared_main_effects %in% names(data@site_cov))) {
@@ -228,6 +243,7 @@ set_modargs <- function(formula_phi,
             cov_theta_shared <- array(dm, c(dim(data@y)[1], dim(data@y)[2], ncol(dm)))
             dimnames(cov_theta_shared)[[3]] <- colnames(dm)
             M_theta_shared   <- dim(cov_theta_shared)[3]
+
         # For theta = "i"
         } else {
             # Generate covariate objects
@@ -324,7 +340,6 @@ set_modargs <- function(formula_phi,
         # For theta = "ijk"
         if ((any(theta_main_effects %in% names(data@repl_cov)))) {
             # Generate covariate objects
-
             for (n in seq_along(theta_main_effects)) {
                 if (theta_main_effects[n] %in% names(data@site_cov))
                     eval(parse(text = sprintf("%s <- rep(rep(extract_covariate(theta_main_effects[%s], data), each = dim(data@y)[1]), dim(data@y)[3])", theta_main_effects[n], n)))
