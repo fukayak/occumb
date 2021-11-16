@@ -87,6 +87,10 @@ test_that("Temp: psi correct", {
     expect_equal(result$m_psi, 3:8)
 
     ## Errors and Warnings
+    expect_error(set_modargs(~ 1, ~ 1, ~ 0, NULL, NULL, NULL, data),
+                 sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "psi"))
+    expect_error(set_modargs(~ 1, ~ 1, ~ -1, NULL, NULL, NULL, data),
+                 sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "psi"))
     expect_error(set_modargs(~ 1, ~ 1, ~ cov3, NULL, NULL, NULL, data),
                  sprintf("Unexpected terms in formula_psi: %s
 Only site covariates are allowed for formula_psi.",

@@ -270,6 +270,8 @@ set_modargs <- function(formula_phi,
         M       <- M + 1
         m_psi   <- seq(m_theta + 1, m_theta + 1)
     } else {
+        # Stop when formula_psi does not have an intercept
+        check_intercept(formula_psi, "psi")
         # Stop when formula_psi includes a term not in the site covariates
         check_wrong_terms(formula_psi, names(data@site_cov), "psi")
 
@@ -415,6 +417,16 @@ Only site covariates, species covariates, or their interactions are allowed for 
     }
 }
 
+has_intercept <- function(formula) {
+    as.logical(attributes(stats::terms(formula))$intercept)
+}
+
+check_intercept <- function(formula, type = c("psi")) {
+    if (!has_intercept(formula))
+        stop(sprintf("No intercept in formula_%s: remove 0 or -1 from the formula",
+                     type))
+}
+
 #xxxx <- function(formula, data, type = "psi_shared") {
 #
 #    # Generate covariate objects
@@ -471,8 +483,6 @@ set_design_matrix2 <- function(formula, type) {
     out <- stats::model.matrix(formula, parent.frame())
     out
 }
-
-
 
 # Auto-generate JAGS model code
 write_jags_model <- function(phi, theta, psi, phi_shared, theta_shared, psi_shared) {
