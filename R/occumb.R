@@ -260,7 +260,7 @@ set_modargs <- function(formula_phi,
     if (formula_theta == ~ 1) {
         cov_theta <- 1
         M         <- M + 1
-        m_theta   <- seq(m_phi + 1, m_phi + 1)
+        m_theta   <- seq(m_phi[length(m_phi)] + 1, m_phi[length(m_phi)] + 1)
     } else {
         # Stop when formula_psi does not have an intercept
         check_intercept(formula_theta, "theta")
@@ -269,6 +269,26 @@ set_modargs <- function(formula_phi,
                           c(names(data@site_cov),
                             names(data@repl_cov)),
                           "theta")
+
+        theta_main_effects <- main_effects(terms(formula_theta))
+
+        # For theta = "ijk"
+        if ((any(theta_main_effects %in% names(data@repl_cov)))) {
+        
+        # For theta = "ij"
+        } else {
+            # Generate covariate objects
+            for (n in seq_along(theta_main_effects))
+                eval(parse(text = sprintf("%s <- rep(extract_covariate(theta_main_effects[%s], data), each = dim(data@y)[1])", theta_main_effects[n], n)))
+
+            # Set design matrix
+            dm <- set_design_matrix(formula_theta)
+            cov_theta <- array(dm, c(dim(data@y)[1], dim(data@y)[2], ncol(dm)))
+
+            dimnames(cov_theta)[[3]] <- colnames(dm)
+            M       <- M + dim(cov_theta)[3]
+            m_theta <- seq(m_phi + 1, m_phi + dim(cov_theta)[3])
+        }
     }
 
     ## psi
@@ -276,7 +296,9 @@ set_modargs <- function(formula_phi,
     if (formula_psi == ~ 1) {
         cov_psi <- 1
         M       <- M + 1
-        m_psi   <- seq(m_theta + 1, m_theta + 1)
+        m_psi   <- seq(m_theta[length(m_theta)] + 1, m_theta[length(m_theta)] + 1)
+
+    # For psi = "ij"
     } else {
         # Stop when formula_psi does not have an intercept
         check_intercept(formula_psi, "psi")
