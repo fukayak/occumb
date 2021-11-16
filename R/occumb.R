@@ -211,10 +211,29 @@ set_modargs <- function(formula_phi,
         theta_shared_main_effects <- main_effects(terms(formula_theta_shared))
 
         # For theta = "ijk"
-        # For theta = "i"
-        # For theta = "ij"
+        if (any(theta_shared_main_effects %in% names(data@repl_cov))) {
 
+        # For theta = "ij"
+        } else if (any(theta_shared_main_effects %in% names(data@site_cov))) {
+
+        # For theta = "i"
+        } else {
+            # Generate covariate objects
+            for (n in seq_along(theta_shared_main_effects))
+                eval(parse(text = sprintf("%s <- extract_covariate(theta_shared_main_effects[%s], data)", theta_shared_main_effects[n], n)))
+
+            # Set design matrix
+            dm <- set_design_matrix(formula_theta_shared, omit_intercept = TRUE)
+            cov_theta_shared <- matrix(dm, nrow = dim(data@y)[1])
+            colnames(cov_theta_shared) <- colnames(dm)
+            M_theta_shared <- ncol(cov_theta_shared)
+        }
+    } else {
+        cov_theta_shared <- NULL
+        M_theta_shared   <- 0
     }
+
+
 
     # psi_shared
 
@@ -249,9 +268,8 @@ set_modargs <- function(formula_phi,
         # For psi = "i"
         } else {
             # Generate covariate objects
-            for (n in seq_along(psi_shared_main_effects)) {
+            for (n in seq_along(psi_shared_main_effects))
                 eval(parse(text = sprintf("%s <- extract_covariate(psi_shared_main_effects[%s], data)", psi_shared_main_effects[n], n)))
-            }
 
             # Set design matrix
             dm <- set_design_matrix(formula_psi_shared, omit_intercept = TRUE)
@@ -362,13 +380,13 @@ set_modargs <- function(formula_phi,
                 psi_shared       = psi_shared,
                 M                = M,
                 M_phi_shared     = 0,
-                M_theta_shared   = 0,
+                M_theta_shared   = M_theta_shared,
                 M_psi_shared     = M_psi_shared,
                 cov_phi          = cov_phi,
                 cov_theta        = cov_theta,
                 cov_psi          = cov_psi,
                 cov_phi_shared   = 0,
-                cov_theta_shared = 0,
+                cov_theta_shared = cov_theta_shared,
                 cov_psi_shared   = cov_psi_shared,
                 m_phi            = m_phi,
                 m_theta          = m_theta,

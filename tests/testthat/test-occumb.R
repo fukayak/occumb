@@ -394,45 +394,45 @@ Note that species covariates are not allowed for formula_theta.",
                          "xxx"))
 })
 test_that("Temp: theta_shared correct", {
-#    ## Output
-#    # spec_cov (continuous)
-#    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov1, data)
-#    expect_equal(result$psi, "i")
-#    expect_true(result$psi_shared)
-#    expect_equal(result$M_psi_shared, 1)
-#    ans_cov <- array(dim = c(I, 1))
-#    for (i in 1:I) {
-#        ans_cov[i, 1] <- cov1[i]
-#    }
-#    colnames(ans_cov) <- "cov1"
-#    expect_equal(result$cov_psi_shared, ans_cov)
-#
-#    # spec_cov (factor)
-#    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov2, data)
-#    expect_equal(result$psi, "i")
-#    expect_true(result$psi_shared)
-#    expect_equal(result$M_psi_shared, 1)
-#    ans_cov <- array(dim = c(I, 1))
-#    for (i in 1:I) {
-#        ans_cov[i, 1] <- as.numeric((cov2[i] == 2))
-#    }
-#    colnames(ans_cov) <- c("cov22")
-#    expect_equal(result$cov_psi_shared, ans_cov)
-#
-#    # spec_cov (interaction)
-#    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov1 * cov2, data)
-#    expect_equal(result$psi, "i")
-#    expect_true(result$psi_shared)
-#    expect_equal(result$M_psi_shared, 3)
-#    ans_cov <- array(dim = c(I, 3))
-#    for (i in 1:I) {
-#        ans_cov[i, 1] <- cov1[i]
-#        ans_cov[i, 2] <- as.numeric((cov2[i] == 2))
-#        ans_cov[i, 3] <- cov1[i] * as.numeric((cov2[i] == 2))
-#    }
-#    colnames(ans_cov) <- c("cov1", "cov22", "cov1:cov22")
-#    expect_equal(result$cov_psi_shared, ans_cov)
-#
+    ## Output
+    # spec_cov (continuous)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ cov1, NULL, data)
+    expect_equal(result$theta, "i")
+    expect_true(result$theta_shared)
+    expect_equal(result$M_theta_shared, 1)
+    ans_cov <- array(dim = c(I, 1))
+    for (i in 1:I) {
+        ans_cov[i, 1] <- cov1[i]
+    }
+    colnames(ans_cov) <- "cov1"
+    expect_equal(result$cov_theta_shared, ans_cov)
+
+    # spec_cov (factor)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ cov2, NULL, data)
+    expect_equal(result$theta, "i")
+    expect_true(result$theta_shared)
+    expect_equal(result$M_theta_shared, 1)
+    ans_cov <- array(dim = c(I, 1))
+    for (i in 1:I) {
+        ans_cov[i, 1] <- as.numeric((cov2[i] == 2))
+    }
+    colnames(ans_cov) <- c("cov22")
+    expect_equal(result$cov_theta_shared, ans_cov)
+
+    # spec_cov (interaction)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ cov1 * cov2, NULL, data)
+    expect_equal(result$theta, "i")
+    expect_true(result$theta_shared)
+    expect_equal(result$M_theta_shared, 3)
+    ans_cov <- array(dim = c(I, 3))
+    for (i in 1:I) {
+        ans_cov[i, 1] <- cov1[i]
+        ans_cov[i, 2] <- as.numeric((cov2[i] == 2))
+        ans_cov[i, 3] <- cov1[i] * as.numeric((cov2[i] == 2))
+    }
+    colnames(ans_cov) <- c("cov1", "cov22", "cov1:cov22")
+    expect_equal(result$cov_theta_shared, ans_cov)
+
 #    # site_cov (continuous)
 #    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov3, data)
 #    expect_equal(result$psi, "ij")
