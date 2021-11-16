@@ -932,17 +932,14 @@ set_data <- function(const, margs, prior_prec, prior_ulim) {
                 prior_ulim = prior_ulim)
 
     if (margs$phi_shared)
-        dat <- list(dat,
-                    cov_phi_shared = margs$cov_phi_shared,
-                    M_phi_shared   = margs$M_phi_shared)
+        dat$cov_phi_shared <- margs$cov_phi_shared
+        dat$M_phi_shared   <- margs$M_phi_shared
     if (margs$theta_shared)
-        dat <- list(dat,
-                    cov_theta_shared = margs$cov_theta_shared,
-                    M_theta_shared   = margs$M_theta_shared)
+        dat$cov_theta_shared <- margs$cov_theta_shared
+        dat$M_theta_shared   <- margs$M_theta_shared
     if (margs$psi_shared)
-        dat <- list(dat,
-                    cov_psi_shared = margs$cov_psi_shared,
-                    M_psi_shared   = margs$M_psi_shared)
+        dat$cov_psi_shared <- margs$cov_psi_shared
+        dat$M_psi_shared   <- margs$M_psi_shared
 
     dat
 }
