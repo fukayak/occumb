@@ -317,7 +317,15 @@ set_modargs <- function(formula_phi,
         M       <- M + 1
         m_phi   <- 1
     } else {
-        stop("Covariates in formula_phi are not yet supported, sorry.")
+        # Stop when formula_phi does not have an intercept
+        check_intercept(formula_phi, "phi")
+        # Stop when formula_phi includes a term other than site/repl covs
+        check_wrong_terms(formula_phi,
+                          c(names(data@site_cov),
+                            names(data@repl_cov)),
+                          "phi")
+
+        phi_main_effects <- main_effects(terms(formula_phi))
     }
 
     ## theta
@@ -531,18 +539,22 @@ extract_covariate <- function(cov_name, data) {
 `%!in%` <- Negate(`%in%`)
 
 check_wrong_terms <- function(formula, correct_terms,
-                              type = c("theta", "psi", "psi_shared", "theta_shared")) {
+                              type = c("phi", "theta", "psi", "psi_shared", "theta_shared")) {
     test_terms <- terms(formula)
     wrong_terms <- main_effects(test_terms) %!in% correct_terms
 
     if (any(wrong_terms)) {
-        if (type == "psi")
+        if (type == "phi")
             stop(sprintf("Unexpected terms in formula_%s: %s
-Note that only site covariates are allowed for formula_%s.",
+Note that species covariates are not allowed for formula_%s.",
                          type, test_terms[wrong_terms], type)) 
         if (type == "theta")
             stop(sprintf("Unexpected terms in formula_%s: %s
 Note that species covariates are not allowed for formula_%s.",
+                         type, test_terms[wrong_terms], type)) 
+        if (type == "psi")
+            stop(sprintf("Unexpected terms in formula_%s: %s
+Note that only site covariates are allowed for formula_%s.",
                          type, test_terms[wrong_terms], type)) 
         if (type == "theta_shared")
             stop(sprintf("Unexpected terms in formula_%s: %s
