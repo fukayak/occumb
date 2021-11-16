@@ -233,14 +233,14 @@ test_that("Temp: theta correct", {
                        site_cov = list(cov3 = cov3, cov4 = cov4),
                        repl_cov = list(cov5 = cov5, cov6 = cov6))
 
-#    ## Output
-#    # null model
-#    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, NULL, data)
-#    expect_equal(result$theta, "i")
-#    expect_equal(result$M, 3)
-#    expect_equal(result$cov_theta, 1)
-#    expect_equal(result$m_theta, 2)
-#
+    ## Output
+    # null model
+    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, NULL, data)
+    expect_equal(result$theta, "i")
+    expect_equal(result$M, 3)
+    expect_equal(result$cov_theta, 1)
+    expect_equal(result$m_theta, 2)
+
 #    # site_cov (continuous)
 #    result <- set_modargs(~ 1, ~ 1, ~ cov1, NULL, NULL, NULL, data)
 #    expect_equal(result$psi, "ij")

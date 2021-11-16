@@ -298,7 +298,7 @@ set_modargs <- function(formula_phi,
     }
 
     out <- list(phi              = "ijk",
-                theta            = "ijk",
+                theta            = set_theta(formula_theta, formula_theta_shared, data),
                 psi              = set_psi(formula_psi, formula_psi_shared, data),
                 phi_shared       = phi_shared,
                 theta_shared     = theta_shared,
@@ -393,6 +393,27 @@ set_psi <- function(formula_psi, formula_psi_shared, data) {
         }
     } else {
         psi <- "ij"
+    }
+}
+
+set_theta <- function(formula_theta, formula_theta_shared, data) {
+    m_eff  <- main_effects(terms(formula_theta))
+    sm_eff <- main_effects(terms(formula_theta_shared))
+
+    if (any(c(m_eff, sm_eff) %in% names(data@repl_cov))) {
+        theta <- "ijk"
+    } else {
+        if (formula_theta == ~ 1) {
+            if (is.null(sm_eff)) {
+                theta <- "i"
+            } else if (any(sm_eff %in% names(data@site_cov))) {
+                theta <- "ij"
+            } else {
+                theta <- "i"
+            }
+        } else {
+            theta <- "ij"
+        }
     }
 }
 
