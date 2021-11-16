@@ -359,6 +359,30 @@ Note that species covariates are not allowed for formula_theta.",
     expect_equal(result$cov_theta, ans_cov)
     expect_equal(result$m_theta, 2:9)
 
+    # site_cov * repl_cov (interaction)
+    result <- set_modargs(~ 1, ~ cov3 * cov6, ~ 1, NULL, NULL, NULL, data)
+    expect_equal(result$theta, "ijk")
+    expect_equal(result$M, 10)
+    ans_cov <- array(dim = c(I, J, K, 8))
+    for (i in 1:I) {
+        for (j in 1:J) {
+            for (k in 1:K) {
+                ans_cov[i, j, k, 1] <- 1
+                ans_cov[i, j, k, 2] <- cov3[j]
+                ans_cov[i, j, k, 3] <- as.numeric(cov6[j, k] == 2)
+                ans_cov[i, j, k, 4] <- as.numeric(cov6[j, k] == 3)
+                ans_cov[i, j, k, 5] <- as.numeric(cov6[j, k] == 4)
+                ans_cov[i, j, k, 6] <- cov3[j] * as.numeric(cov6[j, k] == 2)
+                ans_cov[i, j, k, 7] <- cov3[j] * as.numeric(cov6[j, k] == 3)
+                ans_cov[i, j, k, 8] <- cov3[j] * as.numeric(cov6[j, k] == 4)
+            }
+        }
+    }
+    dimnames(ans_cov)[[4]] <- c("(Intercept)", "cov3", "cov62", "cov63", "cov64",
+                                "cov3:cov62", "cov3:cov63", "cov3:cov64")
+    expect_equal(result$cov_theta, ans_cov)
+    expect_equal(result$m_theta, 2:9)
+
     ## Errors and Warnings
     expect_error(set_modargs(~ 1, ~ 0, ~ 1, NULL, NULL, NULL, data),
                  sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "theta"))

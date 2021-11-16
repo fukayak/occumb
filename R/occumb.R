@@ -278,7 +278,7 @@ set_modargs <- function(formula_phi,
 
             for (n in seq_along(theta_main_effects)) {
                 if (theta_main_effects[n] %in% names(data@site_cov))
-                    eval(parse(text = sprintf("%s <- rep(extract_covariate(theta_main_effects[%s], data), each = dim(data@y)[1])", theta_main_effects[n], n)))
+                    eval(parse(text = sprintf("%s <- rep(rep(extract_covariate(theta_main_effects[%s], data), each = dim(data@y)[1]), dim(data@y)[3])", theta_main_effects[n], n)))
                 if (theta_main_effects[n] %in% names(data@repl_cov))
                     eval(parse(text = sprintf("%s <- rep(extract_covariate(theta_main_effects[%s], data), each = dim(data@y)[1])", theta_main_effects[n], n)))
             }
