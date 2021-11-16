@@ -217,7 +217,7 @@ set_modargs <- function(formula_phi,
             }
 
             # Set design matrix
-            dm <- set_design_matrix3(formula_psi_shared, omit_intercept = TRUE)
+            dm <- set_design_matrix(formula_psi_shared, omit_intercept = TRUE)
             cov_psi_shared <- array(dm, c(dim(data@y)[1], dim(data@y)[2], ncol(dm)))
             dimnames(cov_psi_shared)[[3]] <- colnames(dm)
             M_psi_shared   <- dim(cov_psi_shared)[3]
@@ -230,7 +230,7 @@ set_modargs <- function(formula_phi,
             }
 
             # Set design matrix
-            dm <- set_design_matrix3(formula_psi_shared, omit_intercept = TRUE)
+            dm <- set_design_matrix(formula_psi_shared, omit_intercept = TRUE)
             cov_psi_shared <- matrix(dm, nrow = dim(data@y)[1])
             colnames(cov_psi_shared) <- colnames(dm)
             M_psi_shared   <- ncol(cov_psi_shared)
@@ -280,7 +280,7 @@ set_modargs <- function(formula_phi,
             eval(parse(text = sprintf("%s <- rep(extract_covariate(psi_main_effects[%s], data), each = dim(data@y)[1])", psi_main_effects[n], n)))
 
         # Set design matrix
-        dm <- set_design_matrix2(formula_psi, "psi")
+        dm <- set_design_matrix(formula_psi)
         cov_psi <- array(dm, c(dim(data@y)[1], dim(data@y)[2], ncol(dm)))
         dimnames(cov_psi)[[3]] <- colnames(dm)
         M       <- M + dim(cov_psi)[[3]]
@@ -468,21 +468,7 @@ check_intercept <- function(formula, type = c("psi")) {
 ##    out
 #}
 
-set_design_matrix <- function(formula, type) {
-    out <- stats::model.matrix(formula, parent.frame())
-    # When formula includes an intercept term, remove it and issue a warning
-    if (any(colnames(out) %in% "(Intercept)")) {
-        out <- out[, colnames(out) %!in% "(Intercept)"]
-        warning(sprintf("formula_%s should not include an intercept term: it will be removed.", type))
-    }
-
-    out
-}
-set_design_matrix2 <- function(formula, type) {
-    out <- stats::model.matrix(formula, parent.frame())
-    out
-}
-set_design_matrix3 <- function(formula, omit_intercept) {
+set_design_matrix <- function(formula, omit_intercept = FALSE) {
     out <- stats::model.matrix(formula, parent.frame())
 
     if (omit_intercept) {
