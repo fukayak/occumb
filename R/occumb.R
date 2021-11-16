@@ -231,18 +231,18 @@ set_modargs <- function(formula_phi,
         # For theta = "ij"
         } else if (any(phi_shared_main_effects %in% names(data@site_cov))) {
             # Generate covariate objects
-            for (n in seq_along(theta_shared_main_effects)) {
-                if (theta_shared_main_effects[n] %in% names(data@spec_cov))
-                    eval(parse(text = sprintf("%s <- rep(extract_covariate(theta_shared_main_effects[%s], data), dim(data@y)[2])", theta_shared_main_effects[n], n)))
-                if (theta_shared_main_effects[n] %in% names(data@site_cov))
-                    eval(parse(text = sprintf("%s <- rep(extract_covariate(theta_shared_main_effects[%s], data), each = dim(data@y)[1])", theta_shared_main_effects[n], n)))
+            for (n in seq_along(phi_shared_main_effects)) {
+                if (phi_shared_main_effects[n] %in% names(data@spec_cov))
+                    eval(parse(text = sprintf("%s <- rep(extract_covariate(phi_shared_main_effects[%s], data), dim(data@y)[2])", phi_shared_main_effects[n], n)))
+                if (phi_shared_main_effects[n] %in% names(data@site_cov))
+                    eval(parse(text = sprintf("%s <- rep(extract_covariate(phi_shared_main_effects[%s], data), each = dim(data@y)[1])", phi_shared_main_effects[n], n)))
             }
 
             # Set design matrix
-            dm <- set_design_matrix(formula_theta_shared, omit_intercept = TRUE)
-            cov_theta_shared <- array(dm, c(dim(data@y)[1], dim(data@y)[2], ncol(dm)))
-            dimnames(cov_theta_shared)[[3]] <- colnames(dm)
-            M_theta_shared   <- dim(cov_theta_shared)[3]
+            dm <- set_design_matrix(formula_phi_shared, omit_intercept = TRUE)
+            cov_phi_shared <- array(dm, c(dim(data@y)[1], dim(data@y)[2], ncol(dm)))
+            dimnames(cov_phi_shared)[[3]] <- colnames(dm)
+            M_phi_shared <- dim(cov_phi_shared)[3]
 
         # For theta = "i"
         } else {
