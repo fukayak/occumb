@@ -209,6 +209,7 @@ set_modargs <- function(formula_phi,
         # For psi = "ij"
         if (any(psi_shared_main_effects %in% names(data@site_cov))) {
 
+            # Generate covariate objects
             for (n in seq_along(psi_shared_main_effects)) {
                 if (psi_shared_main_effects[n] %in% names(data@spec_cov))
                     eval(parse(text = sprintf("%s <- rep(extract_covariate(psi_shared_main_effects[%s], data), dim(data@y)[2])", psi_shared_main_effects[n], n)))
@@ -216,6 +217,7 @@ set_modargs <- function(formula_phi,
                     eval(parse(text = sprintf("%s <- rep(extract_covariate(psi_shared_main_effects[%s], data), each = dim(data@y)[1])", psi_shared_main_effects[n], n)))
             }
 
+            # Set design matrix
             dm <- set_design_matrix(formula_psi_shared, "psi_shared")
             cov_psi_shared <- array(dm, c(dim(data@y)[1], dim(data@y)[2], ncol(dm)))
             dimnames(cov_psi_shared)[[3]] <- colnames(dm)
@@ -223,10 +225,12 @@ set_modargs <- function(formula_phi,
 
         # For psi = "i"
         } else {
+            # Generate covariate objects
             for (n in seq_along(psi_shared_main_effects)) {
                 eval(parse(text = sprintf("%s <- extract_covariate(psi_shared_main_effects[%s], data)", psi_shared_main_effects[n], n)))
             }
 
+            # Set design matrix
             dm <- set_design_matrix(formula_psi_shared, "psi_shared")
             cov_psi_shared <- matrix(dm, nrow = dim(data@y)[1])
             colnames(cov_psi_shared) <- colnames(dm)
@@ -269,9 +273,17 @@ set_modargs <- function(formula_phi,
         # Stop when formula_psi includes a term not in the site covariates
         check_wrong_terms(formula_psi, names(data@site_cov), "psi")
 
-        cov_psi <- stats::model.matrix(formula_psi)
-        M       <- M + ncol(cov_psi)
-        m_psi   <- seq(m_theta + 1, m_theta + ncol(cov_psi))
+        # Generate covariate objects
+        psi_main_effects <- main_effects(terms(formula_psi))
+        for (n in seq_along(psi_main_effects))
+            eval(parse(text = sprintf("%s <- rep(extract_covariate(psi_main_effects[%s], data), each = dim(data@y)[1])", psi_main_effects[n], n)))
+
+        # Set design matrix
+        dm <- set_design_matrix2(formula_psi, "psi")
+        cov_psi <- array(dm, c(dim(data@y)[1], dim(data@y)[2], ncol(dm)))
+        dimnames(cov_psi)[[3]] <- colnames(dm)
+        M       <- M + dim(cov_psi)[[3]]
+        m_psi   <- seq(m_theta + 1, m_theta + dim(cov_psi)[[3]])
     }
 
     out <- list(phi              = "ijk",
@@ -455,6 +467,11 @@ set_design_matrix <- function(formula, type) {
 
     out
 }
+set_design_matrix2 <- function(formula, type) {
+    out <- stats::model.matrix(formula, parent.frame())
+    out
+}
+
 
 
 # Auto-generate JAGS model code
