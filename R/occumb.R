@@ -196,6 +196,7 @@ set_modargs <- function(formula_phi,
     psi_shared   <- !is.null(formula_psi_shared)
 
     # psi_shared
+
     if (psi_shared) {
         # Stop when formula_psi_shared does not have an intercept
         check_intercept(formula_psi_shared, "psi_shared")
@@ -261,7 +262,14 @@ set_modargs <- function(formula_phi,
         M         <- M + 1
         m_theta   <- seq(m_phi + 1, m_phi + 1)
     } else {
-        stop("Covariates in formula_theta are not yet supported, sorry.")
+        # Stop when formula_psi does not have an intercept
+        check_intercept(formula_theta, "theta")
+        # Stop when formula_psi includes a term not in the site covariates
+        check_wrong_terms(formula_theta,
+                          c(names(data@spec_cov),
+                            names(data@site_cov),
+                            names(data@repl_cov)),
+                          "theta")
     }
 
     ## psi
@@ -402,15 +410,18 @@ extract_covariate <- function(cov_name, data) {
 `%!in%` <- Negate(`%in%`)
 
 check_wrong_terms <- function(formula, correct_terms,
-                              type = c("psi", "psi_shared")) {
+                              type = c("psi", "theta", "psi_shared")) {
     test_terms <- terms(formula)
     wrong_terms <- main_effects(test_terms) %!in% correct_terms
 
     if (any(wrong_terms)) {
         if (type == "psi")
-            stop(sprintf("Unexpected terms in formula_psi: %s
-Only site covariates are allowed for formula_psi.",
-                         test_terms[wrong_terms])) 
+            stop(sprintf("Unexpected terms in formula_%s: %s
+Only site covariates are allowed for formula_%s.",
+                         type, test_terms[wrong_terms], type)) 
+        if (type == "theta")
+            stop(sprintf("Unexpected terms in formula_%s: %s",
+                         type, test_terms[wrong_terms])) 
         if (type == "psi_shared")
             stop(sprintf("Unexpected terms in formula_psi_shared: %s
 Only site covariates, species covariates, or their interactions are allowed for formula_psi_shared.",

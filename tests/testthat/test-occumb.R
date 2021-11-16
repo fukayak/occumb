@@ -219,6 +219,89 @@ test_that("Temp: psi_shared correct", {
                              sprintf("Unexpected terms in formula_psi_shared: %s
 Only site covariates, species covariates, or their interactions are allowed for formula_psi_shared.", "xxx"))
 })
+
+test_that("Temp: theta correct", {
+    I <- 2; J <- 3; K <- 4
+    cov1 <- rnorm(I)
+    cov2 <- factor(1:I)
+    cov3 <- rnorm(J)
+    cov4 <- factor(1:J)
+    cov5 <- matrix(rnorm(J * K), nrow = J)
+    cov6 <- matrix(rep(1:K, each = J), nrow = J)
+    data <- occumbData(y = array(0, dim = c(I, J, K)),
+                       spec_cov = list(cov1 = cov1, cov2 = cov2),
+                       site_cov = list(cov3 = cov3, cov4 = cov4),
+                       repl_cov = list(cov5 = cov5, cov6 = cov6))
+
+#    ## Output
+#    # null model
+#    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, NULL, data)
+#    expect_equal(result$theta, "i")
+#    expect_equal(result$M, 3)
+#    expect_equal(result$cov_theta, 1)
+#    expect_equal(result$m_theta, 2)
+#
+#    # site_cov (continuous)
+#    result <- set_modargs(~ 1, ~ 1, ~ cov1, NULL, NULL, NULL, data)
+#    expect_equal(result$psi, "ij")
+#    expect_equal(result$M, 4)
+#    ans_cov <- array(dim = c(I, J, 2))
+#    for (i in 1:I) {
+#        for (j in 1:J) {
+#        ans_cov[i, j, 1] <- 1
+#        ans_cov[i, j, 2] <- cov1[j]
+#        }
+#    }
+#    dimnames(ans_cov)[[3]] <- c("(Intercept)", "cov1")
+#    expect_equal(result$cov_psi, ans_cov)
+#    expect_equal(result$m_psi, 3:4)
+#
+#    # site_cov (factor)
+#    result <- set_modargs(~ 1, ~ 1, ~ cov2, NULL, NULL, NULL, data)
+#    expect_equal(result$psi, "ij")
+#    expect_equal(result$M, 5)
+#    ans_cov <- array(dim = c(I, J, 3))
+#    for (i in 1:I) {
+#        for (j in 1:J) {
+#        ans_cov[i, j, 1] <- 1
+#        ans_cov[i, j, 2] <- as.numeric(cov2[j] == 2)
+#        ans_cov[i, j, 3] <- as.numeric(cov2[j] == 3)
+#        }
+#    }
+#    dimnames(ans_cov)[[3]] <- c("(Intercept)", "cov22", "cov23")
+#    expect_equal(result$cov_psi, ans_cov)
+#    expect_equal(result$m_psi, 3:5)
+#
+#    # site_cov (interaction)
+#    result <- set_modargs(~ 1, ~ 1, ~ cov1 * cov2, NULL, NULL, NULL, data)
+#    expect_equal(result$psi, "ij")
+#    expect_equal(result$M, 8)
+#    ans_cov <- array(dim = c(I, J, 6))
+#    for (i in 1:I) {
+#        for (j in 1:J) {
+#        ans_cov[i, j, 1] <- 1
+#        ans_cov[i, j, 2] <- cov1[j]
+#        ans_cov[i, j, 3] <- as.numeric(cov2[j] == 2)
+#        ans_cov[i, j, 4] <- as.numeric(cov2[j] == 3)
+#        ans_cov[i, j, 5] <- cov1[j] * as.numeric(cov2[j] == 2)
+#        ans_cov[i, j, 6] <- cov1[j] * as.numeric(cov2[j] == 3)
+#        }
+#    }
+#    dimnames(ans_cov)[[3]] <- c("(Intercept)", "cov1", "cov22", "cov23",
+#                                "cov1:cov22", "cov1:cov23")
+#    expect_equal(result$cov_psi, ans_cov)
+#    expect_equal(result$m_psi, 3:8)
+
+    ## Errors and Warnings
+    expect_error(set_modargs(~ 1, ~ 0, ~ 1, NULL, NULL, NULL, data),
+                 sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "theta"))
+    expect_error(set_modargs(~ 1, ~ -1, ~ 1, NULL, NULL, NULL, data),
+                 sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "theta"))
+    expect_error(set_modargs(~ 1, ~ xxx, ~ 1, NULL, NULL, NULL, data),
+                 sprintf("Unexpected terms in formula_theta: %s", "xxx"))
+})
+
+
 #test_that("Setup for a null model works", {
 #    result <- set_modargs(~ 1, ~ 1, ~ 1,
 #                          occumbData(y = array(0, dim = rep(2, 3))))
