@@ -195,6 +195,27 @@ set_modargs <- function(formula_phi,
     theta_shared <- !is.null(formula_theta_shared)
     psi_shared   <- !is.null(formula_psi_shared)
 
+    # theta_shared
+
+    if (theta_shared) {
+        # Stop when formula_theta_shared does not have an intercept
+        check_intercept(formula_theta_shared, "theta_shared")
+        # Stop when formula_theta_shared includes a term other than
+        # site_cov, spec_cov, and their interaction
+        check_wrong_terms(formula_theta_shared,
+                          c(names(data@spec_cov),
+                            names(data@site_cov),
+                            names(data@repl_cov)),
+                          "theta_shared")
+
+        theta_shared_main_effects <- main_effects(terms(formula_theta_shared))
+
+        # For theta = "ijk"
+        # For theta = "i"
+        # For theta = "ij"
+
+    }
+
     # psi_shared
 
     if (psi_shared) {
@@ -203,7 +224,7 @@ set_modargs <- function(formula_phi,
         # Stop when formula_psi_shared includes a term other than
         # site_cov, spec_cov, and their interaction
         check_wrong_terms(formula_psi_shared,
-                          c(names(data@site_cov), names(data@spec_cov)),
+                          c(names(data@spec_cov), names(data@site_cov)),
                           "psi_shared")
 
         psi_shared_main_effects <- main_effects(terms(formula_psi_shared))
@@ -262,9 +283,9 @@ set_modargs <- function(formula_phi,
         M         <- M + 1
         m_theta   <- seq(m_phi[length(m_phi)] + 1, m_phi[length(m_phi)] + 1)
     } else {
-        # Stop when formula_psi does not have an intercept
+        # Stop when formula_theta does not have an intercept
         check_intercept(formula_theta, "theta")
-        # Stop when formula_psi includes a term not in the site covariates
+        # Stop when formula_theta includes a term other than site/repl covs
         check_wrong_terms(formula_theta,
                           c(names(data@site_cov),
                             names(data@repl_cov)),
@@ -467,7 +488,7 @@ extract_covariate <- function(cov_name, data) {
 `%!in%` <- Negate(`%in%`)
 
 check_wrong_terms <- function(formula, correct_terms,
-                              type = c("psi", "theta", "psi_shared")) {
+                              type = c("theta", "psi", "psi_shared", "theta_shared")) {
     test_terms <- terms(formula)
     wrong_terms <- main_effects(test_terms) %!in% correct_terms
 
@@ -480,10 +501,14 @@ Note that only site covariates are allowed for formula_%s.",
             stop(sprintf("Unexpected terms in formula_%s: %s
 Note that species covariates are not allowed for formula_%s.",
                          type, test_terms[wrong_terms], type)) 
+        if (type == "theta_shared")
+            stop(sprintf("Unexpected terms in formula_%s: %s
+Make sure they are found in either spec_cov, site_cov, or repl_cov.",
+                         type, test_terms[wrong_terms])) 
         if (type == "psi_shared")
-            stop(sprintf("Unexpected terms in formula_psi_shared: %s
-Note that only site covariates, species covariates, or their interactions are allowed for formula_psi_shared.",
-                         test_terms[wrong_terms])) 
+            stop(sprintf("Unexpected terms in formula_%s: %s
+Note that only site covariates, species covariates, or their interactions are allowed for formula_%s.",
+                         type, test_terms[wrong_terms], type)) 
     }
 }
 

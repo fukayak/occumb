@@ -393,6 +393,125 @@ Note that species covariates are not allowed for formula_theta.",
 Note that species covariates are not allowed for formula_theta.",
                          "xxx"))
 })
+test_that("Temp: theta_shared correct", {
+#    ## Output
+#    # spec_cov (continuous)
+#    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov1, data)
+#    expect_equal(result$psi, "i")
+#    expect_true(result$psi_shared)
+#    expect_equal(result$M_psi_shared, 1)
+#    ans_cov <- array(dim = c(I, 1))
+#    for (i in 1:I) {
+#        ans_cov[i, 1] <- cov1[i]
+#    }
+#    colnames(ans_cov) <- "cov1"
+#    expect_equal(result$cov_psi_shared, ans_cov)
+#
+#    # spec_cov (factor)
+#    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov2, data)
+#    expect_equal(result$psi, "i")
+#    expect_true(result$psi_shared)
+#    expect_equal(result$M_psi_shared, 1)
+#    ans_cov <- array(dim = c(I, 1))
+#    for (i in 1:I) {
+#        ans_cov[i, 1] <- as.numeric((cov2[i] == 2))
+#    }
+#    colnames(ans_cov) <- c("cov22")
+#    expect_equal(result$cov_psi_shared, ans_cov)
+#
+#    # spec_cov (interaction)
+#    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov1 * cov2, data)
+#    expect_equal(result$psi, "i")
+#    expect_true(result$psi_shared)
+#    expect_equal(result$M_psi_shared, 3)
+#    ans_cov <- array(dim = c(I, 3))
+#    for (i in 1:I) {
+#        ans_cov[i, 1] <- cov1[i]
+#        ans_cov[i, 2] <- as.numeric((cov2[i] == 2))
+#        ans_cov[i, 3] <- cov1[i] * as.numeric((cov2[i] == 2))
+#    }
+#    colnames(ans_cov) <- c("cov1", "cov22", "cov1:cov22")
+#    expect_equal(result$cov_psi_shared, ans_cov)
+#
+#    # site_cov (continuous)
+#    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov3, data)
+#    expect_equal(result$psi, "ij")
+#    expect_true(result$psi_shared)
+#    expect_equal(result$M_psi_shared, 1)
+#    ans_cov <- array(dim = c(I, J, 1))
+#    for (i in 1:I) {
+#        for (j in 1:J) {
+#        ans_cov[i, j, 1] <- cov3[j]
+#        }
+#    }
+#    dimnames(ans_cov)[[3]] <- "cov3"
+#    expect_equal(result$cov_psi_shared, ans_cov)
+#
+#    # site_cov (factor)
+#    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov4, data)
+#    expect_true(result$psi_shared)
+#    expect_equal(result$M_psi_shared, 2)
+#    ans_cov <- array(dim = c(I, J, 2))
+#    for (i in 1:I) {
+#        for (j in 1:J) {
+#        ans_cov[i, j, 1] <- as.numeric(cov4[j] == 2)
+#        ans_cov[i, j, 2] <- as.numeric(cov4[j] == 3)
+#        }
+#    }
+#    dimnames(ans_cov)[[3]] <- c("cov42", "cov43")
+#    expect_equal(result$cov_psi_shared, ans_cov)
+#
+#    # site_cov (interaction)
+#    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov3 * cov4, data)
+#    expect_true(result$psi_shared)
+#    expect_equal(result$M_psi_shared, 5)
+#    ans_cov <- array(dim = c(I, J, 5))
+#    for (i in 1:I) {
+#        for (j in 1:J) {
+#        ans_cov[i, j, 1] <- cov3[j]
+#        ans_cov[i, j, 2] <- as.numeric(cov4[j] == 2)
+#        ans_cov[i, j, 3] <- as.numeric(cov4[j] == 3)
+#        ans_cov[i, j, 4] <- cov3[j] * as.numeric(cov4[j] == 2)
+#        ans_cov[i, j, 5] <- cov3[j] * as.numeric(cov4[j] == 3)
+#        }
+#    }
+#    dimnames(ans_cov)[[3]] <- c("cov3", "cov42", "cov43",
+#                                "cov3:cov42", "cov3:cov43")
+#    expect_equal(result$cov_psi_shared, ans_cov)
+#
+#    # spec_cov * site_cov (interaction)
+#    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov1 * cov4, data)
+#    expect_equal(result$psi, "ij")
+#    expect_true(result$psi_shared)
+#    expect_equal(result$M_psi_shared, 5)
+#    ans_cov <- array(dim = c(I, J, 5))
+#    for (i in 1:I) {
+#        for (j in 1:J) {
+#            ans_cov[i, j, 1] <- cov1[i]
+#            ans_cov[i, j, 2] <- as.numeric(cov4[j] == 2)
+#            ans_cov[i, j, 3] <- as.numeric(cov4[j] == 3)
+#            ans_cov[i, j, 4] <- cov1[i] * as.numeric(cov4[j] == 2)
+#            ans_cov[i, j, 5] <- cov1[i] * as.numeric(cov4[j] == 3)
+#        }
+#    }
+#    dimnames(ans_cov)[[3]] <- c("cov1", "cov42", "cov43",
+#                                "cov1:cov42", "cov1:cov43")
+#    expect_equal(result$cov_psi_shared, ans_cov)
+#
+#    # repl_cov (not allowed)
+#    expect_error(set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov5, data),
+#                             sprintf("Unexpected terms in formula_psi_shared: %s
+#Note that only site covariates, species covariates, or their interactions are allowed for formula_psi_shared.", "cov5"))
+
+    ## Errors and Warnings
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ 0, NULL, data),
+                 "No intercept in formula_theta_shared: remove 0 or -1 from the formula")
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ -1, NULL, data),
+                 "No intercept in formula_theta_shared: remove 0 or -1 from the formula")
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ xxx, NULL, data),
+                             sprintf("Unexpected terms in formula_theta_shared: %s
+Make sure they are found in either spec_cov, site_cov, or repl_cov.", "xxx"))
+})
 
 
 #test_that("Setup for a null model works", {
