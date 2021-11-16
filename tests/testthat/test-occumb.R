@@ -91,23 +91,23 @@ test_that("Temp: psi correct", {
                  sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "psi"))
     expect_error(set_modargs(~ 1, ~ 1, ~ -1, NULL, NULL, NULL, data),
                  sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "psi"))
-    expect_error(set_modargs(~ 1, ~ 1, ~ cov3, NULL, NULL, NULL, data),
+    expect_error(set_modargs(~ 1, ~ 1, ~ xxx, NULL, NULL, NULL, data),
                  sprintf("Unexpected terms in formula_psi: %s
 Only site covariates are allowed for formula_psi.",
-                         "cov3"))
+                         "xxx"))
 })
 test_that("Temp: psi_shared correct", {
     I <- 2; J <- 3; K <- 1
     cov1 <- rnorm(I)
-    cov2 <- rnorm(J)
-    cov3 <- factor(1:J)
+    cov2 <- factor(1:I)
+    cov3 <- rnorm(J)
+    cov4 <- factor(1:J)
     data <- occumbData(y = array(0, dim = c(I, J, K)),
-                       spec_cov = list(cov1 = cov1),
-                       site_cov = list(cov2 = cov2,
-                                       cov3 = cov3))
+                       spec_cov = list(cov1 = cov1, cov2 = cov2),
+                       site_cov = list(cov3 = cov3, cov4 = cov4))
 
     ## Output
-    # spec_cov
+    # spec_cov (continuous)
     result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov1, data)
     expect_equal(result$psi, "i")
     expect_true(result$psi_shared)
@@ -119,48 +119,95 @@ test_that("Temp: psi_shared correct", {
     colnames(ans_cov) <- "cov1"
     expect_equal(result$cov_psi_shared, ans_cov)
 
-    # site_cov (continuous)
+    # spec_cov (factor)
     result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov2, data)
+    expect_equal(result$psi, "i")
+    expect_true(result$psi_shared)
+    expect_equal(result$M_psi_shared, 1)
+    ans_cov <- array(dim = c(I, 1))
+    for (i in 1:I) {
+        ans_cov[i, 1] <- as.numeric((cov2[i] == 2))
+    }
+    colnames(ans_cov) <- c("cov22")
+    expect_equal(result$cov_psi_shared, ans_cov)
+
+    # spec_cov (interaction)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov1 * cov2, data)
+    expect_equal(result$psi, "i")
+    expect_true(result$psi_shared)
+    expect_equal(result$M_psi_shared, 3)
+    ans_cov <- array(dim = c(I, 3))
+    for (i in 1:I) {
+        ans_cov[i, 1] <- cov1[i]
+        ans_cov[i, 2] <- as.numeric((cov2[i] == 2))
+        ans_cov[i, 3] <- cov1[i] * as.numeric((cov2[i] == 2))
+    }
+    colnames(ans_cov) <- c("cov1", "cov22", "cov1:cov22")
+    expect_equal(result$cov_psi_shared, ans_cov)
+
+    # site_cov (continuous)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov3, data)
     expect_equal(result$psi, "ij")
     expect_true(result$psi_shared)
     expect_equal(result$M_psi_shared, 1)
     ans_cov <- array(dim = c(I, J, 1))
     for (i in 1:I) {
         for (j in 1:J) {
-        ans_cov[i, j, 1] <- cov2[j]
+        ans_cov[i, j, 1] <- cov3[j]
         }
     }
-    dimnames(ans_cov)[[3]] <- "cov2"
+    dimnames(ans_cov)[[3]] <- "cov3"
     expect_equal(result$cov_psi_shared, ans_cov)
 
     # site_cov (factor)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov3, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov4, data)
     expect_true(result$psi_shared)
     expect_equal(result$M_psi_shared, 2)
     ans_cov <- array(dim = c(I, J, 2))
     for (i in 1:I) {
         for (j in 1:J) {
-        ans_cov[i, j, 1] <- as.numeric(cov3[j] == 2)
-        ans_cov[i, j, 2] <- as.numeric(cov3[j] == 3)
+        ans_cov[i, j, 1] <- as.numeric(cov4[j] == 2)
+        ans_cov[i, j, 2] <- as.numeric(cov4[j] == 3)
         }
     }
-    dimnames(ans_cov)[[3]] <- c("cov32", "cov33")
+    dimnames(ans_cov)[[3]] <- c("cov42", "cov43")
     expect_equal(result$cov_psi_shared, ans_cov)
 
-    # spec_cov * site_cov (continuous)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov1 * cov2, data)
+    # site_cov (interaction)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov3 * cov4, data)
+    expect_true(result$psi_shared)
+    expect_equal(result$M_psi_shared, 5)
+    ans_cov <- array(dim = c(I, J, 5))
+    for (i in 1:I) {
+        for (j in 1:J) {
+        ans_cov[i, j, 1] <- cov3[j]
+        ans_cov[i, j, 2] <- as.numeric(cov4[j] == 2)
+        ans_cov[i, j, 3] <- as.numeric(cov4[j] == 3)
+        ans_cov[i, j, 4] <- cov3[j] * as.numeric(cov4[j] == 2)
+        ans_cov[i, j, 5] <- cov3[j] * as.numeric(cov4[j] == 3)
+        }
+    }
+    dimnames(ans_cov)[[3]] <- c("cov3", "cov42", "cov43",
+                                "cov3:cov42", "cov3:cov43")
+    expect_equal(result$cov_psi_shared, ans_cov)
+
+    # spec_cov * site_cov (interaction)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov1 * cov4, data)
     expect_equal(result$psi, "ij")
     expect_true(result$psi_shared)
-    expect_equal(result$M_psi_shared, 3)
-    ans_cov <- array(dim = c(I, J, 3))
+    expect_equal(result$M_psi_shared, 5)
+    ans_cov <- array(dim = c(I, J, 5))
     for (i in 1:I) {
         for (j in 1:J) {
             ans_cov[i, j, 1] <- cov1[i]
-            ans_cov[i, j, 2] <- cov2[j]
-            ans_cov[i, j, 3] <- cov1[i] * cov2[j]
+            ans_cov[i, j, 2] <- as.numeric(cov4[j] == 2)
+            ans_cov[i, j, 3] <- as.numeric(cov4[j] == 3)
+            ans_cov[i, j, 4] <- cov1[i] * as.numeric(cov4[j] == 2)
+            ans_cov[i, j, 5] <- cov1[i] * as.numeric(cov4[j] == 3)
         }
     }
-    dimnames(ans_cov)[[3]] <- c("cov1", "cov2", "cov1:cov2")
+    dimnames(ans_cov)[[3]] <- c("cov1", "cov42", "cov43",
+                                "cov1:cov42", "cov1:cov43")
     expect_equal(result$cov_psi_shared, ans_cov)
 
     ## Errors and Warnings
@@ -168,9 +215,9 @@ test_that("Temp: psi_shared correct", {
                  sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "psi_shared"))
     expect_error(set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ -1, data),
                  sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "psi_shared"))
-    expect_error(set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov4, data),
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ xxx, data),
                              sprintf("Unexpected terms in formula_psi_shared: %s
-Only site covariates, species covariates, or their interactions are allowed for formula_psi_shared.", "cov4"))
+Only site covariates, species covariates, or their interactions are allowed for formula_psi_shared.", "xxx"))
 })
 #test_that("Setup for a null model works", {
 #    result <- set_modargs(~ 1, ~ 1, ~ 1,
