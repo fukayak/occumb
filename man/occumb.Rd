@@ -5,9 +5,12 @@
 \title{Model-fitting function.}
 \usage{
 occumb(
-  phi_formula = ~1,
-  theta_formula = ~1,
-  psi_formula = ~1,
+  formula_phi = ~1,
+  formula_theta = ~1,
+  formula_psi = ~1,
+  formula_phi_shared = NULL,
+  formula_theta_shared = NULL,
+  formula_psi_shared = NULL,
   data,
   prior_prec = 0.001,
   prior_ulim = 1000,
@@ -20,15 +23,6 @@ occumb(
 )
 }
 \arguments{
-\item{phi_formula}{A right-hand side formula describing covariates of
-sequence relative dominance.}
-
-\item{theta_formula}{A right-hand side formula describing covariates of
-sequence capture probability.}
-
-\item{psi_formula}{A right-hand side formula describing covariates of
-occupancy probability.}
-
 \item{data}{occumbData class object.}
 
 \item{prior_prec}{Precision of the normal prior distribution for the
@@ -62,6 +56,15 @@ function.}
 \item{parallel}{If TRUE, run MCMC chains in parallel on multiple CPU cores.
 Passed to the \code{parallel} argument of jagsUI's \code{jags()}
 function.}
+
+\item{phi_formula}{A right-hand side formula describing covariates of
+sequence relative dominance.}
+
+\item{theta_formula}{A right-hand side formula describing covariates of
+sequence capture probability.}
+
+\item{psi_formula}{A right-hand side formula describing covariates of
+occupancy probability.}
 }
 \value{
 An S4 object of the \code{occumbFit} class containing the results of

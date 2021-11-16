@@ -61,9 +61,6 @@ setClass("occumbFit", slots = c(fit = "jagsUI"))
 #' @return  An S4 object of the \code{occumbFit} class containing the results of
 #'          model fitting.
 #' @export
-#occumb <- function(phi_formula = ~ 1,
-#                   theta_formula = ~ 1,
-#                   psi_formula = ~ 1,
 occumb <- function(formula_phi = ~ 1,
                    formula_theta = ~ 1,
                    formula_psi = ~ 1,
@@ -86,7 +83,6 @@ occumb <- function(formula_phi = ~ 1,
     const <- set_const(data)
 
     # Define arguments for the specified model
-#    margs <- set_modargs(phi_formula, theta_formula, psi_formula, data)
     margs <- set_modargs(formula_phi,
                          formula_theta,
                          formula_psi,
@@ -95,73 +91,32 @@ occumb <- function(formula_phi = ~ 1,
                          formula_psi_shared,
                          data)
 
-#    # Write model file
-#    model <- write_jags_model(margs$phi,
-#                              margs$theta,
-#                              margs$psi,
-#                              margs$phi_shared,
-#                              margs$theta_shared,
-#                              margs$psi_shared)
+    # Set data list
+    dat <- set_data(const, margs, prior_prec, prior_ulim)
+
+    # Set initial values
+    inits <- set_inits(const, margs)
+
+    # Set parameters monitored
+    params <- set_params_monitored(margs$phi_shared,
+                                   margs$theta_shared,
+                                   margs$psi_shared)
+
+    # Write model file
     model <- tempfile()
     writeLines(write_jags_model(margs$phi, margs$theta, margs$psi,
                                 margs$phi_shared,
                                 margs$theta_shared,
                                 margs$psi_shared), model)
 
-    # Set data list
-    dat <- set_data(const, margs, prior_prec, prior_ulim)
-#    dat <- list(I          = const$I,
-#                J          = const$J,
-#                K          = const$K,
-#                N          = const$N,
-#                y          = const$y,
-#                cov_phi    = margs$cov_phi,
-#                cov_theta  = margs$cov_theta,
-#                cov_psi    = margs$cov_psi,
-#                M          = margs$M,
-#                m_phi      = margs$m_phi,
-#                m_theta    = margs$m_theta,
-#                m_psi      = margs$m_psi,
-#                prior_prec = prior_prec,
-#                prior_ulim = prior_ulim)
-
-    # Set initial values
-    inits <- set_inits(const, margs)
-#    inits <- function() {
-#        list(z = matrix(1, const$I, const$J),
-#             u = array(1, dim = c(const$I, const$J, const$K)),
-#             x = array(stats::rnorm(const$I * const$J * const$K,
-#                                    mean = 1, sd = 0.1),
-#                       dim = c(const$I, const$J, const$K)),
-#             spec_eff = matrix(stats::rnorm(const$I * margs$M, sd = 0.1),
-#                               const$I, margs$M),
-#             Mu       = stats::rnorm(margs$M, sd = 0.1),
-#             sigma    = stats::rnorm(margs$M, mean = 1, sd = 0.1),
-#             rho      = matrix(stats::rnorm(margs$M^2, sd = 0.1),
-#                               margs$M, margs$M))
-#    }
-
-    # Set parameters monitored
-    params <- set_params_monitored(margs$phi_shared,
-                                   margs$theta_shared,
-                                   margs$psi_shared)
-#    params <- c("Mu", "sigma", "rho", "alpha", "beta", "gamma",
-#                "phi", "theta", "psi", "z", "pi")
-
     # Run MCMC in JAGS
-    fit <- jagsUI::jags(
-        dat, inits, params, model,
-#        dat, inits, params, model = tf,
-#        dat, inits, params,
-#        system.file("jags",
-#                    sprintf("occumb%s.jags", margs$code),
-#                    package = "occumb"),
-        n.chains = n.chains,
-        n.adapt  = n.adapt,
-        n.iter   = n.iter,
-        n.burnin = n.burnin,
-        n.thin   = n.thin,
-        parallel = parallel)
+    fit <- jagsUI::jags(dat, inits, params, model,
+                        n.chains = n.chains,
+                        n.adapt  = n.adapt,
+                        n.iter   = n.iter,
+                        n.burnin = n.burnin,
+                        n.thin   = n.thin,
+                        parallel = parallel)
 
     # Output
     out <- methods::new("occumbFit", fit = fit)
@@ -252,7 +207,7 @@ set_modargs <- function(formula_phi,
             dimnames(cov_phi_shared)[[3]] <- colnames(dm)
             M_phi_shared <- dim(cov_phi_shared)[3]
 
-        # For theta = "i"
+        # For phi = "i"
         } else {
             # Generate covariate objects
             for (n in seq_along(phi_shared_main_effects))
@@ -427,7 +382,6 @@ set_modargs <- function(formula_phi,
             # Set design matrix
             dm <- set_design_matrix(formula_phi)
             cov_phi <- array(dm, c(dim(data@y)[1], dim(data@y)[2], ncol(dm)))
-
             dimnames(cov_phi)[[3]] <- colnames(dm)
             M       <- M + dim(cov_phi)[3]
             m_phi <- seq(1, dim(cov_phi)[3])
@@ -477,7 +431,6 @@ set_modargs <- function(formula_phi,
             # Set design matrix
             dm <- set_design_matrix(formula_theta)
             cov_theta <- array(dm, c(dim(data@y)[1], dim(data@y)[2], ncol(dm)))
-
             dimnames(cov_theta)[[3]] <- colnames(dm)
             M       <- M + dim(cov_theta)[3]
             m_theta <- seq(m_phi + 1, m_phi + dim(cov_theta)[3])
@@ -511,9 +464,9 @@ set_modargs <- function(formula_phi,
         m_psi   <- seq(m_theta + 1, m_theta + dim(cov_psi)[[3]])
     }
 
-    out <- list(phi              = set_phi_theta(formula_phi, formula_phi_shared, data),
-                theta            = set_phi_theta(formula_theta, formula_theta_shared, data),
-                psi              = set_psi(formula_psi, formula_psi_shared, data),
+    out <- list(phi   = set_phi_theta(formula_phi, formula_phi_shared, data),
+                theta = set_phi_theta(formula_theta, formula_theta_shared, data),
+                psi   = set_psi(formula_psi, formula_psi_shared, data),
                 phi_shared       = phi_shared,
                 theta_shared     = theta_shared,
                 psi_shared       = psi_shared,
@@ -533,226 +486,90 @@ set_modargs <- function(formula_phi,
 
     out
 }
-#set_modargs <- function(phi_formula, theta_formula, psi_formula, data) {
-#    M    <- 0           # Order of species effects
-#    code <- "000000"    # Model code
-#
-#    if (phi_formula == ~ 1) {
-#        cov_phi <- 1
-#        M       <- M + 1
-#        m_phi   <- 1
-#        substr(code, 1, 1) <- "1"
-#    } else {
-#        stop("Covariates in phi_formula are not yet supported, sorry.")
-#    }
-#
-#    if (theta_formula == ~ 1) {
-#        cov_theta <- 1
-#        M         <- M + 1
-#        m_theta   <- seq(m_phi + 1, m_phi + 1)
-#        substr(code, 2, 2) <- "1"
-#    } else {
-#        stop("Covariates in theta_formula are not yet supported, sorry.")
-#    }
-#
-#    if (psi_formula == ~ 1) {
-#        cov_psi <- 1
-#        M       <- M + 1
-#        m_psi   <- seq(m_theta + 1, m_theta + 1)
-#        substr(code, 3, 3) <- "1"
-#    } else {
-#        cov_psi <- stats::model.matrix(stats::as.formula(psi_formula),
-#                                       data@site_cov)
-#        M       <- M + ncol(cov_psi)
-#        m_psi   <- seq(m_theta + 1, m_theta + ncol(cov_psi))
-#        substr(code, 3, 3) <- "2"
-#    }
-#
-#    out <- list(M         = M,
-#                code      = code,
-#                cov_phi   = cov_phi,
-#                cov_theta = cov_theta,
-#                cov_psi   = cov_psi,
-#                m_phi     = m_phi,
-#                m_theta   = m_theta,
-#                m_psi     = m_psi)
-#    out
-#}
 
-# Redefine the terms() function (!! DO NOT EXPORT !!)
-terms <- function(formula) {
-    if (is.null(formula))
-        NULL
-    else
-        attr(stats::terms(formula), which = "term.labels")
+# Auto-generate the data list
+set_data <- function(const, margs, prior_prec, prior_ulim) {
+    dat <- list(I          = const$I,
+                J          = const$J,
+                K          = const$K,
+                N          = const$N,
+                y          = const$y,
+                cov_phi    = margs$cov_phi,
+                cov_theta  = margs$cov_theta,
+                cov_psi    = margs$cov_psi,
+                M          = margs$M,
+                m_phi      = margs$m_phi,
+                m_theta    = margs$m_theta,
+                m_psi      = margs$m_psi,
+                prior_prec = prior_prec,
+                prior_ulim = prior_ulim)
+
+    if (margs$phi_shared)
+        dat$cov_phi_shared <- margs$cov_phi_shared
+        dat$M_phi_shared   <- margs$M_phi_shared
+    if (margs$theta_shared)
+        dat$cov_theta_shared <- margs$cov_theta_shared
+        dat$M_theta_shared   <- margs$M_theta_shared
+    if (margs$psi_shared)
+        dat$cov_psi_shared <- margs$cov_psi_shared
+        dat$M_psi_shared   <- margs$M_psi_shared
+
+    dat
 }
 
-main_effects <- function(terms) {
-    if (is.null(terms))
-        NULL
-    else
-        unique(unlist(strsplit(terms, split = ":")))
+# Auto-generate the initial value function
+set_inits <- function(const, margs) {
+    eval(parse(text = inits_code(const, margs)))
 }
 
-set_psi <- function(formula_psi, formula_psi_shared, data) {
-    shared_main_effects <- main_effects(terms(formula_psi_shared))
+# Auto-generate codes for the initial value function
+inits_code <- function(const, margs) {
+    out <- c(
+        "function() {",
+        "    list(z = matrix(1, const$I, const$J),",
+        "         u = array(1, dim = c(const$I, const$J, const$K)),",
+        "         x = array(stats::rnorm(const$I * const$J * const$K,",
+        "                                mean = 1, sd = 0.1),",
+        "                   dim = c(const$I, const$J, const$K)),")
 
-    if (formula_psi == ~ 1) {
-        if (is.null(shared_main_effects)) {
-            psi <- "i"
-        } else if (any(shared_main_effects %in% names(data@site_cov))) {
-            psi <- "ij"
-        } else {
-            psi <- "i"
-        }
-    } else {
-        psi <- "ij"
-    }
+    if (margs$phi_shared)
+        out <- c(out, "         alpha_shared = stats::rnorm(margs$M_phi_shared, sd = 0.1),")
+    if (margs$theta_shared)
+        out <- c(out, "         beta_shared  = stats::rnorm(margs$M_theta_shared, sd = 0.1),")
+    if (margs$psi_shared)
+        out <- c(out, "         gamma_shared = stats::rnorm(margs$M_psi_shared, sd = 0.1),")
 
-    psi
-}
-
-set_phi_theta <- function(formula, formula_shared, data) {
-    m_eff  <- main_effects(terms(formula))
-    sm_eff <- main_effects(terms(formula_shared))
-
-    if (any(c(m_eff, sm_eff) %in% names(data@repl_cov))) {
-        out <- "ijk"
-    } else {
-        if (formula == ~ 1) {
-            if (is.null(sm_eff)) {
-                out <- "i"
-            } else if (any(sm_eff %in% names(data@site_cov))) {
-                out <- "ij"
-            } else {
-                out <- "i"
-            }
-        } else {
-            out <- "ij"
-        }
-    }
+    out <- c(out,
+        "         spec_eff = matrix(stats::rnorm(const$I * margs$M, sd = 0.1),",
+        "                           const$I, margs$M),",
+        "         Mu       = stats::rnorm(margs$M, sd = 0.1),",
+        "         sigma    = stats::rnorm(margs$M, mean = 1, sd = 0.1),",
+        "         rho      = matrix(stats::rnorm(margs$M^2, sd = 0.1),",
+        "                           margs$M, margs$M))",
+        "}")
 
     out
 }
 
-extract_covariate <- function(cov_name, data) {
-    if (cov_name %in% names(data@spec_cov))
-        cov_type <- "spec_cov"
-    if (cov_name %in% names(data@site_cov))
-        cov_type <- "site_cov"
-    if (cov_name %in% names(data@repl_cov))
-        cov_type <- "repl_cov"
+# Auto-generate the list of parameters monitored
+set_params_monitored <- function(phi_shared, theta_shared, psi_shared) {
+    params <- c("Mu", "sigma", "rho", "alpha", "beta", "gamma")
 
-    eval(parse(text = sprintf("data@%s$%s", cov_type, cov_name)))
+    if (phi_shared)
+        params <- c(params, "alpha_shared")
+    if (theta_shared)
+        params <- c(params, "beta_shared")
+    if (psi_shared)
+        params <- c(params, "gamma_shared")
+
+    params <- c(params, c("phi", "theta", "psi", "z", "pi"))
+
+    params
 }
-
-`%!in%` <- Negate(`%in%`)
-
-check_wrong_terms <- function(formula, correct_terms,
-                              type = c("phi", "theta", "psi",
-                                       "phi_shared", "theta_shared", "psi_shared")) {
-    test_terms <- terms(formula)
-    wrong_terms <- main_effects(test_terms) %!in% correct_terms
-
-    if (any(wrong_terms)) {
-        if (type == "phi")
-            stop(sprintf("Unexpected terms in formula_%s: %s
-Note that species covariates are not allowed for formula_%s.",
-                         type, test_terms[wrong_terms], type)) 
-        if (type == "theta")
-            stop(sprintf("Unexpected terms in formula_%s: %s
-Note that species covariates are not allowed for formula_%s.",
-                         type, test_terms[wrong_terms], type)) 
-        if (type == "psi")
-            stop(sprintf("Unexpected terms in formula_%s: %s
-Note that only site covariates are allowed for formula_%s.",
-                         type, test_terms[wrong_terms], type)) 
-        if (type == "phi_shared")
-            stop(sprintf("Unexpected terms in formula_%s: %s
-Make sure they are found in either spec_cov, site_cov, or repl_cov.",
-                         type, test_terms[wrong_terms])) 
-        if (type == "theta_shared")
-            stop(sprintf("Unexpected terms in formula_%s: %s
-Make sure they are found in either spec_cov, site_cov, or repl_cov.",
-                         type, test_terms[wrong_terms])) 
-        if (type == "psi_shared")
-            stop(sprintf("Unexpected terms in formula_%s: %s
-Note that only site covariates, species covariates, or their interactions are allowed for formula_%s.",
-                         type, test_terms[wrong_terms], type)) 
-    }
-}
-
-has_intercept <- function(formula) {
-    as.logical(attributes(stats::terms(formula))$intercept)
-}
-
-check_intercept <- function(formula, type = c("psi", "psi_shared")) {
-    if (!has_intercept(formula))
-        stop(sprintf("No intercept in formula_%s: remove 0 or -1 from the formula",
-                     type))
-}
-
-#xxxx <- function(formula, data, type = "psi_shared") {
-#
-#    # Generate covariate objects
-#    m_eff <- main_effects(terms(formula))
-#
-#    if (type == "psi_shared") {
-#        # For psi = "ij"
-#        if (any(m_eff %in% names(data@site_cov))) {
-#            for (n in seq_along(m_eff)) {
-#                if (m_eff[n] %in% names(data@spec_cov))
-#                    eval(parse(text = sprintf("%s <- rep(extract_covariate(m_eff[%s], data), dim(data@y)[2])", m_eff[n], n)))
-#                if (m_eff[n] %in% names(data@site_cov))
-#                    eval(parse(text = sprintf("%s <- rep(extract_covariate(m_eff[%s], data), each = dim(data@y)[1])", m_eff[n], n)))
-#            }
-#
-#            tmp <- set_design_matrix(formula, type)
-#            cov_psi_shared <- array(tmp, c(dim(data@y)[1], dim(data@y)[2], ncol(tmp)))
-#            M_psi_shared   <- dim(cov_psi_shared)[3]
-#
-#        # For psi = "i"
-#        } else {
-#            for (n in seq_along(m_eff)) {
-#                eval(parse(text = sprintf("%s <- extract_covariate(m_eff[%s], data)", m_eff[n], n)))
-#            }
-#
-#            tmp <- set_design_matrix(formula, type)
-#            cov_psi_shared <- matrix(tmp, nrow = dim(data@y)[1])
-#            M_psi_shared   <- ncol(cov_psi_shared)
-#        }
-#    }
-#
-##    # Set design matrix
-##    out <- stats::model.matrix(formula, parent.frame())
-##    # When formula includes an intercept term, remove it and issue a warning
-##    if (any(colnames(out) %in% "(Intercept)")) {
-##        out <- out[, colnames(out) %!in% "(Intercept)"]
-##        warning(sprintf("formula_%s should not include an intercept term: it will be removed.", type))
-##    }
-##
-##    out
-#}
-
-set_design_matrix <- function(formula, omit_intercept = FALSE) {
-    out <- stats::model.matrix(formula, parent.frame())
-
-    if (omit_intercept) {
-        if (sum(colnames(out) %!in% "(Intercept)") > 1) {
-            out <- out[, colnames(out) %!in% "(Intercept)"]
-        } else {
-            cn <- colnames(out)[colnames(out) %!in% "(Intercept)"]
-            out <- matrix(out[, colnames(out) %!in% "(Intercept)"], ncol = 1)
-            colnames(out) <- cn
-        }
-    }
-
-    out
-}
-
 
 # Auto-generate JAGS model code
-write_jags_model <- function(phi, theta, psi, phi_shared, theta_shared, psi_shared) {
+write_jags_model <- function(phi, theta, psi,
+                             phi_shared, theta_shared, psi_shared) {
 
     model <- readLines(system.file("jags",
                                    "occumb_template1.jags",
@@ -914,83 +731,133 @@ write_jags_model <- function(phi, theta, psi, phi_shared, theta_shared, psi_shar
     model
 }
 
-# Auto-generate the data list
-set_data <- function(const, margs, prior_prec, prior_ulim) {
-    dat <- list(I          = const$I,
-                J          = const$J,
-                K          = const$K,
-                N          = const$N,
-                y          = const$y,
-                cov_phi    = margs$cov_phi,
-                cov_theta  = margs$cov_theta,
-                cov_psi    = margs$cov_psi,
-                M          = margs$M,
-                m_phi      = margs$m_phi,
-                m_theta    = margs$m_theta,
-                m_psi      = margs$m_psi,
-                prior_prec = prior_prec,
-                prior_ulim = prior_ulim)
 
-    if (margs$phi_shared)
-        dat$cov_phi_shared <- margs$cov_phi_shared
-        dat$M_phi_shared   <- margs$M_phi_shared
-    if (margs$theta_shared)
-        dat$cov_theta_shared <- margs$cov_theta_shared
-        dat$M_theta_shared   <- margs$M_theta_shared
-    if (margs$psi_shared)
-        dat$cov_psi_shared <- margs$cov_psi_shared
-        dat$M_psi_shared   <- margs$M_psi_shared
+# Auxiliary functions for set_modargs() ----------------------------------------
+set_psi <- function(formula_psi, formula_psi_shared, data) {
+    shared_main_effects <- main_effects(terms(formula_psi_shared))
 
-    dat
+    if (formula_psi == ~ 1) {
+        if (is.null(shared_main_effects)) {
+            psi <- "i"
+        } else if (any(shared_main_effects %in% names(data@site_cov))) {
+            psi <- "ij"
+        } else {
+            psi <- "i"
+        }
+    } else {
+        psi <- "ij"
+    }
+
+    psi
 }
 
-# Auto-generate the initial value function
-set_inits <- function(const, margs) {
-    eval(parse(text = inits_code(const, margs)))
-}
+set_phi_theta <- function(formula, formula_shared, data) {
+    m_eff  <- main_effects(terms(formula))
+    sm_eff <- main_effects(terms(formula_shared))
 
-# Auto-generate codes for the initial value function
-inits_code <- function(const, margs) {
-    out <- c(
-        "function() {",
-        "    list(z = matrix(1, const$I, const$J),",
-        "         u = array(1, dim = c(const$I, const$J, const$K)),",
-        "         x = array(stats::rnorm(const$I * const$J * const$K,",
-        "                                mean = 1, sd = 0.1),",
-        "                   dim = c(const$I, const$J, const$K)),")
-
-    if (margs$phi_shared)
-        out <- c(out, "         alpha_shared = stats::rnorm(margs$M_phi_shared, sd = 0.1),")
-    if (margs$theta_shared)
-        out <- c(out, "         beta_shared  = stats::rnorm(margs$M_theta_shared, sd = 0.1),")
-    if (margs$psi_shared)
-        out <- c(out, "         gamma_shared = stats::rnorm(margs$M_psi_shared, sd = 0.1),")
-
-    out <- c(out,
-        "         spec_eff = matrix(stats::rnorm(const$I * margs$M, sd = 0.1),",
-        "                           const$I, margs$M),",
-        "         Mu       = stats::rnorm(margs$M, sd = 0.1),",
-        "         sigma    = stats::rnorm(margs$M, mean = 1, sd = 0.1),",
-        "         rho      = matrix(stats::rnorm(margs$M^2, sd = 0.1),",
-        "                           margs$M, margs$M))",
-        "}")
+    if (any(c(m_eff, sm_eff) %in% names(data@repl_cov))) {
+        out <- "ijk"
+    } else {
+        if (formula == ~ 1) {
+            if (is.null(sm_eff)) {
+                out <- "i"
+            } else if (any(sm_eff %in% names(data@site_cov))) {
+                out <- "ij"
+            } else {
+                out <- "i"
+            }
+        } else {
+            out <- "ij"
+        }
+    }
 
     out
 }
 
-# Auto-generate the list of parameters monitored
-set_params_monitored <- function(phi_shared, theta_shared, psi_shared) {
-    params <- c("Mu", "sigma", "rho", "alpha", "beta", "gamma")
-
-    if (phi_shared)
-        params <- c(params, "alpha_shared")
-    if (theta_shared)
-        params <- c(params, "beta_shared")
-    if (psi_shared)
-        params <- c(params, "gamma_shared")
-
-    params <- c(params, c("phi", "theta", "psi", "z", "pi"))
-
-    params
+check_intercept <- function(formula, type = c("psi", "psi_shared")) {
+    if (!has_intercept(formula))
+        stop(sprintf("No intercept in formula_%s: remove 0 or -1 from the formula",
+                     type))
 }
+
+has_intercept <- function(formula) {
+    as.logical(attributes(stats::terms(formula))$intercept)
+}
+
+check_wrong_terms <- function(formula, correct_terms,
+                              type = c("phi", "theta", "psi",
+                                       "phi_shared", "theta_shared", "psi_shared")) {
+    test_terms <- terms(formula)
+    wrong_terms <- main_effects(test_terms) %!in% correct_terms
+
+    if (any(wrong_terms)) {
+        if (type == "phi")
+            stop(sprintf("Unexpected terms in formula_%s: %s
+Note that species covariates are not allowed for formula_%s.",
+                         type, test_terms[wrong_terms], type)) 
+        if (type == "theta")
+            stop(sprintf("Unexpected terms in formula_%s: %s
+Note that species covariates are not allowed for formula_%s.",
+                         type, test_terms[wrong_terms], type)) 
+        if (type == "psi")
+            stop(sprintf("Unexpected terms in formula_%s: %s
+Note that only site covariates are allowed for formula_%s.",
+                         type, test_terms[wrong_terms], type)) 
+        if (type == "phi_shared")
+            stop(sprintf("Unexpected terms in formula_%s: %s
+Make sure they are found in either spec_cov, site_cov, or repl_cov.",
+                         type, test_terms[wrong_terms])) 
+        if (type == "theta_shared")
+            stop(sprintf("Unexpected terms in formula_%s: %s
+Make sure they are found in either spec_cov, site_cov, or repl_cov.",
+                         type, test_terms[wrong_terms])) 
+        if (type == "psi_shared")
+            stop(sprintf("Unexpected terms in formula_%s: %s
+Note that only site covariates, species covariates, or their interactions are allowed for formula_%s.",
+                         type, test_terms[wrong_terms], type)) 
+    }
+}
+
+main_effects <- function(terms) {
+    if (is.null(terms))
+        NULL
+    else
+        unique(unlist(strsplit(terms, split = ":")))
+}
+
+# Redefine the terms() function (!! DO NOT EXPORT !!)
+terms <- function(formula) {
+    if (is.null(formula))
+        NULL
+    else
+        attr(stats::terms(formula), which = "term.labels")
+}
+
+extract_covariate <- function(cov_name, data) {
+    if (cov_name %in% names(data@spec_cov))
+        cov_type <- "spec_cov"
+    if (cov_name %in% names(data@site_cov))
+        cov_type <- "site_cov"
+    if (cov_name %in% names(data@repl_cov))
+        cov_type <- "repl_cov"
+
+    eval(parse(text = sprintf("data@%s$%s", cov_type, cov_name)))
+}
+
+set_design_matrix <- function(formula, omit_intercept = FALSE) {
+    out <- stats::model.matrix(formula, parent.frame())
+
+    if (omit_intercept) {
+        if (sum(colnames(out) %!in% "(Intercept)") > 1) {
+            out <- out[, colnames(out) %!in% "(Intercept)"]
+        } else {
+            cn <- colnames(out)[colnames(out) %!in% "(Intercept)"]
+            out <- matrix(out[, colnames(out) %!in% "(Intercept)"], ncol = 1)
+            colnames(out) <- cn
+        }
+    }
+
+    out
+}
+# -----------------------------------------------------------------------------
 
