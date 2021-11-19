@@ -5,89 +5,179 @@
 \title{Model-fitting function.}
 \usage{
 occumb(
-  phi_formula = ~1,
-  theta_formula = ~1,
-  psi_formula = ~1,
+  formula_phi = ~1,
+  formula_theta = ~1,
+  formula_psi = ~1,
+  formula_phi_shared = ~1,
+  formula_theta_shared = ~1,
+  formula_psi_shared = ~1,
+  prior_prec = 1e-04,
+  prior_ulim = 10000,
   data,
-  prior_prec = 0.001,
-  prior_ulim = 1000,
-  n.chains = 6,
-  n.adapt = 1000,
-  n.burnin = 30000,
-  n.thin = 500,
-  n.iter = 500 * n.thin + n.burnin,
-  parallel = TRUE
+  n.chains = 4,
+  n.adapt = NULL,
+  n.burnin = 10000,
+  n.thin = 10,
+  n.iter = 20000,
+  parallel = FALSE
 )
 }
 \arguments{
-\item{phi_formula}{A right-hand side formula describing covariates of
-sequence relative dominance.}
+\item{formula_phi}{A right-hand side formula describing species-specific
+effects of sequence relative dominance (\eqn{\phi}).}
 
-\item{theta_formula}{A right-hand side formula describing covariates of
-sequence capture probability.}
+\item{formula_theta}{A right-hand side formula describing species-specific
+effects of sequence capture probability (\eqn{\theta}).}
 
-\item{psi_formula}{A right-hand side formula describing covariates of
-occupancy probability.}
+\item{formula_psi}{A right-hand side formula describing species-specific
+effects of occupancy probability (\eqn{\psi}).}
 
-\item{data}{occumbData class object.}
+\item{formula_phi_shared}{A right-hand side formula describing effects of
+sequence relative dominance (\eqn{\phi}) that are common across
+species. The intercept term is ignored (see Details).}
+
+\item{formula_theta_shared}{A right-hand side formula describing effects of
+sequence capture probability (\eqn{\theta}) that are common across
+species.
+The intercept term is ignored (see Details).}
+
+\item{formula_psi_shared}{A right-hand side formula describing effects of
+occupancy probability (\eqn{\psi}) that are common across species.
+The intercept term is ignored (see Details).}
 
 \item{prior_prec}{Precision of the normal prior distribution for the
-community-level average of species-specific parameters.}
+community-level average of species-specific parameters and effects
+common across species.}
 
 \item{prior_ulim}{Upper limit of the uniform prior distribution for the
 standard deviation of species-specific parameters.}
 
-\item{n.chains}{Number of Markov chains to run.
-Passed to the \code{n.chains} argument of jagsUI's \code{jags()}
-function.}
+\item{data}{A dataset supplied as an \code{\link{occumbData}} class object.}
 
-\item{n.adapt}{Number of iterations to run in the JAGS adaptive phase.
-Passed to the \code{n.adapt} argument of jagsUI's \code{jags()}
-function.
-See the document of jagsUI's \code{jags()} function for details.}
+\item{n.chains}{Number of Markov chains to run.}
 
-\item{n.burnin}{Number of iterations at the beginning of the chain to discard.
-Passed to the \code{n.burnin} argument of jagsUI's \code{jags()}
-function.
-See the document of jagsUI's \code{jags()} function for details.}
+\item{n.adapt}{Number of iterations to run in the JAGS adaptive phase.}
 
-\item{n.thin}{Thinning rate. Must be a positive integer.
-Passed to the \code{n.thin} argument of jagsUI's \code{jags()}
-function.}
+\item{n.burnin}{Number of iterations at the beginning of the chain to discard.}
 
-\item{n.iter}{Total number of iterations per chain (including burn-in).
-Passed to the \code{n.iter} argument of jagsUI's \code{jags()}
-function.}
+\item{n.thin}{Thinning rate. Must be a positive integer.}
 
-\item{parallel}{If TRUE, run MCMC chains in parallel on multiple CPU cores.
-Passed to the \code{parallel} argument of jagsUI's \code{jags()}
-function.}
+\item{n.iter}{Total number of iterations per chain (including burn-in).}
+
+\item{parallel}{If TRUE, run MCMC chains in parallel on multiple CPU cores.}
 }
 \value{
 An S4 object of the \code{occumbFit} class containing the results of
 model fitting.
 }
 \description{
-\code{occumb()} fits a specified site-occupancy model to a dataset and returns
-a model-fit object containing posterior samples.
+\code{occumb()} fits the multispecies site-occupancy model for eDNA
+metabarcoding (Fukaya et al. 2021) and returns a model-fit object containing
+posterior samples.
 }
-\section{Details}{
+\details{
+\code{occumb()} allows the fitting of a range of the multispecies site
+occupancy models including covariates at different levels of the data
+generation process.
+The most general form of the model can be written as follows:
 
-\code{occumb()} allows the fitting of a range of site occupancy models
-for sequence read counts that includes covariates at different levels
-of the data generation process, via the specification of the model
-formula in \code{phi_formula}, \code{theta_formula}, and
-\code{psi_formula.}
-The specified model and dataset are passed to JAGS via the
-interface provided by the jagsUI package, where Markov chain
-Monte Carlo methods are used to obtain posterior samples of model
-parameters.\preformatted{ For the resulting object, the following methods and functions provided
- by the jagsUI package can be applied:
+Sequence read counts:
+\deqn{(y_{1jk}, ..., y_{Ijk}) \sim \textrm{Multinomial}((\pi_{1jk}, ...,  \pi_{Ijk}), N_{jk}),}{(y_{1jk}, ..., y_{Ijk}) ~ Multinomial((pi_{1jk}, ..., pi_{Ijk}), N_{jk}),}
+\deqn{\pi_{ijk} = \frac{u_{ijk}r_{ijk}}{\sum_m u_{mjk}r_{mjk}},}{pi_{ijk} = (u_{ijk} * r_{ijk}) / (\sum_m (u_{mjk} * r_{mjk})),}
 
- plot(); print(); summary()
+Relative frequency of species sequences:
+\deqn{r_{ijk} \sim \textrm{Gamma}(\phi_{ijk}, 1),}{r_{ijk} ~ Gamma(phi_{ijk}, 1),}
 
- Currently, occumb() supports covariate modeling only for
- psi_formula in which site covariates can be incorporated.
+Capture of species sequences:
+\deqn{u_{ijk} \sim \textrm{Bernoulli}(z_{ij}\theta_{ijk}),}{u_{ijk} ~ Bernoulli(z_{ij} * theta_{ijk}),}
+
+Site occupancy of species:
+\deqn{z_{ij} \sim \textrm{Bernoulli}(\psi_{ij}),}{z_{ij} ~ Bernoulli(psi_{ij}),}
+where the variations of \eqn{\phi}{phi}, \eqn{\theta}{theta}, and
+\eqn{\psi}{psi} are modeled by specifying model formulas in
+\code{formula_phi}, \code{formula_theta}, \code{formula_psi},
+\code{formula_phi_shared}, \code{formula_theta_shared}, and
+\code{formula_psi_shared.}
+
+Each parameter may have species-specific effects and effects that are common
+across species, where the former is specified by \code{formula_phi},
+\code{formula_theta}, and \code{formula_psi}, while
+\code{formula_phi_shared}, \code{formula_theta_shared}, and
+\code{formula_psi_shared} specify the latter.
+Because species-specific intercepts are specified by default, the intercept
+term in the \code{formula_phi_shared}, \code{formula_theta_shared}, and
+\code{formula_psi_shared} are always ignored.
+The covariate terms must be found in the names of the list elements stored
+in \code{spec_cov}, \code{site_cov}, or \code{repl_cov} slots in the dataset
+object provided with the \code{data} argument.
+Covariates are modeled using the log link function for \eqn{\phi}{phi}
+and logit link function for \eqn{\theta}{theta} and \eqn{\psi.}{psi.}
+
+The two arguments, \code{prior_prec} and \code{prior_ulim}, control the
+prior distribution of parameters. For the community-level average of
+species-specific effects and for effects common across species, a normal
+prior distribution with mean 0 and precision (i.e., the inverse of the
+variance) \code{prior_prec} is specified. For the standard deviation of
+species-specific effects, a uniform prior distribution with a lower limit of
+0 and an upper limit of \code{prior_ulim} is specified. For the correlation
+coefficient of species-specific effects, a uniform prior distribution in the
+range of \eqn{-1} to 1 is specified by default.
+
+The \code{data} argument requires a dataset object generated using
+\code{ocumbData()}: see the document of \code{\link{occumbData}()}.
+
+The model is fit via the \code{\link[jagsUI]{jags}()} function of the
+jagsUI package, where Markov chain Monte Carlo methods are used to
+obtain posterior samples of parameters and latent variables.
+Arguments \code{n.chains}, \code{n.adapt}, \code{n.burnin}, \code{n.thin},
+\code{n.iter}, and \code{parallel} are passed on to the argument of the
+same name in the \code{\link[jagsUI]{jags}()} function.
+See the document of jagsUI's \code{\link[jagsUI]{jags}()} function for
+details.
+}
+\section{References}{
+
+K. Fukaya, N. I. Kondo, S. S. Matsuzaki and T. Kadoya (2021)
+Multispecies site occupancy modelling and study design for spatially
+replicated environmental DNA metabarcoding. \emph{Methods in Ecology
+and Evolution}. https://doi.org/10.1111/2041-210X.13732
+}
+
+\examples{
+# Generate the smallest random dataset (2 species * 2 sites * 2 reps)
+I <- 2 # Number of species
+J <- 2 # Number of sites
+K <- 2 # Number of replicates
+data <- occumbData(
+    y = array(sample.int(I * J * K), dim = c(I, J, K)),
+    spec_cov = list(cov1 = rnorm(I)),
+    site_cov = list(cov2 = rnorm(J),
+                    cov3 = factor(1:J)),
+    repl_cov = list(cov4 = matrix(rnorm(J * K), J, K)))
+
+\dontrun{
+# Fitting a null model (includes only species-specific intercepts)
+occumb(data = data)
+
+# Add species-specific effects of site covariates in occupancy probabilities
+res1 <- occumb(formula_psi = ~ cov2, data = data)        # Continuous covariate
+res2 <- occumb(formula_psi = ~ cov3, data = data)        # Categorical covariate
+res3 <- occumb(formula_psi = ~ cov2 * cov3, data = data) # Interaction
+
+# Add species covariate in the three parameters
+# Note that species covariates are modeled as common effects
+res4 <- occumb(formula_phi_shared = ~ cov1, data = data)   # phi
+res5 <- occumb(formula_theta_shared = ~ cov1, data = data) # theta
+res6 <- occumb(formula_psi_shared = ~ cov1, data = data)   # psi
+
+# Add replicate covariates
+# Note that replicate covariates can only be specified for theta and phi
+res7 <- occumb(formula_phi = ~ cov4, data = data)   # phi
+res8 <- occumb(formula_theta = ~ cov4, data = data) # theta
+
+# Specify the prior distribution and MCMC settings explicitly
+res9 <- occumb(data = data, prior_prec = 1E-2, prior_ulim = 1E2,
+               n.chains = 1, n.burnin = 1000, n.thin = 1, n.iter = 2000)
+res10 <- occumb(data = data, parallel = TRUE) # Run MCMC in parallel
 }
 }
-

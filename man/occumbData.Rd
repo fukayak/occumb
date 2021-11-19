@@ -13,35 +13,44 @@ Data for missing replicates must be represented by zero vectors.
 NAs are not allowed.}
 
 \item{spec_cov}{A named list of species covariates.
-Each element must be a vector of numeric or factor whose
-length is equal to dim(y)[1] (i.e., the number of species).
-NAs are not allowed.}
+Each element must be a vector of numeric, factor, or
+character whose length is equal to \code{dim(y)[1]} (i.e.,
+the number of species). Characters are automatically
+converted to factors. NAs are not allowed.}
 
 \item{site_cov}{A named list of site covariates.
-Each element must be a vector of numeric or factor whose
-length is equal to dim(y)[2] (i.e., the number of sites).
-NAs are not allowed.}
+Each element must be a vector of numeric, factor, or
+character whose length is equal to \code{dim(y)[2]} (i.e.,
+the number of sites). Characters are automatically converted
+to factors. NAs are not allowed.}
 
 \item{repl_cov}{A named list of replicate covariates.
-Currently not yet available.}
+Each element must be a matrix of numeric, factor, or
+character whose dimension is equal to \code{dim(y)[2:3]}
+(i.e., the number of sites \eqn{\times}{*} number of
+replicates). Characters are automatically converted to
+factors. NAs are not allowed.}
 }
 \value{
 An S4 object of the \code{occumbData} class.
 }
 \description{
-\code{occumbData} creates a data list compatible with the model-fitting
-function \code{occumb}.
+\code{occumbData}() creates a data list compatible with the model-fitting
+function \code{\link{occumb}()}.
 }
-\section{Details}{
-
-The element names for spec_cov, site_cov, and repl_cov must all be unique.
+\details{
+The element names for \code{spec_cov}, \code{site_cov}, and \code{repl_cov}
+must all be unique.
 }
-
 \examples{
-# Generate a small, random dataset
+# Generate the smallest random dataset (2 species * 2 sites * 2 reps)
+I <- 2 # Number of species
+J <- 2 # Number of sites
+K <- 2 # Number of replicates
 data <- occumbData(
-    y = array(sample.int(8), dim = rep(2, 3)),
-    spec_cov = list(cov1 = rnorm(2)),
-    site_cov = list(cov2 = rnorm(2),
-                    cov3 = factor(1:2)))
+    y = array(sample.int(I * J * K), dim = c(I, J, K)),
+    spec_cov = list(cov1 = rnorm(I)),
+    site_cov = list(cov2 = rnorm(J),
+                    cov3 = factor(1:J)),
+    repl_cov = list(cov4 = matrix(rnorm(J * K), J, K)))
 }

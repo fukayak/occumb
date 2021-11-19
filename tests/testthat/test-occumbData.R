@@ -1,5 +1,7 @@
-### Test for validate_occumbData() --------------------------------------------
+### Test for validate_occumbData() ---------------------------------------------
 test_that("Dimension check for y works", {
+    expect_error(new("occumbData", y = array(1:4, dim = rep(2, 1))),
+                 "'y' should be a 3D-array.")
     expect_error(new("occumbData", y = array(1:4, dim = rep(2, 2))),
                  "'y' should be a 3D-array.")
     expect_error(new("occumbData", y = array(1:16, dim = rep(2, 4))),
@@ -32,7 +34,10 @@ test_that("Dimension check for covariates works", {
                  "Length of 'b' should match the number of sites.")
     expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
                                    repl_cov = list(c = rep(1, 3))),
-                 "Length of 'c' should match the number of replicates.")
+                 "'c' should be a matrix with J rows and K columns.")
+    expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
+                                   repl_cov = list(c = matrix(1:2, 1, 2))),
+                 "'c' should be a matrix with J rows and K columns.")
 })
 
 test_that("Check for covariate missing values works", {
@@ -43,7 +48,18 @@ test_that("Check for covariate missing values works", {
                                    site_cov = list(b = c(1, NA))),
                  "Missing values are not allowed in 'site_cov'.")
     expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
-                                   repl_cov = list(c = c(1, NA))),
+                                   repl_cov = list(c = matrix(c(1:3, NA), 2, 2))),
                  "Missing values are not allowed in 'repl_cov'.")
+})
+
+### Test for check_covariate_mode() --------------------------------------------
+test_that("Check for unacceptable covariate mode works", {
+    spec_cov <- list(a = rnorm(1), b = c(0 + 1i))
+    site_cov <- list(c = rnorm(1), d = c(0 + 1i))
+    repl_cov <- list(e = rnorm(1), f = c(0 + 1i))
+    expect_error(check_covariate_mode(spec_cov, site_cov, repl_cov),
+                 sprintf("Unacceptable mode: the following covariates must be numeric, factor, or character. \n %s",
+                         paste(sprintf("%s: %s", c("b", "d", "f"), rep("complex", 3)),
+                               collapse = "; ")))
 })
 

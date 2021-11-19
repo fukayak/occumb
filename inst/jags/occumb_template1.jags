@@ -1,0 +1,13 @@
+model {
+    # Sequence read counts
+    for (j in 1:J) {
+        for (k in 1:K) {
+            y[1:I, j, k] ~ dmulti(pi[1:I, j, k], N[j, k])
+        }
+    }
+
+    # Cell probabilities for sequence reads
+    for (j in 1:J) {
+        for (k in 1:K) {
+            for (i in 1:I) {
+                pi[i, j, k] <- u[i, j, k] * x[i, j, k] / sum_ux[j, k]
