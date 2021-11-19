@@ -47,8 +47,8 @@ data <- occumbData(
 # Fitting a null model (includes only species-specific intercepts)
 res0 <- occumb(data = data)
 
-# occumb() fits the model using jags() in the jagsUI package.
-# You can thus get the same output as seen in the jagsUI results.
+# occumb() fits the model using jags() in the jagsUI package
+# You can thus get the same output as seen in the jagsUI results
 res0
 summary(res0)
 plot(res0)
