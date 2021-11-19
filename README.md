@@ -45,7 +45,13 @@ data <- occumbData(
     repl_cov = list(cov4 = matrix(rnorm(J * K), J, K)))
 
 # Fitting a null model (includes only species-specific intercepts)
-occumb(data = data)
+res0 <- occumb(data = data)
+
+# occumb() fits the model using jags() in the jagsUI package.
+# You can thus get the same output as seen in the jagsUI results.
+res0
+summary(res0)
+plot(res0)
 
 # Add species-specific effects of site covariates in occupancy probabilities
 res1 <- occumb(formula_psi = ~ cov2, data = data)        # Continuous covariate
