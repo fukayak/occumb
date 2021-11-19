@@ -4,72 +4,112 @@ NULL
 # Class for model-fit results of occumb
 setClass("occumbFit", slots = c(fit = "jagsUI"))
 
-#' Model-fitting function.
+#' @title Model-fitting function.
 #' 
-#' \code{occumb()} fits a specified site-occupancy model to a dataset and returns
-#' a model-fit object containing posterior samples.
-#' 
-#' @param phi_formula A right-hand side formula describing covariates of
-#'        sequence relative dominance.
-#' @param theta_formula A right-hand side formula describing covariates of
-#'        sequence capture probability.
-#' @param psi_formula A right-hand side formula describing covariates of
-#'        occupancy probability.
-#' @param data occumbData class object.
+#' @description \code{occumb()} fits the multispecies site-occupancy model for eDNA
+#'  metabarcoding (Fukaya et al. 2021) and returns a model-fit object containing
+#'  posterior samples.
+#' @details
+#'  \code{occumb()} allows the fitting of a range of the multispecies site
+#'  occupancy models including covariates at different levels of the data
+#'  generation process.
+#'  The most general form of the model can be written as follows:
+#'
+#'  Sequence read counts:
+#'  \deqn{(y_{1jk}, ..., y_{Ijk}) \sim \textrm{Multinomial}((\pi_{1jk}, ...,  \pi_{Ijk}), N_{jk}),}{(y_{1jk}, ..., y_{Ijk}) ~ Multinomial((pi_{1jk}, ..., pi_{Ijk}), N_{jk}),}
+#'  \deqn{\pi_{ijk} = \frac{u_{ijk}r_{ijk}}{\sum_m u_{mjk}r_{mjk}},}{pi_{ijk} = (u_{ijk} * r_{ijk}) / (\sum_m (u_{mjk} * r_{mjk})),}
+#'
+#'  Relative frequency of sequences:
+#'  \deqn{r_{ijk} \sim \textrm{Gamma}(\phi_{ijk}, 1),}{r_{ijk} ~ Gamma(phi_{ijk}, 1),}
+#'
+#'  Capture of sequences:
+#'  \deqn{u_{ijk} \sim \textrm{Bernoulli}(z_{ij}\theta_{ijk}),}{u_{ijk} ~ Bernoulli(z_{ij} * theta_{ijk}),}
+#'
+#'  Site occupancy of species:
+#'  \deqn{z_{ij} \sim \textrm{Bernoulli}(\psi_{ij}),}{z_{ij} ~ Bernoulli(psi_{ij}),}
+#'  where the variations of \eqn{\phi}{phi}, \eqn{\theta}{theta}, and
+#'  \eqn{\psi}{psi} are modeled by specifying model formulas in
+#'  \code{formula_phi}, \code{formula_theta}, \code{formula_psi},
+#'  \code{formula_phi_shared}, \code{formula_theta_shared}, and
+#'  \code{formula_psi_shared.}
+#'  
+#'  Each parameter may have species-specific effects and effects that are common
+#'  across species, where the former is specified by \code{formula_phi},
+#'  \code{formula_theta}, and \code{formula_psi}, while
+#'  \code{formula_phi_shared}, \code{formula_theta_shared}, and
+#'  \code{formula_psi_shared} specify the latter.
+#'  Because species-specific intercepts are specified by default, the intercept
+#'  term in the \code{formula_phi_shared}, \code{formula_theta_shared}, and
+#'  \code{formula_psi_shared} are always ignored.
+#'  The covariate terms must be included in the \code{spec_cov},
+#'  \code{site_cov}, or \code{repl_cov} fields in the dataset object provided
+#'  with the \code{data} argument.
+#'  Covariates are modeled using the log link function for \eqn{\phi}{phi}
+#'  and logit link function for \eqn{\theta}{theta} and \eqn{\psi.}{psi.}
+#'
+#'  The two arguments, \code{prior_prec} and \code{prior_ulim}, control the
+#'  prior distribution of parameters. For the community-level average of
+#'  species-specific effects and for effects common across species, a normal
+#'  prior distribution with mean 0 and precision (i.e., the inverse of the
+#'  variance) \code{prior_prec} is specified. For the standard deviation of
+#'  species-specific effects, a uniform prior distribution with a lower limit of
+#'  0 and an upper limit of \code{prior_ulim} is specified. For the correlation
+#'  coefficient of species-specific effects, a uniform prior distribution in the
+#'  range of \eqn{-1} to 1 is specified by default.
+#'
+#'  The model is fit via the \code{\link[jagsUI]{jags}()} function of the
+#'  jagsUI package, where Markov chain Monte Carlo methods are used to
+#'  obtain posterior samples of parameters and latent variables.
+#'  Arguments \code{n.chains}, \code{n.adapt}, \code{n.burnin}, \code{n.thin},
+#'  \code{n.iter}, and \code{parallel} are passed on to the argument of the
+#'  same name in the \code{\link[jagsUI]{jags}()} function.
+#'  See the document of jagsUI's \code{\link[jagsUI]{jags}()} function for
+#'  details.
+#' @param formula_phi A right-hand side formula describing species-specific
+#'        effects of sequence relative dominance (\eqn{\phi}).
+#' @param formula_theta A right-hand side formula describing species-specific
+#'        effects of sequence capture probability (\eqn{\theta}).
+#' @param formula_psi A right-hand side formula describing species-specific
+#'        effects of occupancy probability (\eqn{\psi}).
+#' @param formula_phi_shared A right-hand side formula describing effects of
+#'        sequence relative dominance (\eqn{\phi}) that are common across
+#'        species. The intercept term is ignored (see Details).
+#' @param formula_theta_shared A right-hand side formula describing effects of
+#'        sequence capture probability (\eqn{\theta}) that are common across
+#'        species.
+#'        The intercept term is ignored (see Details).
+#' @param formula_psi_shared A right-hand side formula describing effects of
+#'        occupancy probability (\eqn{\psi}) that are common across species.
+#'        The intercept term is ignored (see Details).
 #' @param prior_prec Precision of the normal prior distribution for the
-#'        community-level average of species-specific parameters.
+#'        community-level average of species-specific parameters and effects
+#'        common across species.
 #' @param prior_ulim Upper limit of the uniform prior distribution for the
 #'        standard deviation of species-specific parameters.
+#' @param data A dataset supplied as an \code{occumbData} class object.
 #' @param n.chains Number of Markov chains to run.
-#'        Passed to the \code{n.chains} argument of jagsUI's \code{jags()}
-#'        function.
 #' @param n.adapt Number of iterations to run in the JAGS adaptive phase.
-#'        Passed to the \code{n.adapt} argument of jagsUI's \code{jags()}
-#'        function.
-#'        See the document of jagsUI's \code{jags()} function for details.
 #' @param n.burnin Number of iterations at the beginning of the chain to discard.
-#'        Passed to the \code{n.burnin} argument of jagsUI's \code{jags()}
-#'        function.
-#'        See the document of jagsUI's \code{jags()} function for details.
 #' @param n.thin Thinning rate. Must be a positive integer.
-#'        Passed to the \code{n.thin} argument of jagsUI's \code{jags()}
-#'        function.
 #' @param n.iter Total number of iterations per chain (including burn-in).
-#'        Passed to the \code{n.iter} argument of jagsUI's \code{jags()}
-#'        function.
 #' @param parallel If TRUE, run MCMC chains in parallel on multiple CPU cores.
-#'        Passed to the \code{parallel} argument of jagsUI's \code{jags()}
-#'        function.
-#' @section Details:
-#'      \code{occumb()} allows the fitting of a range of site occupancy models
-#'      for sequence read counts that includes covariates at different levels
-#'      of the data generation process, via the specification of the model
-#'      formula in \code{phi_formula}, \code{theta_formula}, and
-#'      \code{psi_formula.}
-#'      The specified model and dataset are passed to JAGS via the
-#'      interface provided by the jagsUI package, where Markov chain
-#'      Monte Carlo methods are used to obtain posterior samples of model
-#'      parameters.
-#'
-#'      For the resulting object, the following methods and functions provided
-#'      by the jagsUI package can be applied:
-#'
-#'      plot(); print(); summary()
-#'
-#'      Currently, occumb() supports covariate modeling only for
-#'      psi_formula in which site covariates can be incorporated.
 #' @return  An S4 object of the \code{occumbFit} class containing the results of
 #'          model fitting.
+#' @section References:
+#'      K. Fukaya, N. I. Kondo, S. S. Matsuzaki and T. Kadoya (2021)
+#'      Multispecies site occupancy modelling and study design for spatially
+#'      replicated environmental DNA metabarcoding. \emph{Methods in Ecology
+#'      and Evolution}. https://doi.org/10.1111/2041-210X.13732
 #' @export
 occumb <- function(formula_phi = ~ 1,
                    formula_theta = ~ 1,
                    formula_psi = ~ 1,
-                   formula_phi_shared = NULL,
-                   formula_theta_shared = NULL,
-                   formula_psi_shared = NULL,
-                   data,
+                   formula_phi_shared = ~ 1,
+                   formula_theta_shared = ~ 1,
+                   formula_psi_shared = ~ 1,
                    prior_prec = 1E-3,
                    prior_ulim = 1E3,
+                   data,
                    n.chains = 6,
                    n.adapt = 1000,
                    n.burnin = 30000,
