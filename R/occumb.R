@@ -117,7 +117,7 @@ setClass("occumbFit", slots = c(fit = "jagsUI"))
 #'
 #' \dontrun{
 #' # Fitting a null model (includes only species-specific intercepts)
-#' occumb(data = data)
+#' res0 <- occumb(data = data)
 #'
 #' # Add species-specific effects of site covariates in occupancy probabilities
 #' res1 <- occumb(formula_psi = ~ cov2, data = data)        # Continuous covariate

@@ -1,5 +1,5 @@
 # occumb v0.2.0.9001
-* Fix README
+* Fix a minor issue in the example of occumb().
 
 # occumb v0.2.0
 * Change occumbData class specification and occumbData() function.
