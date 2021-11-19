@@ -1,0 +1,5 @@
+        }
+    }
+
+    # Species-level parameters
+    for (i in 1:I) {
