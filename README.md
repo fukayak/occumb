@@ -69,7 +69,7 @@ res9 <- occumb(data = data, prior_prec = 1E-2, prior_ulim = 1E2,
 res10 <- occumb(data = data, parallel = TRUE) # Run MCMC in parallel
 ```
 
-See the documentation for `ocumbData` and `ocumb` for details.
+See the documentation for `ocumbData()` and `ocumb()` for details.
 
-Future versions will provide functions to summarize the model-fit results and to perform some further analyses based on the model.
+Future versions will provide functions to summarize the model-fit results and perform further analyses based on the model.
 
