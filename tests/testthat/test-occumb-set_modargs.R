@@ -18,7 +18,7 @@ data <- occumbData(y = array(0, dim = c(I, J, K)),
 test_that("Temp: phi_shared correct", {
     ## Output
     # spec_cov (continuous)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov1, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov1, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "i")
     expect_true(result$phi_shared)
     expect_equal(result$M_phi_shared, 1)
@@ -30,7 +30,7 @@ test_that("Temp: phi_shared correct", {
     expect_equal(result$cov_phi_shared, ans_cov)
 
     # spec_cov (factor)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov2, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov2, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "i")
     expect_true(result$phi_shared)
     expect_equal(result$M_phi_shared, 1)
@@ -42,7 +42,7 @@ test_that("Temp: phi_shared correct", {
     expect_equal(result$cov_phi_shared, ans_cov)
 
     # spec_cov (interaction)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov1 * cov2, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov1 * cov2, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "i")
     expect_true(result$phi_shared)
     expect_equal(result$M_phi_shared, 3)
@@ -56,7 +56,7 @@ test_that("Temp: phi_shared correct", {
     expect_equal(result$cov_phi_shared, ans_cov)
 
     # site_cov (continuous)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov3, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov3, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "ij")
     expect_true(result$phi_shared)
     expect_equal(result$M_phi_shared, 1)
@@ -70,7 +70,7 @@ test_that("Temp: phi_shared correct", {
     expect_equal(result$cov_phi_shared, ans_cov)
 
     # site_cov (factor)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov4, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov4, ~ 1, ~ 1, data = data)
     expect_true(result$phi_shared)
     expect_equal(result$M_phi_shared, 2)
     ans_cov <- array(dim = c(I, J, 2))
@@ -84,7 +84,7 @@ test_that("Temp: phi_shared correct", {
     expect_equal(result$cov_phi_shared, ans_cov)
 
     # site_cov (interaction)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov3 * cov4, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov3 * cov4, ~ 1, ~ 1, data = data)
     expect_true(result$phi_shared)
     expect_equal(result$M_phi_shared, 5)
     ans_cov <- array(dim = c(I, J, 5))
@@ -102,7 +102,7 @@ test_that("Temp: phi_shared correct", {
     expect_equal(result$cov_phi_shared, ans_cov)
 
     # spec_cov * site_cov (interaction)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov1 * cov4, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov1 * cov4, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "ij")
     expect_true(result$phi_shared)
     expect_equal(result$M_phi_shared, 5)
@@ -121,7 +121,7 @@ test_that("Temp: phi_shared correct", {
     expect_equal(result$cov_phi_shared, ans_cov)
 
     # repl_cov (continuous)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov5, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov5, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "ijk")
     expect_true(result$phi_shared)
     expect_equal(result$M_phi_shared, 1)
@@ -137,7 +137,7 @@ test_that("Temp: phi_shared correct", {
     expect_equal(result$cov_phi_shared, ans_cov)
 
     # repl_cov (factor)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov6, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov6, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "ijk")
     expect_true(result$phi_shared)
     expect_equal(result$M_phi_shared, 3)
@@ -155,7 +155,7 @@ test_that("Temp: phi_shared correct", {
     expect_equal(result$cov_phi_shared, ans_cov)
 
     # repl_cov (interaction)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov5 * cov6, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov5 * cov6, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "ijk")
     expect_true(result$phi_shared)
     expect_equal(result$M_phi_shared, 7)
@@ -178,7 +178,7 @@ test_that("Temp: phi_shared correct", {
     expect_equal(result$cov_phi_shared, ans_cov)
 
     # spec_cov * site_cov * repl_cov (interaction)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov2 * cov3 * cov5, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov2 * cov3 * cov5, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "ijk")
     expect_true(result$phi_shared)
     expect_equal(result$M_phi_shared, 7)
@@ -201,7 +201,7 @@ test_that("Temp: phi_shared correct", {
                                 "cov22:cov3:cov5")
     expect_equal(result$cov_phi_shared, ans_cov)
 
-    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov1 * cov4 * cov5, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov1 * cov4 * cov5, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "ijk")
     expect_true(result$phi_shared)
     expect_equal(result$M_phi_shared, 11)
@@ -231,11 +231,11 @@ test_that("Temp: phi_shared correct", {
     expect_equal(result$cov_phi_shared, ans_cov)
 
     ## Errors and Warnings
-    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 0, NULL, NULL, data),
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 0, ~ 1, ~ 1, data = data),
                  "No intercept in formula_phi_shared: remove 0 or -1 from the formula")
-    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ -1, NULL, NULL, data),
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ -1, ~ 1, ~ 1, data = data),
                  "No intercept in formula_phi_shared: remove 0 or -1 from the formula")
-    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ xxx, NULL, NULL, data),
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ xxx, ~ 1, ~ 1, data = data),
                              sprintf("Unexpected terms in formula_phi_shared: %s
 Make sure they are found in either spec_cov, site_cov, or repl_cov.", "xxx"))
 })
@@ -244,7 +244,7 @@ Make sure they are found in either spec_cov, site_cov, or repl_cov.", "xxx"))
 test_that("Temp: theta_shared correct", {
     ## Output
     # spec_cov (continuous)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ cov1, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ cov1, ~ 1, data = data)
     expect_equal(result$theta, "i")
     expect_true(result$theta_shared)
     expect_equal(result$M_theta_shared, 1)
@@ -256,7 +256,7 @@ test_that("Temp: theta_shared correct", {
     expect_equal(result$cov_theta_shared, ans_cov)
 
     # spec_cov (factor)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ cov2, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ cov2, ~ 1, data = data)
     expect_equal(result$theta, "i")
     expect_true(result$theta_shared)
     expect_equal(result$M_theta_shared, 1)
@@ -268,7 +268,7 @@ test_that("Temp: theta_shared correct", {
     expect_equal(result$cov_theta_shared, ans_cov)
 
     # spec_cov (interaction)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ cov1 * cov2, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ cov1 * cov2, ~ 1, data = data)
     expect_equal(result$theta, "i")
     expect_true(result$theta_shared)
     expect_equal(result$M_theta_shared, 3)
@@ -282,7 +282,7 @@ test_that("Temp: theta_shared correct", {
     expect_equal(result$cov_theta_shared, ans_cov)
 
     # site_cov (continuous)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ cov3, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ cov3, ~ 1, data = data)
     expect_equal(result$theta, "ij")
     expect_true(result$theta_shared)
     expect_equal(result$M_theta_shared, 1)
@@ -296,7 +296,7 @@ test_that("Temp: theta_shared correct", {
     expect_equal(result$cov_theta_shared, ans_cov)
 
     # site_cov (factor)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ cov4, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ cov4, ~ 1, data = data)
     expect_true(result$theta_shared)
     expect_equal(result$M_theta_shared, 2)
     ans_cov <- array(dim = c(I, J, 2))
@@ -310,7 +310,7 @@ test_that("Temp: theta_shared correct", {
     expect_equal(result$cov_theta_shared, ans_cov)
 
     # site_cov (interaction)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ cov3 * cov4, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ cov3 * cov4, ~ 1, data = data)
     expect_true(result$theta_shared)
     expect_equal(result$M_theta_shared, 5)
     ans_cov <- array(dim = c(I, J, 5))
@@ -328,7 +328,7 @@ test_that("Temp: theta_shared correct", {
     expect_equal(result$cov_theta_shared, ans_cov)
 
     # spec_cov * site_cov (interaction)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ cov1 * cov4, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ cov1 * cov4, ~ 1, data = data)
     expect_equal(result$theta, "ij")
     expect_true(result$theta_shared)
     expect_equal(result$M_theta_shared, 5)
@@ -347,7 +347,7 @@ test_that("Temp: theta_shared correct", {
     expect_equal(result$cov_theta_shared, ans_cov)
 
     # repl_cov (continuous)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ cov5, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ cov5, ~ 1, data = data)
     expect_equal(result$theta, "ijk")
     expect_true(result$theta_shared)
     expect_equal(result$M_theta_shared, 1)
@@ -363,7 +363,7 @@ test_that("Temp: theta_shared correct", {
     expect_equal(result$cov_theta_shared, ans_cov)
 
     # repl_cov (factor)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ cov6, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ cov6, ~ 1, data = data)
     expect_equal(result$theta, "ijk")
     expect_true(result$theta_shared)
     expect_equal(result$M_theta_shared, 3)
@@ -381,7 +381,7 @@ test_that("Temp: theta_shared correct", {
     expect_equal(result$cov_theta_shared, ans_cov)
 
     # repl_cov (interaction)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ cov5 * cov6, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ cov5 * cov6, ~ 1, data = data)
     expect_equal(result$theta, "ijk")
     expect_true(result$theta_shared)
     expect_equal(result$M_theta_shared, 7)
@@ -404,7 +404,7 @@ test_that("Temp: theta_shared correct", {
     expect_equal(result$cov_theta_shared, ans_cov)
 
     # spec_cov * site_cov * repl_cov (interaction)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ cov2 * cov3 * cov5, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ cov2 * cov3 * cov5, ~ 1, data = data)
     expect_equal(result$theta, "ijk")
     expect_true(result$theta_shared)
     expect_equal(result$M_theta_shared, 7)
@@ -427,7 +427,7 @@ test_that("Temp: theta_shared correct", {
                                 "cov22:cov3:cov5")
     expect_equal(result$cov_theta_shared, ans_cov)
 
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ cov1 * cov4 * cov5, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ cov1 * cov4 * cov5, ~ 1, data = data)
     expect_equal(result$theta, "ijk")
     expect_true(result$theta_shared)
     expect_equal(result$M_theta_shared, 11)
@@ -457,11 +457,11 @@ test_that("Temp: theta_shared correct", {
     expect_equal(result$cov_theta_shared, ans_cov)
 
     ## Errors and Warnings
-    expect_error(set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ 0, NULL, data),
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 0, ~ 1, data = data),
                  "No intercept in formula_theta_shared: remove 0 or -1 from the formula")
-    expect_error(set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ -1, NULL, data),
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ -1, ~ 1, data = data),
                  "No intercept in formula_theta_shared: remove 0 or -1 from the formula")
-    expect_error(set_modargs(~ 1, ~ 1, ~ 1, NULL, ~ xxx, NULL, data),
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ xxx, ~ 1, data = data),
                              sprintf("Unexpected terms in formula_theta_shared: %s
 Make sure they are found in either spec_cov, site_cov, or repl_cov.", "xxx"))
 })
@@ -470,7 +470,7 @@ Make sure they are found in either spec_cov, site_cov, or repl_cov.", "xxx"))
 test_that("Temp: psi_shared correct", {
     ## Output
     # spec_cov (continuous)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov1, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ cov1, data = data)
     expect_equal(result$psi, "i")
     expect_true(result$psi_shared)
     expect_equal(result$M_psi_shared, 1)
@@ -482,7 +482,7 @@ test_that("Temp: psi_shared correct", {
     expect_equal(result$cov_psi_shared, ans_cov)
 
     # spec_cov (factor)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov2, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ cov2, data = data)
     expect_equal(result$psi, "i")
     expect_true(result$psi_shared)
     expect_equal(result$M_psi_shared, 1)
@@ -494,7 +494,7 @@ test_that("Temp: psi_shared correct", {
     expect_equal(result$cov_psi_shared, ans_cov)
 
     # spec_cov (interaction)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov1 * cov2, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ cov1 * cov2, data = data)
     expect_equal(result$psi, "i")
     expect_true(result$psi_shared)
     expect_equal(result$M_psi_shared, 3)
@@ -508,7 +508,7 @@ test_that("Temp: psi_shared correct", {
     expect_equal(result$cov_psi_shared, ans_cov)
 
     # site_cov (continuous)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov3, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ cov3, data = data)
     expect_equal(result$psi, "ij")
     expect_true(result$psi_shared)
     expect_equal(result$M_psi_shared, 1)
@@ -522,7 +522,7 @@ test_that("Temp: psi_shared correct", {
     expect_equal(result$cov_psi_shared, ans_cov)
 
     # site_cov (factor)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov4, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ cov4, data = data)
     expect_true(result$psi_shared)
     expect_equal(result$M_psi_shared, 2)
     ans_cov <- array(dim = c(I, J, 2))
@@ -536,7 +536,7 @@ test_that("Temp: psi_shared correct", {
     expect_equal(result$cov_psi_shared, ans_cov)
 
     # site_cov (interaction)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov3 * cov4, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ cov3 * cov4, data = data)
     expect_true(result$psi_shared)
     expect_equal(result$M_psi_shared, 5)
     ans_cov <- array(dim = c(I, J, 5))
@@ -554,7 +554,7 @@ test_that("Temp: psi_shared correct", {
     expect_equal(result$cov_psi_shared, ans_cov)
 
     # spec_cov * site_cov (interaction)
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov1 * cov4, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ cov1 * cov4, data = data)
     expect_equal(result$psi, "ij")
     expect_true(result$psi_shared)
     expect_equal(result$M_psi_shared, 5)
@@ -573,16 +573,16 @@ test_that("Temp: psi_shared correct", {
     expect_equal(result$cov_psi_shared, ans_cov)
 
     # repl_cov (not allowed)
-    expect_error(set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ cov5, data),
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ cov5, data = data),
                              sprintf("Unexpected terms in formula_psi_shared: %s
 Note that only site covariates, species covariates, or their interactions are allowed for formula_psi_shared.", "cov5"))
 
     ## Errors and Warnings
-    expect_error(set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ 0, data),
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ 0, data = data),
                  sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "psi_shared"))
-    expect_error(set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ -1, data),
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ -1, data = data),
                  sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "psi_shared"))
-    expect_error(set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, ~ xxx, data),
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ xxx, data = data),
                              sprintf("Unexpected terms in formula_psi_shared: %s
 Note that only site covariates, species covariates, or their interactions are allowed for formula_psi_shared.", "xxx"))
 })
@@ -591,7 +591,7 @@ Note that only site covariates, species covariates, or their interactions are al
 test_that("Arguments are correct for the null model", {
     ## Output
     # null model
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "i")
     expect_equal(result$M, 3)
     expect_equal(result$cov_phi, 1)
@@ -600,7 +600,7 @@ test_that("Arguments are correct for the null model", {
 
 test_that("Errors are correct for the spec_cov in phi", {
     # spec_cov (not allowed)
-    expect_error(set_modargs(~ cov1, ~ 1, ~ 1, NULL, NULL, NULL, data),
+    expect_error(set_modargs(~ cov1, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
                  sprintf("Unexpected terms in formula_phi: %s
 Note that species covariates are not allowed for formula_phi.",
                          "cov1"))
@@ -608,7 +608,7 @@ Note that species covariates are not allowed for formula_phi.",
 
 test_that("Temp: phi correct", {
     # site_cov (continuous)
-    result <- set_modargs(~ cov3, ~ 1, ~ 1, NULL, NULL, NULL, data)
+    result <- set_modargs(~ cov3, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "ij")
     expect_equal(result$M, 4)
     ans_cov <- array(dim = c(I, J, 2))
@@ -623,7 +623,7 @@ test_that("Temp: phi correct", {
     expect_equal(result$m_phi, 1:2)
 
     # site_cov (factor)
-    result <- set_modargs(~ cov4, ~ 1, ~ 1, NULL, NULL, NULL, data)
+    result <- set_modargs(~ cov4, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "ij")
     expect_equal(result$M, 5)
     ans_cov <- array(dim = c(I, J, 3))
@@ -639,7 +639,7 @@ test_that("Temp: phi correct", {
     expect_equal(result$m_phi, 1:3)
 
     # site_cov (interaction)
-    result <- set_modargs(~ cov3 * cov4, ~ 1, ~ 1, NULL, NULL, NULL, data)
+    result <- set_modargs(~ cov3 * cov4, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "ij")
     expect_equal(result$M, 8)
     ans_cov <- array(dim = c(I, J, 6))
@@ -659,7 +659,7 @@ test_that("Temp: phi correct", {
     expect_equal(result$m_phi, 1:6)
 
     # repl_cov (continuous)
-    result <- set_modargs(~ cov5, ~ 1, ~ 1, NULL, NULL, NULL, data)
+    result <- set_modargs(~ cov5, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "ijk")
     expect_equal(result$M, 4)
     ans_cov <- array(dim = c(I, J, K, 2))
@@ -676,7 +676,7 @@ test_that("Temp: phi correct", {
     expect_equal(result$m_phi, 1:2)
 
     # repl_cov (factor)
-    result <- set_modargs(~ cov6, ~ 1, ~ 1, NULL, NULL, NULL, data)
+    result <- set_modargs(~ cov6, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "ijk")
     expect_equal(result$M, 6)
     ans_cov <- array(dim = c(I, J, K, 4))
@@ -695,7 +695,7 @@ test_that("Temp: phi correct", {
     expect_equal(result$m_phi, 1:4)
 
     # repl_cov (interaction)
-    result <- set_modargs(~ cov5 * cov6, ~ 1, ~ 1, NULL, NULL, NULL, data)
+    result <- set_modargs(~ cov5 * cov6, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "ijk")
     expect_equal(result$M, 10)
     ans_cov <- array(dim = c(I, J, K, 8))
@@ -719,7 +719,7 @@ test_that("Temp: phi correct", {
     expect_equal(result$m_phi, 1:8)
 
     # site_cov * repl_cov (interaction)
-    result <- set_modargs(~ cov3 * cov6, ~ 1, ~ 1, NULL, NULL, NULL, data)
+    result <- set_modargs(~ cov3 * cov6, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "ijk")
     expect_equal(result$M, 10)
     ans_cov <- array(dim = c(I, J, K, 8))
@@ -743,11 +743,11 @@ test_that("Temp: phi correct", {
     expect_equal(result$m_phi, 1:8)
 
     ## Errors and Warnings
-    expect_error(set_modargs(~ 0, ~ 1, ~ 1, NULL, NULL, NULL, data),
+    expect_error(set_modargs(~ 0, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
                  sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "phi"))
-    expect_error(set_modargs(~ -1, ~ 1, ~ 1, NULL, NULL, NULL, data),
+    expect_error(set_modargs(~ -1, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
                  sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "phi"))
-    expect_error(set_modargs(~ xxx, ~ 1, ~ 1, NULL, NULL, NULL, data),
+    expect_error(set_modargs(~ xxx, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
                  sprintf("Unexpected terms in formula_phi: %s
 Note that species covariates are not allowed for formula_phi",
                          "xxx"))
@@ -757,20 +757,20 @@ Note that species covariates are not allowed for formula_phi",
 test_that("Temp: theta correct", {
     ## Output
     # null model
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$theta, "i")
     expect_equal(result$M, 3)
     expect_equal(result$cov_theta, 1)
     expect_equal(result$m_theta, 2)
 
     # spec_cov (not allowed)
-    expect_error(set_modargs(~ 1, ~ cov1, ~ 1, NULL, NULL, NULL, data),
+    expect_error(set_modargs(~ 1, ~ cov1, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
                  sprintf("Unexpected terms in formula_theta: %s
 Note that species covariates are not allowed for formula_theta.",
                          "cov1"))
 
     # site_cov (continuous)
-    result <- set_modargs(~ 1, ~ cov3, ~ 1, NULL, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ cov3, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$theta, "ij")
     expect_equal(result$M, 4)
     ans_cov <- array(dim = c(I, J, 2))
@@ -785,7 +785,7 @@ Note that species covariates are not allowed for formula_theta.",
     expect_equal(result$m_theta, 2:3)
 
     # site_cov (factor)
-    result <- set_modargs(~ 1, ~ cov4, ~ 1, NULL, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ cov4, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$theta, "ij")
     expect_equal(result$M, 5)
     ans_cov <- array(dim = c(I, J, 3))
@@ -801,7 +801,7 @@ Note that species covariates are not allowed for formula_theta.",
     expect_equal(result$m_theta, 2:4)
 
     # site_cov (interaction)
-    result <- set_modargs(~ 1, ~ cov3 * cov4, ~ 1, NULL, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ cov3 * cov4, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$theta, "ij")
     expect_equal(result$M, 8)
     ans_cov <- array(dim = c(I, J, 6))
@@ -821,7 +821,7 @@ Note that species covariates are not allowed for formula_theta.",
     expect_equal(result$m_theta, 2:7)
 
     # repl_cov (continuous)
-    result <- set_modargs(~ 1, ~ cov5, ~ 1, NULL, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ cov5, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$theta, "ijk")
     expect_equal(result$M, 4)
     ans_cov <- array(dim = c(I, J, K, 2))
@@ -838,7 +838,7 @@ Note that species covariates are not allowed for formula_theta.",
     expect_equal(result$m_theta, 2:3)
 
     # repl_cov (factor)
-    result <- set_modargs(~ 1, ~ cov6, ~ 1, NULL, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ cov6, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$theta, "ijk")
     expect_equal(result$M, 6)
     ans_cov <- array(dim = c(I, J, K, 4))
@@ -857,7 +857,7 @@ Note that species covariates are not allowed for formula_theta.",
     expect_equal(result$m_theta, 2:5)
 
     # repl_cov (interaction)
-    result <- set_modargs(~ 1, ~ cov5 * cov6, ~ 1, NULL, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ cov5 * cov6, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$theta, "ijk")
     expect_equal(result$M, 10)
     ans_cov <- array(dim = c(I, J, K, 8))
@@ -881,7 +881,7 @@ Note that species covariates are not allowed for formula_theta.",
     expect_equal(result$m_theta, 2:9)
 
     # site_cov * repl_cov (interaction)
-    result <- set_modargs(~ 1, ~ cov3 * cov6, ~ 1, NULL, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ cov3 * cov6, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$theta, "ijk")
     expect_equal(result$M, 10)
     ans_cov <- array(dim = c(I, J, K, 8))
@@ -905,11 +905,11 @@ Note that species covariates are not allowed for formula_theta.",
     expect_equal(result$m_theta, 2:9)
 
     ## Errors and Warnings
-    expect_error(set_modargs(~ 1, ~ 0, ~ 1, NULL, NULL, NULL, data),
+    expect_error(set_modargs(~ 1, ~ 0, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
                  sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "theta"))
-    expect_error(set_modargs(~ 1, ~ -1, ~ 1, NULL, NULL, NULL, data),
+    expect_error(set_modargs(~ 1, ~ -1, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
                  sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "theta"))
-    expect_error(set_modargs(~ 1, ~ xxx, ~ 1, NULL, NULL, NULL, data),
+    expect_error(set_modargs(~ 1, ~ xxx, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
                  sprintf("Unexpected terms in formula_theta: %s
 Note that species covariates are not allowed for formula_theta.",
                          "xxx"))
@@ -919,20 +919,20 @@ Note that species covariates are not allowed for formula_theta.",
 test_that("Temp: psi correct", {
     ## Output
     # null model
-    result <- set_modargs(~ 1, ~ 1, ~ 1, NULL, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$psi, "i")
     expect_equal(result$M, 3)
     expect_equal(result$cov_psi, 1)
     expect_equal(result$m_psi, 3)
 
     # spec_cov (not allowed)
-    expect_error(set_modargs(~ 1, ~ 1, ~ cov1, NULL, NULL, NULL, data),
+    expect_error(set_modargs(~ 1, ~ 1, ~ cov1, ~ 1, ~ 1, ~ 1, data = data),
                  sprintf("Unexpected terms in formula_psi: %s
 Note that only site covariates are allowed for formula_psi.",
                          "cov1"))
 
     # site_cov (continuous)
-    result <- set_modargs(~ 1, ~ 1, ~ cov3, NULL, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ cov3, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$psi, "ij")
     expect_equal(result$M, 4)
     ans_cov <- array(dim = c(I, J, 2))
@@ -947,7 +947,7 @@ Note that only site covariates are allowed for formula_psi.",
     expect_equal(result$m_psi, 3:4)
 
     # site_cov (factor)
-    result <- set_modargs(~ 1, ~ 1, ~ cov4, NULL, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ cov4, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$psi, "ij")
     expect_equal(result$M, 5)
     ans_cov <- array(dim = c(I, J, 3))
@@ -963,7 +963,7 @@ Note that only site covariates are allowed for formula_psi.",
     expect_equal(result$m_psi, 3:5)
 
     # site_cov (interaction)
-    result <- set_modargs(~ 1, ~ 1, ~ cov3 * cov4, NULL, NULL, NULL, data)
+    result <- set_modargs(~ 1, ~ 1, ~ cov3 * cov4, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$psi, "ij")
     expect_equal(result$M, 8)
     ans_cov <- array(dim = c(I, J, 6))
@@ -983,17 +983,17 @@ Note that only site covariates are allowed for formula_psi.",
     expect_equal(result$m_psi, 3:8)
 
     # repl_cov (not allowed)
-    expect_error(set_modargs(~ 1, ~ 1, ~ cov5, NULL, NULL, NULL, data),
+    expect_error(set_modargs(~ 1, ~ 1, ~ cov5, ~ 1, ~ 1, ~ 1, data = data),
                  sprintf("Unexpected terms in formula_psi: %s
 Note that only site covariates are allowed for formula_psi.",
                          "cov5"))
 
     ## Errors and Warnings
-    expect_error(set_modargs(~ 1, ~ 1, ~ 0, NULL, NULL, NULL, data),
+    expect_error(set_modargs(~ 1, ~ 1, ~ 0, ~ 1, ~ 1, ~ 1, data = data),
                  sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "psi"))
-    expect_error(set_modargs(~ 1, ~ 1, ~ -1, NULL, NULL, NULL, data),
+    expect_error(set_modargs(~ 1, ~ 1, ~ -1, ~ 1, ~ 1, ~ 1, data = data),
                  sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "psi"))
-    expect_error(set_modargs(~ 1, ~ 1, ~ xxx, NULL, NULL, NULL, data),
+    expect_error(set_modargs(~ 1, ~ 1, ~ xxx, ~ 1, ~ 1, ~ 1, data = data),
                  sprintf("Unexpected terms in formula_psi: %s
 Note that only site covariates are allowed for formula_psi.",
                          "xxx"))

@@ -197,9 +197,9 @@ set_modargs <- function(formula_phi,
                         formula_psi_shared,
                         data) {
 
-    phi_shared   <- !is.null(formula_phi_shared)
-    theta_shared <- !is.null(formula_theta_shared)
-    psi_shared   <- !is.null(formula_psi_shared)
+    phi_shared   <- formula_phi_shared   != ~ 1
+    theta_shared <- formula_theta_shared != ~ 1
+    psi_shared   <- formula_psi_shared   != ~ 1
 
     # phi_shared
 
