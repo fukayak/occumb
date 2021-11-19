@@ -11,15 +11,15 @@ occumb(
   formula_phi_shared = ~1,
   formula_theta_shared = ~1,
   formula_psi_shared = ~1,
-  prior_prec = 0.001,
-  prior_ulim = 1000,
+  prior_prec = 1e-04,
+  prior_ulim = 10000,
   data,
-  n.chains = 6,
-  n.adapt = 1000,
-  n.burnin = 30000,
-  n.thin = 500,
-  n.iter = 500 * n.thin + n.burnin,
-  parallel = TRUE
+  n.chains = 4,
+  n.adapt = NULL,
+  n.burnin = 10000,
+  n.thin = 10,
+  n.iter = 20000,
+  parallel = FALSE
 )
 }
 \arguments{
@@ -52,7 +52,7 @@ common across species.}
 \item{prior_ulim}{Upper limit of the uniform prior distribution for the
 standard deviation of species-specific parameters.}
 
-\item{data}{A dataset supplied as an \code{occumbData} class object.}
+\item{data}{A dataset supplied as an \code{\link{occumbData}} class object.}
 
 \item{n.chains}{Number of Markov chains to run.}
 
@@ -85,10 +85,10 @@ Sequence read counts:
 \deqn{(y_{1jk}, ..., y_{Ijk}) \sim \textrm{Multinomial}((\pi_{1jk}, ...,  \pi_{Ijk}), N_{jk}),}{(y_{1jk}, ..., y_{Ijk}) ~ Multinomial((pi_{1jk}, ..., pi_{Ijk}), N_{jk}),}
 \deqn{\pi_{ijk} = \frac{u_{ijk}r_{ijk}}{\sum_m u_{mjk}r_{mjk}},}{pi_{ijk} = (u_{ijk} * r_{ijk}) / (\sum_m (u_{mjk} * r_{mjk})),}
 
-Relative frequency of sequences:
+Relative frequency of species sequences:
 \deqn{r_{ijk} \sim \textrm{Gamma}(\phi_{ijk}, 1),}{r_{ijk} ~ Gamma(phi_{ijk}, 1),}
 
-Capture of sequences:
+Capture of species sequences:
 \deqn{u_{ijk} \sim \textrm{Bernoulli}(z_{ij}\theta_{ijk}),}{u_{ijk} ~ Bernoulli(z_{ij} * theta_{ijk}),}
 
 Site occupancy of species:
@@ -107,9 +107,9 @@ across species, where the former is specified by \code{formula_phi},
 Because species-specific intercepts are specified by default, the intercept
 term in the \code{formula_phi_shared}, \code{formula_theta_shared}, and
 \code{formula_psi_shared} are always ignored.
-The covariate terms must be included in the \code{spec_cov},
-\code{site_cov}, or \code{repl_cov} fields in the dataset object provided
-with the \code{data} argument.
+The covariate terms must be found in the names of the list elements stored
+in \code{spec_cov}, \code{site_cov}, or \code{repl_cov} slots in the dataset
+object provided with the \code{data} argument.
 Covariates are modeled using the log link function for \eqn{\phi}{phi}
 and logit link function for \eqn{\theta}{theta} and \eqn{\psi.}{psi.}
 
@@ -122,6 +122,9 @@ species-specific effects, a uniform prior distribution with a lower limit of
 0 and an upper limit of \code{prior_ulim} is specified. For the correlation
 coefficient of species-specific effects, a uniform prior distribution in the
 range of \eqn{-1} to 1 is specified by default.
+
+The \code{data} argument requires a dataset object generated using
+\code{ocumbData()}: see the document of \code{\link{occumbData}()}.
 
 The model is fit via the \code{\link[jagsUI]{jags}()} function of the
 jagsUI package, where Markov chain Monte Carlo methods are used to
