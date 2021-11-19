@@ -20,18 +20,56 @@ The current programs are an alpha version released to present the concept of pac
 
 ## Installation
 
-You can install the released version of occumb from the GitHub repository using the `install_github()` function in remote (or devtools) package:
+You can install the latest version of occumb from the GitHub repository using the `install_github()` function in remotes (or devtools) package:
 
 ``` r
-remote::install_github("fukayak/occumb", ref = "main")
+remotes::install_github("fukayak/occumb", ref = "main")
 ```
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+The current version (v0.2.x) allows you to build a dataset object used for the multispecies site occupancy modeling (using `occumbData()` function) and fit models with species, site, and replicate covariates (using `occumb()` function).
 
 ``` r
 library(occumb)
-## basic example code
+
+# Generate the smallest random dataset (2 species * 2 sites * 2 reps)
+I <- 2 # Number of species
+J <- 2 # Number of sites
+K <- 2 # Number of replicates
+data <- occumbData(
+    y = array(sample.int(I * J * K), dim = c(I, J, K)),
+    spec_cov = list(cov1 = rnorm(I)),
+    site_cov = list(cov2 = rnorm(J),
+                    cov3 = factor(1:J)),
+    repl_cov = list(cov4 = matrix(rnorm(J * K), J, K)))
+
+# Fitting a null model (includes only species-specific intercepts)
+occumb(data = data)
+
+# Add species-specific effects of site covariates in occupancy probabilities
+res1 <- occumb(formula_psi = ~ cov2, data = data)        # Continuous covariate
+res2 <- occumb(formula_psi = ~ cov3, data = data)        # Categorical covariate
+res3 <- occumb(formula_psi = ~ cov2 * cov3, data = data) # Interaction
+
+# Add species covariate in the three parameters
+# Note that species covariates are modeled as common effects
+res4 <- occumb(formula_phi_shared = ~ cov1, data = data)   # phi
+res5 <- occumb(formula_theta_shared = ~ cov1, data = data) # theta
+res6 <- occumb(formula_psi_shared = ~ cov1, data = data)   # psi
+
+# Add replicate covariates
+# Note that replicate covariates can only be specified for theta and phi
+res7 <- occumb(formula_phi = ~ cov4, data = data)   # phi
+res8 <- occumb(formula_theta = ~ cov4, data = data) # theta
+
+# Specify the prior distribution and MCMC settings explicitly
+res9 <- occumb(data = data, prior_prec = 1E-2, prior_ulim = 1E2,
+               n.chains = 1, n.burnin = 1000, n.thin = 1, n.iter = 2000)
+res10 <- occumb(data = data, parallel = TRUE) # Run MCMC in parallel
 ```
+
+See the documentation for `ocumbData` and `ocumb` for details.
+
+Future versions will provide functions to summarize the model-fit results and to perform some further analyses based on the model.
 
