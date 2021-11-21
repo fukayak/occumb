@@ -156,13 +156,29 @@ occumb <- function(formula_phi = ~ 1,
                    n.thin = 10,
                    n.iter = 20000,
                    parallel = FALSE) {
-    # QC
-    # Check if the mode of arguments is correct
+    ## QC
+    # Check formulas
+    formulas <- c("formula_phi",
+                  "formula_theta",
+                  "formula_psi",
+                  "formula_phi_shared",
+                  "formula_theta_shared",
+                  "formula_psi_shared")
+    bad_formula <- rep(FALSE, 6)
+    bad_formula[1] <- !inherits(formula_phi, "formula")
+    bad_formula[2] <- !inherits(formula_theta, "formula")
+    bad_formula[3] <- !inherits(formula_psi, "formula")
+    bad_formula[4] <- !inherits(formula_phi_shared, "formula")
+    bad_formula[5] <- !inherits(formula_theta_shared, "formula")
+    bad_formula[6] <- !inherits(formula_psi_shared, "formula")
+    if (any(bad_formula))
+        stop(sprintf("Formula is expected for: %s",
+                     paste(formulas[bad_formula], collapse = ", ")))
 
-    # Set constants
+    ## Set constants
     const <- set_const(data)
 
-    # Define arguments for the specified model
+    ## Define arguments for the specified model
     margs <- set_modargs(formula_phi,
                          formula_theta,
                          formula_psi,
@@ -171,25 +187,25 @@ occumb <- function(formula_phi = ~ 1,
                          formula_psi_shared,
                          data)
 
-    # Set data list
+    ## Set data list
     dat <- set_data(const, margs, prior_prec, prior_ulim)
 
-    # Set initial values
+    ## Set initial values
     inits <- set_inits(const, margs)
 
-    # Set parameters monitored
+    ## Set parameters monitored
     params <- set_params_monitored(margs$phi_shared,
                                    margs$theta_shared,
                                    margs$psi_shared)
 
-    # Write model file
+    ## Write model file
     model <- tempfile()
     writeLines(write_jags_model(margs$phi, margs$theta, margs$psi,
                                 margs$phi_shared,
                                 margs$theta_shared,
                                 margs$psi_shared), model)
 
-    # Run MCMC in JAGS
+    ## Run MCMC in JAGS
     fit <- jagsUI::jags(dat, inits, params, model,
                         n.chains = n.chains,
                         n.adapt  = n.adapt,
@@ -198,7 +214,7 @@ occumb <- function(formula_phi = ~ 1,
                         n.thin   = n.thin,
                         parallel = parallel)
 
-    # Output
+    ## Output
     out <- methods::new("occumbFit", fit = fit)
     out
 }

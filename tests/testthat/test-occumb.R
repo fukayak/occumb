@@ -1,3 +1,28 @@
+### Tests for quality controls -------------------------------------------------
+test_that("Checks for formula work", {
+    formulas <- c("formula_phi",
+                  "formula_theta",
+                  "formula_psi",
+                  "formula_phi_shared",
+                  "formula_theta_shared",
+                  "formula_psi_shared")
+    expect_error(occumb(1, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
+                 sprintf("Formula is expected for: %s", "formula_phi"))
+    expect_error(occumb(~ 1, 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
+                 sprintf("Formula is expected for: %s", "formula_theta"))
+    expect_error(occumb(~ 1, ~ 1, 1, ~ 1, ~ 1, ~ 1, data = data),
+                 sprintf("Formula is expected for: %s", "formula_psi"))
+    expect_error(occumb(~ 1, ~ 1, ~ 1, 1, ~ 1, ~ 1, data = data),
+                 sprintf("Formula is expected for: %s", "formula_phi_shared"))
+    expect_error(occumb(~ 1, ~ 1, ~ 1, ~ 1, 1, ~ 1, data = data),
+                 sprintf("Formula is expected for: %s", "formula_theta_shared"))
+    expect_error(occumb(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, 1, data = data),
+                 sprintf("Formula is expected for: %s", "formula_psi_shared"))
+    expect_error(occumb(1, 1, 1, 1, 1, 1, data = data),
+                 sprintf("Formula is expected for: %s",
+                         paste(formulas, collapse = ", ")))
+})
+
 ### Tests for set_const() ------------------------------------------------------
 test_that("Replacement of missing y to NA works", {
     y         <- array(1:8, dim = rep(2, 3))
