@@ -1,4 +1,6 @@
-# occumb v0.2.0.9001
+# occumb v0.2.0.9002
+* Add validations for the inputs of `occumb()`.
+* Fix `set_modargs()` for shared parameters.
 * Fix a minor issue in the example of `occumb()`.
 
 # occumb v0.2.0 (2021/11/19)

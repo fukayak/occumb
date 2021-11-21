@@ -156,7 +156,67 @@ occumb <- function(formula_phi = ~ 1,
                    n.thin = 10,
                    n.iter = 20000,
                    parallel = FALSE) {
-    ## QC
+
+    # Validate arguments
+    qc_occumb(data, formula_phi, formula_theta, formula_psi,
+              formula_phi_shared, formula_theta_shared, formula_psi_shared)
+
+    # Set constants
+    const <- set_const(data)
+
+    # Define arguments for the specified model
+    margs <- set_modargs(formula_phi,
+                         formula_theta,
+                         formula_psi,
+                         formula_phi_shared,
+                         formula_theta_shared,
+                         formula_psi_shared,
+                         data)
+
+    # Set data list
+    dat <- set_data(const, margs, prior_prec, prior_ulim)
+
+    # Set initial values
+    inits <- set_inits(const, margs)
+
+    # Set parameters monitored
+    params <- set_params_monitored(margs$phi_shared,
+                                   margs$theta_shared,
+                                   margs$psi_shared)
+
+    # Write model file
+    model <- tempfile()
+    writeLines(write_jags_model(margs$phi, margs$theta, margs$psi,
+                                margs$phi_shared,
+                                margs$theta_shared,
+                                margs$psi_shared), model)
+
+    # Run MCMC in JAGS
+    fit <- jagsUI::jags(dat, inits, params, model,
+                        n.chains = n.chains,
+                        n.adapt  = n.adapt,
+                        n.iter   = n.iter,
+                        n.burnin = n.burnin,
+                        n.thin   = n.thin,
+                        parallel = parallel)
+
+    # Output
+    out <- methods::new("occumbFit", fit = fit)
+    out
+}
+
+# Validation for the inputs
+qc_occumb <- function(data,
+                      formula_phi,
+                      formula_theta,
+                      formula_psi,
+                      formula_phi_shared,
+                      formula_theta_shared,
+                      formula_psi_shared) {
+    # Check data
+    if (!inherits(data, "occumbData"))
+        stop("An occumbData class object is expected for data")
+
     # Check formulas
     formulas <- c("formula_phi",
                   "formula_theta",
@@ -174,49 +234,6 @@ occumb <- function(formula_phi = ~ 1,
     if (any(bad_formula))
         stop(sprintf("Formula is expected for: %s",
                      paste(formulas[bad_formula], collapse = ", ")))
-
-    ## Set constants
-    const <- set_const(data)
-
-    ## Define arguments for the specified model
-    margs <- set_modargs(formula_phi,
-                         formula_theta,
-                         formula_psi,
-                         formula_phi_shared,
-                         formula_theta_shared,
-                         formula_psi_shared,
-                         data)
-
-    ## Set data list
-    dat <- set_data(const, margs, prior_prec, prior_ulim)
-
-    ## Set initial values
-    inits <- set_inits(const, margs)
-
-    ## Set parameters monitored
-    params <- set_params_monitored(margs$phi_shared,
-                                   margs$theta_shared,
-                                   margs$psi_shared)
-
-    ## Write model file
-    model <- tempfile()
-    writeLines(write_jags_model(margs$phi, margs$theta, margs$psi,
-                                margs$phi_shared,
-                                margs$theta_shared,
-                                margs$psi_shared), model)
-
-    ## Run MCMC in JAGS
-    fit <- jagsUI::jags(dat, inits, params, model,
-                        n.chains = n.chains,
-                        n.adapt  = n.adapt,
-                        n.iter   = n.iter,
-                        n.burnin = n.burnin,
-                        n.thin   = n.thin,
-                        parallel = parallel)
-
-    ## Output
-    out <- methods::new("occumbFit", fit = fit)
-    out
 }
 
 # Extract constants for the model

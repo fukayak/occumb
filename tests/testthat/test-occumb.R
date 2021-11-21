@@ -1,4 +1,8 @@
 ### Tests for quality controls -------------------------------------------------
+test_that("Checks for data work", {
+    expect_error(occumb(data = array(1, dim = rep(2, 3))),
+                 "An occumbData class object is expected for data")
+})
 test_that("Checks for formula work", {
     formulas <- c("formula_phi",
                   "formula_theta",
