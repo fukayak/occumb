@@ -551,18 +551,25 @@ set_modargs <- function(formula_phi,
                 theta_shared     = theta_shared,
                 psi_shared       = psi_shared,
                 M                = M,
-                M_phi_shared     = M_phi_shared,
-                M_theta_shared   = M_theta_shared,
-                M_psi_shared     = M_psi_shared,
                 cov_phi          = cov_phi,
                 cov_theta        = cov_theta,
                 cov_psi          = cov_psi,
-                cov_phi_shared   = cov_phi_shared,
-                cov_theta_shared = cov_theta_shared,
-                cov_psi_shared   = cov_psi_shared,
                 m_phi            = m_phi,
                 m_theta          = m_theta,
                 m_psi            = m_psi)
+
+    if (phi_shared) {
+        out$M_phi_shared   <- M_phi_shared
+        out$cov_phi_shared <- cov_phi_shared
+    }
+    if (theta_shared) {
+        out$M_theta_shared   <- M_theta_shared
+        out$cov_theta_shared <- cov_theta_shared
+    }
+    if (psi_shared) {
+        out$M_psi_shared   <- M_psi_shared
+        out$cov_psi_shared <- cov_psi_shared
+    }
 
     out
 }
