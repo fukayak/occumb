@@ -6,19 +6,26 @@ test_that("Checks for formula work", {
                   "formula_phi_shared",
                   "formula_theta_shared",
                   "formula_psi_shared")
-    expect_error(occumb(1, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
+    expect_error(occumb(1, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1,
+                        data = occumbData(y = array(1, dim = rep(2, 3)))),
                  sprintf("Formula is expected for: %s", "formula_phi"))
-    expect_error(occumb(~ 1, 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
+    expect_error(occumb(~ 1, 1, ~ 1, ~ 1, ~ 1, ~ 1,
+                        data = occumbData(y = array(1, dim = rep(2, 3)))),
                  sprintf("Formula is expected for: %s", "formula_theta"))
-    expect_error(occumb(~ 1, ~ 1, 1, ~ 1, ~ 1, ~ 1, data = data),
+    expect_error(occumb(~ 1, ~ 1, 1, ~ 1, ~ 1, ~ 1,
+                        data = occumbData(y = array(1, dim = rep(2, 3)))),
                  sprintf("Formula is expected for: %s", "formula_psi"))
-    expect_error(occumb(~ 1, ~ 1, ~ 1, 1, ~ 1, ~ 1, data = data),
+    expect_error(occumb(~ 1, ~ 1, ~ 1, 1, ~ 1, ~ 1,
+                        data = occumbData(y = array(1, dim = rep(2, 3)))),
                  sprintf("Formula is expected for: %s", "formula_phi_shared"))
-    expect_error(occumb(~ 1, ~ 1, ~ 1, ~ 1, 1, ~ 1, data = data),
+    expect_error(occumb(~ 1, ~ 1, ~ 1, ~ 1, 1, ~ 1,
+                        data = occumbData(y = array(1, dim = rep(2, 3)))),
                  sprintf("Formula is expected for: %s", "formula_theta_shared"))
-    expect_error(occumb(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, 1, data = data),
+    expect_error(occumb(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, 1,
+                        data = occumbData(y = array(1, dim = rep(2, 3)))),
                  sprintf("Formula is expected for: %s", "formula_psi_shared"))
-    expect_error(occumb(1, 1, 1, 1, 1, 1, data = data),
+    expect_error(occumb(1, 1, 1, 1, 1, 1,
+                        data = occumbData(y = array(1, dim = rep(2, 3)))),
                  sprintf("Formula is expected for: %s",
                          paste(formulas, collapse = ", ")))
 })
