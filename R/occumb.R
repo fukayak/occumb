@@ -332,9 +332,6 @@ set_modargs <- function(formula_phi,
             colnames(cov_phi_shared) <- colnames(dm)
             M_phi_shared <- ncol(cov_phi_shared)
         }
-    } else {
-        cov_phi_shared <- NULL
-        M_phi_shared   <- 0
     }
 
     # theta_shared
@@ -398,9 +395,6 @@ set_modargs <- function(formula_phi,
             colnames(cov_theta_shared) <- colnames(dm)
             M_theta_shared <- ncol(cov_theta_shared)
         }
-    } else {
-        cov_theta_shared <- NULL
-        M_theta_shared   <- 0
     }
 
     # psi_shared
@@ -445,9 +439,6 @@ set_modargs <- function(formula_phi,
             colnames(cov_psi_shared) <- colnames(dm)
             M_psi_shared   <- ncol(cov_psi_shared)
         }
-    } else {
-        cov_psi_shared <- NULL
-        M_psi_shared   <- 0
     }
 
     M <- 0      # Order of species effects
