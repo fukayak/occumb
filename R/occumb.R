@@ -117,7 +117,7 @@ setClass("occumbFit", slots = c(fit = "jagsUI"))
 #'
 #' \dontrun{
 #' # Fitting a null model (includes only species-specific intercepts)
-#' occumb(data = data)
+#' res0 <- occumb(data = data)
 #'
 #' # Add species-specific effects of site covariates in occupancy probabilities
 #' res1 <- occumb(formula_psi = ~ cov2, data = data)        # Continuous covariate
@@ -156,8 +156,10 @@ occumb <- function(formula_phi = ~ 1,
                    n.thin = 10,
                    n.iter = 20000,
                    parallel = FALSE) {
-    # QC
-    # Check if the mode of arguments is correct
+
+    # Validate arguments
+    qc_occumb(data, formula_phi, formula_theta, formula_psi,
+              formula_phi_shared, formula_theta_shared, formula_psi_shared)
 
     # Set constants
     const <- set_const(data)
@@ -201,6 +203,37 @@ occumb <- function(formula_phi = ~ 1,
     # Output
     out <- methods::new("occumbFit", fit = fit)
     out
+}
+
+# Validation for the inputs
+qc_occumb <- function(data,
+                      formula_phi,
+                      formula_theta,
+                      formula_psi,
+                      formula_phi_shared,
+                      formula_theta_shared,
+                      formula_psi_shared) {
+    # Check data
+    if (!inherits(data, "occumbData"))
+        stop("An occumbData class object is expected for data")
+
+    # Check formulas
+    formulas <- c("formula_phi",
+                  "formula_theta",
+                  "formula_psi",
+                  "formula_phi_shared",
+                  "formula_theta_shared",
+                  "formula_psi_shared")
+    bad_formula <- rep(FALSE, 6)
+    bad_formula[1] <- !inherits(formula_phi, "formula")
+    bad_formula[2] <- !inherits(formula_theta, "formula")
+    bad_formula[3] <- !inherits(formula_psi, "formula")
+    bad_formula[4] <- !inherits(formula_phi_shared, "formula")
+    bad_formula[5] <- !inherits(formula_theta_shared, "formula")
+    bad_formula[6] <- !inherits(formula_psi_shared, "formula")
+    if (any(bad_formula))
+        stop(sprintf("Formula is expected for: %s",
+                     paste(formulas[bad_formula], collapse = ", ")))
 }
 
 # Extract constants for the model
@@ -551,18 +584,25 @@ set_modargs <- function(formula_phi,
                 theta_shared     = theta_shared,
                 psi_shared       = psi_shared,
                 M                = M,
-                M_phi_shared     = M_phi_shared,
-                M_theta_shared   = M_theta_shared,
-                M_psi_shared     = M_psi_shared,
                 cov_phi          = cov_phi,
                 cov_theta        = cov_theta,
                 cov_psi          = cov_psi,
-                cov_phi_shared   = cov_phi_shared,
-                cov_theta_shared = cov_theta_shared,
-                cov_psi_shared   = cov_psi_shared,
                 m_phi            = m_phi,
                 m_theta          = m_theta,
                 m_psi            = m_psi)
+
+    if (phi_shared) {
+        out$M_phi_shared   <- M_phi_shared
+        out$cov_phi_shared <- cov_phi_shared
+    }
+    if (theta_shared) {
+        out$M_theta_shared   <- M_theta_shared
+        out$cov_theta_shared <- cov_theta_shared
+    }
+    if (psi_shared) {
+        out$M_psi_shared   <- M_psi_shared
+        out$cov_psi_shared <- cov_psi_shared
+    }
 
     out
 }
@@ -899,18 +939,20 @@ Note that only site covariates, species covariates, or their interactions are al
 }
 
 main_effects <- function(terms) {
-    if (is.null(terms))
+    if (is.null(terms)) {
         NULL
-    else
+    } else {
         unique(unlist(strsplit(terms, split = ":")))
+    }
 }
 
 # Redefine the terms() function (!! DO NOT EXPORT !!)
 terms <- function(formula) {
-    if (is.null(formula))
+    if (is.null(formula)) {
         NULL
-    else
+    } else {
         attr(stats::terms(formula), which = "term.labels")
+    }
 }
 
 extract_covariate <- function(cov_name, data) {

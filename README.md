@@ -45,7 +45,13 @@ data <- occumbData(
     repl_cov = list(cov4 = matrix(rnorm(J * K), J, K)))
 
 # Fitting a null model (includes only species-specific intercepts)
-occumb(data = data)
+res0 <- occumb(data = data)
+
+# occumb() fits the model using jags() in the jagsUI package
+# You can thus get the same output as seen in the jagsUI results
+res0
+summary(res0)
+plot(res0)
 
 # Add species-specific effects of site covariates in occupancy probabilities
 res1 <- occumb(formula_psi = ~ cov2, data = data)        # Continuous covariate
@@ -69,7 +75,7 @@ res9 <- occumb(data = data, prior_prec = 1E-2, prior_ulim = 1E2,
 res10 <- occumb(data = data, parallel = TRUE) # Run MCMC in parallel
 ```
 
-See the documentation for `ocumbData()` and `ocumb()` for details.
+See the documentation for `occumbData()` and `occumb()` for details.
 
 Future versions will provide functions to summarize the model-fit results and perform further analyses based on the model.
 
