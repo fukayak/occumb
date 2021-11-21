@@ -899,18 +899,20 @@ Note that only site covariates, species covariates, or their interactions are al
 }
 
 main_effects <- function(terms) {
-    if (is.null(terms))
+    if (is.null(terms)) {
         NULL
-    else
+    } else {
         unique(unlist(strsplit(terms, split = ":")))
+    }
 }
 
 # Redefine the terms() function (!! DO NOT EXPORT !!)
 terms <- function(formula) {
-    if (is.null(formula))
+    if (is.null(formula)) {
         NULL
-    else
+    } else {
         attr(stats::terms(formula), which = "term.labels")
+    }
 }
 
 extract_covariate <- function(cov_name, data) {
