@@ -21,9 +21,11 @@ Config/testthat/edition: 3
 Imports: 
     jagsUI,
     stats,
-    methods
+    methods,
+    graphics
 Collate: 
     'classes.R'
+    'gof.R'
     'occumb.R'
     'occumbData.R'
     'plot.R'

@@ -1,4 +1,8 @@
 # occumb (development version)
+* Add `...` argument to `occumb()`.
+* Add `get_data()` function.
+* Add `get_post_sample()` function.
+* Add `gof()` function.
 
 # occumb v0.2.1 (2021/11/21)
 * A few bug fixes.
