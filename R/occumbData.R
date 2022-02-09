@@ -174,3 +174,8 @@ check_covariate_mode <- function(spec_cov, site_cov, repl_cov) {
     }
 }
 
+# Getter
+get_data <- function(occumbData, variable) {
+    eval(parse(text = paste0("occumbData@", variable)))
+}
+
