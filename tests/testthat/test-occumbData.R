@@ -64,7 +64,7 @@ test_that("Check for unacceptable covariate mode works", {
 })
 
 ### Test for get_data() --------------------------------------------------------
-test_that("Outputs are correct when proper variable name are given", {
+test_that("Outputs are correct when proper variable names are given", {
     I <- 2; J <- 2; K <- 2
     y <- array(sample.int(I * J * K), dim = c(I, J, K))
     spec_cov <- list(cov1 = rnorm(I))
