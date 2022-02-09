@@ -6,7 +6,7 @@
 #' @examples
 #' # Write later.
 #' @export
-gof <- function(fit, data) {
+gof <- function(fit, data, plot = TRUE) {
 
     # Validate arguments
     qc_gof(fit, data)
@@ -49,9 +49,11 @@ gof <- function(fit, data) {
     }
 
     # Output (plot and object)
-    par(mfrow = c(1, 2))
-    plot_gof(dev_obs, dev_rep, "Deviance")
-    plot_gof(FT_obs, FT_rep, "Freeman-Tukey")
+    if (plot) {
+        par(mfrow = c(1, 2))
+        plot_gof(dev_obs, dev_rep, "Deviance")
+        plot_gof(FT_obs, FT_rep, "Freeman-Tukey")
+    }
 
     out <- list(p_values = list(
                     deviance = Bayesian_p_value(dev_obs, dev_rep),
@@ -77,8 +79,7 @@ qc_gof <- function(fit, data) {
     y  <- get_data(data, "y")
     pi <- get_post_samples(fit, "pi")
     if (!identical(dim(y), dim(pi)[-1]))
-        stop("Dimension mismatch between the data and posterior:
-              make sure to supply the data to which the model was applied")
+        stop("Dimension mismatch between the data and posterior: make sure to supply the data to which the model was applied")
 }
 
 # Fit statistics --------------------------------------------------------------
