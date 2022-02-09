@@ -1,10 +1,37 @@
-#' @title Goodness-of-fit function.
+#' @title Goodness-of-fit assessment.
 #' 
-#' @description Write later.
+#' @description \code{gof()} computes some fit statistics and their Bayesian \eqn{p}-values from the model fitting results and the original data.
 #' @details
-#'  Write later.
+#'  TODO: Add details.
+#'      - This function conducts the procedure of gof assessment described in (ref).
+#'      - Two statistics: deviance and Freeman_Tukey statistics.
+#'      - Bayesian p-value: I(obs < rep) / N.
+#'          Extreme values may indicate inadequate model fit.
+#'      - References for gof stats and Bayesian p-values.
+#' @param fit An \code{occumbFit} object.
+#' @param data An \code{occumbData} object used for the model fitting.
+#' @param plot Logical, determine if draw scatter plots of the fit statistics.
+#' @section References:
+#'  TODO: Add references.
 #' @examples
-#' # Write later.
+#' \dontrun{
+#' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
+#' I <- 2 # Number of species
+#' J <- 2 # Number of sites
+#' K <- 2 # Number of replicates
+#' data <- occumbData(
+#'     y = array(sample.int(I * J * K), dim = c(I, J, K)),
+#'     spec_cov = list(cov1 = rnorm(I)),
+#'     site_cov = list(cov2 = rnorm(J),
+#'                     cov3 = factor(1:J)),
+#'     repl_cov = list(cov4 = matrix(rnorm(J * K), J, K)))
+#' 
+#' # Fitting a null model
+#' fit <- occumb(data = data)
+#' 
+#' # Goodness-of-fit assessment
+#' gof_result <- gof(fit, data)
+#' }
 #' @export
 gof <- function(fit, data, plot = TRUE) {
 
@@ -25,7 +52,7 @@ gof <- function(fit, data, plot = TRUE) {
         for (j in seq_len(J)) {
             for (k in seq_len(K)) {
                 if (N[j, k] > 0)
-                    y_rep[m, , j, k] <- rmultinom(1, N[j, k], pi[m, , j, k])
+                    y_rep[m, , j, k] <- stats::rmultinom(1, N[j, k], pi[m, , j, k])
             }
         }
     }
@@ -50,7 +77,7 @@ gof <- function(fit, data, plot = TRUE) {
 
     # Output (plot and object)
     if (plot) {
-        par(mfrow = c(1, 2))
+        graphics::par(mfrow = c(1, 2))
         plot_gof(dev_obs, dev_rep, "Deviance")
         plot_gof(FT_obs, FT_rep, "Freeman-Tukey")
     }
@@ -88,7 +115,7 @@ Freeman_Tukey <- function(y, N, pi) {
 }
 
 loglik <- function(y, N, pi) {
-    dmultinom(y, N, pi, log = TRUE)
+    stats::dmultinom(y, N, pi, log = TRUE)
 }
 # -----------------------------------------------------------------------------
 
@@ -104,6 +131,6 @@ plot_gof <- function(stat_obs, stat_rep, statistics) {
          main = paste(statistics, "| Bayesian p-value =", pval),
          xlab = paste0(statistics, "_rep"),
          ylab = paste0(statistics, "_obs"))
-    abline(a = 0, b = 1)
+    graphics::abline(a = 0, b = 1)
 }
 
