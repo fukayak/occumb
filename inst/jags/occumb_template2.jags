@@ -1,6 +1,6 @@
             }
-            sum_ux[j, k] <- ifelse(sum(u[1:I, j, k]) > 0,
-                                   sum(u[1:I, j, k] * x[1:I, j, k]),
+            sum_ur[j, k] <- ifelse(sum(u[1:I, j, k]) > 0,
+                                   sum(u[1:I, j, k] * r[1:I, j, k]),
                                    1)
         }
     }

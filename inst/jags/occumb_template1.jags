@@ -10,4 +10,4 @@ model {
     for (j in 1:J) {
         for (k in 1:K) {
             for (i in 1:I) {
-                pi[i, j, k] <- u[i, j, k] * x[i, j, k] / sum_ux[j, k]
+                pi[i, j, k] <- u[i, j, k] * r[i, j, k] / sum_ur[j, k]

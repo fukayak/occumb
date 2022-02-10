@@ -153,7 +153,7 @@ test_that("Code for initial value function is correct for 144 available models",
             "function() {",
             "    list(z = matrix(1, const$I, const$J),",
             "         u = array(1, dim = c(const$I, const$J, const$K)),",
-            "         x = array(stats::rnorm(const$I * const$J * const$K,",
+            "         r = array(stats::rnorm(const$I * const$J * const$K,",
             "                                mean = 1, sd = 0.1),",
             "                   dim = c(const$I, const$J, const$K)),")
 
@@ -209,13 +209,13 @@ test_that("JAGS code is correct for 144 available models", {
 
         if (cases$phi[i] == "i")
             ans <- c(ans,
-                     "                x[i, j, k] ~ dgamma(phi[i], 1)")
+                     "                r[i, j, k] ~ dgamma(phi[i], 1)")
         if (cases$phi[i] == "ij")
             ans <- c(ans,
-                     "                x[i, j, k] ~ dgamma(phi[i, j], 1)")
+                     "                r[i, j, k] ~ dgamma(phi[i, j], 1)")
         if (cases$phi[i] == "ijk")
             ans <- c(ans,
-                     "                x[i, j, k] ~ dgamma(phi[i, j, k], 1)")
+                     "                r[i, j, k] ~ dgamma(phi[i, j, k], 1)")
 
         ans <- c(ans, readLines(system.file("jags",
                                             "occumb_template2.jags",

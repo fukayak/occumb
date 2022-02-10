@@ -642,7 +642,7 @@ inits_code <- function(const, margs) {
         "function() {",
         "    list(z = matrix(1, const$I, const$J),",
         "         u = array(1, dim = c(const$I, const$J, const$K)),",
-        "         x = array(stats::rnorm(const$I * const$J * const$K,",
+        "         r = array(stats::rnorm(const$I * const$J * const$K,",
         "                                mean = 1, sd = 0.1),",
         "                   dim = c(const$I, const$J, const$K)),")
 
@@ -691,13 +691,13 @@ write_jags_model <- function(phi, theta, psi,
 
     if (phi == "i")
         model <- c(model,
-                   "                x[i, j, k] ~ dgamma(phi[i], 1)")
+                   "                r[i, j, k] ~ dgamma(phi[i], 1)")
     if (phi == "ij")
         model <- c(model,
-                   "                x[i, j, k] ~ dgamma(phi[i, j], 1)")
+                   "                r[i, j, k] ~ dgamma(phi[i, j], 1)")
     if (phi == "ijk")
         model <- c(model,
-                   "                x[i, j, k] ~ dgamma(phi[i, j, k], 1)")
+                   "                r[i, j, k] ~ dgamma(phi[i, j, k], 1)")
 
     model <- c(model,
                readLines(system.file("jags",
