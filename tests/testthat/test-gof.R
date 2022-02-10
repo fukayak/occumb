@@ -38,7 +38,7 @@ test_that("Checks for data work", {
     expect_error(gof(fit, data = array(1, dim = rep(2, 3))),
                  "An occumbData class object is expected for data")
     expect_error(gof(fit, data = data2),
-                 "Dimension mismatch between the data and posterior: make sure to supply the data to which the model was applied")
+                 "Dimension mismatch between the data and posterior: make sure to supply the dataset to which the model was applied")
 })
 
 ### Tests for fit statistics ---------------------------------------------------
