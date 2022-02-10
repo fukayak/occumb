@@ -1,18 +1,48 @@
-#' @title Goodness-of-fit assessment.
+#' @title Goodness-of-fit assessment of the fitted model.
 #' 
-#' @description \code{gof()} computes some fit statistics and their Bayesian \eqn{p}-values from the model fitting results and the original data.
+#' @description \code{gof()} calculates some omnibus discrepancy measures and 
+#'  their Bayesian \eqn{p}-values for the fitted model using the posterior
+#'  predictive check approach.
 #' @details
-#'  TODO: Add details.
-#'      - This function conducts the procedure of gof assessment described in (ref).
-#'      - Two statistics: deviance and Freeman_Tukey statistics.
-#'      - Bayesian p-value: I(obs < rep) / N.
-#'          Extreme values may indicate inadequate model fit.
-#'      - References for gof stats and Bayesian p-values.
+#'  Two discrepancy measures, deviance and the Freeman-Tukey statistics, are
+#'  obtained using the procedure of posterior predictive checking.
+#'  The Bayesian \eqn{p}-value is estimated as the probability that the value of
+#'  the discrepancy measure of replicated data is more extreme than that of the
+#'  observed data.
+#'  An extreme Bayesian \eqn{p}-value may indicate an inadequate model fit.
+#'  See, e.g., Gelman et al. (2014), Kéry and Royle (2016), and
+#'  Conn et al. (2018) for more details on the procedures for posterior
+#'  predictive checking.
+#'
+#'  Note that the dataset that has been used for the model fitting must be
+#'  supplied to the \code{data} argument.
+#'  Although the function checks whether the dimensions of the dataset and
+#'  posterior match (so that an apparent inconsistency is detected), it does not
+#'  verify that the dataset is identical to the one used for the model fitting.
 #' @param fit An \code{occumbFit} object.
 #' @param data An \code{occumbData} object used for the model fitting.
+#' @return A list with the following named elements in which results for
+#'  deviance and the Freeman-Tukey statistics are recorded:
+#'      \describe{
+#'          \item{\code{p_values}}{Bayesian \eqn{p}-value.}
+#'          \item{\code{stats_obs}}{Discrepancy measures for observed data.}
+#'          \item{\code{stats_rep}}{Discrepancy measures for repeated data.}
+#'      }
 #' @param plot Logical, determine if draw scatter plots of the fit statistics.
 #' @section References:
-#'  TODO: Add references.
+#'  P. B. Conn, D. S. Johnson, P. J. Williams, S. R. Melin and M. B. Hooten.
+#'  (2018) A guide to Bayesian model checking for ecologists.
+#'  \emph{Ecological Monographs} \strong{88}:526--542.
+#'  \url{https://doi.org/10.1002/ecm.1314}
+#'
+#'  A. Gelman, J. B. Carlin, H. S. Stern D. B. Dunson, A. Vehtari and
+#'  D. B. Rubin (2013) \emph{Bayesian Data Analysis}. 3rd edition.
+#'  Chapman and Hall/CRC. \url{http://www.stat.columbia.edu/~gelman/book/}
+#'
+#'  M. Kéry and J. A. Royle (2016) \emph{Applied Hierarchical Modeling in
+#'  Ecology --- Analysis of Distribution, Abundance and Species Richness in R
+#'  and BUGS. Volume 1: Prelude and Static Models}. Academic Press.
+#'  \url{https://www.mbr-pwrc.usgs.gov/pubanalysis/keryroylebook/}
 #' @examples
 #' \dontrun{
 #' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
@@ -31,6 +61,7 @@
 #' 
 #' # Goodness-of-fit assessment
 #' gof_result <- gof(fit, data)
+#' gof_result$p_values  # print p-values
 #' }
 #' @export
 gof <- function(fit, data, plot = TRUE) {
@@ -109,7 +140,7 @@ qc_gof <- function(fit, data) {
     y  <- get_data(data, "y")
     pi <- get_post_samples(fit, "pi")
     if (!identical(dim(y), dim(pi)[-1]))
-        stop("Dimension mismatch between the data and posterior: make sure to supply the data to which the model was applied")
+        stop("Dimension mismatch between the data and posterior: make sure to supply the dataset to which the model was applied")
 }
 
 # Fit statistics --------------------------------------------------------------
