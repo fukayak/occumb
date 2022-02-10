@@ -75,7 +75,7 @@ model fitting.
 }
 \description{
 \code{occumb()} fits the multispecies site-occupancy model for eDNA
-metabarcoding (Fukaya et al. 2021) and returns a model-fit object containing
+metabarcoding (Fukaya et al. 2022) and returns a model-fit object containing
 posterior samples.
 }
 \details{
@@ -140,10 +140,11 @@ details.
 }
 \section{References}{
 
-K. Fukaya, N. I. Kondo, S. S. Matsuzaki and T. Kadoya (2021)
+K. Fukaya, N. I. Kondo, S. S. Matsuzaki and T. Kadoya (2022)
 Multispecies site occupancy modelling and study design for spatially
 replicated environmental DNA metabarcoding. \emph{Methods in Ecology
-and Evolution}. https://doi.org/10.1111/2041-210X.13732
+and Evolution} \strong{13}:183--193.
+\url{https://doi.org/10.1111/2041-210X.13732}
 }
 
 \examples{

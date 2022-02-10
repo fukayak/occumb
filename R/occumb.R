@@ -7,7 +7,7 @@ setClass("occumbFit", slots = c(fit = "jagsUI"))
 #' @title Model-fitting function.
 #' 
 #' @description \code{occumb()} fits the multispecies site-occupancy model for eDNA
-#'  metabarcoding (Fukaya et al. 2021) and returns a model-fit object containing
+#'  metabarcoding (Fukaya et al. 2022) and returns a model-fit object containing
 #'  posterior samples.
 #' @details
 #'  \code{occumb()} allows the fitting of a range of the multispecies site
@@ -100,10 +100,11 @@ setClass("occumbFit", slots = c(fit = "jagsUI"))
 #' @return  An S4 object of the \code{occumbFit} class containing the results of
 #'          model fitting.
 #' @section References:
-#'      K. Fukaya, N. I. Kondo, S. S. Matsuzaki and T. Kadoya (2021)
+#'      K. Fukaya, N. I. Kondo, S. S. Matsuzaki and T. Kadoya (2022)
 #'      Multispecies site occupancy modelling and study design for spatially
 #'      replicated environmental DNA metabarcoding. \emph{Methods in Ecology
-#'      and Evolution}. https://doi.org/10.1111/2041-210X.13732
+#'      and Evolution} \strong{13}:183--193.
+#'      \url{https://doi.org/10.1111/2041-210X.13732}
 #' @examples
 #' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
 #' I <- 2 # Number of species
