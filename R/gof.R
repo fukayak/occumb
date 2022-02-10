@@ -51,8 +51,11 @@ gof <- function(fit, data, plot = TRUE) {
     for (m in seq_len(M)) {
         for (j in seq_len(J)) {
             for (k in seq_len(K)) {
-                if (N[j, k] > 0)
+                if (N[j, k] > 0) {
                     y_rep[m, , j, k] <- stats::rmultinom(1, N[j, k], pi[m, , j, k])
+                } else {
+                    y_rep[m, , j, k] <- 0
+                }
             }
         }
     }
