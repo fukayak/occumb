@@ -128,12 +128,12 @@ Bayesian_p_value <- function(stat_obs, stat_rep) mean(stat_obs < stat_rep)
 # Plot function
 plot_gof <- function(stat_obs, stat_rep, statistics) {
     pval <- Bayesian_p_value(stat_obs, stat_rep)
-    plot(stat_obs ~ stat_rep,
+    plot(stat_rep ~ stat_obs,
          xlim = range(c(stat_obs, stat_rep)),
          ylim = range(c(stat_obs, stat_rep)),
          main = paste(statistics, "| Bayesian p-value =", pval),
-         xlab = paste0(statistics, "_rep"),
-         ylab = paste0(statistics, "_obs"))
+         xlab = paste0(statistics, "_obs"),
+         ylab = paste0(statistics, "_rep"))
     graphics::abline(a = 0, b = 1)
 }
 
