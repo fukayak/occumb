@@ -96,6 +96,7 @@ setClass("occumbFit", slots = c(fit = "jagsUI"))
 #' @param n.thin Thinning rate. Must be a positive integer.
 #' @param n.iter Total number of iterations per chain (including burn-in).
 #' @param parallel If TRUE, run MCMC chains in parallel on multiple CPU cores.
+#' @param ... Additional arguments passed to \code{\link[jagsUI]{jags}()} function.
 #' @return  An S4 object of the \code{occumbFit} class containing the results of
 #'          model fitting.
 #' @section References:
@@ -155,7 +156,8 @@ occumb <- function(formula_phi = ~ 1,
                    n.burnin = 10000,
                    n.thin = 10,
                    n.iter = 20000,
-                   parallel = FALSE) {
+                   parallel = FALSE,
+                   ...) {
 
     # Validate arguments
     qc_occumb(data, formula_phi, formula_theta, formula_psi,
@@ -198,7 +200,7 @@ occumb <- function(formula_phi = ~ 1,
                         n.iter   = n.iter,
                         n.burnin = n.burnin,
                         n.thin   = n.thin,
-                        parallel = parallel)
+                        parallel = parallel, ...)
 
     # Output
     out <- methods::new("occumbFit", fit = fit)
@@ -971,6 +973,13 @@ set_design_matrix <- function(formula, omit_intercept = FALSE) {
     }
 
     out
+}
+# -----------------------------------------------------------------------------
+
+
+# Getter ----------------------------------------------------------------------
+get_post_samples <- function(occumbFit, parameter) {
+    eval(parse(text = paste0("occumbFit@fit$sims.list$", parameter)))
 }
 # -----------------------------------------------------------------------------
 
