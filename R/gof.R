@@ -60,7 +60,7 @@
 gof <- function(fit, plot = TRUE) {
 
     # Validate arguments
-    qc_gof(fit)
+    qc_occumbFit(fit)
 
     # Set constants
     y <- get_data(fit, "y")
@@ -121,20 +121,9 @@ gof <- function(fit, plot = TRUE) {
     out
 }
 
-# Validation for the inputs
-qc_gof <- function(fit) {
-    # Check object classes
-    if (!inherits(fit, "occumbFit"))
-        stop("An occumbFit class object is expected for fit")
-}
-
 # Fit statistics --------------------------------------------------------------
 Freeman_Tukey <- function(y, N, pi) {
     sum((sqrt(y) - sqrt(N * pi))^2)
-}
-
-llmulti <- function(y, N, pi) {
-    stats::dmultinom(y, N, pi, log = TRUE)
 }
 # -----------------------------------------------------------------------------
 

@@ -4,6 +4,7 @@
 * Add `get_post_sample()` function.
 * Add `gof()` function.
 * Add `data` field in `occumbFit` class.
+* Add `loglik()` function.
 
 # occumb v0.2.1 (2021/11/21)
 * A few bug fixes.
