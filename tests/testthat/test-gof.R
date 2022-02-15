@@ -19,7 +19,7 @@ fit <- occumb(data = data,
 
 ### Tests for outputs ----------------------------------------------------------
 test_that("Dimensions of the output are as expected", {
-    out <- gof(fit, data, plot = FALSE)
+    out <- gof(fit, plot = FALSE)
     expect_identical(names(out), c("p_values", "stats_obs", "stats_rep"))
     expect_identical(names(out$p_values), c("deviance", "Freeman_Tukey"))
     expect_identical(names(out$stats_obs), c("deviance", "Freeman_Tukey"))
@@ -33,12 +33,8 @@ test_that("Dimensions of the output are as expected", {
 
 ### Tests for quality controls -------------------------------------------------
 test_that("Checks for data work", {
-    expect_error(gof(fit = array(1, dim = rep(2, 3)), data = data),
+    expect_error(gof(fit = array(1, dim = rep(2, 3))),
                  "An occumbFit class object is expected for fit")
-    expect_error(gof(fit, data = array(1, dim = rep(2, 3))),
-                 "An occumbData class object is expected for data")
-    expect_error(gof(fit, data = data2),
-                 "Dimension mismatch between the data and posterior: make sure to supply the dataset to which the model was applied")
 })
 
 ### Tests for fit statistics ---------------------------------------------------

@@ -979,6 +979,10 @@ set_design_matrix <- function(formula, omit_intercept = FALSE) {
 
 
 # Getter ----------------------------------------------------------------------
+get_data <- function(occumbFit, variable) {
+    eval(parse(text = paste0("occumbFit@data@", variable)))
+}
+
 get_post_samples <- function(occumbFit, parameter) {
     eval(parse(text = paste0("occumbFit@fit$sims.list$", parameter)))
 }

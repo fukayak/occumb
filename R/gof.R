@@ -13,14 +13,7 @@
 #'  See, e.g., Gelman et al. (2014), Kéry and Royle (2016), and
 #'  Conn et al. (2018) for more details on the procedures for posterior
 #'  predictive checking.
-#'
-#'  Note that the dataset that has been used for the model fitting must be
-#'  supplied to the \code{data} argument.
-#'  Although the function checks whether the dimensions of the dataset and
-#'  posterior match (so that an apparent inconsistency is detected), it does not
-#'  verify that the dataset is identical to the one used for the model fitting.
 #' @param fit An \code{occumbFit} object.
-#' @param data An \code{occumbData} object used for the model fitting.
 #' @return A list with the following named elements in which results for
 #'  deviance and the Freeman-Tukey statistics are recorded:
 #'      \describe{
@@ -60,17 +53,17 @@
 #' fit <- occumb(data = data)
 #' 
 #' # Goodness-of-fit assessment
-#' gof_result <- gof(fit, data)
+#' gof_result <- gof(fit)
 #' gof_result$p_values  # print p-values
 #' }
 #' @export
-gof <- function(fit, data, plot = TRUE) {
+gof <- function(fit, plot = TRUE) {
 
     # Validate arguments
-    qc_gof(fit, data)
+    qc_gof(fit)
 
     # Set constants
-    y <- get_data(data, "y")
+    y <- get_data(fit, "y")
     I <- dim(y)[1]; J <- dim(y)[2]; K <- dim(y)[3]
     N <- apply(y, c(2, 3), sum)
 
@@ -129,18 +122,10 @@ gof <- function(fit, data, plot = TRUE) {
 }
 
 # Validation for the inputs
-qc_gof <- function(fit, data) {
+qc_gof <- function(fit) {
     # Check object classes
     if (!inherits(fit, "occumbFit"))
         stop("An occumbFit class object is expected for fit")
-    if (!inherits(data, "occumbData"))
-        stop("An occumbData class object is expected for data")
-
-    # Check data dimensions
-    y  <- get_data(data, "y")
-    pi <- get_post_samples(fit, "pi")
-    if (!identical(dim(y), dim(pi)[-1]))
-        stop("Dimension mismatch between the data and posterior: make sure to supply the dataset to which the model was applied")
 }
 
 # Fit statistics --------------------------------------------------------------
