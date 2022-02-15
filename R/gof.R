@@ -60,7 +60,7 @@
 gof <- function(fit, plot = TRUE) {
 
     # Validate arguments
-    qc_gof(fit)
+    qc_occumbFit(fit)
 
     # Set constants
     y <- get_data(fit, "y")
@@ -119,13 +119,6 @@ gof <- function(fit, plot = TRUE) {
                     deviance = dev_rep,
                     Freeman_Tukey = FT_rep))
     out
-}
-
-# Validation for the inputs
-qc_gof <- function(fit) {
-    # Check object classes
-    if (!inherits(fit, "occumbFit"))
-        stop("An occumbFit class object is expected for fit")
 }
 
 # Fit statistics --------------------------------------------------------------
