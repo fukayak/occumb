@@ -1,10 +1,19 @@
 #' @title Pointwise log-likelihood of the fitted model.
 #' 
-#' @description ...
+#' @description \code{loglik} extracts the pointwise log-likelihood matrix from
+#'  an \code{occumbFit} object.
 #' @details
-#'  ...
+#'  The pointwise log-likelihood, the log-likelihood of each replicate for the
+#'  posterior samples, can be used to obtain WAIC and PSIS-LOO for model
+#'  selection.
 #' @param fit An \code{occumbFit} object.
-#' @return ...
+#' @return An \eqn{M \times L} matrix, where \eqn{M} is the size of the
+#'  posterior sample and \eqn{L} is the number of replicates.
+#' @section References:
+#'  A. Vehtari, A. Gelman, J. Gabry (2017) Practical Bayesian model evaluation
+#'  using leave-one-out cross-validation and WAIC.
+#'  \emph{Statistics and Computing}, \strong{27}, 1413--1432.
+#'  \url{https://doi.org/10.1007/s11222-016-9696-4}
 #' @examples
 #' \dontrun{
 #' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
@@ -22,7 +31,7 @@
 #' fit <- occumb(data = data)
 #' 
 #' # Extract log-likelihood
-#' ll <- loglik(fit)
+#' ll <- loglik(fit)  # could be passed to loo() or waic() in the loo package
 #' }
 #' @export
 loglik <- function(fit) {

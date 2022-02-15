@@ -26,6 +26,7 @@ Imports:
 Collate: 
     'classes.R'
     'gof.R'
+    'loglik.R'
     'occumbData.R'
     'occumb.R'
     'plot.R'
