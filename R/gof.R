@@ -97,8 +97,8 @@ gof <- function(fit, data, plot = TRUE) {
         dev_obs_m <- dev_rep_m <- FT_obs_m <- FT_rep_m <- matrix(nrow = J, ncol = K)
         for (j in seq_len(J)) {
             for (k in seq_len(K)) {
-                dev_obs_m[j, k] <- -2 * loglik(y[, j, k], N[j, k], pi[m, , j, k])
-                dev_rep_m[j, k] <- -2 * loglik(y_rep[m, , j, k], N[j, k], pi[m, , j, k])
+                dev_obs_m[j, k] <- -2 * llmulti(y[, j, k], N[j, k], pi[m, , j, k])
+                dev_rep_m[j, k] <- -2 * llmulti(y_rep[m, , j, k], N[j, k], pi[m, , j, k])
                 FT_obs_m[j, k]  <- Freeman_Tukey(y[, j, k], N[j, k], pi[m, , j, k])
                 FT_rep_m[j, k]  <- Freeman_Tukey(y_rep[m, , j, k], N[j, k], pi[m, , j, k])
             }
@@ -148,7 +148,7 @@ Freeman_Tukey <- function(y, N, pi) {
     sum((sqrt(y) - sqrt(N * pi))^2)
 }
 
-loglik <- function(y, N, pi) {
+llmulti <- function(y, N, pi) {
     stats::dmultinom(y, N, pi, log = TRUE)
 }
 # -----------------------------------------------------------------------------

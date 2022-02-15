@@ -47,7 +47,7 @@ test_that("Calculations of fit statistics are correct", {
     pi_test <- rep(0.5, 2)
     expect_identical(Freeman_Tukey(y_test, sum(y_test), pi_test),
                      sum(((sqrt(y_test)) - sqrt(sum(y_test) * pi_test))^2))
-    expect_identical(loglik(y_test, sum(y_test), pi_test),
+    expect_identical(llmulti(y_test, sum(y_test), pi_test),
                      dmultinom(y_test, sum(y_test), pi_test, log = TRUE))
 })
 
