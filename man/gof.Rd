@@ -4,12 +4,10 @@
 \alias{gof}
 \title{Goodness-of-fit assessment of the fitted model.}
 \usage{
-gof(fit, data, plot = TRUE)
+gof(fit, plot = TRUE)
 }
 \arguments{
 \item{fit}{An \code{occumbFit} object.}
-
-\item{data}{An \code{occumbData} object used for the model fitting.}
 
 \item{plot}{Logical, determine if draw scatter plots of the fit statistics.}
 }
@@ -37,12 +35,6 @@ An extreme Bayesian \eqn{p}-value may indicate an inadequate model fit.
 See, e.g., Gelman et al. (2014), Kéry and Royle (2016), and
 Conn et al. (2018) for more details on the procedures for posterior
 predictive checking.
-
-Note that the dataset that has been used for the model fitting must be
-supplied to the \code{data} argument.
-Although the function checks whether the dimensions of the dataset and
-posterior match (so that an apparent inconsistency is detected), it does not
-verify that the dataset is identical to the one used for the model fitting.
 }
 \section{References}{
 
@@ -78,7 +70,7 @@ data <- occumbData(
 fit <- occumb(data = data)
 
 # Goodness-of-fit assessment
-gof_result <- gof(fit, data)
+gof_result <- gof(fit)
 gof_result$p_values  # print p-values
 }
 }
