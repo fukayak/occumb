@@ -20,3 +20,11 @@ test_that("qc_occumbFit() works correctly", {
                  "An occumbFit class object is expected for fit")
 })
 
+### Tests for llmulti() --------------------------------------------------------
+test_that("Calculation of multinomial log-likelihood is correct", {
+    y_test  <- sample.int(2)
+    pi_test <- rep(0.5, 2)
+    expect_identical(llmulti(y_test, sum(y_test), pi_test),
+                     dmultinom(y_test, sum(y_test), pi_test, log = TRUE))
+})
+

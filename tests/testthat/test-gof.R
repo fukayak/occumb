@@ -38,13 +38,11 @@ test_that("Checks for data work", {
 })
 
 ### Tests for fit statistics ---------------------------------------------------
-test_that("Calculations of fit statistics are correct", {
+test_that("Calculation of fit statistics is correct", {
     y_test  <- sample.int(2)
     pi_test <- rep(0.5, 2)
     expect_identical(Freeman_Tukey(y_test, sum(y_test), pi_test),
                      sum(((sqrt(y_test)) - sqrt(sum(y_test) * pi_test))^2))
-    expect_identical(llmulti(y_test, sum(y_test), pi_test),
-                     dmultinom(y_test, sum(y_test), pi_test, log = TRUE))
 })
 
 test_that("Calculation of Bayes p-value is correct", {
