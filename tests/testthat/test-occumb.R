@@ -366,6 +366,30 @@ test_that("JAGS code is correct for 144 available models", {
     }
 })
 
+### Test for get_data() --------------------------------------------------------
+test_that("Outputs are correct when proper variable names are given", {
+    I <- 2; J <- 2; K <- 2
+    y <- array(sample.int(I * J * K), dim = c(I, J, K))
+    spec_cov <- list(cov1 = rnorm(I))
+    site_cov <- list(cov2 = rnorm(J), cov3 = factor(1:J))
+    repl_cov <- list(cov4 = matrix(rnorm(J * K), J, K))
+    data <- occumbData(
+        y = y,
+        spec_cov = spec_cov,
+        site_cov = site_cov,
+        repl_cov = repl_cov)
+
+    fit <- occumb(data = data,
+                  n.chains = 1, n.burnin = 10, n.thin = 1, n.iter = 20,
+                  verbose = FALSE)
+
+    expect_identical(get_data(fit, "y"), y)
+    expect_identical(get_data(fit, "spec_cov"), spec_cov)
+    expect_identical(get_data(fit, "site_cov"), site_cov)
+    expect_identical(get_data(fit, "repl_cov"), repl_cov)
+})
+
+
 ### Tests for get_post_samples ------------------------------------------------
 test_that("Outputs are correct when proper parameter names are given", {
     I <- 2; J <- 2; K <- 2
