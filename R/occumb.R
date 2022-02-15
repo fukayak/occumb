@@ -1,8 +1,8 @@
-#' @include classes.R
+#' @include classes.R occumbData.R
 NULL
 
 # Class for model-fit results of occumb
-setClass("occumbFit", slots = c(fit = "jagsUI"))
+setClass("occumbFit", slots = c(fit = "jagsUI", data = "occumbData"))
 
 #' @title Model-fitting function.
 #' 
@@ -204,7 +204,7 @@ occumb <- function(formula_phi = ~ 1,
                         parallel = parallel, ...)
 
     # Output
-    out <- methods::new("occumbFit", fit = fit)
+    out <- methods::new("occumbFit", fit = fit, data = data)
     out
 }
 

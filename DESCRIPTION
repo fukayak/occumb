@@ -26,8 +26,8 @@ Imports:
 Collate: 
     'classes.R'
     'gof.R'
-    'occumb.R'
     'occumbData.R'
+    'occumb.R'
     'plot.R'
     'print.R'
     'summary.R'
