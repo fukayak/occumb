@@ -11,3 +11,8 @@ qc_occumbFit <- function(fit) {
     }
 }
 
+# Multinomial log-likelihood
+llmulti <- function(y, N, pi) {
+    stats::dmultinom(y, N, pi, log = TRUE)
+}
+

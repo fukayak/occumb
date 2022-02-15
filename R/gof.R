@@ -125,10 +125,6 @@ gof <- function(fit, plot = TRUE) {
 Freeman_Tukey <- function(y, N, pi) {
     sum((sqrt(y) - sqrt(N * pi))^2)
 }
-
-llmulti <- function(y, N, pi) {
-    stats::dmultinom(y, N, pi, log = TRUE)
-}
 # -----------------------------------------------------------------------------
 
 # Calculate Bayesian p-values
