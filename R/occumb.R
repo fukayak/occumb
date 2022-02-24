@@ -98,7 +98,7 @@ setClass("occumbFit", slots = c(fit = "jagsUI", data = "occumbData"))
 #' @param parallel If TRUE, run MCMC chains in parallel on multiple CPU cores.
 #' @param ... Additional arguments passed to \code{\link[jagsUI]{jags}()} function.
 #' @return  An S4 object of the \code{occumbFit} class containing the results of
-#'          model fitting.
+#'          model fitting and the supplied dataset.
 #' @section References:
 #'      K. Fukaya, N. I. Kondo, S. S. Matsuzaki and T. Kadoya (2022)
 #'      Multispecies site occupancy modelling and study design for spatially

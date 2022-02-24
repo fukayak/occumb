@@ -71,7 +71,7 @@ standard deviation of species-specific parameters.}
 }
 \value{
 An S4 object of the \code{occumbFit} class containing the results of
-model fitting.
+model fitting and the supplied dataset.
 }
 \description{
 \code{occumb()} fits the multispecies site-occupancy model for eDNA
