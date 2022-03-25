@@ -22,9 +22,11 @@ Imports:
     jagsUI,
     stats,
     methods,
-    graphics
+    graphics,
+    foreach
 Collate: 
     'classes.R'
+    'globals.R'
     'gof.R'
     'loglik.R'
     'occumbData.R'

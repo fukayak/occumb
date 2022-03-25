@@ -68,10 +68,13 @@
 #' gof_result <- gof(fit)
 #' gof_result$p_values  # print p-values
 #' }
+#' @importFrom foreach '%do%'
 #' @export
 gof <- function(fit,
                 stats = c("Freeman_Tukey", "deviance"),
                 plot = TRUE) {
+
+    parallel <- FALSE   # To be implemented...
 
     # Validate arguments
     qc_occumbFit(fit)
@@ -86,37 +89,19 @@ gof <- function(fit,
     M  <- dim(pi)[1]
 
     # Generate replicate data
-    y_rep <- array(dim = c(M, I, J, K))
-    for (m in seq_len(M)) {
-        for (j in seq_len(J)) {
-            for (k in seq_len(K)) {
-                if (N[j, k] > 0) {
-                    y_rep[m, , j, k] <- stats::rmultinom(1, N[j, k], pi[m, , j, k])
-                } else {
-                    y_rep[m, , j, k] <- 0
-                }
-            }
-        }
+    if (parallel) { # Currently not available
+    } else {
+        y_rep <- foreach::foreach(m = seq_len(M)) %do%
+            get_y_rep(y, N, pi[m, , , ])
     }
 
     # Calculate fit statistics
-    stats_obs <- stats_rep <- vector(length = M)
-    for (m in seq_len(M)) {
-        stats_obs_m <- stats_rep_m <- matrix(nrow = J, ncol = K)
-        for (j in seq_len(J)) {
-            for (k in seq_len(K)) {
-                if (stats == "Freeman_Tukey") {
-                    stats_obs_m[j, k]  <- Freeman_Tukey(y[, j, k], N[j, k], pi[m, , j, k])
-                    stats_rep_m[j, k]  <- Freeman_Tukey(y_rep[m, , j, k], N[j, k], pi[m, , j, k])
-                }
-                if (stats == "deviance") {
-                    stats_obs_m[j, k] <- -2 * llmulti(y[, j, k], N[j, k], pi[m, , j, k])
-                    stats_rep_m[j, k] <- -2 * llmulti(y_rep[m, , j, k], N[j, k], pi[m, , j, k])
-                }
-            }
-        }
-        stats_obs[m] <- sum(stats_obs_m)
-        stats_rep[m] <- sum(stats_rep_m)
+    if (parallel) { # Currently not available
+    } else {
+        stats_obs <- foreach::foreach(m = seq_len(M), .combine = c) %do%
+            get_stats(y, N, pi[m, , , ], stats)
+        stats_rep <- foreach::foreach(m = seq_len(M), .combine = c) %do%
+            get_stats(y_rep[[m]], N, pi[m, , , ], stats)
     }
 
     # Output (plot and object)
@@ -133,6 +118,39 @@ Freeman_Tukey <- function(y, N, pi) {
     sum((sqrt(y) - sqrt(N * pi))^2)
 }
 # -----------------------------------------------------------------------------
+
+# Generate replicate data
+get_y_rep <- function(y, N, pi) {
+    I <- dim(y)[1]; J <- dim(y)[2]; K <- dim(y)[3]
+    y_rep_m <- array(dim = c(I, J, K))
+    for (j in seq_len(J)) {
+        for (k in seq_len(K)) {
+            if (N[j, k] > 0) {
+                y_rep_m[, j, k] <- stats::rmultinom(1, N[j, k], pi[, j, k])
+            } else {
+                y_rep_m[, j, k] <- 0
+            }
+        }
+    }
+    y_rep_m
+}
+
+# Calculate fit statistics
+get_stats <- function(y, N, pi, stats) {
+    J <- dim(y)[2]; K <- dim(y)[3]
+    stats_m <- stats_m <- matrix(nrow = J, ncol = K)
+    for (j in seq_len(J)) {
+        for (k in seq_len(K)) {
+            if (stats == "Freeman_Tukey") {
+                stats_m[j, k]  <- Freeman_Tukey(y[, j, k], N[j, k], pi[, j, k])
+            }
+            if (stats == "deviance") {
+                stats_m[j, k] <- -2 * llmulti(y[, j, k], N[j, k], pi[, j, k])
+            }
+        }
+    }
+    sum(stats_m)
+}
 
 # Calculate Bayesian p-values
 Bayesian_p_value <- function(stat_obs, stat_rep) mean(stat_obs < stat_rep)
