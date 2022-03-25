@@ -4,24 +4,36 @@
 #'  their Bayesian \eqn{p}-values for the fitted model using the posterior
 #'  predictive check approach.
 #' @details
-#'  Two discrepancy measures, deviance and the Freeman-Tukey statistics, are
-#'  obtained using the procedure of posterior predictive checking.
+#'  A discrepancy statistic of the fitted model is obtained using the procedure
+#'  of posterior predictive checking.
+#'  The following statistics are currently available:
+#'      \describe{
+#'          \item{Freeman-Tukey statistics (default)}{\eqn{T(\boldsymbol{y}, \boldsymbol{\theta}) = \sum_{i}\sum_{j}\sum_{k}\left(\sqrt{y_{ijk}} - \sqrt{E(y_{ijk} \mid \boldsymbol{\theta})}\right)^2}{\sum_i \sum_j \sum_k (sqrt(y[i, j, k]) - sqrt(E(y[i, j, k] | theta)))^2}}
+#'          \item{Deviance statistics}{\eqn{T(\boldsymbol{y}, \boldsymbol{\theta}) = -2 \log p(\boldsymbol{y} \mid \boldsymbol{\theta})}{T(y, theta) = -2 * log(p(y | theta))}}
+#'      }
+#'  where \eqn{\boldsymbol{y} = \{y_{ijk}\}}{y}, \eqn{\boldsymbol{\theta}}{theta}, 
+#'  \eqn{E(y_{ijk} \mid \boldsymbol{\theta})}{E(y[i, j, k] | theta)}, and
+#'  \eqn{\log p(\boldsymbol{y} \mid \boldsymbol{\theta})}{log(p(y | theta))}
+#'  are sequence read count data, parameters and latent variables of the model,
+#'  expected value of the data conditional on \eqn{\boldsymbol{\theta}}{theta},
+#'  and log-likelihood of the model, respectively.
 #'  The Bayesian \eqn{p}-value is estimated as the probability that the value of
-#'  the discrepancy measure of replicated data is more extreme than that of the
-#'  observed data.
+#'  the discrepancy statistics of replicated dataset is more extreme than that
+#'  of the observed dataset.
 #'  An extreme Bayesian \eqn{p}-value may indicate an inadequate model fit.
 #'  See, e.g., Gelman et al. (2014), Kéry and Royle (2016), and
 #'  Conn et al. (2018) for more details on the procedures for posterior
 #'  predictive checking.
 #' @param fit An \code{occumbFit} object.
-#' @return A list with the following named elements in which results for
-#'  deviance and the Freeman-Tukey statistics are recorded:
-#'      \describe{
-#'          \item{\code{p_values}}{Bayesian \eqn{p}-value.}
-#'          \item{\code{stats_obs}}{Discrepancy measures for observed data.}
-#'          \item{\code{stats_rep}}{Discrepancy measures for repeated data.}
-#'      }
+#' @param stats The discrepancy statistics to be applied.
 #' @param plot Logical, determine if draw scatter plots of the fit statistics.
+#' @return A list with the following named elements:
+#'      \describe{
+#'          \item{\code{stats}}{The discrepancy statistics applied.}
+#'          \item{\code{p_value}}{Bayesian \eqn{p}-value.}
+#'          \item{\code{stats_obs}}{Discrepancy statistics for observed data.}
+#'          \item{\code{stats_rep}}{Discrepancy statistics for repeated data.}
+#'      }
 #' @section References:
 #'  P. B. Conn, D. S. Johnson, P. J. Williams, S. R. Melin and M. B. Hooten.
 #'  (2018) A guide to Bayesian model checking for ecologists.
@@ -57,10 +69,13 @@
 #' gof_result$p_values  # print p-values
 #' }
 #' @export
-gof <- function(fit, plot = TRUE) {
+gof <- function(fit,
+                stats = c("Freeman_Tukey", "deviance"),
+                plot = TRUE) {
 
     # Validate arguments
     qc_occumbFit(fit)
+    stats <- match.arg(stats)
 
     # Set constants
     y <- get_data(fit, "y")
@@ -85,39 +100,31 @@ gof <- function(fit, plot = TRUE) {
     }
 
     # Calculate fit statistics
-    dev_obs <- dev_rep <- FT_obs <- FT_rep <- vector(length = M)
+    stats_obs <- stats_rep <- vector(length = M)
     for (m in seq_len(M)) {
-        dev_obs_m <- dev_rep_m <- FT_obs_m <- FT_rep_m <- matrix(nrow = J, ncol = K)
+        stats_obs_m <- stats_rep_m <- matrix(nrow = J, ncol = K)
         for (j in seq_len(J)) {
             for (k in seq_len(K)) {
-                dev_obs_m[j, k] <- -2 * llmulti(y[, j, k], N[j, k], pi[m, , j, k])
-                dev_rep_m[j, k] <- -2 * llmulti(y_rep[m, , j, k], N[j, k], pi[m, , j, k])
-                FT_obs_m[j, k]  <- Freeman_Tukey(y[, j, k], N[j, k], pi[m, , j, k])
-                FT_rep_m[j, k]  <- Freeman_Tukey(y_rep[m, , j, k], N[j, k], pi[m, , j, k])
+                if (stats == "Freeman_Tukey") {
+                    stats_obs_m[j, k]  <- Freeman_Tukey(y[, j, k], N[j, k], pi[m, , j, k])
+                    stats_rep_m[j, k]  <- Freeman_Tukey(y_rep[m, , j, k], N[j, k], pi[m, , j, k])
+                }
+                if (stats == "deviance") {
+                    stats_obs_m[j, k] <- -2 * llmulti(y[, j, k], N[j, k], pi[m, , j, k])
+                    stats_rep_m[j, k] <- -2 * llmulti(y_rep[m, , j, k], N[j, k], pi[m, , j, k])
+                }
             }
         }
-        dev_obs[m] <- sum(dev_obs_m)
-        dev_rep[m] <- sum(dev_rep_m)
-        FT_obs[m]  <- sum(FT_obs_m)
-        FT_rep[m]  <- sum(FT_rep_m)
+        stats_obs[m] <- sum(stats_obs_m)
+        stats_rep[m] <- sum(stats_rep_m)
     }
 
     # Output (plot and object)
-    if (plot) {
-        graphics::par(mfrow = c(1, 2))
-        plot_gof(dev_obs, dev_rep, "Deviance")
-        plot_gof(FT_obs, FT_rep, "Freeman-Tukey")
-    }
-
-    out <- list(p_values = list(
-                    deviance = Bayesian_p_value(dev_obs, dev_rep),
-                    Freeman_Tukey = Bayesian_p_value(FT_obs, FT_rep)),
-                stats_obs = list(
-                    deviance = dev_obs,
-                    Freeman_Tukey = FT_obs),
-                stats_rep = list(
-                    deviance = dev_rep,
-                    Freeman_Tukey = FT_rep))
+    if (plot) plot_gof(stats_obs, stats_rep, stats)
+    out <- list(stats = stats,
+                p_value = Bayesian_p_value(stats_obs, stats_rep),
+                stats_obs = stats_obs,
+                stats_rep = stats_rep)
     out
 }
 

@@ -20,15 +20,17 @@ fit <- occumb(data = data,
 ### Tests for outputs ----------------------------------------------------------
 test_that("Dimensions of the output are as expected", {
     out <- gof(fit, plot = FALSE)
-    expect_identical(names(out), c("p_values", "stats_obs", "stats_rep"))
-    expect_identical(names(out$p_values), c("deviance", "Freeman_Tukey"))
-    expect_identical(names(out$stats_obs), c("deviance", "Freeman_Tukey"))
-    expect_identical(names(out$stats_rep), c("deviance", "Freeman_Tukey"))
-    expect_equal(length(out$stats_obs$deviance), fit@fit$mcmc.info$n.samples)
-    expect_equal(length(out$stats_obs$Freeman_Tukey), fit@fit$mcmc.info$n.samples)
-    expect_equal(length(out$stats_rep$deviance), fit@fit$mcmc.info$n.samples)
-    expect_equal(length(out$stats_rep$Freeman_Tukey), fit@fit$mcmc.info$n.samples)
-    expect_false(any(out$p_values < 0 & 1 < out$p_values))
+    expect_identical(names(out), c("stats", "p_value", "stats_obs", "stats_rep"))
+    expect_identical(out$stats, "Freeman_Tukey")
+    expect_equal(length(out$stats_obs), fit@fit$mcmc.info$n.samples)
+    expect_equal(length(out$stats_rep), fit@fit$mcmc.info$n.samples)
+    expect_false(any(out$p_value < 0 & 1 < out$p_value))
+    out <- gof(fit, stats = "deviance", plot = FALSE)
+    expect_identical(names(out), c("stats", "p_value", "stats_obs", "stats_rep"))
+    expect_identical(out$stats, "deviance")
+    expect_equal(length(out$stats_obs), fit@fit$mcmc.info$n.samples)
+    expect_equal(length(out$stats_rep), fit@fit$mcmc.info$n.samples)
+    expect_false(any(out$p_value < 0 & 1 < out$p_value))
 })
 
 ### Tests for quality controls -------------------------------------------------

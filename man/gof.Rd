@@ -4,20 +4,22 @@
 \alias{gof}
 \title{Goodness-of-fit assessment of the fitted model.}
 \usage{
-gof(fit, plot = TRUE)
+gof(fit, stats = c("Freeman_Tukey", "deviance"), plot = TRUE)
 }
 \arguments{
 \item{fit}{An \code{occumbFit} object.}
 
+\item{stats}{The discrepancy statistics to be applied.}
+
 \item{plot}{Logical, determine if draw scatter plots of the fit statistics.}
 }
 \value{
-A list with the following named elements in which results for
-deviance and the Freeman-Tukey statistics are recorded:
+A list with the following named elements:
 \describe{
-\item{\code{p_values}}{Bayesian \eqn{p}-value.}
-\item{\code{stats_obs}}{Discrepancy measures for observed data.}
-\item{\code{stats_rep}}{Discrepancy measures for repeated data.}
+\item{\code{stats}}{The discrepancy statistics applied.}
+\item{\code{p_value}}{Bayesian \eqn{p}-value.}
+\item{\code{stats_obs}}{Discrepancy statistics for observed data.}
+\item{\code{stats_rep}}{Discrepancy statistics for repeated data.}
 }
 }
 \description{
@@ -26,11 +28,22 @@ their Bayesian \eqn{p}-values for the fitted model using the posterior
 predictive check approach.
 }
 \details{
-Two discrepancy measures, deviance and the Freeman-Tukey statistics, are
-obtained using the procedure of posterior predictive checking.
+A discrepancy statistic of the fitted model is obtained using the procedure
+of posterior predictive checking.
+The following statistics are currently available:
+\describe{
+\item{Freeman-Tukey statistics (default)}{\eqn{T(\boldsymbol{y}, \boldsymbol{\theta}) = \sum_{i}\sum_{j}\sum_{k}\left(\sqrt{y_{ijk}} - \sqrt{E(y_{ijk} \mid \boldsymbol{\theta})}\right)^2}{\sum_i \sum_j \sum_k (sqrt(y[i, j, k]) - sqrt(E(y[i, j, k] | theta)))^2}}
+\item{Deviance statistics}{\eqn{T(\boldsymbol{y}, \boldsymbol{\theta}) = -2 \log p(\boldsymbol{y} \mid \boldsymbol{\theta})}{T(y, theta) = -2 * log(p(y | theta))}}
+}
+where \eqn{\boldsymbol{y} = \{y_{ijk}\}}{y}, \eqn{\boldsymbol{\theta}}{theta},
+\eqn{E(y_{ijk} \mid \boldsymbol{\theta})}{E(y[i, j, k] | theta)}, and
+\eqn{\log p(\boldsymbol{y} \mid \boldsymbol{\theta})}{log(p(y | theta))}
+are sequence read count data, parameters and latent variables of the model,
+expected value of the data conditional on \eqn{\boldsymbol{\theta}}{theta},
+and log-likelihood of the model, respectively.
 The Bayesian \eqn{p}-value is estimated as the probability that the value of
-the discrepancy measure of replicated data is more extreme than that of the
-observed data.
+the discrepancy statistics of replicated dataset is more extreme than that
+of the observed dataset.
 An extreme Bayesian \eqn{p}-value may indicate an inadequate model fit.
 See, e.g., Gelman et al. (2014), Kéry and Royle (2016), and
 Conn et al. (2018) for more details on the procedures for posterior
