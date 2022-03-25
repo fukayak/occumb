@@ -16,17 +16,17 @@ setClass("occumbFit", slots = c(fit = "jagsUI", data = "occumbData"))
 #'  The most general form of the model can be written as follows:
 #'
 #'  Sequence read counts:
-#'  \deqn{(y_{1jk}, ..., y_{Ijk}) \sim \textrm{Multinomial}((\pi_{1jk}, ...,  \pi_{Ijk}), N_{jk}),}{(y_{1jk}, ..., y_{Ijk}) ~ Multinomial((pi_{1jk}, ..., pi_{Ijk}), N_{jk}),}
-#'  \deqn{\pi_{ijk} = \frac{u_{ijk}r_{ijk}}{\sum_m u_{mjk}r_{mjk}},}{pi_{ijk} = (u_{ijk} * r_{ijk}) / (\sum_m (u_{mjk} * r_{mjk})),}
+#'  \deqn{(y_{1jk}, ..., y_{Ijk}) \sim \textrm{Multinomial}((\pi_{1jk}, ...,  \pi_{Ijk}), N_{jk}),}{y[1:I, j, k] ~ Multinomial(pi[1:I, j, k], N[j, k]),}
+#'  \deqn{\pi_{ijk} = \frac{u_{ijk}r_{ijk}}{\sum_m u_{mjk}r_{mjk}},}{pi[i, j, k] = (u[i, j, k] * r[i, j, k]) / sum(u[1:I, j, k] * r[1:I, j, k]),}
 #'
 #'  Relative frequency of species sequences:
-#'  \deqn{r_{ijk} \sim \textrm{Gamma}(\phi_{ijk}, 1),}{r_{ijk} ~ Gamma(phi_{ijk}, 1),}
+#'  \deqn{r_{ijk} \sim \textrm{Gamma}(\phi_{ijk}, 1),}{r[i, j, k] ~ Gamma(phi[i, j, k], 1),}
 #'
 #'  Capture of species sequences:
-#'  \deqn{u_{ijk} \sim \textrm{Bernoulli}(z_{ij}\theta_{ijk}),}{u_{ijk} ~ Bernoulli(z_{ij} * theta_{ijk}),}
+#'  \deqn{u_{ijk} \sim \textrm{Bernoulli}(z_{ij}\theta_{ijk}),}{u[i, j, k] ~ Bernoulli(z[i, j] * theta[i, j, k]),}
 #'
 #'  Site occupancy of species:
-#'  \deqn{z_{ij} \sim \textrm{Bernoulli}(\psi_{ij}),}{z_{ij} ~ Bernoulli(psi_{ij}),}
+#'  \deqn{z_{ij} \sim \textrm{Bernoulli}(\psi_{ij}),}{z[i, j] ~ Bernoulli(psi[i, j]),}
 #'  where the variations of \eqn{\phi}{phi}, \eqn{\theta}{theta}, and
 #'  \eqn{\psi}{psi} are modeled by specifying model formulas in
 #'  \code{formula_phi}, \code{formula_theta}, \code{formula_psi},
