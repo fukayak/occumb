@@ -17,7 +17,7 @@ fit <- occumb(data = data,
 test_that("qc_occumbFit() works correctly", {
     expect_invisible(qc_occumbFit(fit))
     expect_error(qc_occumbFit(fit = array(1, dim = rep(2, 3))),
-                 "An occumbFit class object is expected for fit")
+                 "An occumbFit class object is expected for 'fit'")
 })
 
 ### Tests for llmulti() --------------------------------------------------------

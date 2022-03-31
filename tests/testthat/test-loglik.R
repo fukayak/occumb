@@ -65,6 +65,6 @@ test_that("Dimensions of the output are as expected", {
 ### Tests for quality controls -------------------------------------------------
 test_that("Checks for data work", {
     expect_error(loglik(fit = array(1, dim = rep(2, 3))),
-                 "An occumbFit class object is expected for fit")
+                 "An occumbFit class object is expected for 'fit'")
 })
 
