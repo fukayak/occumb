@@ -5,14 +5,16 @@
 #' @details
 #'  The pointwise log-likelihood is the log-likelihood of each data point
 #'  evaluated with the posterior samples of parameter values. It can be used to
-#'  obtain criteria for model comparisons, including WAIC and PSIS-LOO. These
-#'  criteria can be conveniently calculated by applying functions from the
-#'  \href{https://cran.r-project.org/web/packages/loo/index.html}{\code{loo}} package
-#'  to the output of this function: see Vehtari et al. (2017) and the
-#'  documentation of the \code{loo} package for details.
+#'  obtain criteria for model comparisons, including WAIC and PSIS-LOO. They
+#'  can be conveniently calculated by applying functions in the
+#'  \href{https://cran.r-project.org/web/packages/loo/index.html}{\code{loo}}
+#'  package to the output of \code{loglik} function: see Vehtari et al. (2017)
+#'  and the documentation of the \code{loo} package for details.
 #' @param fit An \code{occumbFit} object.
-#' @return An \eqn{M \times L} matrix, where \eqn{M} is the size of the
-#'  posterior sample and \eqn{L} is the number of replicates.
+#' @return A three-dimensional array of pointwise log-likelihood, where the
+#'  first dimension represents the number of MCMC iterations per chain, the
+#'  second the number of chains, and the last the number of eDNA samples
+#'  (i.e., replicates).
 #' @section References:
 #'  A. Vehtari, A. Gelman, J. Gabry (2017) Practical Bayesian model evaluation
 #'  using leave-one-out cross-validation and WAIC.
@@ -44,26 +46,33 @@ loglik <- function(fit) {
     qc_occumbFit(fit)
 
     # Set constants
-    y <- get_data(fit, "y")
-    I <- dim(y)[1]; J <- dim(y)[2]; K <- dim(y)[3]
-    N <- apply(y, c(2, 3), sum)
-
+    y  <- get_data(fit, "y")
+    I  <- dim(y)[1]; J <- dim(y)[2]; K <- dim(y)[3]
+    N  <- apply(y, c(2, 3), sum)
     pi <- get_post_samples(fit, "pi")
-    M  <- dim(pi)[1]
+    n_iter  <- fit@fit$mcmc.info$n.samples / fit@fit$mcmc.info$n.chains
+    n_chain <- fit@fit$mcmc.info$n.chains
 
-    # Calculate fit statistics
-    out <- matrix(nrow = M, ncol = J * K)
-    for (m in seq_len(M)) {
-        ll <- matrix(nrow = J, ncol = K)
-        for (j in seq_len(J)) {
-            for (k in seq_len(K)) {
-                ll[j, k] <- llmulti(y[, j, k], N[j, k], pi[m, , j, k])
+    # Calculate pointwise log-likelihood
+    out <- array(dim = c(n_iter, n_chain, J * K))
+    for (iter in seq_len(n_iter)) {
+        for (chain in seq_len(n_chain)) {
+            m  <- get_m(iter, chain, n_iter)
+            ll <- matrix(nrow = J, ncol = K)
+            for (j in seq_len(J)) {
+                for (k in seq_len(K)) {
+                    ll[j, k] <- llmulti(y[, j, k], N[j, k], pi[m, , j, k])
+                }
             }
+            out[iter, chain, ] <- c(ll)
         }
-        out[m, ] <- c(ll)
     }
 
     # Output
     out
+}
+
+get_m <- function(iter, chain, n_iter) {
+    (chain - 1) * n_iter + iter
 }
 

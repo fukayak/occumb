@@ -14,14 +14,52 @@ data2 <- occumbData(y = array(sample.int((I + 1) * J * K), dim = c(I + 1, J, K))
                     repl_cov = repl_cov)
 
 fit <- occumb(data = data,
-              n.chains = 1, n.burnin = 10, n.thin = 1, n.iter = 20,
+              n.chains = 2, n.burnin = 10, n.thin = 1, n.iter = 20,
               verbose = FALSE)
+
+### Tests for the MCMC output sorting ------------------------------------------
+test_that("The pi array is correctly aligned", {
+    pi <- get_post_samples(fit, "pi")
+
+    for (i in seq_len(I)) {
+        for (j in seq_len(J)) {
+            for (k in seq_len(K)) {
+                ans <- c(fit@fit$samples[[1]][, sprintf("pi[%s,%s,%s]", i, j, k)],
+                         fit@fit$samples[[2]][, sprintf("pi[%s,%s,%s]", i, j, k)])
+                # Order: samples in chain1, samples in chain2, ... 
+                expect_identical(pi[, i, j, k], ans)
+            }
+        }
+    }
+})
+
+test_that("get_m() works correctly", {
+    pi <- get_post_samples(fit, "pi")
+    n_iter  <- fit@fit$mcmc.info$n.samples / fit@fit$mcmc.info$n.chains
+    n_chain <- fit@fit$mcmc.info$n.chains
+
+    for (i in seq_len(I)) {
+        for (j in seq_len(J)) {
+            for (k in seq_len(K)) {
+                ans <- c(fit@fit$samples[[1]][, sprintf("pi[%s,%s,%s]", i, j, k)],
+                         fit@fit$samples[[2]][, sprintf("pi[%s,%s,%s]", i, j, k)])
+                for (iter in seq_len(n_iter)) {
+                    for (chain in seq_len(n_chain)) {
+                        m <- get_m(iter, chain, n_iter)
+                        expect_identical(pi[m, i, j, k], ans[m])
+                    }
+                }
+            }
+        }
+    }
+})
 
 ### Tests for outputs ----------------------------------------------------------
 test_that("Dimensions of the output are as expected", {
     out <- loglik(fit)
-    expect_equal(nrow(out), fit@fit$mcmc.info$n.samples)
-    expect_equal(ncol(out), dim(fit@data@y)[2] * dim(fit@data@y)[3])
+    expect_equal(dim(out)[1], fit@fit$mcmc.info$n.samples / fit@fit$mcmc.info$n.chains)
+    expect_equal(dim(out)[2], fit@fit$mcmc.info$n.chains)
+    expect_equal(dim(out)[3], dim(fit@data@y)[2] * dim(fit@data@y)[3])
 })
 
 ### Tests for quality controls -------------------------------------------------

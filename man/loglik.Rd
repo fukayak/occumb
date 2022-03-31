@@ -10,8 +10,10 @@ loglik(fit)
 \item{fit}{An \code{occumbFit} object.}
 }
 \value{
-An \eqn{M \times L} matrix, where \eqn{M} is the size of the
-posterior sample and \eqn{L} is the number of replicates.
+A three-dimensional array of pointwise log-likelihood, where the
+first dimension represents the number of MCMC iterations per chain, the
+second the number of chains, and the last the number of eDNA samples
+(i.e., replicates).
 }
 \description{
 \code{loglik()} extracts the pointwise log-likelihood matrix from
@@ -20,11 +22,11 @@ an \code{occumbFit} object.
 \details{
 The pointwise log-likelihood is the log-likelihood of each data point
 evaluated with the posterior samples of parameter values. It can be used to
-obtain criteria for model comparisons, including WAIC and PSIS-LOO. These
-criteria can be conveniently calculated by applying functions from the
-\href{https://cran.r-project.org/web/packages/loo/index.html}{\code{loo}} package
-to the output of this function: see Vehtari et al. (2017) and the
-documentation of the \code{loo} package for details.
+obtain criteria for model comparisons, including WAIC and PSIS-LOO. They
+can be conveniently calculated by applying functions in the
+\href{https://cran.r-project.org/web/packages/loo/index.html}{\code{loo}}
+package to the output of \code{loglik} function: see Vehtari et al. (2017)
+and the documentation of the \code{loo} package for details.
 }
 \section{References}{
 
