@@ -153,7 +153,7 @@ test_that("Code for initial value function is correct for 144 available models",
             "function() {",
             "    list(z = matrix(1, const$I, const$J),",
             "         u = array(1, dim = c(const$I, const$J, const$K)),",
-            "         x = array(stats::rnorm(const$I * const$J * const$K,",
+            "         r = array(stats::rnorm(const$I * const$J * const$K,",
             "                                mean = 1, sd = 0.1),",
             "                   dim = c(const$I, const$J, const$K)),")
 
@@ -209,13 +209,13 @@ test_that("JAGS code is correct for 144 available models", {
 
         if (cases$phi[i] == "i")
             ans <- c(ans,
-                     "                x[i, j, k] ~ dgamma(phi[i], 1)")
+                     "                r[i, j, k] ~ dgamma(phi[i], 1)")
         if (cases$phi[i] == "ij")
             ans <- c(ans,
-                     "                x[i, j, k] ~ dgamma(phi[i, j], 1)")
+                     "                r[i, j, k] ~ dgamma(phi[i, j], 1)")
         if (cases$phi[i] == "ijk")
             ans <- c(ans,
-                     "                x[i, j, k] ~ dgamma(phi[i, j, k], 1)")
+                     "                r[i, j, k] ~ dgamma(phi[i, j, k], 1)")
 
         ans <- c(ans, readLines(system.file("jags",
                                             "occumb_template2.jags",
@@ -363,6 +363,54 @@ test_that("JAGS code is correct for 144 available models", {
                                 theta_shared = cases$theta_shared[i],
                                 psi_shared   = cases$psi_shared[i])
         expect_equal(res, ans)
+    }
+})
+
+### Test for get_data() --------------------------------------------------------
+test_that("Outputs are correct when proper variable names are given", {
+    I <- 2; J <- 2; K <- 2
+    y <- array(sample.int(I * J * K), dim = c(I, J, K))
+    spec_cov <- list(cov1 = rnorm(I))
+    site_cov <- list(cov2 = rnorm(J), cov3 = factor(1:J))
+    repl_cov <- list(cov4 = matrix(rnorm(J * K), J, K))
+    data <- occumbData(
+        y = y,
+        spec_cov = spec_cov,
+        site_cov = site_cov,
+        repl_cov = repl_cov)
+
+    fit <- occumb(data = data,
+                  n.chains = 1, n.burnin = 10, n.thin = 1, n.iter = 20,
+                  verbose = FALSE)
+
+    expect_identical(get_data(fit, "y"), y)
+    expect_identical(get_data(fit, "spec_cov"), spec_cov)
+    expect_identical(get_data(fit, "site_cov"), site_cov)
+    expect_identical(get_data(fit, "repl_cov"), repl_cov)
+})
+
+
+### Tests for get_post_samples ------------------------------------------------
+test_that("Outputs are correct when proper parameter names are given", {
+    I <- 2; J <- 2; K <- 2
+    y <- array(sample.int(I * J * K), dim = c(I, J, K))
+    spec_cov <- list(cov1 = rnorm(I))
+    site_cov <- list(cov2 = rnorm(J), cov3 = factor(1:J))
+    repl_cov <- list(cov4 = matrix(rnorm(J * K), J, K))
+    data <- occumbData(
+        y = y,
+        spec_cov = spec_cov,
+        site_cov = site_cov,
+        repl_cov = repl_cov)
+
+    fit <- occumb(data = data,
+                  n.chains = 1, n.burnin = 10, n.thin = 1, n.iter = 20,
+                  verbose = FALSE)
+
+    lpar <- names(fit@fit$sims.list)
+    for (i in seq_along(lpar)) {
+        expect_identical(get_post_samples(fit, lpar[i]),
+                         eval(parse(text = paste0("fit@fit$sims.list$", lpar[i]))))
     }
 })
 

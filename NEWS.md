@@ -1,3 +1,9 @@
+# occumb 0.3.0 (2022/03/31)
+* Add `gof()` function.
+* Add `loglik()` function.
+* Add `...` argument to `occumb()` function.
+* Add `data` field in `occumbFit` class.
+
 # occumb v0.2.1 (2021/11/21)
 * A few bug fixes.
 * Add validations for the inputs of `occumb()`.

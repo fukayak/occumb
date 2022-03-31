@@ -1,6 +1,6 @@
 Package: occumb
 Title: Site Occupancy Modeling For Environmental DNA Metabarcoding
-Version: 0.2.1
+Version: 0.3.0
 Authors@R: 
     person(given = "Keiichi",
            family = "Fukaya",
@@ -21,11 +21,16 @@ Config/testthat/edition: 3
 Imports: 
     jagsUI,
     stats,
-    methods
+    methods,
+    graphics,
+    foreach
 Collate: 
     'classes.R'
-    'occumb.R'
+    'globals.R'
+    'gof.R'
+    'loglik.R'
     'occumbData.R'
+    'occumb.R'
     'plot.R'
     'print.R'
     'summary.R'

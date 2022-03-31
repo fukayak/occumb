@@ -19,7 +19,8 @@ occumb(
   n.burnin = 10000,
   n.thin = 10,
   n.iter = 20000,
-  parallel = FALSE
+  parallel = FALSE,
+  ...
 )
 }
 \arguments{
@@ -65,14 +66,16 @@ standard deviation of species-specific parameters.}
 \item{n.iter}{Total number of iterations per chain (including burn-in).}
 
 \item{parallel}{If TRUE, run MCMC chains in parallel on multiple CPU cores.}
+
+\item{...}{Additional arguments passed to \code{\link[jagsUI]{jags}()} function.}
 }
 \value{
 An S4 object of the \code{occumbFit} class containing the results of
-model fitting.
+model fitting and the supplied dataset.
 }
 \description{
 \code{occumb()} fits the multispecies site-occupancy model for eDNA
-metabarcoding (Fukaya et al. 2021) and returns a model-fit object containing
+metabarcoding (Fukaya et al. 2022) and returns a model-fit object containing
 posterior samples.
 }
 \details{
@@ -82,17 +85,17 @@ generation process.
 The most general form of the model can be written as follows:
 
 Sequence read counts:
-\deqn{(y_{1jk}, ..., y_{Ijk}) \sim \textrm{Multinomial}((\pi_{1jk}, ...,  \pi_{Ijk}), N_{jk}),}{(y_{1jk}, ..., y_{Ijk}) ~ Multinomial((pi_{1jk}, ..., pi_{Ijk}), N_{jk}),}
-\deqn{\pi_{ijk} = \frac{u_{ijk}r_{ijk}}{\sum_m u_{mjk}r_{mjk}},}{pi_{ijk} = (u_{ijk} * r_{ijk}) / (\sum_m (u_{mjk} * r_{mjk})),}
+\deqn{(y_{1jk}, ..., y_{Ijk}) \sim \textrm{Multinomial}((\pi_{1jk}, ...,  \pi_{Ijk}), N_{jk}),}{y[1:I, j, k] ~ Multinomial(pi[1:I, j, k], N[j, k]),}
+\deqn{\pi_{ijk} = \frac{u_{ijk}r_{ijk}}{\sum_m u_{mjk}r_{mjk}},}{pi[i, j, k] = (u[i, j, k] * r[i, j, k]) / sum(u[1:I, j, k] * r[1:I, j, k]),}
 
 Relative frequency of species sequences:
-\deqn{r_{ijk} \sim \textrm{Gamma}(\phi_{ijk}, 1),}{r_{ijk} ~ Gamma(phi_{ijk}, 1),}
+\deqn{r_{ijk} \sim \textrm{Gamma}(\phi_{ijk}, 1),}{r[i, j, k] ~ Gamma(phi[i, j, k], 1),}
 
 Capture of species sequences:
-\deqn{u_{ijk} \sim \textrm{Bernoulli}(z_{ij}\theta_{ijk}),}{u_{ijk} ~ Bernoulli(z_{ij} * theta_{ijk}),}
+\deqn{u_{ijk} \sim \textrm{Bernoulli}(z_{ij}\theta_{ijk}),}{u[i, j, k] ~ Bernoulli(z[i, j] * theta[i, j, k]),}
 
 Site occupancy of species:
-\deqn{z_{ij} \sim \textrm{Bernoulli}(\psi_{ij}),}{z_{ij} ~ Bernoulli(psi_{ij}),}
+\deqn{z_{ij} \sim \textrm{Bernoulli}(\psi_{ij}),}{z[i, j] ~ Bernoulli(psi[i, j]),}
 where the variations of \eqn{\phi}{phi}, \eqn{\theta}{theta}, and
 \eqn{\psi}{psi} are modeled by specifying model formulas in
 \code{formula_phi}, \code{formula_theta}, \code{formula_psi},
@@ -137,10 +140,11 @@ details.
 }
 \section{References}{
 
-K. Fukaya, N. I. Kondo, S. S. Matsuzaki and T. Kadoya (2021)
+K. Fukaya, N. I. Kondo, S. S. Matsuzaki and T. Kadoya (2022)
 Multispecies site occupancy modelling and study design for spatially
 replicated environmental DNA metabarcoding. \emph{Methods in Ecology
-and Evolution}. https://doi.org/10.1111/2041-210X.13732
+and Evolution} \strong{13}:183--193.
+\url{https://doi.org/10.1111/2041-210X.13732}
 }
 
 \examples{

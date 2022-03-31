@@ -1,13 +1,13 @@
-#' @include classes.R
+#' @include classes.R occumbData.R
 NULL
 
 # Class for model-fit results of occumb
-setClass("occumbFit", slots = c(fit = "jagsUI"))
+setClass("occumbFit", slots = c(fit = "jagsUI", data = "occumbData"))
 
 #' @title Model-fitting function.
 #' 
 #' @description \code{occumb()} fits the multispecies site-occupancy model for eDNA
-#'  metabarcoding (Fukaya et al. 2021) and returns a model-fit object containing
+#'  metabarcoding (Fukaya et al. 2022) and returns a model-fit object containing
 #'  posterior samples.
 #' @details
 #'  \code{occumb()} allows the fitting of a range of the multispecies site
@@ -16,17 +16,17 @@ setClass("occumbFit", slots = c(fit = "jagsUI"))
 #'  The most general form of the model can be written as follows:
 #'
 #'  Sequence read counts:
-#'  \deqn{(y_{1jk}, ..., y_{Ijk}) \sim \textrm{Multinomial}((\pi_{1jk}, ...,  \pi_{Ijk}), N_{jk}),}{(y_{1jk}, ..., y_{Ijk}) ~ Multinomial((pi_{1jk}, ..., pi_{Ijk}), N_{jk}),}
-#'  \deqn{\pi_{ijk} = \frac{u_{ijk}r_{ijk}}{\sum_m u_{mjk}r_{mjk}},}{pi_{ijk} = (u_{ijk} * r_{ijk}) / (\sum_m (u_{mjk} * r_{mjk})),}
+#'  \deqn{(y_{1jk}, ..., y_{Ijk}) \sim \textrm{Multinomial}((\pi_{1jk}, ...,  \pi_{Ijk}), N_{jk}),}{y[1:I, j, k] ~ Multinomial(pi[1:I, j, k], N[j, k]),}
+#'  \deqn{\pi_{ijk} = \frac{u_{ijk}r_{ijk}}{\sum_m u_{mjk}r_{mjk}},}{pi[i, j, k] = (u[i, j, k] * r[i, j, k]) / sum(u[1:I, j, k] * r[1:I, j, k]),}
 #'
 #'  Relative frequency of species sequences:
-#'  \deqn{r_{ijk} \sim \textrm{Gamma}(\phi_{ijk}, 1),}{r_{ijk} ~ Gamma(phi_{ijk}, 1),}
+#'  \deqn{r_{ijk} \sim \textrm{Gamma}(\phi_{ijk}, 1),}{r[i, j, k] ~ Gamma(phi[i, j, k], 1),}
 #'
 #'  Capture of species sequences:
-#'  \deqn{u_{ijk} \sim \textrm{Bernoulli}(z_{ij}\theta_{ijk}),}{u_{ijk} ~ Bernoulli(z_{ij} * theta_{ijk}),}
+#'  \deqn{u_{ijk} \sim \textrm{Bernoulli}(z_{ij}\theta_{ijk}),}{u[i, j, k] ~ Bernoulli(z[i, j] * theta[i, j, k]),}
 #'
 #'  Site occupancy of species:
-#'  \deqn{z_{ij} \sim \textrm{Bernoulli}(\psi_{ij}),}{z_{ij} ~ Bernoulli(psi_{ij}),}
+#'  \deqn{z_{ij} \sim \textrm{Bernoulli}(\psi_{ij}),}{z[i, j] ~ Bernoulli(psi[i, j]),}
 #'  where the variations of \eqn{\phi}{phi}, \eqn{\theta}{theta}, and
 #'  \eqn{\psi}{psi} are modeled by specifying model formulas in
 #'  \code{formula_phi}, \code{formula_theta}, \code{formula_psi},
@@ -96,13 +96,15 @@ setClass("occumbFit", slots = c(fit = "jagsUI"))
 #' @param n.thin Thinning rate. Must be a positive integer.
 #' @param n.iter Total number of iterations per chain (including burn-in).
 #' @param parallel If TRUE, run MCMC chains in parallel on multiple CPU cores.
+#' @param ... Additional arguments passed to \code{\link[jagsUI]{jags}()} function.
 #' @return  An S4 object of the \code{occumbFit} class containing the results of
-#'          model fitting.
+#'          model fitting and the supplied dataset.
 #' @section References:
-#'      K. Fukaya, N. I. Kondo, S. S. Matsuzaki and T. Kadoya (2021)
+#'      K. Fukaya, N. I. Kondo, S. S. Matsuzaki and T. Kadoya (2022)
 #'      Multispecies site occupancy modelling and study design for spatially
 #'      replicated environmental DNA metabarcoding. \emph{Methods in Ecology
-#'      and Evolution}. https://doi.org/10.1111/2041-210X.13732
+#'      and Evolution} \strong{13}:183--193.
+#'      \url{https://doi.org/10.1111/2041-210X.13732}
 #' @examples
 #' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
 #' I <- 2 # Number of species
@@ -155,7 +157,8 @@ occumb <- function(formula_phi = ~ 1,
                    n.burnin = 10000,
                    n.thin = 10,
                    n.iter = 20000,
-                   parallel = FALSE) {
+                   parallel = FALSE,
+                   ...) {
 
     # Validate arguments
     qc_occumb(data, formula_phi, formula_theta, formula_psi,
@@ -198,10 +201,10 @@ occumb <- function(formula_phi = ~ 1,
                         n.iter   = n.iter,
                         n.burnin = n.burnin,
                         n.thin   = n.thin,
-                        parallel = parallel)
+                        parallel = parallel, ...)
 
     # Output
-    out <- methods::new("occumbFit", fit = fit)
+    out <- methods::new("occumbFit", fit = fit, data = data)
     out
 }
 
@@ -332,9 +335,6 @@ set_modargs <- function(formula_phi,
             colnames(cov_phi_shared) <- colnames(dm)
             M_phi_shared <- ncol(cov_phi_shared)
         }
-    } else {
-        cov_phi_shared <- NULL
-        M_phi_shared   <- 0
     }
 
     # theta_shared
@@ -398,9 +398,6 @@ set_modargs <- function(formula_phi,
             colnames(cov_theta_shared) <- colnames(dm)
             M_theta_shared <- ncol(cov_theta_shared)
         }
-    } else {
-        cov_theta_shared <- NULL
-        M_theta_shared   <- 0
     }
 
     # psi_shared
@@ -445,9 +442,6 @@ set_modargs <- function(formula_phi,
             colnames(cov_psi_shared) <- colnames(dm)
             M_psi_shared   <- ncol(cov_psi_shared)
         }
-    } else {
-        cov_psi_shared <- NULL
-        M_psi_shared   <- 0
     }
 
     M <- 0      # Order of species effects
@@ -648,7 +642,7 @@ inits_code <- function(const, margs) {
         "function() {",
         "    list(z = matrix(1, const$I, const$J),",
         "         u = array(1, dim = c(const$I, const$J, const$K)),",
-        "         x = array(stats::rnorm(const$I * const$J * const$K,",
+        "         r = array(stats::rnorm(const$I * const$J * const$K,",
         "                                mean = 1, sd = 0.1),",
         "                   dim = c(const$I, const$J, const$K)),")
 
@@ -697,13 +691,13 @@ write_jags_model <- function(phi, theta, psi,
 
     if (phi == "i")
         model <- c(model,
-                   "                x[i, j, k] ~ dgamma(phi[i], 1)")
+                   "                r[i, j, k] ~ dgamma(phi[i], 1)")
     if (phi == "ij")
         model <- c(model,
-                   "                x[i, j, k] ~ dgamma(phi[i, j], 1)")
+                   "                r[i, j, k] ~ dgamma(phi[i, j], 1)")
     if (phi == "ijk")
         model <- c(model,
-                   "                x[i, j, k] ~ dgamma(phi[i, j, k], 1)")
+                   "                r[i, j, k] ~ dgamma(phi[i, j, k], 1)")
 
     model <- c(model,
                readLines(system.file("jags",
@@ -980,6 +974,17 @@ set_design_matrix <- function(formula, omit_intercept = FALSE) {
     }
 
     out
+}
+# -----------------------------------------------------------------------------
+
+
+# Getter ----------------------------------------------------------------------
+get_data <- function(occumbFit, variable) {
+    eval(parse(text = paste0("occumbFit@data@", variable)))
+}
+
+get_post_samples <- function(occumbFit, parameter) {
+    eval(parse(text = paste0("occumbFit@fit$sims.list$", parameter)))
 }
 # -----------------------------------------------------------------------------
 
