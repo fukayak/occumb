@@ -1,3 +1,5 @@
+# occumb (development version)
+
 # occumb 0.3.0 (2022/03/31)
 * Add `gof()` function.
 * Add `loglik()` function.
