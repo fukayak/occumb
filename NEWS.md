@@ -1,10 +1,8 @@
-# occumb (development version)
-* Add `...` argument to `occumb()`.
-* Add `get_data()` function.
-* Add `get_post_sample()` function.
+# occumb 0.3.0 (2022/03/31)
 * Add `gof()` function.
-* Add `data` field in `occumbFit` class.
 * Add `loglik()` function.
+* Add `...` argument to `occumb()` function.
+* Add `data` field in `occumbFit` class.
 
 # occumb v0.2.1 (2021/11/21)
 * A few bug fixes.
