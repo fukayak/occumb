@@ -28,7 +28,12 @@ remotes::install_github("fukayak/occumb", ref = "main")
 
 ## Example
 
-The current version (v0.2.x) allows you to build a dataset object used for the multispecies site occupancy modeling (using `occumbData()` function) and fit models with species, site, and replicate covariates (using `occumb()` function).
+The current version (v0.3.x) provides the following main functions:
+
+- `occumbData()` builds a dataset object used for the multispecies site occupancy modeling.
+- `occumb()` fits a model, possibly with species, site, and replicate covariates.
+- `gof()` computes statistics for goodness-of-fit assessment of the model.
+- `loglik()` extracts the pointwise log-likelihood of the model.
 
 ``` r
 library(occumb)
@@ -73,9 +78,15 @@ res8 <- occumb(formula_theta = ~ cov4, data = data) # theta
 res9 <- occumb(data = data, prior_prec = 1E-2, prior_ulim = 1E2,
                n.chains = 1, n.burnin = 1000, n.thin = 1, n.iter = 2000)
 res10 <- occumb(data = data, parallel = TRUE) # Run MCMC in parallel
+
+# Calculate goodness-of-fit statistics
+gof_res0 <- gof(res0)
+
+# Extract pointwise log-likelihood
+ll_res0 <- loglik(res0)
 ```
 
-See the documentation for `occumbData()` and `occumb()` for details.
+See the documentation of each function for more details.
 
 Future versions will provide functions to summarize the model-fit results and perform further analyses based on the model.
 
