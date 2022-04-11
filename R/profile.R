@@ -6,12 +6,8 @@
 #' @param N Sequence depth (numeric).
 #' @return The expected number of detected species per site.
 cutil_local <- function(z, theta, phi, K, N) {
-    I  <- nrow(z)
-    J  <- ncol(z)
     pi <- predict_pi(z, theta, phi, K)
-
     detect_probs <- predict_detect_probs_local(pi, N)
-
     return(sum(detect_probs) / J)
 }
 
@@ -23,12 +19,8 @@ cutil_local <- function(z, theta, phi, K, N) {
 #' @param N Sequence depth (numeric).
 #' @return The expected total number of species detected over the all sites.
 cutil_regional <- function(z, theta, phi, K, N) {
-    I  <- nrow(z)
-    J  <- nrow(N)
     pi <- predict_pi(z, theta, phi, K)
-
     detect_probs <- predict_detect_probs_regional(pi, N)
-
     return(sum(detect_probs))
 }
 
