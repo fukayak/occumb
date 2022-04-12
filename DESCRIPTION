@@ -33,5 +33,6 @@ Collate:
     'occumb.R'
     'plot.R'
     'print.R'
+    'profile.R'
     'summary.R'
     'utils.R'
