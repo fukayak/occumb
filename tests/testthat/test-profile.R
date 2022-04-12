@@ -1,8 +1,60 @@
+### Tests for eutil ------------------------------------------------------------
+I <- 4; J <- 3; K <- 2; N <- 100; M <- 2
+seed  <- rnorm(1)
+z     <- array(rbinom(M * I * J, 1, 0.8), dim = c(M, I, J))
+theta <- array(runif(M * I * J, min = 0.5), dim = c(M, I, J))
+phi   <- array(rgamma(M * I * J, 1), dim = c(M, I, J))
+test_that("eutil() works as expected for local scale", {
+    # rep = 1
+    ans <- with_seed(seed, {
+        util_rep <- vector(length = M)
+        for (n in seq_len(M))
+            util_rep[n] <-
+                cutil_local(z[n, , ], theta[n, , ], phi[n, , ], K, N)
+        mean(util_rep)})
+    expect_equal(
+        with_seed(seed, eutil(z, theta, phi, K, N, scale = "local")),
+        ans)
+    # rep > 1
+    ans <- with_seed(seed, {
+        util_rep <- vector(length = M * 2)
+        for (n in rep(seq_len(M), each = 2))
+            util_rep[n] <-
+                cutil_local(z[n, , ], theta[n, , ], phi[n, , ], K, N)
+        mean(util_rep)})
+    expect_equal(
+        with_seed(seed, eutil(z, theta, phi, K, N, scale = "local", rep = 2)),
+        ans)
+})
+test_that("eutil() works as expected for regional scale", {
+    # rep = 1
+    ans <- with_seed(seed, {
+        util_rep <- vector(length = M)
+        for (n in seq_len(M))
+            util_rep[n] <-
+                cutil_regional(z[n, , ], theta[n, , ], phi[n, , ], K, N)
+        mean(util_rep)})
+    expect_equal(
+        with_seed(seed, eutil(z, theta, phi, K, N, scale = "regional")),
+        ans)
+    # rep > 1
+    ans <- with_seed(seed, {
+        util_rep <- vector(length = M * 2)
+        for (n in rep(seq_len(M), each = 2))
+            util_rep[n] <-
+                cutil_regional(z[n, , ], theta[n, , ], phi[n, , ], K, N)
+        mean(util_rep)})
+    expect_equal(
+        with_seed(seed, eutil(z, theta, phi, K, N, scale = "regional", rep = 2)),
+        ans)
+})
+
+
 ### Tests for cutil ------------------------------------------------------------
 I <- 4; J <- 3; K <- 2; N <- 100
 u <- r <- pi <- array(dim = c(I, J, K)); pi[1] <- NaN
 while(any(is.nan(pi))) {
-    z     <- matrix(stats::rbinom(I * J, 1, 0.8), I, J)
+    z     <- matrix(rbinom(I * J, 1, 0.8), I, J)
     theta <- matrix(runif(I * J, min = 0.5), I, J)
     phi   <- matrix(rgamma(I * J, 1), I, J)
     seed  <- rnorm(1)
