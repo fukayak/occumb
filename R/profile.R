@@ -14,19 +14,21 @@
 eutil <- function(z, theta, phi, K, N, scale = c("local", "regional"), rep = 1) {
 
     M <- dim(z)[1]
-    util_rep <- vector(length = M * rep)
 
     if (match.arg(scale) == "local") {
-        for (n in rep(seq_len(M), each = rep))
-            util_rep[n] <-
-                cutil_local(z[n, , ], theta[n, , ], phi[n, , ], K, N)
+        fun <- .cutil_local
+    } else if (match.arg(scale) == "regional") {
+        fun <- .cutil_regional
     }
 
-    if (match.arg(scale) == "regional") {
-        for (n in rep(seq_len(M), each = rep))
-            util_rep[n] <-
-                cutil_regional(z[n, , ], theta[n, , ], phi[n, , ], K, N)
-    }
+    util_rep <- unlist(
+        lapply(X = rep(seq_len(M), each = rep),
+               FUN = fun,
+               args = list(z = z,
+                           theta = theta,
+                           phi = phi,
+                           K = K,
+                           N = N)))
 
     mean(util_rep)
 }
@@ -55,6 +57,23 @@ cutil_regional <- function(z, theta, phi, K, N) {
     pi <- predict_pi(z, theta, phi, K)
     detect_probs <- predict_detect_probs_regional(pi, N)
     return(sum(detect_probs))
+}
+
+# Auxiliary functions adapting cutil to lapply
+.cutil_local <- function(n, args) {
+    cutil_local(args$z[n, , ],
+                args$theta[n, , ],
+                args$phi[n, , ],
+                args$K,
+                args$N)
+}
+
+.cutil_regional <- function(n, args) {
+    cutil_regional(args$z[n, , ],
+                   args$theta[n, , ],
+                   args$phi[n, , ],
+                   args$K,
+                   args$N)
 }
 
 # Calculate pi

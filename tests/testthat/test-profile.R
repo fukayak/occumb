@@ -4,6 +4,7 @@ seed  <- rnorm(1)
 z     <- array(rbinom(M * I * J, 1, 0.8), dim = c(M, I, J))
 theta <- array(runif(M * I * J, min = 0.5), dim = c(M, I, J))
 phi   <- array(rgamma(M * I * J, 1), dim = c(M, I, J))
+
 test_that("eutil() works as expected for local scale", {
     # rep = 1
     ans <- with_seed(seed, {
@@ -18,14 +19,16 @@ test_that("eutil() works as expected for local scale", {
     # rep > 1
     ans <- with_seed(seed, {
         util_rep <- vector(length = M * 2)
-        for (n in rep(seq_len(M), each = 2))
-            util_rep[n] <-
-                cutil_local(z[n, , ], theta[n, , ], phi[n, , ], K, N)
+        n <- rep(seq_len(M), each = 2)
+        for (m in seq_along(n))
+            util_rep[m] <-
+                cutil_local(z[n[m], , ], theta[n[m], , ], phi[n[m], , ], K, N)
         mean(util_rep)})
     expect_equal(
         with_seed(seed, eutil(z, theta, phi, K, N, scale = "local", rep = 2)),
         ans)
 })
+
 test_that("eutil() works as expected for regional scale", {
     # rep = 1
     ans <- with_seed(seed, {
@@ -40,15 +43,15 @@ test_that("eutil() works as expected for regional scale", {
     # rep > 1
     ans <- with_seed(seed, {
         util_rep <- vector(length = M * 2)
-        for (n in rep(seq_len(M), each = 2))
-            util_rep[n] <-
-                cutil_regional(z[n, , ], theta[n, , ], phi[n, , ], K, N)
+        n <- rep(seq_len(M), each = 2)
+        for (m in seq_along(n))
+            util_rep[m] <-
+                cutil_regional(z[n[m], , ], theta[n[m], , ], phi[n[m], , ], K, N)
         mean(util_rep)})
     expect_equal(
         with_seed(seed, eutil(z, theta, phi, K, N, scale = "regional", rep = 2)),
         ans)
 })
-
 
 ### Tests for cutil ------------------------------------------------------------
 I <- 4; J <- 3; K <- 2; N <- 100
@@ -72,22 +75,26 @@ while(any(is.nan(pi))) {
         }
     }
 }
+
 test_that("cutil_local() works as expected", {
     ans <- with_seed(seed,
         sum(predict_detect_probs_local(predict_pi(z, theta, phi, K), N)) / J)
     expect_equal(with_seed(seed, cutil_local(z, theta, phi, K, N)), ans)
 })
+
 test_that("cutil_regional() works as expected", {
     ans <- with_seed(seed,
         sum(predict_detect_probs_regional(predict_pi(z, theta, phi, K), N)))
     expect_equal(with_seed(seed, cutil_regional(z, theta, phi, K, N)), ans)
 })
+
 test_that("predict_pi() works as expected", {
     with_seed(seed, expect_equal(predict_pi(z, theta, phi, K), pi))
     theta_zero <- matrix(0, I, J)
     expect_error(predict_pi(z, theta_zero, phi, K),
         "Failed to generate valid pi values under the given parameter set.")
 })
+
 test_that("predict_detect_probs_local() works as expected", {
     ans <- matrix(nrow = I, ncol = J)
     for (i in seq_len(I)) {
@@ -97,6 +104,7 @@ test_that("predict_detect_probs_local() works as expected", {
     }
     expect_equal(predict_detect_probs_local(pi, N), ans)
 })
+
 test_that("predict_detect_probs_regional() works as expected", {
     ans <- vector(length = I)
     for (i in seq_len(I)) ans[i] <- 1 - prod((1 - pi[i, , ])^N)
