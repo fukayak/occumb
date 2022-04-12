@@ -1,8 +1,10 @@
 ### Tests for eutil ------------------------------------------------------------
-I <- 4; J <- 3; K <- 2; N <- 100; M <- 2
+### * Tests are available only for non-parallel computations *
+
+I <- 20; J <- 5; K <- 4; N <- 100; M <- 2
 seed  <- rnorm(1)
 z     <- array(rbinom(M * I * J, 1, 0.8), dim = c(M, I, J))
-theta <- array(runif(M * I * J, min = 0.5), dim = c(M, I, J))
+theta <- array(runif(M * I * J, min = 0.8), dim = c(M, I, J))
 phi   <- array(rgamma(M * I * J, 1), dim = c(M, I, J))
 
 test_that("eutil() works as expected for local scale", {
@@ -54,11 +56,12 @@ test_that("eutil() works as expected for regional scale", {
 })
 
 ### Tests for cutil ------------------------------------------------------------
-I <- 4; J <- 3; K <- 2; N <- 100
+
+I <- 20; J <- 5; K <- 4; N <- 100
 u <- r <- pi <- array(dim = c(I, J, K)); pi[1] <- NaN
 while(any(is.nan(pi))) {
     z     <- matrix(rbinom(I * J, 1, 0.8), I, J)
-    theta <- matrix(runif(I * J, min = 0.5), I, J)
+    theta <- matrix(runif(I * J, min = 0.8), I, J)
     phi   <- matrix(rgamma(I * J, 1), I, J)
     seed  <- rnorm(1)
     set.seed(seed)

@@ -10,8 +10,10 @@
 # @param scale Spatial scale to evaluate detection effectiveness.
 # @param rep Controls the sample size for Monte Carlo simulation.
 #   The integral is evaluated using a total of N_sample * rep random samples.
+# @param The number of cores to use for parallelization.
 # @return The expected utility.
-eutil <- function(z, theta, phi, K, N, scale = c("local", "regional"), rep = 1) {
+eutil <- function(z, theta, phi, K, N, scale = c("local", "regional"),
+                  rep = 1, cores = cores) {
 
     M <- dim(z)[1]
 
@@ -21,14 +23,41 @@ eutil <- function(z, theta, phi, K, N, scale = c("local", "regional"), rep = 1) 
         fun <- .cutil_regional
     }
 
-    util_rep <- unlist(
-        lapply(X = rep(seq_len(M), each = rep),
-               FUN = fun,
-               args = list(z = z,
-                           theta = theta,
-                           phi = phi,
-                           K = K,
-                           N = N)))
+    if (cores == 1) {
+        util_rep <- unlist(
+            lapply(X = rep(seq_len(M), each = rep),
+                   FUN = fun,
+                   args = list(z = z, theta = theta, phi = phi, K = K, N = N))
+        )
+    } else {
+        if (.Platform$OS.type == "windows") {
+            # On Windows use makePSOCKcluster() and parLapply() for multiple cores
+            cl <- parallel::makePSOCKcluster(cores)
+            on.exit(parallel::stopCluster(cl))
+            util_rep <- unlist(
+                parallel::parLapply(cl = cl,
+                                    X = rep(seq_len(M), each = rep),
+                                    FUN = fun,
+                                    args = list(z = z,
+                                                theta = theta,
+                                                phi = phi,
+                                                K = K,
+                                                N = N))
+            )
+        } else {
+            # On Mac or Linux use mclapply() for multiple cores
+            util_rep <- unlist(
+                parallel::mclapply(mc.cores = cores,
+                                   X = rep(seq_len(M), each = rep),
+                                   FUN = fun,
+                                   args = list(z = z,
+                                               theta = theta,
+                                               phi = phi,
+                                               K = K,
+                                               N = N))
+            )
+        }
+    }
 
     mean(util_rep)
 }
