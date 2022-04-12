@@ -8,16 +8,19 @@ theta <- array(runif(M * I * J, min = 0.8), dim = c(M, I, J))
 phi   <- array(rgamma(M * I * J, 1), dim = c(M, I, J))
 
 test_that("eutil() works as expected for local scale", {
-    # rep = 1
+    # N_rep = 1
     ans <- with_seed(seed, {
         util_rep <- vector(length = M)
         for (n in seq_len(M))
             util_rep[n] <-
                 cutil_local(z[n, , ], theta[n, , ], phi[n, , ], K, N)
-        mean(util_rep)})
+        mean(util_rep)}
+    )
     expect_equal(
-        with_seed(seed, eutil(z, theta, phi, K, N, scale = "local")),
-        ans)
+        with_seed(seed, eutil(z, theta, phi, K, N, scale = "local",
+                              N_rep = 1, cores = 1)),
+        ans
+    )
     # rep > 1
     ans <- with_seed(seed, {
         util_rep <- vector(length = M * 2)
@@ -25,10 +28,13 @@ test_that("eutil() works as expected for local scale", {
         for (m in seq_along(n))
             util_rep[m] <-
                 cutil_local(z[n[m], , ], theta[n[m], , ], phi[n[m], , ], K, N)
-        mean(util_rep)})
+        mean(util_rep)}
+    )
     expect_equal(
-        with_seed(seed, eutil(z, theta, phi, K, N, scale = "local", rep = 2)),
-        ans)
+        with_seed(seed, eutil(z, theta, phi, K, N, scale = "local",
+                              N_rep = 2, cores = 1)),
+        ans
+    )
 })
 
 test_that("eutil() works as expected for regional scale", {
@@ -38,10 +44,13 @@ test_that("eutil() works as expected for regional scale", {
         for (n in seq_len(M))
             util_rep[n] <-
                 cutil_regional(z[n, , ], theta[n, , ], phi[n, , ], K, N)
-        mean(util_rep)})
+        mean(util_rep)}
+    )
     expect_equal(
-        with_seed(seed, eutil(z, theta, phi, K, N, scale = "regional")),
-        ans)
+        with_seed(seed, eutil(z, theta, phi, K, N, scale = "regional",
+                              N_rep = 1, cores = 1)),
+        ans
+    )
     # rep > 1
     ans <- with_seed(seed, {
         util_rep <- vector(length = M * 2)
@@ -49,10 +58,13 @@ test_that("eutil() works as expected for regional scale", {
         for (m in seq_along(n))
             util_rep[m] <-
                 cutil_regional(z[n[m], , ], theta[n[m], , ], phi[n[m], , ], K, N)
-        mean(util_rep)})
+        mean(util_rep)}
+    )
     expect_equal(
-        with_seed(seed, eutil(z, theta, phi, K, N, scale = "regional", rep = 2)),
-        ans)
+        with_seed(seed, eutil(z, theta, phi, K, N, scale = "regional",
+                              N_rep = 2, cores = 1)),
+        ans
+    )
 })
 
 ### Tests for cutil ------------------------------------------------------------

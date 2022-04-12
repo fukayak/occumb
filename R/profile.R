@@ -8,12 +8,12 @@
 # @param K The number of replicates (integer).
 # @param N Sequence depth (numeric).
 # @param scale Spatial scale to evaluate detection effectiveness.
-# @param rep Controls the sample size for Monte Carlo simulation.
-#   The integral is evaluated using a total of N_sample * rep random samples.
+# @param N_rep Controls the sample size for Monte Carlo simulation.
+#   The integral is evaluated using a total of N_sample * N_rep random samples.
 # @param The number of cores to use for parallelization.
 # @return The expected utility.
 eutil <- function(z, theta, phi, K, N, scale = c("local", "regional"),
-                  rep = 1, cores = cores) {
+                  N_rep = N_rep, cores = cores) {
 
     M <- dim(z)[1]
 
@@ -25,7 +25,7 @@ eutil <- function(z, theta, phi, K, N, scale = c("local", "regional"),
 
     if (cores == 1) {
         util_rep <- unlist(
-            lapply(X = rep(seq_len(M), each = rep),
+            lapply(X = rep(seq_len(M), each = N_rep),
                    FUN = fun,
                    args = list(z = z, theta = theta, phi = phi, K = K, N = N))
         )
@@ -36,7 +36,7 @@ eutil <- function(z, theta, phi, K, N, scale = c("local", "regional"),
             on.exit(parallel::stopCluster(cl))
             util_rep <- unlist(
                 parallel::parLapply(cl = cl,
-                                    X = rep(seq_len(M), each = rep),
+                                    X = rep(seq_len(M), each = N_rep),
                                     FUN = fun,
                                     args = list(z = z,
                                                 theta = theta,
@@ -48,7 +48,7 @@ eutil <- function(z, theta, phi, K, N, scale = c("local", "regional"),
             # On Mac or Linux use mclapply() for multiple cores
             util_rep <- unlist(
                 parallel::mclapply(mc.cores = cores,
-                                   X = rep(seq_len(M), each = rep),
+                                   X = rep(seq_len(M), each = N_rep),
                                    FUN = fun,
                                    args = list(z = z,
                                                theta = theta,
