@@ -21,22 +21,20 @@ while(any(is.nan(pi))) {
     }
 }
 test_that("cutil_local() works as expected", {
-    set.seed(seed)
-    ans <- sum(predict_detect_probs_local(predict_pi(z, theta, phi, K), N)) / J
-    set.seed(seed)
-    expect_equal(cutil_local(z, theta, phi, K, N), ans)
+    ans <- with_seed(seed,
+        sum(predict_detect_probs_local(predict_pi(z, theta, phi, K), N)) / J)
+    expect_equal(with_seed(seed, cutil_local(z, theta, phi, K, N)), ans)
 })
 test_that("cutil_regional() works as expected", {
-    set.seed(seed)
-    ans <- sum(predict_detect_probs_regional(predict_pi(z, theta, phi, K), N))
-    set.seed(seed)
-    expect_equal(cutil_regional(z, theta, phi, K, N), ans)
+    ans <- with_seed(seed,
+        sum(predict_detect_probs_regional(predict_pi(z, theta, phi, K), N)))
+    expect_equal(with_seed(seed, cutil_regional(z, theta, phi, K, N)), ans)
 })
 test_that("predict_pi() works as expected", {
-    set.seed(seed)
-    expect_equal(predict_pi(z, theta, phi, K), pi)
+    with_seed(seed, expect_equal(predict_pi(z, theta, phi, K), pi))
     theta_zero <- matrix(0, I, J)
-    expect_error(predict_pi(z, theta_zero, phi, K), "Failed to generate valid pi values under the given parameter set.")
+    expect_error(predict_pi(z, theta_zero, phi, K),
+        "Failed to generate valid pi values under the given parameter set.")
 })
 test_that("predict_detect_probs_local() works as expected", {
     ans <- matrix(nrow = I, ncol = J)
