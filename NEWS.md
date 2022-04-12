@@ -1,5 +1,6 @@
 # occumb (development version)
 * Add `cutil_local()` and `cutil_regional()` functions.
+* Add `eutil()` function.
 
 # occumb 0.3.0 (2022/03/31)
 * Add `gof()` function.
