@@ -1,3 +1,108 @@
+# @title Tentative: the main function (local). 
+# @param settings A dataframe of K and N.
+# @param fit An occumbFit object.
+# @param N_rep Controls the sample size for Monte Carlo simulation.
+#   The integral is evaluated using a total of N_sample * N_rep random samples,
+#   where N_sample is the size of the MCMC sample given as `fit.`
+# @param core The number of cores to use for parallelization.
+# @return The expected utility.
+eval_util_L <- function(settings,
+                        fit,
+                        N_rep = 1,
+                        cores = parallel::detectCores()) {
+
+    # Validate arguments ... to be added
+
+    result <- rep(NA, nrow(settings))
+
+    # Extract posterior samples
+    z     <- get_post_samples(fit, "z")
+    theta <- get_post_samples(fit, "theta")
+    phi   <- get_post_samples(fit, "phi")
+
+    # Adapt theta/phi when they are species-specific
+    if (length(dim(theta)) == 2) {
+        theta <- array(dim = dim(z))
+        for (j in seq_len(dim(theta)[3]))
+            theta[, , j] <- get_post_samples(fit, "theta")
+    }
+    if (length(dim(phi)) == 2) {
+        phi <- array(dim = dim(z))
+        for (j in seq_len(dim(phi)[3]))
+            phi[, , j] <- get_post_samples(fit, "phi")
+    }
+
+    # Adapt theta/phi when they are replicate-specific
+    # ... to be added
+
+    # Calculate expected utility
+    for (i in seq_len(nrow(settings))) {
+        result[i] <- eutil(z = z, theta = theta, phi = phi,
+                           K = settings$K[i], N = settings$N[i],
+                           scale = "local",
+                           N_rep = N_rep, cores = cores)
+    }
+
+    # Output
+    out <- cbind(settings, result)
+    colnames(out)[ncol(out)] <- "Utility"
+    out
+}
+
+# @title Tentative: the main function (regional). 
+# @param settings A dataframe of J, K, and N.
+# @param fit An occumbFit object.
+# @param N_rep Controls the sample size for Monte Carlo simulation.
+#   The integral is evaluated using a total of N_sample * N_rep random samples,
+#   where N_sample is the size of the MCMC sample given as `fit.`
+# @param core The number of cores to use for parallelization.
+# @return The expected utility.
+eval_util_R <- function(settings,
+                        fit,
+                        N_rep = 1,
+                        cores = parallel::detectCores()) {
+
+    # Validate arguments ... to be added
+
+    result <- rep(NA, nrow(settings))
+
+    # Extract posterior samples
+    psi   <- get_post_samples(fit, "psi")
+#    theta <- get_post_samples(fit, "theta")
+#    phi   <- get_post_samples(fit, "phi")
+
+    # Adapt psi/theta/phi when they are site- or replicate-specific
+    # ... to be added
+
+    # Calculate expected utility
+    for (i in seq_len(nrow(settings))) {
+        # Generate z (dim = N_sample * N_species * N_site)
+        z <- array(NA, dim = c(dim(psi)[1], dim(psi)[2], settings$J[i]))
+        for (j in seq_len(dim(z)[3]))
+            z[, , j] <- rbinom(dim(psi)[1] * dim(psi)[2], 1, psi)
+
+        # Adapt dimension of theta/phi
+        theta <- array(dim = dim(z))
+        for (j in seq_len(dim(theta)[3]))
+            theta[, , j] <- get_post_samples(fit, "theta")
+        phi <- array(dim = dim(z))
+        for (j in seq_len(dim(phi)[3]))
+            phi[, , j] <- get_post_samples(fit, "phi")
+
+        result[i] <- eutil(z = z, theta = theta, phi = phi,
+                           K = settings$K[i], N = settings$N[i],
+                           scale = "regional",
+                           N_rep = N_rep, cores = cores)
+    }
+
+    # Output
+    out <- cbind(settings, result)
+    colnames(out)[ncol(out)] <- "Utility"
+    out
+}
+
+
+
 # @title Monte-Carlo integration to obtain expected utility.
 # @param z A species presence-absence array
 #   (dim = N_sample * N_species * N_sites).
