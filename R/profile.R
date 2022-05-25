@@ -10,7 +10,7 @@
 # @param scale Spatial scale to evaluate detection effectiveness.
 # @param N_rep Controls the sample size for Monte Carlo simulation.
 #   The integral is evaluated using a total of N_sample * N_rep random samples.
-# @param The number of cores to use for parallelization.
+# @param core The number of cores to use for parallelization.
 # @return The expected utility.
 eutil <- function(z, theta, phi, K, N, scale = c("local", "regional"),
                   N_rep = N_rep, cores = cores) {
