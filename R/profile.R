@@ -164,8 +164,10 @@ qc_eval_util_L <- function(settings, fit) {
         stop("The 'settings' argument does not contain column 'K'.")
     if (!checkmate::testSubset("N", names(settings)))
         stop("The 'settings' argument does not contain column 'N'.")
-    checkmate::assert_numeric(settings[, "K"], lower = 1)
-    checkmate::assert_numeric(settings[, "N"], lower = 1)
+    if (!checkmate::test_numeric(settings[, "K"], lower = 1))
+        stop("'K' contains a non-positive value.")
+    if (!checkmate::test_numeric(settings[, "N"], lower = 1))
+        stop("'N' contains a non-positive value.")
 
     # Assert that fit is an occumbFit object
     assert_occumbFit(fit)

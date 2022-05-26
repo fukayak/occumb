@@ -1,3 +1,54 @@
+I <- 2 # Number of species
+J <- 2 # Number of sites
+K <- 2 # Number of replicates
+data <- occumbData(
+    y = array(sample.int(I * J * K), dim = c(I, J, K)),
+    spec_cov = list(cov1 = rnorm(I)),
+    site_cov = list(cov2 = rnorm(J),
+                    cov3 = factor(1:J)),
+    repl_cov = list(cov4 = matrix(rnorm(J * K), J, K)))
+
+res0 <- occumb(data = data,
+               n.chains = 1, n.adapt = 0, n.burnin = 0,
+               n.thin = 1, n.iter = 10, verbose = FALSE)
+res7 <- occumb(formula_phi = ~ cov4, data = data,
+               n.chains = 1, n.adapt = 0, n.burnin = 0,
+               n.thin = 1, n.iter = 10, verbose = FALSE)
+res8 <- occumb(formula_theta = ~ cov4, data = data,
+               n.chains = 1, n.adapt = 0, n.burnin = 0,
+               n.thin = 1, n.iter = 10, verbose = FALSE)
+
+
+### Tests for eval_util_L/R ----------------------------------------------------
+
+test_that("eval_util_L() outputs a data frame with the additional Utility column", {
+    settings <- data.frame(K = rep(1, 3), N = rep(1, 3), x = NA)
+    test     <- eval_util_L(settings, res0)
+    checkmate::expect_data_frame(test)
+    expect_equal(colnames(test), c(colnames(settings), "Utility"))
+    expect_equal(test[, -ncol(test)], settings)
+})
+
+
+### Tests for qc_eval_util_L ---------------------------------------------------
+test_that("qc_eval_util_L() blocks inappropriate settings", {
+    expect_error(qc_eval_util_L(data.frame(Kx = rep(1, 2), N = rep(1, 2)), res0),
+                 "The 'settings' argument does not contain column 'K'.")
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), Nx = rep(1, 2)), res0),
+                 "The 'settings' argument does not contain column 'N'.")
+    expect_error(qc_eval_util_L(data.frame(K = rep(0, 2), N = rep(1, 2)), res0),
+                 "'K' contains a non-positive value.")
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(0, 2)), res0),
+                 "'N' contains a non-positive value.")
+})
+
+test_that("qc_eval_util_L() blocks models with replicate-specific parameters", {
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)), res7),
+                 "'phi' is replicate-specific: the current 'eval_util_L' is not applicable to models with replicate-specific parameters.")
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)), res8),
+                 "'theta' is replicate-specific: the current 'eval_util_L' is not applicable to models with replicate-specific parameters.")
+})
+
 ### Tests for eutil ------------------------------------------------------------
 ### * Tests are available only for non-parallel computations *
 
