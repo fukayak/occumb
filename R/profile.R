@@ -120,22 +120,20 @@ eval_util_R <- function(settings,
 
     # Validate arguments ... to be added
 
-    result <- rep(NA, nrow(settings))
 
     # Extract posterior samples
-    psi   <- get_post_samples(fit, "psi")
-#    theta <- get_post_samples(fit, "theta")
-#    phi   <- get_post_samples(fit, "phi")
+    psi <- get_post_samples(fit, "psi")
 
     # Adapt psi/theta/phi when they are site- or replicate-specific
     # ... to be added
 
     # Calculate expected utility
+    result <- rep(NA, nrow(settings))
     for (i in seq_len(nrow(settings))) {
         # Generate z (dim = N_sample * N_species * N_site)
-        z <- array(NA, dim = c(dim(psi)[1], dim(psi)[2], settings$J[i]))
+        z <- array(NA, dim = c(dim(psi)[1], dim(psi)[2], settings[i, "J"]))
         for (j in seq_len(dim(z)[3]))
-            z[, , j] <- rbinom(dim(psi)[1] * dim(psi)[2], 1, psi)
+            z[, , j] <- stats::rbinom(dim(psi)[1] * dim(psi)[2], 1, psi)
 
         # Adapt dimension of theta/phi
         theta <- array(dim = dim(z))
@@ -146,7 +144,7 @@ eval_util_R <- function(settings,
             phi[, , j] <- get_post_samples(fit, "phi")
 
         result[i] <- eutil(z = z, theta = theta, phi = phi,
-                           K = settings$K[i], N = settings$N[i],
+                           K = settings[i, "K"], N = settings[i, "N"],
                            scale = "regional",
                            N_rep = N_rep, cores = cores)
     }
