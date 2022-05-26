@@ -167,6 +167,9 @@ qc_eval_util_L <- function(settings, fit) {
     checkmate::assert_numeric(settings[, "K"], lower = 1)
     checkmate::assert_numeric(settings[, "N"], lower = 1)
 
+    # Assert that fit is an occumbFit object
+    assert_occumbFit(fit)
+
     # Assert that model parameters are not replicate-specific
     if (!length(dim(get_post_samples(fit, "theta"))) < 4)
         stop("'theta' is replicate-specific: the current 'eval_util_L' is not applicable to models with replicate-specific parameters.")
