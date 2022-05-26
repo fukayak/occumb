@@ -23,7 +23,7 @@ res8 <- occumb(formula_theta = ~ cov4, data = data,
 
 test_that("eval_util_L() outputs a data frame with the additional Utility column", {
     settings <- data.frame(K = rep(1, 3), N = rep(1, 3), x = NA)
-    test     <- eval_util_L(settings, res0)
+    test     <- eval_util_L(settings, res0, cores = 1)
     checkmate::expect_data_frame(test)
     expect_equal(colnames(test), c(colnames(settings), "Utility"))
     expect_equal(test[, -ncol(test)], settings)
