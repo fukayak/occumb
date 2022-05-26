@@ -23,7 +23,8 @@ Imports:
     stats,
     methods,
     graphics,
-    foreach
+    foreach,
+    checkmate
 Collate: 
     'classes.R'
     'globals.R'

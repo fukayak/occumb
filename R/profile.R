@@ -42,7 +42,10 @@
 #' @param settings A data frame that specifies a set of conditions under which
 #'  the utility is evaluated. It must include a column named `K` and `N`, which
 #'  specifies the number of replicates per site and the sequencing depth per
-#'  replicate, respectively. Additional columns are ignored but may be included.
+#'  replicate, respectively.
+#'  `K` and `N` must be numeric vectors greater than 0. When `K` contains a
+#'  decimal, the decimal part is discarded and treated as an integer.
+#'  Additional columns are ignored but may be included.
 #' @param fit An `occumbFit` object containing a posterior sample of the
 #'  relevant parameters.
 #' @param N_rep Controls the sample size for Monte Carlo integration.
@@ -64,12 +67,8 @@ eval_util_L <- function(settings,
                         N_rep = 1,
                         cores = parallel::detectCores()) {
 
-    # Validate arguments ... to be added
-    #   - settings has column K and N
-    #   - K, N > 0
-    #   - dim(theta/phi) < 4
-
-    result <- rep(NA, nrow(settings))
+    # Validate arguments
+    qc_eval_util_L(settings, fit)
 
     # Extract posterior samples
     z     <- get_post_samples(fit, "z")
@@ -92,9 +91,10 @@ eval_util_L <- function(settings,
     # ... to be added
 
     # Calculate expected utility
+    result <- rep(NA, nrow(settings))
     for (i in seq_len(nrow(settings))) {
         result[i] <- eutil(z = z, theta = theta, phi = phi,
-                           K = settings$K[i], N = settings$N[i],
+                           K = settings[i, "K"], N = settings[i, "N"],
                            scale = "local",
                            N_rep = N_rep, cores = cores)
     }
@@ -157,7 +157,22 @@ eval_util_R <- function(settings,
     out
 }
 
+qc_eval_util_L <- function(settings, fit) {
+    # Assert that settings is a data frame and contains the required columns
+    checkmate::assert_data_frame(settings)
+    if (!checkmate::testSubset("K", names(settings)))
+        stop("The 'settings' argument does not contain column 'K'.")
+    if (!checkmate::testSubset("N", names(settings)))
+        stop("The 'settings' argument does not contain column 'N'.")
+    checkmate::assert_numeric(settings[, "K"], lower = 1)
+    checkmate::assert_numeric(settings[, "N"], lower = 1)
 
+    # Assert that model parameters are not replicate-specific
+    if (!length(dim(get_post_samples(fit, "theta"))) < 4)
+        stop("'theta' is replicate-specific: the current 'eval_util_L' is not applicable to models with replicate-specific parameters.")
+    if (!length(dim(get_post_samples(fit, "phi"))) < 4)
+        stop("'phi' is replicate-specific: the current 'eval_util_L' is not applicable to models with replicate-specific parameters.")
+}
 
 # @title Monte-Carlo integration to obtain expected utility.
 # @param z A species presence-absence array
