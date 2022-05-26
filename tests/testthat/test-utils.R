@@ -13,10 +13,10 @@ fit <- occumb(data = data,
               n.chains = 1, n.burnin = 10, n.thin = 1, n.iter = 20,
               verbose = FALSE)
 
-### Tests for qc_occumbFit() ---------------------------------------------------
-test_that("qc_occumbFit() works correctly", {
-    expect_invisible(qc_occumbFit(fit))
-    expect_error(qc_occumbFit(fit = array(1, dim = rep(2, 3))),
+### Tests for assert_occumbFit() -----------------------------------------------
+test_that("assert_occumbFit() works correctly", {
+    expect_invisible(assert_occumbFit(fit))
+    expect_error(assert_occumbFit(fit = array(1, dim = rep(2, 3))),
                  "An occumbFit class object is expected for 'fit'")
 })
 
