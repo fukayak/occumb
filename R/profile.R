@@ -229,9 +229,9 @@ qc_eval_util_L <- function(settings, fit) {
     assert_occumbFit(fit)
 
     # Assert that model parameters are not replicate-specific
-    if (!length(dim(get_post_samples(fit, "theta"))) < 4)
+    if (length(dim(get_post_samples(fit, "theta"))) == 4)
         stop("'theta' is replicate-specific: the current 'eval_util_L' is not applicable to models with replicate-specific parameters.")
-    if (!length(dim(get_post_samples(fit, "phi"))) < 4)
+    if (length(dim(get_post_samples(fit, "phi"))) == 4)
         stop("'phi' is replicate-specific: the current 'eval_util_L' is not applicable to models with replicate-specific parameters.")
 }
 
