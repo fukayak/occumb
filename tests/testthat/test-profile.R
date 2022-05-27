@@ -62,33 +62,43 @@ test_that("eval_util_L() outputs a data frame with the additional Utility column
     expect_equal(test0[, -ncol(test0)], settings)
 
     # Model with site covariates
-    test1 <- eval_util_L(settings, res0, cores = 1)
+    test1 <- eval_util_L(settings, res1, cores = 1)
     checkmate::expect_data_frame(test1)
     expect_equal(colnames(test1), c(colnames(settings), "Utility"))
     expect_equal(test1[, -ncol(test1)], settings)
 
-    test2 <- eval_util_L(settings, res0, cores = 1)
+    test1a <- eval_util_L(settings, res1a, cores = 1)
+    checkmate::expect_data_frame(test1a)
+    expect_equal(colnames(test1a), c(colnames(settings), "Utility"))
+    expect_equal(test1a[, -ncol(test1a)], settings)
+
+    test1b <- eval_util_L(settings, res1b, cores = 1)
+    checkmate::expect_data_frame(test1b)
+    expect_equal(colnames(test1b), c(colnames(settings), "Utility"))
+    expect_equal(test1b[, -ncol(test1b)], settings)
+
+    test2 <- eval_util_L(settings, res2, cores = 1)
     checkmate::expect_data_frame(test2)
     expect_equal(colnames(test2), c(colnames(settings), "Utility"))
     expect_equal(test2[, -ncol(test2)], settings)
 
-    test3 <- eval_util_L(settings, res0, cores = 1)
+    test3 <- eval_util_L(settings, res3, cores = 1)
     checkmate::expect_data_frame(test3)
     expect_equal(colnames(test3), c(colnames(settings), "Utility"))
     expect_equal(test3[, -ncol(test3)], settings)
 
     # Model with species covariates
-    test4 <- eval_util_L(settings, res0, cores = 1)
+    test4 <- eval_util_L(settings, res4, cores = 1)
     checkmate::expect_data_frame(test4)
     expect_equal(colnames(test4), c(colnames(settings), "Utility"))
     expect_equal(test4[, -ncol(test4)], settings)
 
-    test5 <- eval_util_L(settings, res0, cores = 1)
+    test5 <- eval_util_L(settings, res5, cores = 1)
     checkmate::expect_data_frame(test5)
     expect_equal(colnames(test5), c(colnames(settings), "Utility"))
     expect_equal(test5[, -ncol(test5)], settings)
 
-    test6 <- eval_util_L(settings, res0, cores = 1)
+    test6 <- eval_util_L(settings, res6, cores = 1)
     checkmate::expect_data_frame(test6)
     expect_equal(colnames(test6), c(colnames(settings), "Utility"))
     expect_equal(test6[, -ncol(test6)], settings)
