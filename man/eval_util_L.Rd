@@ -57,7 +57,8 @@ is proportional to the relative frequency of the sequence of species
 \eqn{i}{i}, conditional on its presence in replicate \eqn{k}{k} at site
 \eqn{j}{j} (Fukaya et al. 2022).
 Expectations are taken with respect to the posterior distributions of
-\eqn{r}{r} and \eqn{u}{u}, which are evaluated numerically by Monte Carlo
+\eqn{\boldsymbol{r} = \{r_{ijk}\}}{r} and \eqn{\boldsymbol{u} = \{u_{ijk}\}}{u},
+which are evaluated numerically by Monte Carlo
 integration using MCMC samples in the \code{occumbFit} object. Higher
 approximation accuracy can be obtained by increasing the value of \code{N_rep}.
 
