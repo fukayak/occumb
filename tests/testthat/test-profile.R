@@ -8,9 +8,34 @@ data <- occumbData(
                     cov3 = factor(1:J)),
     repl_cov = list(cov4 = matrix(rnorm(J * K), J, K)))
 
+# Fitting a null model (includes only species-specific intercepts)
 res0 <- occumb(data = data,
                n.chains = 1, n.adapt = 0, n.burnin = 0,
                n.thin = 1, n.iter = 10, verbose = FALSE)
+
+# Add species-specific effects of site covariates in occupancy probabilities
+res1 <- occumb(formula_psi = ~ cov2, data = data,
+               n.chains = 1, n.adapt = 0, n.burnin = 0,
+               n.thin = 1, n.iter = 10, verbose = FALSE)
+res2 <- occumb(formula_psi = ~ cov3, data = data,
+               n.chains = 1, n.adapt = 0, n.burnin = 0,
+               n.thin = 1, n.iter = 10, verbose = FALSE)
+res3 <- occumb(formula_psi = ~ cov2 * cov3, data = data,
+               n.chains = 1, n.adapt = 0, n.burnin = 0,
+               n.thin = 1, n.iter = 10, verbose = FALSE)
+
+# Add species covariate in the three parameters
+res4 <- occumb(formula_phi_shared = ~ cov1, data = data,
+               n.chains = 1, n.adapt = 0, n.burnin = 0,
+               n.thin = 1, n.iter = 10, verbose = FALSE)
+res5 <- occumb(formula_theta_shared = ~ cov1, data = data,
+               n.chains = 1, n.adapt = 0, n.burnin = 0,
+               n.thin = 1, n.iter = 10, verbose = FALSE)
+res6 <- occumb(formula_psi_shared = ~ cov1, data = data,
+               n.chains = 1, n.adapt = 0, n.burnin = 0,
+               n.thin = 1, n.iter = 10, verbose = FALSE)
+
+# Add replicate covariates
 res7 <- occumb(formula_phi = ~ cov4, data = data,
                n.chains = 1, n.adapt = 0, n.burnin = 0,
                n.thin = 1, n.iter = 10, verbose = FALSE)
@@ -23,10 +48,44 @@ res8 <- occumb(formula_theta = ~ cov4, data = data,
 
 test_that("eval_util_L() outputs a data frame with the additional Utility column", {
     settings <- data.frame(K = rep(1, 3), N = rep(1, 3), x = NA)
-    test     <- eval_util_L(settings, res0, cores = 1)
-    checkmate::expect_data_frame(test)
-    expect_equal(colnames(test), c(colnames(settings), "Utility"))
-    expect_equal(test[, -ncol(test)], settings)
+
+    # Null model
+    test0 <- eval_util_L(settings, res0, cores = 1)
+    checkmate::expect_data_frame(test0)
+    expect_equal(colnames(test0), c(colnames(settings), "Utility"))
+    expect_equal(test0[, -ncol(test0)], settings)
+
+    # Model with site covariates
+    test1 <- eval_util_L(settings, res0, cores = 1)
+    checkmate::expect_data_frame(test1)
+    expect_equal(colnames(test1), c(colnames(settings), "Utility"))
+    expect_equal(test1[, -ncol(test1)], settings)
+
+    test2 <- eval_util_L(settings, res0, cores = 1)
+    checkmate::expect_data_frame(test2)
+    expect_equal(colnames(test2), c(colnames(settings), "Utility"))
+    expect_equal(test2[, -ncol(test2)], settings)
+
+    test3 <- eval_util_L(settings, res0, cores = 1)
+    checkmate::expect_data_frame(test3)
+    expect_equal(colnames(test3), c(colnames(settings), "Utility"))
+    expect_equal(test3[, -ncol(test3)], settings)
+
+    # Model with species covariates
+    test4 <- eval_util_L(settings, res0, cores = 1)
+    checkmate::expect_data_frame(test4)
+    expect_equal(colnames(test4), c(colnames(settings), "Utility"))
+    expect_equal(test4[, -ncol(test4)], settings)
+
+    test5 <- eval_util_L(settings, res0, cores = 1)
+    checkmate::expect_data_frame(test5)
+    expect_equal(colnames(test5), c(colnames(settings), "Utility"))
+    expect_equal(test5[, -ncol(test5)], settings)
+
+    test6 <- eval_util_L(settings, res0, cores = 1)
+    checkmate::expect_data_frame(test6)
+    expect_equal(colnames(test6), c(colnames(settings), "Utility"))
+    expect_equal(test6[, -ncol(test6)], settings)
 })
 
 
