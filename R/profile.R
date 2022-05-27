@@ -359,19 +359,47 @@ cutil_regional <- function(z, theta, phi, K, N) {
 
 # Auxiliary functions adapting cutil to lapply
 .cutil_local <- function(n, args) {
-    cutil_local(args$z[n, , ],
-                args$theta[n, , ],
-                args$phi[n, , ],
-                args$K,
-                args$N)
+    if (dim(args$z)[2] == 1) {          # When I = 1
+        cutil_local(matrix(args$z[n, , ], nrow = 1),
+                    matrix(args$theta[n, , ], nrow = 1),
+                    matrix(args$phi[n, , ], nrow = 1),
+                    args$K,
+                    args$N)
+    } else if (dim(args$z)[3] == 1) {   # When J = 1
+        cutil_local(matrix(args$z[n, , ], ncol = 1),
+                    matrix(args$theta[n, , ], ncol = 1),
+                    matrix(args$phi[n, , ], ncol = 1),
+                    args$K,
+                    args$N)
+    } else {
+        cutil_local(args$z[n, , ],
+                    args$theta[n, , ],
+                    args$phi[n, , ],
+                    args$K,
+                    args$N)
+    }
 }
 
 .cutil_regional <- function(n, args) {
-    cutil_regional(args$z[n, , ],
-                   args$theta[n, , ],
-                   args$phi[n, , ],
-                   args$K,
-                   args$N)
+    if (dim(args$z)[2] == 1) {          # When I = 1
+        cutil_regional(matrix(args$z[n, , ], nrow = 1),
+                       matrix(args$theta[n, , ], nrow = 1),
+                       matrix(args$phi[n, , ], nrow = 1),
+                       args$K,
+                       args$N)
+    } else if (dim(args$z)[3] == 1) {   # When J = 1
+        cutil_regional(matrix(args$z[n, , ], ncol = 1),
+                       matrix(args$theta[n, , ], ncol = 1),
+                       matrix(args$phi[n, , ], ncol = 1),
+                       args$K,
+                       args$N)
+    } else {
+        cutil_regional(args$z[n, , ],
+                       args$theta[n, , ],
+                       args$phi[n, , ],
+                       args$K,
+                       args$N)
+    }
 }
 
 # Calculate pi

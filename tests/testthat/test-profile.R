@@ -1,3 +1,5 @@
+additional_test <- FALSE
+
 I <- 2 # Number of species
 J <- 2 # Number of sites
 K <- 2 # Number of replicates
@@ -104,6 +106,45 @@ test_that("eval_util_L() outputs a data frame with the additional Utility column
     expect_equal(test6[, -ncol(test6)], settings)
 })
 
+if (additional_test) {
+    test_that("eval_util_R() outputs a data frame with the additional Utility column", {
+        settings <- data.frame(J = rep(1, 3), K = rep(1, 3), N = rep(1, 3), x = NA)
+
+        # Null model
+        for (n in seq_len(1E4)) {
+            test0 <- try(eval_util_R(settings, res0, cores = 1), silent = TRUE)
+            if (class(test0) != "try-error") break
+        }
+        checkmate::expect_data_frame(test0)
+        expect_equal(colnames(test0), c(colnames(settings), "Utility"))
+        expect_equal(test0[, -ncol(test0)], settings)
+
+        # Model with species covariates
+        for (n in seq_len(1E4)) {
+            test4 <- try(eval_util_R(settings, res4, cores = 1), silent = TRUE)
+            if (class(test4) != "try-error") break
+        }
+        checkmate::expect_data_frame(test4)
+        expect_equal(colnames(test4), c(colnames(settings), "Utility"))
+        expect_equal(test4[, -ncol(test4)], settings)
+
+        for (n in seq_len(1E4)) {
+            test5 <- try(eval_util_R(settings, res5, cores = 1), silent = TRUE)
+            if (class(test5) != "try-error") break
+        }
+        checkmate::expect_data_frame(test5)
+        expect_equal(colnames(test5), c(colnames(settings), "Utility"))
+        expect_equal(test5[, -ncol(test5)], settings)
+
+        for (n in seq_len(1E4)) {
+            test6 <- try(eval_util_R(settings, res6, cores = 1), silent = TRUE)
+            if (class(test6) != "try-error") break
+        }
+        checkmate::expect_data_frame(test6)
+        expect_equal(colnames(test6), c(colnames(settings), "Utility"))
+        expect_equal(test6[, -ncol(test6)], settings)
+    })
+}
 
 ### Tests for qc_eval_util_L ---------------------------------------------------
 test_that("qc_eval_util_L() blocks inappropriate settings", {
