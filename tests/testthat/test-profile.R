@@ -153,9 +153,9 @@ test_that("qc_eval_util_L() blocks inappropriate settings", {
     expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), Nx = rep(1, 2)), res0),
                  "The 'settings' argument does not contain column 'N'.")
     expect_error(qc_eval_util_L(data.frame(K = rep(0, 2), N = rep(1, 2)), res0),
-                 "'K' contains a non-positive value.")
+                 "'K' contains values less than one.")
     expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(0, 2)), res0),
-                 "'N' contains a non-positive value.")
+                 "'N' contains values less than one.")
 })
 
 test_that("qc_eval_util_L() blocks models with replicate-specific parameters", {
@@ -183,15 +183,15 @@ test_that("qc_eval_util_R() blocks inappropriate settings", {
     expect_error(qc_eval_util_R(data.frame(J = rep(0, 2),
                                            K = rep(1, 2),
                                            N = rep(1, 2)), res0),
-                 "'J' contains a non-positive value.")
+                 "'J' contains values less than one.")
     expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
                                            K = rep(0, 2),
                                            N = rep(1, 2)), res0),
-                 "'K' contains a non-positive value.")
+                 "'K' contains values less than one.")
     expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
                                            K = rep(1, 2),
                                            N = rep(0, 2)), res0),
-                 "'N' contains a non-positive value.")
+                 "'N' contains values less than one.")
 })
 
 test_that("qc_eval_util_R() blocks models with site-specific parameters", {
