@@ -17,6 +17,12 @@ res0 <- occumb(data = data,
 res1 <- occumb(formula_psi = ~ cov2, data = data,
                n.chains = 1, n.adapt = 0, n.burnin = 0,
                n.thin = 1, n.iter = 10, verbose = FALSE)
+res1a <- occumb(formula_theta = ~ cov2, data = data,
+                n.chains = 1, n.adapt = 0, n.burnin = 0,
+                n.thin = 1, n.iter = 10, verbose = FALSE)
+res1b <- occumb(formula_phi = ~ cov2, data = data,
+                n.chains = 1, n.adapt = 0, n.burnin = 0,
+                n.thin = 1, n.iter = 10, verbose = FALSE)
 res2 <- occumb(formula_psi = ~ cov3, data = data,
                n.chains = 1, n.adapt = 0, n.burnin = 0,
                n.thin = 1, n.iter = 10, verbose = FALSE)
@@ -137,15 +143,36 @@ test_that("qc_eval_util_R() blocks inappropriate settings", {
                  "'N' contains a non-positive value.")
 })
 
-test_that("qc_eval_util_L() blocks models with replicate-specific parameters", {
-    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)), res7),
-                 "'phi' is replicate-specific: the current 'eval_util_L' is not applicable to models with replicate-specific parameters.")
-    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)), res8),
-                 "'theta' is replicate-specific: the current 'eval_util_L' is not applicable to models with replicate-specific parameters.")
+test_that("qc_eval_util_R() blocks models with site-specific parameters", {
+    expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
+                                           K = rep(1, 2),
+                                           N = rep(1, 2)), res1),
+                 "'psi' is site-specific: the current 'eval_util_R' is not applicable to models with site-specific parameters.")
+    expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
+                                           K = rep(1, 2),
+                                           N = rep(1, 2)), res1a),
+                 "'theta' is site-specific: the current 'eval_util_R' is not applicable to models with site-specific parameters.")
+    expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
+                                           K = rep(1, 2),
+                                           N = rep(1, 2)), res1b),
+                 "'phi' is site-specific: the current 'eval_util_R' is not applicable to models with site-specific parameters.")
+    expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
+                                           K = rep(1, 2),
+                                           N = rep(1, 2)), res2),
+                 "'psi' is site-specific: the current 'eval_util_R' is not applicable to models with site-specific parameters.")
+    expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
+                                           K = rep(1, 2),
+                                           N = rep(1, 2)), res3),
+                 "'psi' is site-specific: the current 'eval_util_R' is not applicable to models with site-specific parameters.")
+    expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
+                                           K = rep(1, 2),
+                                           N = rep(1, 2)), res7),
+                 "'phi' is replicate-specific: the current 'eval_util_R' is not applicable to models with replicate-specific parameters.")
+    expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
+                                           K = rep(1, 2),
+                                           N = rep(1, 2)), res8),
+                 "'theta' is replicate-specific: the current 'eval_util_R' is not applicable to models with replicate-specific parameters.")
 })
-
-
-
 
 
 ### Tests for eutil ------------------------------------------------------------

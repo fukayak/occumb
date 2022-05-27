@@ -255,13 +255,15 @@ qc_eval_util_R <- function(settings, fit) {
     assert_occumbFit(fit)
 
     # Assert that model parameters are not site- or replicate-specific
-    if (!length(dim(get_post_samples(fit, "theta"))) < 3)
+    if (length(dim(get_post_samples(fit, "psi"))) == 3)
+        stop("'psi' is site-specific: the current 'eval_util_R' is not applicable to models with site-specific parameters.")
+    if (length(dim(get_post_samples(fit, "theta"))) == 3)
         stop("'theta' is site-specific: the current 'eval_util_R' is not applicable to models with site-specific parameters.")
-    if (!length(dim(get_post_samples(fit, "phi"))) < 3)
+    if (length(dim(get_post_samples(fit, "phi"))) == 3)
         stop("'phi' is site-specific: the current 'eval_util_R' is not applicable to models with site-specific parameters.")
-    if (!length(dim(get_post_samples(fit, "theta"))) < 4)
+    if (length(dim(get_post_samples(fit, "theta"))) == 4)
         stop("'theta' is replicate-specific: the current 'eval_util_R' is not applicable to models with replicate-specific parameters.")
-    if (!length(dim(get_post_samples(fit, "phi"))) < 4)
+    if (length(dim(get_post_samples(fit, "phi"))) == 4)
         stop("'phi' is replicate-specific: the current 'eval_util_R' is not applicable to models with replicate-specific parameters.")
 }
 
