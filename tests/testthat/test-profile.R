@@ -108,6 +108,46 @@ test_that("qc_eval_util_L() blocks models with replicate-specific parameters", {
                  "'theta' is replicate-specific: the current 'eval_util_L' is not applicable to models with replicate-specific parameters.")
 })
 
+
+### Tests for qc_eval_util_R ---------------------------------------------------
+test_that("qc_eval_util_R() blocks inappropriate settings", {
+    expect_error(qc_eval_util_R(data.frame(Jx = rep(1, 2),
+                                           K = rep(1, 2),
+                                           N = rep(1, 2)), res0),
+                 "The 'settings' argument does not contain column 'J'.")
+    expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
+                                           Kx = rep(1, 2),
+                                           N = rep(1, 2)), res0),
+                 "The 'settings' argument does not contain column 'K'.")
+    expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
+                                           K = rep(1, 2),
+                                           Nx = rep(1, 2)), res0),
+                 "The 'settings' argument does not contain column 'N'.")
+    expect_error(qc_eval_util_R(data.frame(J = rep(0, 2),
+                                           K = rep(1, 2),
+                                           N = rep(1, 2)), res0),
+                 "'J' contains a non-positive value.")
+    expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
+                                           K = rep(0, 2),
+                                           N = rep(1, 2)), res0),
+                 "'K' contains a non-positive value.")
+    expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
+                                           K = rep(1, 2),
+                                           N = rep(0, 2)), res0),
+                 "'N' contains a non-positive value.")
+})
+
+test_that("qc_eval_util_L() blocks models with replicate-specific parameters", {
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)), res7),
+                 "'phi' is replicate-specific: the current 'eval_util_L' is not applicable to models with replicate-specific parameters.")
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)), res8),
+                 "'theta' is replicate-specific: the current 'eval_util_L' is not applicable to models with replicate-specific parameters.")
+})
+
+
+
+
+
 ### Tests for eutil ------------------------------------------------------------
 ### * Tests are available only for non-parallel computations *
 

@@ -177,7 +177,7 @@ eval_util_R <- function(settings,
                         cores = parallel::detectCores()) {
 
     # Validate arguments ... to be added
-
+    qc_eval_util_R(settings, fit)
 
     # Extract posterior samples
     psi <- get_post_samples(fit, "psi")
@@ -233,6 +233,36 @@ qc_eval_util_L <- function(settings, fit) {
         stop("'theta' is replicate-specific: the current 'eval_util_L' is not applicable to models with replicate-specific parameters.")
     if (!length(dim(get_post_samples(fit, "phi"))) < 4)
         stop("'phi' is replicate-specific: the current 'eval_util_L' is not applicable to models with replicate-specific parameters.")
+}
+
+qc_eval_util_R <- function(settings, fit) {
+    # Assert that settings is a data frame and contains the required columns
+    checkmate::assert_data_frame(settings)
+    if (!checkmate::testSubset("J", names(settings)))
+        stop("The 'settings' argument does not contain column 'J'.")
+    if (!checkmate::testSubset("K", names(settings)))
+        stop("The 'settings' argument does not contain column 'K'.")
+    if (!checkmate::testSubset("N", names(settings)))
+        stop("The 'settings' argument does not contain column 'N'.")
+    if (!checkmate::test_numeric(settings[, "J"], lower = 1))
+        stop("'J' contains a non-positive value.")
+    if (!checkmate::test_numeric(settings[, "K"], lower = 1))
+        stop("'K' contains a non-positive value.")
+    if (!checkmate::test_numeric(settings[, "N"], lower = 1))
+        stop("'N' contains a non-positive value.")
+
+    # Assert that fit is an occumbFit object
+    assert_occumbFit(fit)
+
+    # Assert that model parameters are not site- or replicate-specific
+    if (!length(dim(get_post_samples(fit, "theta"))) < 3)
+        stop("'theta' is site-specific: the current 'eval_util_R' is not applicable to models with site-specific parameters.")
+    if (!length(dim(get_post_samples(fit, "phi"))) < 3)
+        stop("'phi' is site-specific: the current 'eval_util_R' is not applicable to models with site-specific parameters.")
+    if (!length(dim(get_post_samples(fit, "theta"))) < 4)
+        stop("'theta' is replicate-specific: the current 'eval_util_R' is not applicable to models with replicate-specific parameters.")
+    if (!length(dim(get_post_samples(fit, "phi"))) < 4)
+        stop("'phi' is replicate-specific: the current 'eval_util_R' is not applicable to models with replicate-specific parameters.")
 }
 
 # @title Monte-Carlo integration to obtain expected utility.
