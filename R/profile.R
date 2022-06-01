@@ -244,11 +244,11 @@ list_cond_L <- function(budget, lambda1, lambda2, fit, K = NULL) {
     ## Validate arguments
     # Assert that budget and cost values are positive.
     if (!checkmate::test_numeric(budget, lower = 0))
-        stop("Non-positive 'budget' value.")
+        stop("Negative 'budget' value.")
     if (!checkmate::test_numeric(lambda1, lower = 0))
-        stop("Non-positive 'lambda1' value.")
+        stop("Negative 'lambda1' value.")
     if (!checkmate::test_numeric(lambda2, lower = 0))
-        stop("Non-positive 'lambda2' value.")
+        stop("Negative 'lambda2' value.")
 
     # Assert that fit is an occumbFit object
     assert_occumbFit(fit)

@@ -1,5 +1,7 @@
 additional_test <- FALSE
 
+
+### Tests for eval_util_L/R ----------------------------------------------------
 I <- 2 # Number of species
 J <- 2 # Number of sites
 K <- 2 # Number of replicates
@@ -50,9 +52,6 @@ res7 <- occumb(formula_phi = ~ cov4, data = data,
 res8 <- occumb(formula_theta = ~ cov4, data = data,
                n.chains = 1, n.adapt = 0, n.burnin = 0,
                n.thin = 1, n.iter = 10, verbose = FALSE)
-
-
-### Tests for eval_util_L/R ----------------------------------------------------
 
 test_that("eval_util_L() outputs a data frame with the additional Utility column", {
     settings <- data.frame(K = rep(1, 3), N = rep(1, 3), x = NA)
@@ -145,6 +144,72 @@ if (additional_test) {
         expect_equal(test6[, -ncol(test6)], settings)
     })
 }
+
+
+### Tests for list_cond_L/R ----------------------------------------------------
+I <- 2  # Number of species
+J <- 50 # Number of sites
+K <- 2  # Number of replicates
+data <- occumbData(
+    y = array(sample.int(I * J * K), dim = c(I, J, K)),
+    spec_cov = list(cov1 = rnorm(I)),
+    site_cov = list(cov2 = rnorm(J),
+                    cov3 = factor(1:J)),
+    repl_cov = list(cov4 = matrix(rnorm(J * K), J, K)))
+res0 <- occumb(data = data,
+               n.chains = 1, n.adapt = 0, n.burnin = 0,
+               n.thin = 1, n.iter = 10, verbose = FALSE)
+budget <- 850000; lambda1 <- 0.01; lambda2 <- 5000
+test <- list_cond_L(budget, lambda1, lambda2, res0)
+
+test_that("list_cond_L() outputs a data frame with correct columns", {
+    checkmate::expect_data_frame(test)
+    expect_equal(colnames(test), c("budget", "lambda1", "lambda2", "K", "N"))
+})
+
+test_that("Elements of list_cond_L() output are correct", {
+    max_K <- floor(budget / (lambda2 * J))
+    N <- (budget - lambda2 * J * seq_len(max_K)) / (lambda1 * J * seq_len(max_K))
+    expect_equal(nrow(test), max_K)
+    expect_equal(test$budget, rep(budget, max_K))
+    expect_equal(test$lambda1, rep(lambda1, max_K))
+    expect_equal(test$lambda2, rep(lambda2, max_K))
+    expect_equal(test$K, seq_len(max_K))
+    expect_equal(test$N, N)
+})
+
+test_that("K argument of list_cond_L() work correctly", {
+    testK <- c(1, 3)
+    N <- (budget - lambda2 * J * testK) / (lambda1 * J * testK)
+    test <- list_cond_L(budget, lambda1, lambda2, res0, K = testK)
+    expect_equal(nrow(test), length(testK))
+    expect_equal(test$budget, rep(budget, length(testK)))
+    expect_equal(test$lambda1, rep(lambda1, length(testK)))
+    expect_equal(test$lambda2, rep(lambda2, length(testK)))
+    expect_equal(test$K, testK)
+    expect_equal(test$N, N)
+})
+
+test_that("Quality controls for list_cond_L() work correctly", {
+    max_K <- floor(budget / (lambda2 * J))
+    expect_error(list_cond_L(-1, lambda1, lambda2, res0),
+                 "Negative 'budget' value.")
+    expect_error(list_cond_L(budget, -1, lambda2, res0),
+                 "Negative 'lambda1' value.")
+    expect_error(list_cond_L(budget, lambda1, -1, res0),
+                 "Negative 'lambda2' value.")
+    expect_error(list_cond_L(budget, lambda1, lambda2, 0),
+                 "An occumbFit class object is expected for 'fit'")
+    expect_error(list_cond_L(0, lambda1, lambda2, res0),
+                 "Impossible to have > 0 replicates per site under the given budget, cost, and the number of sites.")
+    expect_error(list_cond_L(budget, lambda1, lambda2, res0, K = c(0, 1)),
+                 "'K' contains values less than one.")
+    expect_error(list_cond_L(budget, lambda1, lambda2, res0, K = seq_len(max_K + 1)),
+                 paste("A value of 'K' greater than",
+                       max_K,
+                       "is not feasible under the given budget, cost, and the number of sites."))
+})
+
 
 ### Tests for qc_eval_util_L ---------------------------------------------------
 test_that("qc_eval_util_L() blocks inappropriate settings", {
