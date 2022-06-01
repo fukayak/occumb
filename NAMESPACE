@@ -3,6 +3,7 @@
 export(eval_util_L)
 export(eval_util_R)
 export(gof)
+export(list_cond_L)
 export(loglik)
 export(occumb)
 export(occumbData)

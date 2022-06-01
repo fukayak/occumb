@@ -213,6 +213,81 @@ eval_util_R <- function(settings,
     out
 }
 
+#' @title Conditions for local assessment under certain budget and cost values.
+#' @description `list_cond_L()` constructs a list of possible local species
+#'  diversity assessment conditions under specified budget and cost values.
+#' @details
+#'   This function can generate a data frame object to be given to the
+#'  `settings` argument of `eval_util_L()`; see Examples of `eval_util_L()`.
+#'  By default, it outputs a list of all feasible combinations of values for the
+#'  number of replicates per site `K` and the sequencing depth per replicate
+#'  `N`, based on the given budget and cost values and the number of sites
+#'  (identified by reference to the `fit` object). The resulting `N` can be
+#'  non-integer because it is calculated simply by assuming that we can obtain
+#'  its maximum value. If you want to obtain a list for only a subset of the
+#'  possible `K` values under a given budget and cost values, use the `K`
+#'  argument to provide a vector of the desired `K` values.
+#' @param budget A numeric specifying the amount of budget. Use the currency
+#'  unit consistent with `lambda1` and `lambda2`.
+#' @param lambda1 A numeric specifying the cost per sequence read for
+#'  high-throughput sequencing. Use the currency unit consistent with `budget`
+#'  and `lambda2`.
+#' @param lambda2 A numeric specifying the cost per replicate for library
+#'  preparation. Use the currency unit consistent with `budget` and `lambda1`.
+#' @param fit An `occumbFit` object.
+#' @param K An optional vector for manually specifying the number of replicates.
+#' @return A data frame containing columns named `budget`, `lambda1`, `lambda2`,
+#'  `K`, and `N`.
+#' @export
+list_cond_L <- function(budget, lambda1, lambda2, fit, K = NULL) {
+
+    ## Validate arguments
+    # Assert that budget and cost values are positive.
+    if (!checkmate::test_numeric(budget, lower = 0))
+        stop("Non-positive 'budget' value.")
+    if (!checkmate::test_numeric(lambda1, lower = 0))
+        stop("Non-positive 'lambda1' value.")
+    if (!checkmate::test_numeric(lambda2, lower = 0))
+        stop("Non-positive 'lambda2' value.")
+
+    # Assert that fit is an occumbFit object
+    assert_occumbFit(fit)
+
+    # Determine the number of sites
+    J <- dim(get_post_samples(fit, "z"))[3]
+
+    # Determine max_K under given budget, cost, and the number of sites
+    max_K <- floor(budget / (lambda2 * J))
+
+    # Assert that given settings ensure at least one replicate per site
+    if (!checkmate::test_numeric(max_K, lower = 1))
+        stop("Impossible to have > 0 replicates per site under the given budget, cost, and the number of sites.")
+
+    if (is.null(K)) {
+        # Determine K values
+        K <- seq_len(max_K)[budget - lambda2 * J * seq_len(max_K) > 0]
+    } else {
+        # Assert that K >= 1
+        if (!checkmate::test_numeric(K, lower = 1))
+            stop("'K' contains values less than one.")
+
+        # Assert that the all given K are feasible
+        if (any(!budget - lambda2 * J * K > 0))
+            stop(paste("A value of 'K' greater than",
+                       max_K,
+                       "is not feasible under the given budget, cost, and the number of sites."))
+    }
+
+    # Output a table of conditions
+    out <- cbind(rep(budget, length(K)),
+                 rep(lambda1, length(K)),
+                 rep(lambda2, length(K)),
+                 K,
+                 (budget - lambda2 * J * K) / (lambda1 * J * K))
+    colnames(out) <- c("budget", "lambda1", "lambda2", "K", "N")
+    data.frame(out)
+}
+
 qc_eval_util_L <- function(settings, fit) {
     # Assert that settings is a data frame and contains the required columns
     checkmate::assert_data_frame(settings)
