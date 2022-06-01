@@ -278,13 +278,99 @@ list_cond_L <- function(budget, lambda1, lambda2, fit, K = NULL) {
                        "is not feasible under the given budget, cost, and the number of sites."))
     }
 
-    # Output a table of conditions
+    ## Output a table of conditions
     out <- cbind(rep(budget, length(K)),
                  rep(lambda1, length(K)),
                  rep(lambda2, length(K)),
                  K,
                  (budget - lambda2 * J * K) / (lambda1 * J * K))
     colnames(out) <- c("budget", "lambda1", "lambda2", "K", "N")
+    data.frame(out)
+}
+
+#' @title Conditions for regional assessment under certain budget and cost values.
+#' @description `list_cond_R()` constructs a list of possible regional species
+#'  diversity assessment conditions under specified budget and cost values.
+#' @details
+#'   This function can generate a data frame object to be given to the
+#'  `settings` argument of `eval_util_R()`; see Examples of `eval_util_R()`.
+#'  By default, it outputs a list of all feasible combinations of values for the
+#'  number of replicates per site `K` and the sequencing depth per replicate
+#'  `N`, based on the given budget and cost values and the number of sites
+#'  (identified by reference to the `fit` object). The resulting `N` can be
+#'  non-integer because it is calculated simply by assuming that we can obtain
+#'  its maximum value. If you want to obtain a list for only a subset of the
+#'  possible `K` values under a given budget and cost values, use the `K`
+#'  argument to provide a vector of the desired `K` values.
+#' @param budget A numeric specifying the amount of budget. Use the currency
+#'  unit consistent with `lambda1` and `lambda2`.
+#' @param lambda1 A numeric specifying the cost per sequence read for
+#'  high-throughput sequencing. Use the currency unit consistent with `budget`
+#'  and `lambda2`.
+#' @param lambda2 A numeric specifying the cost per replicate for library
+#'  preparation. Use the currency unit consistent with `budget` and `lambda1`.
+#' @param fit An `occumbFit` object.
+#' @param K An optional vector for manually specifying the number of replicates.
+#'  For computational convenience, `K` values must be in ascending order.
+#'  - If the values of J and K are not compatible, they are removed from the result.
+#' @return A data frame containing columns named `budget`, `lambda1`, `lambda2`,
+#'  `K`, and `N`.
+#' @export
+list_cond_R <- function(budget, lambda1, lambda2, lambda3, J = NULL, K = NULL) {
+
+    ## Validate arguments
+    # Assert that budget and cost values are positive.
+    if (!checkmate::test_numeric(budget, lower = 0))
+        stop("Negative 'budget' value.")
+    if (!checkmate::test_numeric(lambda1, lower = 0))
+        stop("Negative 'lambda1' value.")
+    if (!checkmate::test_numeric(lambda2, lower = 0))
+        stop("Negative 'lambda2' value.")
+    if (!checkmate::test_numeric(lambda3, lower = 0))
+        stop("Negative 'lambda3' value.")
+
+    # Assert that J, K >= 1
+    if (!is.null(J) & !checkmate::test_numeric(J, lower = 1))
+        stop("'J' contains values less than one.")
+    if (!is.null(K) & !checkmate::test_numeric(K, lower = 1))
+        stop("'K' contains values less than one.")
+
+    # Assert that K is in ascending order
+    if (!is.null(K) & !identical(K, sort(K)))
+        stop("'K' must be in ascending order.")
+
+    # Determine the combination of J and K to be used
+    J_valid <- vector()
+    K_valid <- vector()
+
+    if (is.null(K))
+        K <- seq_len(1E8)
+    if (is.null(J))
+        J <- seq_len(1E8)
+
+    for (k in K) {
+        J_valid_k <- J[budget - lambda2 * J * k - lambda3 * J > 0]
+        if (length(J_valid_k) > 0) {
+            J_valid <- c(J_valid, J_valid_k)
+            K_valid <- c(K_valid, rep(k, length(J_valid_k)))
+        } else {
+            break
+        }
+    }
+
+    # Assert that given settings ensure at least one valid combination of J and K
+    if (!length(J_valid) > 0)
+        stop("Impossible to have valid combination of 'J' and 'K' under the given budget and cost.")
+
+    ## Output a table of conditions
+    out <- cbind(rep(budget, length(J_valid)),
+                 rep(lambda1, length(J_valid)),
+                 rep(lambda2, length(J_valid)),
+                 rep(lambda3, length(J_valid)),
+                 J_valid,
+                 K_valid,
+                 (budget - lambda2 * J_valid * K_valid - lambda3 * J_valid) / (lambda1 * J_valid * K_valid))
+    colnames(out) <- c("budget", "lambda1", "lambda2", "lambda3", "J", "K", "N")
     data.frame(out)
 }
 
