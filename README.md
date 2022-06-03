@@ -13,7 +13,7 @@ See the [original paper](https://doi.org/10.1111/2041-210X.13732) for details of
 ## Important note
 The current programs are an alpha version released to present the concept of package development. In other words, please be aware of the following points when you want to try this package:
 
-- Only a few planned features have been implemented.
+- Some of the planned features have not yet been implemented.
 - The functions may not have been thoroughly tested.
 - Documentation may be insufficient.
 - Specifications may change significantly in the future.
@@ -28,12 +28,13 @@ remotes::install_github("fukayak/occumb", ref = "main")
 
 ## Example
 
-The current version (v0.3.x) provides the following main functions:
+The current version (v0.4.x) provides the following main functions:
 
 - `occumbData()` builds a dataset object used for the multispecies site occupancy modeling.
 - `occumb()` fits a model, possibly with species, site, and replicate covariates.
 - `gof()` computes statistics for goodness-of-fit assessment of the model.
 - `loglik()` extracts the pointwise log-likelihood of the model.
+- `eval_util_L()` and `eval_util_L()` predicts expected utility (the expected number of detected species) at the local and regional scale, respectively.
 
 ``` r
 library(occumb)
@@ -84,9 +85,18 @@ gof_res0 <- gof(res0)
 
 # Extract pointwise log-likelihood
 ll_res0 <- loglik(res0)
+
+# Estimate expected utility for local species diversity assessment
+util_L <- eval_util_L(list_cond_L(budget = 1E5, lambda1 = 0.01, lambda2 = 5000, fit),
+                      fit)
+
+# Estimate expected utility for regional species diversity assessment
+util_R <- eval_util_R(list_cond_R(budget = 50000,
+                                  lambda1 = 0.01,
+                                  lambda2 = 5000,
+                                  lambda3 = 5000),
+                      fit)
 ```
 
 See the documentation of each function for more details.
-
-Future versions will provide functions to summarize the model-fit results and perform further analyses based on the model.
 

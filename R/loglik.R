@@ -43,7 +43,7 @@
 loglik <- function(fit) {
 
     # Validate arguments
-    qc_occumbFit(fit)
+    assert_occumbFit(fit)
 
     # Set constants
     y  <- get_data(fit, "y")

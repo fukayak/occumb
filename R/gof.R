@@ -77,7 +77,7 @@ gof <- function(fit,
     parallel <- FALSE   # To be implemented...
 
     # Validate arguments
-    qc_occumbFit(fit)
+    assert_occumbFit(fit)
     stats <- match.arg(stats)
 
     # Set constants
