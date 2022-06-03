@@ -213,8 +213,7 @@ test_that("Quality controls for list_cond_L() work correctly", {
 
 ### Tests for list_cond_R ------------------------------------------------------
 budget <- 100000; lambda1 <- 0.01; lambda2 <- 5000; lambda3 <- 5000
-# Under the above condition, the maximum value of K is 18.
-max_K <- 18
+max_K <- find_maxK(budget, lambda2, lambda3)
 test <- list_cond_R(budget, lambda1, lambda2, lambda3)
 
 test_that("list_cond_R() outputs a data frame with correct columns", {
@@ -310,6 +309,31 @@ test_that("Quality controls for list_cond_R() work correctly", {
                  "'K' must be in ascending order.")
     expect_error(list_cond_R(budget, lambda1, lambda2, lambda3, K = c(20)),
                  paste("No valid combination of 'J' and 'K' under the given budget and cost."))
+})
+
+
+### Tests for find_max_J/K -----------------------------------------------------
+test_that("find_maxJ/K() returns correct value", {
+    budget <- 100000; lambda2 <- 5000; lambda3 <- 5000
+    J <- seq_len(1E3)
+    J_ans <- max(J[budget - lambda2 * J - lambda3 * J > 0])
+    K <- seq_len(1E3)
+    K_ans <- max(K[budget - lambda2 * K - lambda3 > 0])
+
+    expect_equal(find_maxJ(budget, lambda2, lambda3), J_ans)
+    expect_equal(find_maxK(budget, lambda2, lambda3), K_ans)
+})
+
+test_that("find_maxJ/K() returns zero when budget is too small", {
+    expect_equal(find_maxJ(10, lambda2, lambda3), 0)
+    expect_equal(find_maxK(10, lambda2, lambda3), 0)
+})
+
+test_that("find_maxJ/K() throws an error when the budget is too large", {
+    expect_error(find_maxJ(1E16, lambda2, lambda3),
+                 "Maximum `J` value seems too large under the specified budget and cost values: consider using the `J` argument to specify a smaller set of `J` values of interest.")
+    expect_error(find_maxK(1E16, lambda2, lambda3),
+                 "Maximum `K` value seems too large under the specified budget and cost values: consider using the `K` argument to specify a smaller set of `K` values of interest.")
 })
 
 

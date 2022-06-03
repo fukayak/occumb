@@ -344,14 +344,20 @@ list_cond_R <- function(budget, lambda1, lambda2, lambda3, J = NULL, K = NULL) {
         stop("'K' must be in ascending order.")
 
     # Determine the combination of J and K to be used
-    J_valid <- vector()
-    K_valid <- vector()
+    if (is.null(J)) {
+        max_J <- find_maxJ(budget, lambda2, lambda3)
+        if (!max_J)
+            stop("No valid combination of 'J' and 'K' under the given budget and cost.")
+        J <- seq_len(max_J)
+    }
+    if (is.null(K)) {
+        max_K <- find_maxK(budget, lambda2, lambda3)
+        if (!max_K)
+            stop("No valid combination of 'J' and 'K' under the given budget and cost.")
+        K <- seq_len(max_K)
+    }
 
-    if (is.null(K))
-        K <- seq_len(1E8)
-    if (is.null(J))
-        J <- seq_len(1E8)
-
+    J_valid <- K_valid <- vector()
     for (k in K) {
         J_valid_k <- J[budget - lambda2 * J * k - lambda3 * J > 0]
         if (length(J_valid_k) > 0) {
@@ -626,5 +632,47 @@ predict_detect_probs_regional <- function(pi, N) {
     }
 
     detect_probs
+}
+
+# Find the maximum K value under the specified budget for regional assessment
+find_maxK <- function(budget, lambda2, lambda3, ulim = 1E4) {
+    J <- 1
+    for (n in 2:log10(ulim)) {
+        K <- seq_len(10^n)
+
+        if (any(budget - lambda2 * J * K - lambda3 * J > 0)) {
+            maxK <- max(K[budget - lambda2 * J * K - lambda3 * J > 0])
+        } else {
+            maxK <- 0
+        }
+
+        if (maxK < length(K))
+            break
+
+        if (n == log10(ulim))
+            stop("Maximum `K` value seems too large under the specified budget and cost values: consider using the `K` argument to specify a smaller set of `K` values of interest.")
+    }
+    maxK
+}
+
+# Find the maximum J value under the specified budget for regional assessment
+find_maxJ <- function(budget, lambda2, lambda3, ulim = 1E6) {
+    K <- 1
+    for (n in 4:log10(ulim)) {
+        J <- seq_len(10^n)
+
+        if (any(budget - lambda2 * J * K - lambda3 * J > 0)) {
+            maxJ <- max(J[budget - lambda2 * J * K - lambda3 * J > 0])
+        } else {
+            maxJ <- 0
+        }
+
+        if (maxJ < length(J))
+            break
+
+        if (n == log10(ulim))
+            stop("Maximum `J` value seems too large under the specified budget and cost values: consider using the `J` argument to specify a smaller set of `J` values of interest.")
+    }
+    maxJ
 }
 
