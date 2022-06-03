@@ -145,7 +145,8 @@ eval_util_L <- function(settings,
 #'  values specified in the `conditions` argument.
 #'  Such evaluations can be used to balance `J`, `K`, and `N` to maximize the
 #'  utility under a constant budget (possible combinations of `J`, `K`, and `N`
-#'  under a budget level are easily obtained using `x`; see the example below).
+#'  under specified budget and cost values are easily obtained using
+#'  `list_cond_R()`; see the example below).
 #'  It is also possible to examine how the utility varies with different `J`,
 #'  `K`, and `N` values without setting a budget level, which may be useful to know
 #'  the satisfactory level of `J`, `K`, and `N` from a purely technical point of
@@ -197,6 +198,45 @@ eval_util_L <- function(settings,
 #'      replicated environmental DNA metabarcoding. \emph{Methods in Ecology
 #'      and Evolution} \strong{13}:183--193.
 #'      \url{https://doi.org/10.1111/2041-210X.13732}
+#' @examples
+#' \dontrun{
+#' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
+#' I <- 2 # Number of species
+#' J <- 2 # Number of sites
+#' K <- 2 # Number of replicates
+#' data <- occumbData(
+#'     y = array(sample.int(I * J * K), dim = c(I, J, K)),
+#'     spec_cov = list(cov1 = rnorm(I)),
+#'     site_cov = list(cov2 = rnorm(J),
+#'                     cov3 = factor(1:J)),
+#'     repl_cov = list(cov4 = matrix(rnorm(J * K), J, K)))
+#'
+#' # Fitting a null model
+#' fit <- occumb(data = data)
+#'
+#' # Estimate expected utility
+#' util1 <- eval_util_R(data.frame(J = rep(rep(1:3, each = 3), times = 3),
+#'                                 K = rep(rep(1:3, each = 3), each = 3),
+#'                                 N = rep(rep(c(1E3, 1E4, 1E5), times = 3), times = 3)),
+#'                      fit) # Arbitrary J, K, and N values
+#' util2 <- eval_util_R(list_cond_R(budget = 50000,
+#'                                  lambda1 = 0.01,
+#'                                  lambda2 = 5000,
+#'                                  lambda3 = 5000),
+#'                      fit) # J, K, and N values under specified budget and cost
+#' util3 <- eval_util_R(list_cond_R(budget = 50000,
+#'                                  lambda1 = 0.01,
+#'                                  lambda2 = 5000,
+#'                                  lambda3 = 5000,
+#'                                  K = 1:5),
+#'                      fit) # K values restricted
+#' util4 <- eval_util_R(list_cond_R(budget = 50000,
+#'                                  lambda1 = 0.01,
+#'                                  lambda2 = 5000,
+#'                                  lambda3 = 5000,
+#'                                  J = 1:3, K = 1:5),
+#'                      fit) # J and K values restricted
+#' }
 #' @export
 eval_util_R <- function(settings,
                         fit,
