@@ -1,6 +1,6 @@
 Package: occumb
 Title: Site Occupancy Modeling For Environmental DNA Metabarcoding
-Version: 0.3.0.9000
+Version: 0.3.0.9003
 Authors@R: 
     person(given = "Keiichi",
            family = "Fukaya",
@@ -14,7 +14,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
@@ -23,7 +23,8 @@ Imports:
     stats,
     methods,
     graphics,
-    foreach
+    foreach,
+    checkmate
 Collate: 
     'classes.R'
     'globals.R'
@@ -34,4 +35,5 @@ Collate:
     'plot.R'
     'print.R'
     'summary.R'
+    'utility.R'
     'utils.R'
