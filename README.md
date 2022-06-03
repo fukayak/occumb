@@ -34,7 +34,7 @@ The current version (v0.4.x) provides the following main functions:
 - `occumb()` fits a model, possibly with species, site, and replicate covariates.
 - `gof()` computes statistics for goodness-of-fit assessment of the model.
 - `loglik()` extracts the pointwise log-likelihood of the model.
-- `eval_util_L()` and `eval_util_L()` predicts expected utility (the expected number of detected species) at the local and regional scale, respectively.
+- `eval_util_L()` and `eval_util_R()` predicts expected utility (the expected number of detected species) at the local and regional scale, respectively.
 
 ``` r
 library(occumb)
@@ -87,15 +87,15 @@ gof_res0 <- gof(res0)
 ll_res0 <- loglik(res0)
 
 # Estimate expected utility for local species diversity assessment
-util_L <- eval_util_L(list_cond_L(budget = 1E5, lambda1 = 0.01, lambda2 = 5000, fit),
-                      fit)
+util_L <- eval_util_L(list_cond_L(budget = 1E5, lambda1 = 0.01, lambda2 = 5000, res0),
+                      res0)
 
 # Estimate expected utility for regional species diversity assessment
 util_R <- eval_util_R(list_cond_R(budget = 50000,
                                   lambda1 = 0.01,
                                   lambda2 = 5000,
                                   lambda3 = 5000),
-                      fit)
+                      res0)
 ```
 
 See the documentation of each function for more details.
