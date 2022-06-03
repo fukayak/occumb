@@ -294,7 +294,6 @@ test_that("K argument of list_cond_R() work correctly", {
 })
 
 test_that("Quality controls for list_cond_R() work correctly", {
-    max_K <- floor(budget / (lambda2 * J))
     expect_error(list_cond_R(-1, lambda1, lambda2, lambda3),
                  "Negative 'budget' value.")
     expect_error(list_cond_R(budget, -1, lambda2, lambda3),
