@@ -1,8 +1,6 @@
-# occumb (development version)
-* Add `cutil_local()` and `cutil_regional()` functions.
-* Add `eutil()` function.
-* Add `eval_util_L` and `eval_util_R` functions.
-* Add `list_cond_L` and `list_cond_R` functions.
+# occumb 0.4.0 (2022/06/03)
+* Add `eval_util_L()` and `eval_util_R()` functions.
+* Add `list_cond_L()` and `list_cond_R()` functions.
 
 # occumb 0.3.0 (2022/03/31)
 * Add `gof()` function.
