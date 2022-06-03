@@ -295,26 +295,30 @@ list_cond_L <- function(budget, lambda1, lambda2, fit, K = NULL) {
 #'   This function can generate a data frame object to be given to the
 #'  `settings` argument of `eval_util_R()`; see Examples of `eval_util_R()`.
 #'  By default, it outputs a list of all feasible combinations of values for the
-#'  number of replicates per site `K` and the sequencing depth per replicate
-#'  `N`, based on the given budget and cost values and the number of sites
-#'  (identified by reference to the `fit` object). The resulting `N` can be
-#'  non-integer because it is calculated simply by assuming that we can obtain
-#'  its maximum value. If you want to obtain a list for only a subset of the
-#'  possible `K` values under a given budget and cost values, use the `K`
-#'  argument to provide a vector of the desired `K` values.
+#'  number of sites `J`, number of replicates per site `K`, and the sequencing
+#'  depth per replicate `N`, based on the given budget and cost values.
+#'  The resulting `N` can be non-integer because it is calculated simply by
+#'  assuming that we can obtain its maximum value.
+#'  If you want to obtain a list for only a subset of the possible values of `J`
+#'  and `K` under a given budget and cost values, use the `J` and/or `K`
+#'  arguments. If a given combination of `J` and `K` values is not feasible
+#'  under the specified budget and cost values, that combination will be ignored
+#'  and excluded from the output.
 #' @param budget A numeric specifying the amount of budget. Use the currency
-#'  unit consistent with `lambda1` and `lambda2`.
+#'  unit consistent with `lambda1`, `lambda2`, and `lambda3`.
 #' @param lambda1 A numeric specifying the cost per sequence read for
-#'  high-throughput sequencing. Use the currency unit consistent with `budget`
-#'  and `lambda2`.
+#'  high-throughput sequencing. Use the currency unit consistent with `budget`,
+#'  `lambda2`, and `lambda3`.
 #' @param lambda2 A numeric specifying the cost per replicate for library
-#'  preparation. Use the currency unit consistent with `budget` and `lambda1`.
-#' @param fit An `occumbFit` object.
+#'  preparation. Use the currency unit consistent with `budget`, `lambda1`, and
+#'  `lambda3`.
+#' @param lambda3 A numeric specifying the visiting cost per site. Use the
+#'  currency unit consistent with `budget`, `lambda1`, and `lambda2`.
+#' @param J An optional vector for manually specifying the number of sites
 #' @param K An optional vector for manually specifying the number of replicates.
 #'  For computational convenience, `K` values must be in ascending order.
-#'  - If the values of J and K are not compatible, they are removed from the result.
 #' @return A data frame containing columns named `budget`, `lambda1`, `lambda2`,
-#'  `K`, and `N`.
+#'  , `lambda3`, `J`, `K`, and `N`.
 #' @export
 list_cond_R <- function(budget, lambda1, lambda2, lambda3, J = NULL, K = NULL) {
 
@@ -360,7 +364,7 @@ list_cond_R <- function(budget, lambda1, lambda2, lambda3, J = NULL, K = NULL) {
 
     # Assert that given settings ensure at least one valid combination of J and K
     if (!length(J_valid) > 0)
-        stop("Impossible to have valid combination of 'J' and 'K' under the given budget and cost.")
+        stop("No valid combination of 'J' and 'K' under the given budget and cost.")
 
     ## Output a table of conditions
     out <- cbind(rep(budget, length(J_valid)),
