@@ -44,7 +44,11 @@ The resulting \code{N} can be non-integer because it is calculated simply by
 assuming that we can obtain its maximum value.
 If you want to obtain a list for only a subset of the possible values of \code{J}
 and \code{K} under a given budget and cost values, use the \code{J} and/or \code{K}
-arguments. If a given combination of \code{J} and \code{K} values is not feasible
-under the specified budget and cost values, that combination will be ignored
-and excluded from the output.
+arguments (in fact, it is recommended that a relatively small number of \code{K}
+values be specified using the \code{K} argument because the list of all
+conditions achievable under moderate budget and cost values can be huge, and
+it is rarely practical to have a vast number of replicates per site). If a
+given combination of \code{J} and \code{K} values is not feasible under the specified
+budget and cost values, that combination will be ignored and excluded from
+the output.
 }

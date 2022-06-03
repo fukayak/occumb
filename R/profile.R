@@ -301,9 +301,13 @@ list_cond_L <- function(budget, lambda1, lambda2, fit, K = NULL) {
 #'  assuming that we can obtain its maximum value.
 #'  If you want to obtain a list for only a subset of the possible values of `J`
 #'  and `K` under a given budget and cost values, use the `J` and/or `K`
-#'  arguments. If a given combination of `J` and `K` values is not feasible
-#'  under the specified budget and cost values, that combination will be ignored
-#'  and excluded from the output.
+#'  arguments (in fact, it is recommended that a relatively small number of `K`
+#'  values be specified using the `K` argument because the list of all
+#'  conditions achievable under moderate budget and cost values can be huge, and
+#'  it is rarely practical to have a vast number of replicates per site). If a
+#'  given combination of `J` and `K` values is not feasible under the specified
+#'  budget and cost values, that combination will be ignored and excluded from
+#'  the output.
 #' @param budget A numeric specifying the amount of budget. Use the currency
 #'  unit consistent with `lambda1`, `lambda2`, and `lambda3`.
 #' @param lambda1 A numeric specifying the cost per sequence read for
