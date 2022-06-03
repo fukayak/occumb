@@ -10,8 +10,9 @@
 #'  the latent occupancy state \eqn{z}{z} is estimated) for the combination of
 #'  `K` and `N` values specified in the `conditions` argument.
 #'  Such evaluations can be used to balance `K` and `N` to maximize the utility
-#'  under a constant budget (possible combinations of `K` and `N` under a
-#'  budget level are easily obtained using `x`; see the example below).
+#'  under a constant budget (possible combinations of `K` and `N` under
+#'  specified budget and cost values are easily obtained using `list_cond_L()`;
+#'  see the example below).
 #'  It is also possible to examine how the utility varies with different `K`
 #'  and `N` values without setting a budget level, which may be useful to know
 #'  the satisfactory level of `K` and `N` from a purely technical point of view.
@@ -62,6 +63,32 @@
 #'      replicated environmental DNA metabarcoding. \emph{Methods in Ecology
 #'      and Evolution} \strong{13}:183--193.
 #'      \url{https://doi.org/10.1111/2041-210X.13732}
+#' @examples
+#' \dontrun{
+#' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
+#' I <- 2 # Number of species
+#' J <- 2 # Number of sites
+#' K <- 2 # Number of replicates
+#' data <- occumbData(
+#'     y = array(sample.int(I * J * K), dim = c(I, J, K)),
+#'     spec_cov = list(cov1 = rnorm(I)),
+#'     site_cov = list(cov2 = rnorm(J),
+#'                     cov3 = factor(1:J)),
+#'     repl_cov = list(cov4 = matrix(rnorm(J * K), J, K)))
+#'
+#' # Fitting a null model
+#' fit <- occumb(data = data)
+#'
+#' # Estimate expected utility
+#' util1 <- eval_util_L(data.frame(K = rep(1:3, each = 3),
+#'                                 N = rep(c(1E3, 1E4, 1E5), times = 3)),
+#'                      fit) # Arbitrary K and N values
+#' util2 <- eval_util_L(list_cond_L(budget = 1E5, lambda1 = 0.01, lambda2 = 5000, fit),
+#'                      fit) # K and N values under specified budget and cost
+#' util3 <- eval_util_L(list_cond_L(budget = 1E5, lambda1 = 0.01, lambda2 = 5000, fit,
+#'                                  K = 1:5),
+#'                      fit) # K values restricted
+#' }
 #' @export
 eval_util_L <- function(settings,
                         fit,
