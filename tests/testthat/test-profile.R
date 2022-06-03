@@ -146,7 +146,7 @@ if (additional_test) {
 }
 
 
-### Tests for list_cond_L/R ----------------------------------------------------
+### Tests for list_cond_L ------------------------------------------------------
 I <- 2  # Number of species
 J <- 50 # Number of sites
 K <- 2  # Number of replicates
@@ -208,6 +208,109 @@ test_that("Quality controls for list_cond_L() work correctly", {
                  paste("A value of 'K' greater than",
                        max_K,
                        "is not feasible under the given budget, cost, and the number of sites."))
+})
+
+
+### Tests for list_cond_R ------------------------------------------------------
+budget <- 100000; lambda1 <- 0.01; lambda2 <- 5000; lambda3 <- 5000
+# Under the above condition, the maximum value of K is 18.
+max_K <- 18
+test <- list_cond_R(budget, lambda1, lambda2, lambda3)
+
+test_that("list_cond_R() outputs a data frame with correct columns", {
+    checkmate::expect_data_frame(test)
+    expect_equal(colnames(test),
+                 c("budget", "lambda1", "lambda2", "lambda3", "J", "K", "N"))
+})
+
+test_that("Elements of list_cond_R() output are correct", {
+    J_valid <- list(); J <- seq_len(100)
+    for (k in seq_len(max_K))
+        J_valid[[k]] <- J[budget - lambda2 * J * k - lambda3 * J > 0]
+    nrow_ans <- length(unlist(J_valid))
+    J_ans <- K_ans <- vector()
+    for (k in seq_len(max_K)) {
+        J_ans <- c(J_ans, J_valid[[k]])
+        K_ans <- c(K_ans, rep(k, sapply(J_valid, length)[k]))
+    }
+    N_ans <- (budget - lambda2 * J_ans * K_ans - lambda3 * J_ans) / (lambda1 * J_ans * K_ans)
+
+    expect_equal(nrow(test), nrow_ans)
+    expect_equal(test$budget, rep(budget, nrow_ans))
+    expect_equal(test$lambda1, rep(lambda1, nrow_ans))
+    expect_equal(test$lambda2, rep(lambda2, nrow_ans))
+    expect_equal(test$lambda3, rep(lambda2, nrow_ans))
+    expect_equal(test$J, J_ans)
+    expect_equal(test$K, K_ans)
+    expect_equal(test$N, N_ans)
+})
+
+test_that("J argument of list_cond_R() work correctly", {
+    J <- seq(2, 10, 2)
+    J_valid <- list()
+    for (k in seq_len(max_K))
+        J_valid[[k]] <- J[budget - lambda2 * J * k - lambda3 * J > 0]
+    nrow_ans <- length(unlist(J_valid))
+    J_ans <- K_ans <- vector()
+    for (k in seq_len(max_K)) {
+        J_ans <- c(J_ans, J_valid[[k]])
+        K_ans <- c(K_ans, rep(k, sapply(J_valid, length)[k]))
+    }
+    N_ans <- (budget - lambda2 * J_ans * K_ans - lambda3 * J_ans) / (lambda1 * J_ans * K_ans)
+
+    testJ <- list_cond_R(budget, lambda1, lambda2, lambda3, J = J)
+    expect_equal(nrow(testJ), nrow_ans)
+    expect_equal(testJ$budget, rep(budget, nrow_ans))
+    expect_equal(testJ$lambda1, rep(lambda1, nrow_ans))
+    expect_equal(testJ$lambda2, rep(lambda2, nrow_ans))
+    expect_equal(testJ$lambda3, rep(lambda2, nrow_ans))
+    expect_equal(testJ$J, J_ans)
+    expect_equal(testJ$K, K_ans)
+    expect_equal(testJ$N, N_ans)
+})
+
+test_that("K argument of list_cond_R() work correctly", {
+    K <- c(1, 3)
+    J_valid <- list(); J <- seq_len(100)
+    for (k in K)
+        J_valid[[k]] <- J[budget - lambda2 * J * k - lambda3 * J > 0]
+    nrow_ans <- length(unlist(J_valid))
+    J_ans <- K_ans <- vector()
+    for (k in K) {
+        J_ans <- c(J_ans, J_valid[[k]])
+        K_ans <- c(K_ans, rep(k, sapply(J_valid, length)[k]))
+    }
+    N_ans <- (budget - lambda2 * J_ans * K_ans - lambda3 * J_ans) / (lambda1 * J_ans * K_ans)
+
+    testK <- list_cond_R(budget, lambda1, lambda2, lambda3, K = K)
+    expect_equal(nrow(testK), nrow_ans)
+    expect_equal(testK$budget, rep(budget, nrow_ans))
+    expect_equal(testK$lambda1, rep(lambda1, nrow_ans))
+    expect_equal(testK$lambda2, rep(lambda2, nrow_ans))
+    expect_equal(testK$lambda3, rep(lambda2, nrow_ans))
+    expect_equal(testK$J, J_ans)
+    expect_equal(testK$K, K_ans)
+    expect_equal(testK$N, N_ans)
+})
+
+test_that("Quality controls for list_cond_R() work correctly", {
+    max_K <- floor(budget / (lambda2 * J))
+    expect_error(list_cond_R(-1, lambda1, lambda2, lambda3),
+                 "Negative 'budget' value.")
+    expect_error(list_cond_R(budget, -1, lambda2, lambda3),
+                 "Negative 'lambda1' value.")
+    expect_error(list_cond_R(budget, lambda1, -1, lambda3),
+                 "Negative 'lambda2' value.")
+    expect_error(list_cond_R(budget, lambda1, lambda2, -1),
+                 "Negative 'lambda3' value.")
+    expect_error(list_cond_R(budget, lambda1, lambda2, lambda3, J = c(0, 1)),
+                 "'J' contains values less than one.")
+    expect_error(list_cond_R(budget, lambda1, lambda2, lambda3, K = c(0, 1)),
+                 "'K' contains values less than one.")
+    expect_error(list_cond_R(budget, lambda1, lambda2, lambda3, K = c(2, 1)),
+                 "'K' must be in ascending order.")
+    expect_error(list_cond_R(budget, lambda1, lambda2, lambda3, K = c(20)),
+                 paste("No valid combination of 'J' and 'K' under the given budget and cost."))
 })
 
 
