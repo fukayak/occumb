@@ -258,7 +258,7 @@ eval_util_R <- function(settings,
         # Generate z (dim = N_sample * N_species * N_site)
         z <- array(NA, dim = c(dim(psi)[1], dim(psi)[2], settings[i, "J"]))
         for (j in seq_len(dim(z)[3]))
-            z[, , j] <- stats::rbinom(dim(psi)[1] * dim(psi)[2], 1, psi)
+            z[, , j] <- sample_z(psi)
 
         # Adapt dimension of theta/phi
         theta <- array(dim = dim(z))
@@ -652,28 +652,19 @@ predict_pi <- function(z, theta, phi, K) {
     u <- r <- array(dim = c(I, J, K))
     pi <- array(dim = c(I, J, K))
 
-    count <- 0
-    for (n in seq_len(1000)) {
-        # Posterior predictive samples of u and r
-        for (k in seq_len(K)) {
-            u[, , k] <- stats::rbinom(I * J, 1, z * theta)
-            r[, , k] <- stats::rgamma(I * J, phi, 1)
-        }
-
-        # Derive pi
-        for (j in seq_len(J)) {
-            for (k in seq_len(K)) {
-                ur <- (u * r)[, j, k]
-                pi[, j, k] <- ur / sum(ur)
-            }
-        }
-
-        if (any(is.nan(pi))) count <- count + 1
-        else break
+    # Posterior predictive samples of u and r
+    for (k in seq_len(K)) {
+        u[, , k] <- sample_u(z * theta)
+        r[, , k] <- stats::rgamma(I * J, phi, 1)
     }
 
-    if (count == 1000)
-        stop("Failed to generate valid pi values under the given parameter set.")
+    # Derive pi
+    for (j in seq_len(J)) {
+        for (k in seq_len(K)) {
+            ur <- (u * r)[, j, k]
+            pi[, j, k] <- ur / sum(ur)
+        }
+    }
 
     pi
 }
@@ -745,5 +736,41 @@ find_maxJ <- function(budget, lambda2, lambda3, ulim = 1E6) {
             stop("Maximum `J` value seems too large under the specified budget and cost values: consider using the `J` argument to specify a smaller set of `J` values of interest.")
     }
     maxJ
+}
+
+# Sample z except for all zero cases
+sample_z <- function(psi) {
+    z <- array(stats::rbinom(dim(psi)[1] * dim(psi)[2], 1, psi), dim = dim(psi))
+
+    # Find cases where all species have z = 0 to resample
+    allzero <- which(rowSums(z) == 0)
+    if (length(allzero)) {
+        for (n in seq_along(allzero)) {
+            while(sum(z[allzero[n], ]) == 0)
+                z[allzero[n], ] <- stats::rbinom(ncol(psi), 1, psi[allzero[n], ])
+        }
+        return(z)
+    } else {
+        return(z)
+    }
+}
+
+# Sample u except for all zero cases
+sample_u <- function(z_theta) {
+    u <- array(stats::rbinom(nrow(z_theta) * ncol(z_theta), 1, z_theta),
+               dim = dim(z_theta))
+
+    # Find cases where all species have u = 0 to resample
+    allzero <- which(colSums(u) == 0)
+    if (length(allzero)) {
+        for (n in seq_along(allzero)) {
+            while(sum(u[, allzero[n]]) == 0)
+                u[, allzero[n]] <-
+                    stats::rbinom(nrow(z_theta), 1, z_theta[, allzero[n]])
+        }
+        return(u)
+    } else {
+        return(u)
+    }
 }
 
