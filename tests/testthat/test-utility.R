@@ -418,7 +418,6 @@ test_that("qc_eval_util_R() blocks models with site-specific parameters", {
 
 
 ### Tests for eutil ------------------------------------------------------------
-### * Tests are available only for non-parallel computations *
 
 I <- 20; J <- 5; K <- 4; N <- 100; M <- 2
 seed  <- rnorm(1)
@@ -427,6 +426,7 @@ theta <- array(runif(M * I * J, min = 0.8), dim = c(M, I, J))
 phi   <- array(rgamma(M * I * J, 1), dim = c(M, I, J))
 
 test_that("eutil() works as expected for local scale", {
+    ## * Tests are available only for non-parallel computations *
     # N_rep = 1
     ans <- with_seed(seed, {
         util_rep <- vector(length = M)
@@ -457,6 +457,7 @@ test_that("eutil() works as expected for local scale", {
 })
 
 test_that("eutil() works as expected for regional scale", {
+    ## * Tests are available only for non-parallel computations *
     # rep = 1
     ans <- with_seed(seed, {
         util_rep <- vector(length = M)
@@ -483,6 +484,15 @@ test_that("eutil() works as expected for regional scale", {
         with_seed(seed, eutil(z, theta, phi, K, N, scale = "regional",
                               N_rep = 2, cores = 1)),
         ans
+    )
+})
+
+test_that("eutil() runs in parallel", {
+    expect_visible(
+        eutil(z, theta, phi, K, N, scale = "local", N_rep = 1, cores = 2)
+    )
+    expect_visible(
+        eutil(z, theta, phi, K, N, scale = "regional", N_rep = 1, cores = 2)
     )
 })
 
