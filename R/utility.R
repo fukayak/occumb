@@ -548,7 +548,7 @@ eutil <- function(z, theta, phi, K, N, scale = c("local", "regional"),
             util_rep <- unlist(
                 parallel::parLapply(cl = cl,
                                     X = rep(seq_len(M), each = N_rep),
-                                    FUN = fun,
+                                    fun = fun,
                                     args = list(z = z,
                                                 theta = theta,
                                                 phi = phi,
