@@ -84,6 +84,6 @@ fit <- occumb(data = data)
 
 # Goodness-of-fit assessment
 gof_result <- gof(fit)
-gof_result$p_values  # print p-values
+gof_result$p_value  # print p-values
 }
 }
