@@ -544,6 +544,10 @@ eutil <- function(z, theta, phi, K, N, scale = c("local", "regional"),
         if (.Platform$OS.type == "windows") {
             # On Windows use makePSOCKcluster() and parLapply() for multiple cores
             cl <- parallel::makePSOCKcluster(cores)
+            parallel::clusterExport(cl, c("cutil_local", "cutil_regional",
+                                          "predict_pi", "sample_u",
+                                          "predict_detect_probs_local",
+                                          "predict_detect_probs_regional"))
             on.exit(parallel::stopCluster(cl))
             util_rep <- unlist(
                 parallel::parLapply(cl = cl,
