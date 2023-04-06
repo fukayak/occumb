@@ -56,7 +56,7 @@ See, e.g., Gelman et al. (2014), Kéry and Royle (2016), and
 Conn et al. (2018) for more details on the procedures for posterior
 predictive checking.
 
-Calculations can be run in parallel on multiple CPU cores where the \code{cores}
+Computations can be run in parallel on multiple CPU cores where the \code{cores}
 argument controls the degree of parallelization. By default, all
 cores available in the user's environment are used.
 }
