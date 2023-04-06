@@ -118,7 +118,7 @@ gof <- function(fit,
         if (.Platform$OS.type == "windows") {
             # On Windows use makePSOCKcluster() and parLapply() for multiple cores
             cl <- parallel::makePSOCKcluster(cores)
-            parallel::clusterExport(cl, varlist = c("get_stats", "Freeman_Tukey"))
+            parallel::clusterEvalQ(cl, library(occumb))
             on.exit(parallel::stopCluster(cl))
             y_rep <- parallel::parLapply(cl = cl,
                                          X = seq_len(M),
