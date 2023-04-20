@@ -2,7 +2,9 @@
 NULL
 
 # Class for model-fit results of occumb
-setClass("occumbFit", slots = c(fit = "jagsUI", data = "occumbData"))
+setClass("occumbFit", slots = c(fit = "jagsUI",
+                                data = "occumbData",
+                                occumb_args = "list"))
 
 #' @title Model-fitting function.
 #' 
@@ -204,7 +206,21 @@ occumb <- function(formula_phi = ~ 1,
                         parallel = parallel, ...)
 
     # Output
-    out <- methods::new("occumbFit", fit = fit, data = data)
+    out <- methods::new("occumbFit",
+                        fit = fit,
+                        data = data,
+                        occumb_args = c(
+                            list(formula_phi = formula_phi,
+                                 formula_theta = formula_theta,
+                                 formula_psi = formula_psi,
+                                 formula_phi_shared = formula_phi_shared,
+                                 formula_theta_shared = formula_theta_shared,
+                                 formula_psi_shared = formula_psi_shared,
+                                 prior_prec = prior_prec,
+                                 prior_ulim = prior_ulim),
+                            list(...)
+                        )
+    )
     out
 }
 
