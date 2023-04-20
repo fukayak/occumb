@@ -999,8 +999,44 @@ get_data <- function(occumbFit, variable) {
     eval(parse(text = paste0("occumbFit@data@", variable)))
 }
 
-get_post_samples <- function(occumbFit, parameter) {
-    eval(parse(text = paste0("occumbFit@fit$sims.list$", parameter)))
+#' @title Extract posterior samples of parameters from a model fit object.
+#' @description TODO: to be added.
+#' @details TODO: to be added.
+#' @param fit An \code{occumbFit} object.
+#' @param parameter TODO: to be added.
+#' @return TODO: to be added.
+#' @examples
+#' # to be added
+#' @export
+get_post_samples <- function(fit,
+                             parameter = c("z", "pi", "phi", "theta", "psi",
+                                           "alpha", "beta", "gamma",
+                                           "alpha_share", "beta_shared", "gamma_shared",
+                                           "Mu", "sigma", "rho")) {
+
+    assert_occumbFit(fit)
+    parameter <- match.arg(parameter)
+    if (parameter %!in% names(fit@fit$sims.list))
+        stop(paste(parameter, "is not included in the fitted model"))
+
+    out <- .get_post_samples(fit, parameter)
+    out
 }
+
+.get_post_samples <- function(fit, parameter) {
+
+    out <- eval(parse(text = paste0("fit@fit$sims.list$", parameter)))
+
+    if (parameter == "z") {
+        attr(out, "dimension") <- c("Sample", "Species", "Site")
+        if (!is.null(dimnames(fit@data@y)[[1]]) | !is.null(dimnames(fit@data@y)[[2]]))
+            attr(out, "label") <- list(Sample = NULL, 
+                                       Species = dimnames(fit@data@y)[[1]],
+                                       Site = dimnames(fit@data@y)[[2]])
+    }
+
+    out
+}
+
 # -----------------------------------------------------------------------------
 
