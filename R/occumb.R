@@ -1025,26 +1025,66 @@ get_post_samples <- function(fit,
 
 .get_post_samples <- function(fit, parameter) {
 
+    add_attributes <- function(sims.list, type = c("i", "ij", "ijk")) {
+        if (type == "i") {
+            attr(sims.list, "dimension") <- c("Sample", "Species")
+            if (!is.null(dimnames(fit@data@y)[[1]]))
+                attr(sims.list, "label") <- list(
+                    Sample  = NULL, 
+                    Species = dimnames(fit@data@y)[[1]]
+                )
+        }
+
+        if (type == "ij") {
+            attr(sims.list, "dimension") <- c("Sample", "Species", "Site")
+            if (!is.null(dimnames(fit@data@y)[[1]]) |
+                !is.null(dimnames(fit@data@y)[[2]]))
+                attr(sims.list, "label") <- list(
+                    Sample  = NULL, 
+                    Species = dimnames(fit@data@y)[[1]],
+                    Site    = dimnames(fit@data@y)[[2]]
+                )
+        }
+
+        if (type == "ijk") {
+            attr(sims.list, "dimension") <- c("Sample", "Species", "Site", "Replicate")
+            if (!is.null(dimnames(fit@data@y)[[1]]) |
+                !is.null(dimnames(fit@data@y)[[2]]) |
+                !is.null(dimnames(fit@data@y)[[3]]))
+                attr(sims.list, "label") <- list(
+                        Sample    = NULL, 
+                        Species   = dimnames(fit@data@y)[[1]],
+                        Site      = dimnames(fit@data@y)[[2]],
+                        Replicate = dimnames(fit@data@y)[[3]]
+                )
+        }
+
+        return(sims.list)
+    }
+
     out <- eval(parse(text = paste0("fit@fit$sims.list$", parameter)))
+    margs <- set_modargs(fit@occumb_args$formula_phi,
+                         fit@occumb_args$formula_theta,
+                         fit@occumb_args$formula_psi,
+                         fit@occumb_args$formula_phi_shared,
+                         fit@occumb_args$formula_theta_shared,
+                         fit@occumb_args$formula_psi_shared,
+                         fit@data)
 
-    if (parameter == "z") {
-        attr(out, "dimension") <- c("Sample", "Species", "Site")
-        if (!is.null(dimnames(fit@data@y)[[1]]) | !is.null(dimnames(fit@data@y)[[2]]))
-            attr(out, "label") <- list(Sample = NULL, 
-                                       Species = dimnames(fit@data@y)[[1]],
-                                       Site = dimnames(fit@data@y)[[2]])
-    }
+    if (parameter == "z")
+        out <- add_attributes(out, "ij")
 
-    if (parameter == "pi") {
-        attr(out, "dimension") <- c("Sample", "Species", "Site", "Replicate")
-        if (!is.null(dimnames(fit@data@y)[[1]]) |
-            !is.null(dimnames(fit@data@y)[[2]]) |
-            !is.null(dimnames(fit@data@y)[[3]]))
-            attr(out, "label") <- list(Sample = NULL, 
-                                       Species = dimnames(fit@data@y)[[1]],
-                                       Site = dimnames(fit@data@y)[[2]],
-                                       Replicate = dimnames(fit@data@y)[[3]])
-    }
+    if (parameter == "pi")
+        out <- add_attributes(out, "ijk")
+
+    if (parameter == "phi")
+        out <- add_attributes(out, margs$phi)
+
+    if (parameter == "theta")
+        out <- add_attributes(out, margs$theta)
+
+    if (parameter == "psi")
+        out <- add_attributes(out, margs$psi)
 
     out
 }
