@@ -1035,6 +1035,17 @@ get_post_samples <- function(fit,
                                        Site = dimnames(fit@data@y)[[2]])
     }
 
+    if (parameter == "pi") {
+        attr(out, "dimension") <- c("Sample", "Species", "Site", "Replicate")
+        if (!is.null(dimnames(fit@data@y)[[1]]) |
+            !is.null(dimnames(fit@data@y)[[2]]) |
+            !is.null(dimnames(fit@data@y)[[3]]))
+            attr(out, "label") <- list(Sample = NULL, 
+                                       Species = dimnames(fit@data@y)[[1]],
+                                       Site = dimnames(fit@data@y)[[2]],
+                                       Replicate = dimnames(fit@data@y)[[3]])
+    }
+
     out
 }
 
