@@ -263,6 +263,24 @@ get_post_summary <- function(
         return(tab_summary)
     }
 
+    add_attributes2 <- function(tab_summary, covariate) {
+        attr(tab_summary, "dimension") <- c("Species", "Effects")
+
+        if (identical(covariate, 1)) {
+            effect_name <- "(Intercept)"
+        } else {
+            effect_name <- dimnames(covariate)[[length(dim(covariate))]]
+        }
+
+        if (!is.null(dimnames(fit@data@y)[[1]]))
+            attr(tab_summary, "label") <- list(
+                Species = dimnames(fit@data@y)[[1]],
+                Effects = effect_name
+            )
+
+        return(tab_summary)
+    }
+
     out <- fit@fit$summary[rows_extract(fit, parameter), ]
     margs <- set_modargs(fit@occumb_args$formula_phi,
                          fit@occumb_args$formula_theta,
@@ -286,6 +304,15 @@ get_post_summary <- function(
 
     if (parameter == "psi")
         out <- add_attributes1(out, margs$psi)
+
+    if (parameter == "alpha")
+        out <- add_attributes2(out, margs$cov_phi)
+
+    if (parameter == "beta")
+        out <- add_attributes2(out, margs$cov_theta)
+
+    if (parameter == "gamma")
+        out <- add_attributes2(out, margs$cov_psi)
 
     out
 }
