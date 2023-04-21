@@ -224,9 +224,20 @@ get_post_summary <- function(
 
 .get_post_summary <- function(fit, parameter) {
 
-    rows_extract <- function(fit, parameter) {
-        pattern <- paste0(parameter, "\\[")
-        return(grep(pattern, rownames(fit@fit$summary)))
+    rows_extract <- function(fit, parameter, margs) {
+        if (parameter == "alpha_shared") {
+            if (margs$M_phi_shared == 1)
+                pattern <- paste0(parameter)
+        } else if (parameter == "beta_shared") {
+            if (margs$M_theta_shared == 1)
+                pattern <- paste0(parameter)
+        } else if (parameter == "gamma_shared") {
+            if (margs$M_psi_shared == 1)
+                pattern <- paste0(parameter)
+        } else {
+            pattern <- paste0(parameter, "\\[")
+            return(grep(pattern, rownames(fit@fit$summary)))
+        }
     }
 
     add_attributes1 <- function(tab_summary, type = c("i", "ij", "ijk")) {
@@ -281,7 +292,19 @@ get_post_summary <- function(
         return(tab_summary)
     }
 
-    out <- fit@fit$summary[rows_extract(fit, parameter), ]
+    add_attributes3 <- function(tab_summary, covariate) {
+        if (is.null(covariate)) {
+            invisible()
+        } else {
+            attr(tab_summary, "dimension") <- c("Effects")
+            attr(tab_summary, "label") <- list(
+                Effects = dimnames(covariate)[[length(dim(covariate))]]
+            )
+        }
+
+        return(tab_summary)
+    }
+
     margs <- set_modargs(fit@occumb_args$formula_phi,
                          fit@occumb_args$formula_theta,
                          fit@occumb_args$formula_psi,
@@ -289,6 +312,7 @@ get_post_summary <- function(
                          fit@occumb_args$formula_theta_shared,
                          fit@occumb_args$formula_psi_shared,
                          fit@data)
+    out <- fit@fit$summary[rows_extract(fit, parameter, margs), ]
 
     if (parameter == "z")
         out <- add_attributes1(out, "ij")
@@ -313,6 +337,15 @@ get_post_summary <- function(
 
     if (parameter == "gamma")
         out <- add_attributes2(out, margs$cov_psi)
+
+    if (parameter == "alpha_shared")
+        out <- add_attributes3(out, margs$cov_phi_shared)
+
+    if (parameter == "beta_shared")
+        out <- add_attributes3(out, margs$cov_theta_shared)
+
+    if (parameter == "gamma_shared")
+        out <- add_attributes3(out, margs$cov_gamma_shared)
 
     out
 }
