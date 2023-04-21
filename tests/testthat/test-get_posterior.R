@@ -66,3 +66,5 @@ test_that("Extracted tables are correct when proper parameter names are given", 
     }
 })
 
+# TODO: Add tests for additional attributes supplied by get_post_summary().
+
