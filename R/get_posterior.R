@@ -52,21 +52,21 @@ get_post_summary <- function(
 
 .get_post_samples <- function(fit, parameter) {
 
-    add_attributes1 <- function(sims.list, type = c("i", "ij", "ijk")) {
+    add_attributes1 <- function(sims_list, type = c("i", "ij", "ijk")) {
         if (type == "i") {
-            attr(sims.list, "dimension") <- c("Sample", "Species")
+            attr(sims_list, "dimension") <- c("Sample", "Species")
             if (!is.null(dimnames(fit@data@y)[[1]]))
-                attr(sims.list, "label") <- list(
+                attr(sims_list, "label") <- list(
                     Sample  = NULL,
                     Species = dimnames(fit@data@y)[[1]]
                 )
         }
 
         if (type == "ij") {
-            attr(sims.list, "dimension") <- c("Sample", "Species", "Site")
+            attr(sims_list, "dimension") <- c("Sample", "Species", "Site")
             if (!is.null(dimnames(fit@data@y)[[1]]) |
                 !is.null(dimnames(fit@data@y)[[2]]))
-                attr(sims.list, "label") <- list(
+                attr(sims_list, "label") <- list(
                     Sample  = NULL,
                     Species = dimnames(fit@data@y)[[1]],
                     Site    = dimnames(fit@data@y)[[2]]
@@ -74,23 +74,23 @@ get_post_summary <- function(
         }
 
         if (type == "ijk") {
-            attr(sims.list, "dimension") <- c("Sample", "Species", "Site", "Replicate")
+            attr(sims_list, "dimension") <- c("Sample", "Species", "Site", "Replicate")
             if (!is.null(dimnames(fit@data@y)[[1]]) |
                 !is.null(dimnames(fit@data@y)[[2]]) |
                 !is.null(dimnames(fit@data@y)[[3]]))
-                attr(sims.list, "label") <- list(
-                        Sample    = NULL,
-                        Species   = dimnames(fit@data@y)[[1]],
-                        Site      = dimnames(fit@data@y)[[2]],
-                        Replicate = dimnames(fit@data@y)[[3]]
+                attr(sims_list, "label") <- list(
+                    Sample    = NULL,
+                    Species   = dimnames(fit@data@y)[[1]],
+                    Site      = dimnames(fit@data@y)[[2]],
+                    Replicate = dimnames(fit@data@y)[[3]]
                 )
         }
 
-        return(sims.list)
+        return(sims_list)
     }
 
-    add_attributes2 <- function(sims.list, covariate) {
-        attr(sims.list, "dimension") <- c("Sample", "Species", "Effects")
+    add_attributes2 <- function(sims_list, covariate) {
+        attr(sims_list, "dimension") <- c("Sample", "Species", "Effects")
 
         if (identical(covariate, 1)) {
             effect_name <- "(Intercept)"
@@ -99,30 +99,30 @@ get_post_summary <- function(
         }
 
         if (!is.null(dimnames(fit@data@y)[[1]]))
-            attr(sims.list, "label") <- list(
+            attr(sims_list, "label") <- list(
                 Sample  = NULL,
                 Species = dimnames(fit@data@y)[[1]],
                 Effects = effect_name
             )
 
-        return(sims.list)
+        return(sims_list)
     }
 
-    add_attributes3 <- function(sims.list, covariate) {
+    add_attributes3 <- function(sims_list, covariate) {
         if (is.null(covariate)) {
             invisible()
         } else {
-            attr(sims.list, "dimension") <- c("Sample", "Effects")
-            attr(sims.list, "label") <- list(
+            attr(sims_list, "dimension") <- c("Sample", "Effects")
+            attr(sims_list, "label") <- list(
                 Sample  = NULL,
                 Effects = dimnames(covariate)[[length(dim(covariate))]]
             )
         }
 
-        return(sims.list)
+        return(sims_list)
     }
 
-    add_attributes4 <- function(sims.list, margs, is_rho = FALSE) {
+    add_attributes4 <- function(sims_list, margs, is_rho = FALSE) {
         if (identical(margs$cov_phi, 1)) {
             effect_name_phi <- "phi | (Intercept)"
         } else {
@@ -151,21 +151,21 @@ get_post_summary <- function(
         }
 
         if (is_rho) {
-            attr(sims.list, "dimension") <- c("Sample", "Effects 1", "Effects 2")
-            attr(sims.list, "label") <- list(
+            attr(sims_list, "dimension") <- c("Sample", "Effects 1", "Effects 2")
+            attr(sims_list, "label") <- list(
                 Sample  = NULL,
                 Effects1 = c(effect_name_phi, effect_name_theta, effect_name_psi),
                 Effects2 = c(effect_name_phi, effect_name_theta, effect_name_psi)
             )
         } else {
-            attr(sims.list, "dimension") <- c("Sample", "Effects")
-            attr(sims.list, "label") <- list(
+            attr(sims_list, "dimension") <- c("Sample", "Effects")
+            attr(sims_list, "label") <- list(
                 Sample  = NULL,
                 Effects = c(effect_name_phi, effect_name_theta, effect_name_psi)
             )
         }
 
-        return(sims.list)
+        return(sims_list)
     }
 
     out <- eval(parse(text = paste0("fit@fit$sims.list$", parameter)))
@@ -229,38 +229,38 @@ get_post_summary <- function(
         return(grep(pattern, rownames(fit@fit$summary)))
     }
 
-    add_attributes1 <- function(tab.summary, type = c("i", "ij", "ijk")) {
+    add_attributes1 <- function(tab_summary, type = c("i", "ij", "ijk")) {
         if (type == "i") {
-            attr(tab.summary, "dimension") <- c("Species")
+            attr(tab_summary, "dimension") <- c("Species")
             if (!is.null(dimnames(fit@data@y)[[1]]))
-                attr(tab.summary, "label") <- list(
+                attr(tab_summary, "label") <- list(
                     Species = dimnames(fit@data@y)[[1]]
                 )
         }
 
         if (type == "ij") {
-            attr(tab.summary, "dimension") <- c("Species", "Site")
+            attr(tab_summary, "dimension") <- c("Species", "Site")
             if (!is.null(dimnames(fit@data@y)[[1]]) |
                 !is.null(dimnames(fit@data@y)[[2]]))
-                attr(tab.summary, "label") <- list(
+                attr(tab_summary, "label") <- list(
                     Species = dimnames(fit@data@y)[[1]],
                     Site    = dimnames(fit@data@y)[[2]]
                 )
         }
 
         if (type == "ijk") {
-            attr(tab.summary, "dimension") <- c("Species", "Site", "Replicate")
+            attr(tab_summary, "dimension") <- c("Species", "Site", "Replicate")
             if (!is.null(dimnames(fit@data@y)[[1]]) |
                 !is.null(dimnames(fit@data@y)[[2]]) |
                 !is.null(dimnames(fit@data@y)[[3]]))
-                attr(tab.summary, "label") <- list(
-                        Species   = dimnames(fit@data@y)[[1]],
-                        Site      = dimnames(fit@data@y)[[2]],
-                        Replicate = dimnames(fit@data@y)[[3]]
+                attr(tab_summary, "label") <- list(
+                    Species   = dimnames(fit@data@y)[[1]],
+                    Site      = dimnames(fit@data@y)[[2]],
+                    Replicate = dimnames(fit@data@y)[[3]]
                 )
         }
 
-        return(tab.summary)
+        return(tab_summary)
     }
 
     out <- fit@fit$summary[rows_extract(fit, parameter), ]
