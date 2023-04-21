@@ -1095,9 +1095,7 @@ get_post_samples <- function(fit,
         return(sims.list)
     }
 
-    add_attributes4 <- function(sims.list, margs) {
-        attr(sims.list, "dimension") <- c("Sample", "Effects")
-
+    add_attributes4 <- function(sims.list, margs, is_rho = FALSE) {
         if (identical(margs$cov_phi, 1)) {
             effect_name_phi <- "phi | (Intercept)"
         } else {
@@ -1125,10 +1123,20 @@ get_post_samples <- function(fit,
             )
         }
 
-        attr(sims.list, "label") <- list(
-            Sample  = NULL,
-            Effects = c(effect_name_phi, effect_name_theta, effect_name_psi)
-        )
+        if (is_rho) {
+            attr(sims.list, "dimension") <- c("Sample", "Effects 1", "Effects 2")
+            attr(sims.list, "label") <- list(
+                Sample  = NULL,
+                Effects1 = c(effect_name_phi, effect_name_theta, effect_name_psi),
+                Effects2 = c(effect_name_phi, effect_name_theta, effect_name_psi)
+            )
+        } else {
+            attr(sims.list, "dimension") <- c("Sample", "Effects")
+            attr(sims.list, "label") <- list(
+                Sample  = NULL,
+                Effects = c(effect_name_phi, effect_name_theta, effect_name_psi)
+            )
+        }
 
         return(sims.list)
     }
@@ -1180,6 +1188,9 @@ get_post_samples <- function(fit,
 
     if (parameter == "sigma")
         out <- add_attributes4(out, margs)
+
+    if (parameter == "rho")
+        out <- add_attributes4(out, margs, TRUE)
 
     out
 }
