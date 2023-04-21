@@ -1095,6 +1095,44 @@ get_post_samples <- function(fit,
         return(sims.list)
     }
 
+    add_attributes4 <- function(sims.list, margs) {
+        attr(sims.list, "dimension") <- c("Sample", "Effects")
+
+        if (identical(margs$cov_phi, 1)) {
+            effect_name_phi <- "phi | (Intercept)"
+        } else {
+            effect_name_phi <- paste(
+                "phi |",
+                dimnames(margs$cov_phi)[[length(dim(margs$cov_phi))]]
+            )
+        }
+
+        if (identical(margs$cov_theta, 1)) {
+            effect_name_theta <- "theta | (Intercept)"
+        } else {
+            effect_name_theta <- paste(
+                "theta |",
+                dimnames(margs$cov_theta)[[length(dim(margs$cov_theta))]]
+            )
+        }
+
+        if (identical(margs$cov_psi, 1)) {
+            effect_name_psi <- "psi | (Intercept)"
+        } else {
+            effect_name_psi <- paste(
+                "psi |",
+                dimnames(margs$cov_psi)[[length(dim(margs$cov_psi))]]
+            )
+        }
+
+        attr(sims.list, "label") <- list(
+            Sample  = NULL,
+            Effects = c(effect_name_phi, effect_name_theta, effect_name_psi)
+        )
+
+        return(sims.list)
+    }
+
     out <- eval(parse(text = paste0("fit@fit$sims.list$", parameter)))
     margs <- set_modargs(fit@occumb_args$formula_phi,
                          fit@occumb_args$formula_theta,
@@ -1136,6 +1174,12 @@ get_post_samples <- function(fit,
 
     if (parameter == "gamma_shared")
         out <- add_attributes3(out, margs$cov_gamma_shared)
+
+    if (parameter == "Mu")
+        out <- add_attributes4(out, margs)
+
+    if (parameter == "sigma")
+        out <- add_attributes4(out, margs)
 
     out
 }
