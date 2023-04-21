@@ -264,6 +264,13 @@ get_post_summary <- function(
     }
 
     out <- fit@fit$summary[rows_extract(fit, parameter), ]
+    margs <- set_modargs(fit@occumb_args$formula_phi,
+                         fit@occumb_args$formula_theta,
+                         fit@occumb_args$formula_psi,
+                         fit@occumb_args$formula_phi_shared,
+                         fit@occumb_args$formula_theta_shared,
+                         fit@occumb_args$formula_psi_shared,
+                         fit@data)
 
     if (parameter == "z")
         out <- add_attributes1(out, "ij")
@@ -271,7 +278,15 @@ get_post_summary <- function(
     if (parameter == "pi")
         out <- add_attributes1(out, "ijk")
 
-    out
+    if (parameter == "phi")
+        out <- add_attributes1(out, margs$phi)
 
+    if (parameter == "theta")
+        out <- add_attributes1(out, margs$theta)
+
+    if (parameter == "psi")
+        out <- add_attributes1(out, margs$psi)
+
+    out
 }
 
