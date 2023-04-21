@@ -305,6 +305,50 @@ get_post_summary <- function(
         return(tab_summary)
     }
 
+    add_attributes4 <- function(tab_summary, margs, is_rho = FALSE) {
+        if (identical(margs$cov_phi, 1)) {
+            effect_name_phi <- "phi | (Intercept)"
+        } else {
+            effect_name_phi <- paste(
+                "phi |",
+                dimnames(margs$cov_phi)[[length(dim(margs$cov_phi))]]
+            )
+        }
+
+        if (identical(margs$cov_theta, 1)) {
+            effect_name_theta <- "theta | (Intercept)"
+        } else {
+            effect_name_theta <- paste(
+                "theta |",
+                dimnames(margs$cov_theta)[[length(dim(margs$cov_theta))]]
+            )
+        }
+
+        if (identical(margs$cov_psi, 1)) {
+            effect_name_psi <- "psi | (Intercept)"
+        } else {
+            effect_name_psi <- paste(
+                "psi |",
+                dimnames(margs$cov_psi)[[length(dim(margs$cov_psi))]]
+            )
+        }
+
+        if (is_rho) {
+            attr(tab_summary, "dimension") <- c("Effects 1", "Effects 2")
+            attr(tab_summary, "label") <- list(
+                Effects1 = c(effect_name_phi, effect_name_theta, effect_name_psi),
+                Effects2 = c(effect_name_phi, effect_name_theta, effect_name_psi)
+            )
+        } else {
+            attr(tab_summary, "dimension") <- c("Effects")
+            attr(tab_summary, "label") <- list(
+                Effects = c(effect_name_phi, effect_name_theta, effect_name_psi)
+            )
+        }
+
+        return(tab_summary)
+    }
+
     margs <- set_modargs(fit@occumb_args$formula_phi,
                          fit@occumb_args$formula_theta,
                          fit@occumb_args$formula_psi,
@@ -346,6 +390,15 @@ get_post_summary <- function(
 
     if (parameter == "gamma_shared")
         out <- add_attributes3(out, margs$cov_gamma_shared)
+
+    if (parameter == "Mu")
+        out <- add_attributes4(out, margs)
+
+    if (parameter == "sigma")
+        out <- add_attributes4(out, margs)
+
+    if (parameter == "rho")
+        out <- add_attributes4(out, margs, TRUE)
 
     out
 }
