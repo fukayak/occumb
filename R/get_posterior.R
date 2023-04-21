@@ -1,4 +1,4 @@
-#' @title Extract posterior samples of parameters from a model fit object.
+#' @title Extract posterior samples of parameters from a model-fit object.
 #' @description TODO: to be added.
 #' @details TODO: to be added.
 #' @param fit An \code{occumbFit} object.
@@ -21,6 +21,32 @@ get_post_samples <- function(
         stop(paste(parameter, "is not included in the fitted model"))
 
     out <- .get_post_samples(fit, parameter)
+    out
+}
+
+#' @title Extract posterior summary of parameters from a model-fit object.
+#' @description TODO: to be added.
+#' @details TODO: to be added.
+#' @param fit An \code{occumbFit} object.
+#' @param parameter TODO: to be added.
+#' @return TODO: to be added.
+#' @examples
+#' # to be added
+#' @export
+get_post_summary <- function(
+    fit,
+    parameter = c("z", "pi", "phi", "theta", "psi",
+                  "alpha", "beta", "gamma",
+                  "alpha_shared", "beta_shared", "gamma_shared",
+                  "Mu", "sigma", "rho")
+    ) {
+
+    assert_occumbFit(fit)
+    parameter <- match.arg(parameter)
+    if (parameter %!in% names(fit@fit$sims.list))
+        stop(paste(parameter, "is not included in the fitted model"))
+
+    out <- .get_post_summary(fit, parameter)
     out
 }
 
@@ -194,5 +220,58 @@ get_post_samples <- function(
         out <- add_attributes4(out, margs, TRUE)
 
     out
+}
+
+.get_post_summary <- function(fit, parameter) {
+
+    rows_extract <- function(fit, parameter) {
+        pattern <- paste0(parameter, "\\[")
+        return(grep(pattern, rownames(fit@fit$summary)))
+    }
+
+    add_attributes1 <- function(tab.summary, type = c("i", "ij", "ijk")) {
+        if (type == "i") {
+            attr(tab.summary, "dimension") <- c("Species")
+            if (!is.null(dimnames(fit@data@y)[[1]]))
+                attr(tab.summary, "label") <- list(
+                    Species = dimnames(fit@data@y)[[1]]
+                )
+        }
+
+        if (type == "ij") {
+            attr(tab.summary, "dimension") <- c("Species", "Site")
+            if (!is.null(dimnames(fit@data@y)[[1]]) |
+                !is.null(dimnames(fit@data@y)[[2]]))
+                attr(tab.summary, "label") <- list(
+                    Species = dimnames(fit@data@y)[[1]],
+                    Site    = dimnames(fit@data@y)[[2]]
+                )
+        }
+
+        if (type == "ijk") {
+            attr(tab.summary, "dimension") <- c("Species", "Site", "Replicate")
+            if (!is.null(dimnames(fit@data@y)[[1]]) |
+                !is.null(dimnames(fit@data@y)[[2]]) |
+                !is.null(dimnames(fit@data@y)[[3]]))
+                attr(tab.summary, "label") <- list(
+                        Species   = dimnames(fit@data@y)[[1]],
+                        Site      = dimnames(fit@data@y)[[2]],
+                        Replicate = dimnames(fit@data@y)[[3]]
+                )
+        }
+
+        return(tab.summary)
+    }
+
+    out <- fit@fit$summary[rows_extract(fit, parameter), ]
+
+    if (parameter == "z")
+        out <- add_attributes1(out, "ij")
+
+    if (parameter == "pi")
+        out <- add_attributes1(out, "ijk")
+
+    out
+
 }
 
