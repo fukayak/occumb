@@ -1011,7 +1011,7 @@ get_data <- function(occumbFit, variable) {
 get_post_samples <- function(fit,
                              parameter = c("z", "pi", "phi", "theta", "psi",
                                            "alpha", "beta", "gamma",
-                                           "alpha_share", "beta_shared", "gamma_shared",
+                                           "alpha_shared", "beta_shared", "gamma_shared",
                                            "Mu", "sigma", "rho")) {
 
     assert_occumbFit(fit)
@@ -1068,7 +1068,7 @@ get_post_samples <- function(fit,
         if (identical(covariate, 1)) {
             effect_name <- "(Intercept)"
         } else {
-            effect_name <- dimnames(covariate)[[3]]
+            effect_name <- dimnames(covariate)[[length(dim(covariate))]]
         }
 
         if (!is.null(dimnames(fit@data@y)[[1]]))
@@ -1077,6 +1077,20 @@ get_post_samples <- function(fit,
                 Species = dimnames(fit@data@y)[[1]],
                 Effects = effect_name
             )
+
+        return(sims.list)
+    }
+
+    add_attributes3 <- function(sims.list, covariate) {
+        if (is.null(covariate)) {
+            invisible()
+        } else {
+            attr(sims.list, "dimension") <- c("Sample", "Effects")
+            attr(sims.list, "label") <- list(
+                Sample  = NULL,
+                Effects = dimnames(covariate)[[length(dim(covariate))]]
+            )
+        }
 
         return(sims.list)
     }
@@ -1113,6 +1127,15 @@ get_post_samples <- function(fit,
 
     if (parameter == "gamma")
         out <- add_attributes2(out, margs$cov_psi)
+
+    if (parameter == "alpha_shared")
+        out <- add_attributes3(out, margs$cov_phi_shared)
+
+    if (parameter == "beta_shared")
+        out <- add_attributes3(out, margs$cov_theta_shared)
+
+    if (parameter == "gamma_shared")
+        out <- add_attributes3(out, margs$cov_gamma_shared)
 
     out
 }
