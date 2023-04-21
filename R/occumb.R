@@ -1025,12 +1025,12 @@ get_post_samples <- function(fit,
 
 .get_post_samples <- function(fit, parameter) {
 
-    add_attributes <- function(sims.list, type = c("i", "ij", "ijk")) {
+    add_attributes1 <- function(sims.list, type = c("i", "ij", "ijk")) {
         if (type == "i") {
             attr(sims.list, "dimension") <- c("Sample", "Species")
             if (!is.null(dimnames(fit@data@y)[[1]]))
                 attr(sims.list, "label") <- list(
-                    Sample  = NULL, 
+                    Sample  = NULL,
                     Species = dimnames(fit@data@y)[[1]]
                 )
         }
@@ -1040,7 +1040,7 @@ get_post_samples <- function(fit,
             if (!is.null(dimnames(fit@data@y)[[1]]) |
                 !is.null(dimnames(fit@data@y)[[2]]))
                 attr(sims.list, "label") <- list(
-                    Sample  = NULL, 
+                    Sample  = NULL,
                     Species = dimnames(fit@data@y)[[1]],
                     Site    = dimnames(fit@data@y)[[2]]
                 )
@@ -1052,12 +1052,31 @@ get_post_samples <- function(fit,
                 !is.null(dimnames(fit@data@y)[[2]]) |
                 !is.null(dimnames(fit@data@y)[[3]]))
                 attr(sims.list, "label") <- list(
-                        Sample    = NULL, 
+                        Sample    = NULL,
                         Species   = dimnames(fit@data@y)[[1]],
                         Site      = dimnames(fit@data@y)[[2]],
                         Replicate = dimnames(fit@data@y)[[3]]
                 )
         }
+
+        return(sims.list)
+    }
+
+    add_attributes2 <- function(sims.list, covariate) {
+        attr(sims.list, "dimension") <- c("Sample", "Species", "Effects")
+
+        if (identical(covariate, 1)) {
+            effect_name <- "(Intercept)"
+        } else {
+            effect_name <- dimnames(covariate)[[3]]
+        }
+
+        if (!is.null(dimnames(fit@data@y)[[1]]))
+            attr(sims.list, "label") <- list(
+                Sample  = NULL,
+                Species = dimnames(fit@data@y)[[1]],
+                Effects = effect_name
+            )
 
         return(sims.list)
     }
@@ -1072,19 +1091,28 @@ get_post_samples <- function(fit,
                          fit@data)
 
     if (parameter == "z")
-        out <- add_attributes(out, "ij")
+        out <- add_attributes1(out, "ij")
 
     if (parameter == "pi")
-        out <- add_attributes(out, "ijk")
+        out <- add_attributes1(out, "ijk")
 
     if (parameter == "phi")
-        out <- add_attributes(out, margs$phi)
+        out <- add_attributes1(out, margs$phi)
 
     if (parameter == "theta")
-        out <- add_attributes(out, margs$theta)
+        out <- add_attributes1(out, margs$theta)
 
     if (parameter == "psi")
-        out <- add_attributes(out, margs$psi)
+        out <- add_attributes1(out, margs$psi)
+
+    if (parameter == "alpha")
+        out <- add_attributes2(out, margs$cov_phi)
+
+    if (parameter == "beta")
+        out <- add_attributes2(out, margs$cov_theta)
+
+    if (parameter == "gamma")
+        out <- add_attributes2(out, margs$cov_psi)
 
     out
 }
