@@ -41,7 +41,7 @@
 #'  attributes are added to the output object to inform these dimensions.
 #'  If the sequence read count data \code{y} has species, site, or replicate
 #'  names appended as the \code{dimnames} attribute (see Details in
-#'  \code{\link{occumbData()}}), they will be copied into the \code{label}
+#'  \code{\link{occumbData}()}), they will be copied into the \code{label}
 #'  attribute of the returned object.
 #' @param fit An \code{occumbFit} object.
 #' @param parameter A string of parameter name. See Details for possible choices
@@ -52,7 +52,7 @@
 #'
 #'  \code{get_post_summary()} returns a table (matrix) of posterior summary
 #'  of the selected parameter. The elements of the posterior summary are the
-#'  same as those obtained with the \code{\link[jagsUI]{jags()}} function in the
+#'  same as those obtained with the \code{\link[jagsUI]{jags}()} function in the
 #'  \code{jagsUI} package: they include mean, standard deviation, percentiles
 #'  of posterior samples; \code{overlap0} that checks if 0 falls in the
 #'  parameter's 95% credible interval; the proportion of the posterior with the
