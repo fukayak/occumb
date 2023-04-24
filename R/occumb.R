@@ -543,7 +543,8 @@ set_modargs <- function(formula_phi,
             cov_theta <- array(dm, c(dim(data@y)[1], dim(data@y)[2], dim(data@y)[3], ncol(dm)))
             dimnames(cov_theta)[[4]] <- colnames(dm)
             M       <- M + dim(cov_theta)[4]
-            m_theta <- seq(m_phi + 1, m_phi + dim(cov_theta)[4])
+            m_theta <- seq(m_phi[length(m_phi)] + 1,
+                           m_phi[length(m_phi)] + dim(cov_theta)[4])
 
         # For theta = "ij"
         } else {
@@ -556,7 +557,8 @@ set_modargs <- function(formula_phi,
             cov_theta <- array(dm, c(dim(data@y)[1], dim(data@y)[2], ncol(dm)))
             dimnames(cov_theta)[[3]] <- colnames(dm)
             M       <- M + dim(cov_theta)[3]
-            m_theta <- seq(m_phi + 1, m_phi + dim(cov_theta)[3])
+            m_theta <- seq(m_phi[length(m_phi)] + 1,
+                           m_phi[length(m_phi)] + dim(cov_theta)[3])
         }
     }
 
@@ -584,7 +586,8 @@ set_modargs <- function(formula_phi,
         cov_psi <- array(dm, c(dim(data@y)[1], dim(data@y)[2], ncol(dm)))
         dimnames(cov_psi)[[3]] <- colnames(dm)
         M       <- M + dim(cov_psi)[[3]]
-        m_psi   <- seq(m_theta + 1, m_theta + dim(cov_psi)[[3]])
+        m_psi   <- seq(m_theta[length(m_theta)] + 1,
+                       m_theta[length(m_theta)] + dim(cov_psi)[[3]])
     }
 
     out <- list(phi   = set_phi_theta(formula_phi, formula_phi_shared, data),
