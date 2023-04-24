@@ -234,7 +234,7 @@ qc_occumb <- function(data,
                       formula_psi_shared) {
     # Check data
     if (!inherits(data, "occumbData"))
-        stop("An occumbData class object is expected for data")
+        stop("An occumbData class object is expected for data\n")
 
     # Check formulas
     formulas <- c("formula_phi",
@@ -251,7 +251,7 @@ qc_occumb <- function(data,
     bad_formula[5] <- !inherits(formula_theta_shared, "formula")
     bad_formula[6] <- !inherits(formula_psi_shared, "formula")
     if (any(bad_formula))
-        stop(sprintf("Formula is expected for: %s",
+        stop(sprintf("Formula is expected for: %s\n",
                      paste(formulas[bad_formula], collapse = ", ")))
 }
 
@@ -906,7 +906,7 @@ set_phi_theta <- function(formula, formula_shared, data) {
 
 check_intercept <- function(formula, type = c("psi", "psi_shared")) {
     if (!has_intercept(formula))
-        stop(sprintf("No intercept in formula_%s: remove 0 or -1 from the formula",
+        stop(sprintf("No intercept in formula_%s: remove 0 or -1 from the formula\n",
                      type))
 }
 
@@ -923,27 +923,27 @@ check_wrong_terms <- function(formula, correct_terms,
     if (any(wrong_terms)) {
         if (type == "phi")
             stop(sprintf("Unexpected terms in formula_%s: %s
-Note that species covariates are not allowed for formula_%s.",
+Note that species covariates are not allowed for formula_%s.\n",
                          type, test_terms[wrong_terms], type)) 
         if (type == "theta")
             stop(sprintf("Unexpected terms in formula_%s: %s
-Note that species covariates are not allowed for formula_%s.",
+Note that species covariates are not allowed for formula_%s.\n",
                          type, test_terms[wrong_terms], type)) 
         if (type == "psi")
             stop(sprintf("Unexpected terms in formula_%s: %s
-Note that only site covariates are allowed for formula_%s.",
+Note that only site covariates are allowed for formula_%s.\n",
                          type, test_terms[wrong_terms], type)) 
         if (type == "phi_shared")
             stop(sprintf("Unexpected terms in formula_%s: %s
-Make sure they are found in either spec_cov, site_cov, or repl_cov.",
+Make sure they are found in either spec_cov, site_cov, or repl_cov.\n",
                          type, test_terms[wrong_terms])) 
         if (type == "theta_shared")
             stop(sprintf("Unexpected terms in formula_%s: %s
-Make sure they are found in either spec_cov, site_cov, or repl_cov.",
+Make sure they are found in either spec_cov, site_cov, or repl_cov.\n",
                          type, test_terms[wrong_terms])) 
         if (type == "psi_shared")
             stop(sprintf("Unexpected terms in formula_%s: %s
-Note that only site covariates, species covariates, or their interactions are allowed for formula_%s.",
+Note that only site covariates, species covariates, or their interactions are allowed for formula_%s.\n",
                          type, test_terms[wrong_terms], type)) 
     }
 }

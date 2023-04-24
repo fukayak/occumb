@@ -133,7 +133,7 @@ get_post_summary <- function(
 qc_get_posterior <- function(fit, parameter) {
     assert_occumbFit(fit)
     if (parameter %!in% names(fit@fit$sims.list))
-        stop(paste(parameter, "is not included in the fitted model"))
+        stop(paste(parameter, "is not included in the fitted model\n"))
 }
 
 .get_post_samples <- function(fit, parameter) {

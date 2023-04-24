@@ -311,11 +311,11 @@ list_cond_L <- function(budget, lambda1, lambda2, fit, K = NULL) {
     ## Validate arguments
     # Assert that budget and cost values are positive.
     if (!checkmate::test_numeric(budget, lower = 0))
-        stop("Negative 'budget' value.")
+        stop("Negative 'budget' value.\n")
     if (!checkmate::test_numeric(lambda1, lower = 0))
-        stop("Negative 'lambda1' value.")
+        stop("Negative 'lambda1' value.\n")
     if (!checkmate::test_numeric(lambda2, lower = 0))
-        stop("Negative 'lambda2' value.")
+        stop("Negative 'lambda2' value.\n")
 
     # Assert that fit is an occumbFit object
     assert_occumbFit(fit)
@@ -328,7 +328,7 @@ list_cond_L <- function(budget, lambda1, lambda2, fit, K = NULL) {
 
     # Assert that given settings ensure at least one replicate per site
     if (!checkmate::test_numeric(max_K, lower = 1))
-        stop("Impossible to have > 0 replicates per site under the given budget, cost, and the number of sites.")
+        stop("Impossible to have > 0 replicates per site under the given budget, cost, and the number of sites.\n")
 
     if (is.null(K)) {
         # Determine K values
@@ -336,13 +336,13 @@ list_cond_L <- function(budget, lambda1, lambda2, fit, K = NULL) {
     } else {
         # Assert that K >= 1
         if (!checkmate::test_numeric(K, lower = 1))
-            stop("'K' contains values less than one.")
+            stop("'K' contains values less than one.\n")
 
         # Assert that the all given K are feasible
         if (any(!budget - lambda2 * J * K > 0))
             stop(paste("A value of 'K' greater than",
                        max_K,
-                       "is not feasible under the given budget, cost, and the number of sites."))
+                       "is not feasible under the given budget, cost, and the number of sites.\n"))
     }
 
     ## Output a table of conditions
@@ -396,35 +396,35 @@ list_cond_R <- function(budget, lambda1, lambda2, lambda3, J = NULL, K = NULL) {
     ## Validate arguments
     # Assert that budget and cost values are positive.
     if (!checkmate::test_numeric(budget, lower = 0))
-        stop("Negative 'budget' value.")
+        stop("Negative 'budget' value.\n")
     if (!checkmate::test_numeric(lambda1, lower = 0))
-        stop("Negative 'lambda1' value.")
+        stop("Negative 'lambda1' value.\n")
     if (!checkmate::test_numeric(lambda2, lower = 0))
-        stop("Negative 'lambda2' value.")
+        stop("Negative 'lambda2' value.\n")
     if (!checkmate::test_numeric(lambda3, lower = 0))
-        stop("Negative 'lambda3' value.")
+        stop("Negative 'lambda3' value.\n")
 
     # Assert that J, K >= 1
     if (!is.null(J) & !checkmate::test_numeric(J, lower = 1))
-        stop("'J' contains values less than one.")
+        stop("'J' contains values less than one.\n")
     if (!is.null(K) & !checkmate::test_numeric(K, lower = 1))
-        stop("'K' contains values less than one.")
+        stop("'K' contains values less than one.\n")
 
     # Assert that K is in ascending order
     if (!is.null(K) & !identical(K, sort(K)))
-        stop("'K' must be in ascending order.")
+        stop("'K' must be in ascending order.\n")
 
     # Determine the combination of J and K to be used
     if (is.null(J)) {
         max_J <- find_maxJ(budget, lambda2, lambda3)
         if (!max_J)
-            stop("No valid combination of 'J' and 'K' under the given budget and cost.")
+            stop("No valid combination of 'J' and 'K' under the given budget and cost.\n")
         J <- seq_len(max_J)
     }
     if (is.null(K)) {
         max_K <- find_maxK(budget, lambda2, lambda3)
         if (!max_K)
-            stop("No valid combination of 'J' and 'K' under the given budget and cost.")
+            stop("No valid combination of 'J' and 'K' under the given budget and cost.\n")
         K <- seq_len(max_K)
     }
 
@@ -441,7 +441,7 @@ list_cond_R <- function(budget, lambda1, lambda2, lambda3, J = NULL, K = NULL) {
 
     # Assert that given settings ensure at least one valid combination of J and K
     if (!length(J_valid) > 0)
-        stop("No valid combination of 'J' and 'K' under the given budget and cost.")
+        stop("No valid combination of 'J' and 'K' under the given budget and cost.\n")
 
     ## Output a table of conditions
     out <- cbind(rep(budget, length(J_valid)),
@@ -459,54 +459,54 @@ qc_eval_util_L <- function(settings, fit) {
     # Assert that settings is a data frame and contains the required columns
     checkmate::assert_data_frame(settings)
     if (!checkmate::testSubset("K", names(settings)))
-        stop("The 'settings' argument does not contain column 'K'.")
+        stop("The 'settings' argument does not contain column 'K'.\n")
     if (!checkmate::testSubset("N", names(settings)))
-        stop("The 'settings' argument does not contain column 'N'.")
+        stop("The 'settings' argument does not contain column 'N'.\n")
     if (!checkmate::test_numeric(settings[, "K"], lower = 1))
-        stop("'K' contains values less than one.")
+        stop("'K' contains values less than one.\n")
     if (!checkmate::test_numeric(settings[, "N"], lower = 1))
-        stop("'N' contains values less than one.")
+        stop("'N' contains values less than one.\n")
 
     # Assert that fit is an occumbFit object
     assert_occumbFit(fit)
 
     # Assert that model parameters are not replicate-specific
     if (length(dim(get_post_samples(fit, "theta"))) == 4)
-        stop("'theta' is replicate-specific: the current 'eval_util_L' is not applicable to models with replicate-specific parameters.")
+        stop("'theta' is replicate-specific: the current 'eval_util_L' is not applicable to models with replicate-specific parameters.\n")
     if (length(dim(get_post_samples(fit, "phi"))) == 4)
-        stop("'phi' is replicate-specific: the current 'eval_util_L' is not applicable to models with replicate-specific parameters.")
+        stop("'phi' is replicate-specific: the current 'eval_util_L' is not applicable to models with replicate-specific parameters.\n")
 }
 
 qc_eval_util_R <- function(settings, fit) {
     # Assert that settings is a data frame and contains the required columns
     checkmate::assert_data_frame(settings)
     if (!checkmate::testSubset("J", names(settings)))
-        stop("The 'settings' argument does not contain column 'J'.")
+        stop("The 'settings' argument does not contain column 'J'.\n")
     if (!checkmate::testSubset("K", names(settings)))
-        stop("The 'settings' argument does not contain column 'K'.")
+        stop("The 'settings' argument does not contain column 'K'.\n")
     if (!checkmate::testSubset("N", names(settings)))
-        stop("The 'settings' argument does not contain column 'N'.")
+        stop("The 'settings' argument does not contain column 'N'.\n")
     if (!checkmate::test_numeric(settings[, "J"], lower = 1))
-        stop("'J' contains values less than one.")
+        stop("'J' contains values less than one.\n")
     if (!checkmate::test_numeric(settings[, "K"], lower = 1))
-        stop("'K' contains values less than one.")
+        stop("'K' contains values less than one.\n")
     if (!checkmate::test_numeric(settings[, "N"], lower = 1))
-        stop("'N' contains values less than one.")
+        stop("'N' contains values less than one.\n")
 
     # Assert that fit is an occumbFit object
     assert_occumbFit(fit)
 
     # Assert that model parameters are not site- or replicate-specific
     if (length(dim(get_post_samples(fit, "psi"))) == 3)
-        stop("'psi' is site-specific: the current 'eval_util_R' is not applicable to models with site-specific parameters.")
+        stop("'psi' is site-specific: the current 'eval_util_R' is not applicable to models with site-specific parameters.\n")
     if (length(dim(get_post_samples(fit, "theta"))) == 3)
-        stop("'theta' is site-specific: the current 'eval_util_R' is not applicable to models with site-specific parameters.")
+        stop("'theta' is site-specific: the current 'eval_util_R' is not applicable to models with site-specific parameters.\n")
     if (length(dim(get_post_samples(fit, "phi"))) == 3)
-        stop("'phi' is site-specific: the current 'eval_util_R' is not applicable to models with site-specific parameters.")
+        stop("'phi' is site-specific: the current 'eval_util_R' is not applicable to models with site-specific parameters.\n")
     if (length(dim(get_post_samples(fit, "theta"))) == 4)
-        stop("'theta' is replicate-specific: the current 'eval_util_R' is not applicable to models with replicate-specific parameters.")
+        stop("'theta' is replicate-specific: the current 'eval_util_R' is not applicable to models with replicate-specific parameters.\n")
     if (length(dim(get_post_samples(fit, "phi"))) == 4)
-        stop("'phi' is replicate-specific: the current 'eval_util_R' is not applicable to models with replicate-specific parameters.")
+        stop("'phi' is replicate-specific: the current 'eval_util_R' is not applicable to models with replicate-specific parameters.\n")
 }
 
 # @title Monte-Carlo integration to obtain expected utility.
@@ -713,7 +713,7 @@ find_maxK <- function(budget, lambda2, lambda3, ulim = 1E4) {
             break
 
         if (n == log10(ulim))
-            stop("Maximum `K` value seems too large under the specified budget and cost values: consider using the `K` argument to specify a smaller set of `K` values of interest.")
+            stop("Maximum `K` value seems too large under the specified budget and cost values: consider using the `K` argument to specify a smaller set of `K` values of interest.\n")
     }
     maxK
 }
@@ -734,7 +734,7 @@ find_maxJ <- function(budget, lambda2, lambda3, ulim = 1E6) {
             break
 
         if (n == log10(ulim))
-            stop("Maximum `J` value seems too large under the specified budget and cost values: consider using the `J` argument to specify a smaller set of `J` values of interest.")
+            stop("Maximum `J` value seems too large under the specified budget and cost values: consider using the `J` argument to specify a smaller set of `J` values of interest.\n")
     }
     maxJ
 }
