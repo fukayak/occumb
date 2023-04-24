@@ -290,6 +290,10 @@ set_modargs <- function(formula_phi,
     theta_shared <- formula_theta_shared != ~ 1
     psi_shared   <- formula_psi_shared   != ~ 1
 
+    type_phi   <- set_phi_theta(formula_phi, formula_phi_shared, data)
+    type_theta <- set_phi_theta(formula_theta, formula_theta_shared, data)
+    type_psi   <- set_psi(formula_psi, formula_psi_shared, data)
+
     # phi_shared
 
     if (phi_shared) {
@@ -306,7 +310,7 @@ set_modargs <- function(formula_phi,
         phi_shared_main_effects <- main_effects(terms(formula_phi_shared))
 
         # For phi = "ijk"
-        if (any(phi_shared_main_effects %in% names(data@repl_cov))) {
+        if (type_phi == "ijk") {
             # Generate covariate objects
             for (n in seq_along(phi_shared_main_effects)) {
                 if (phi_shared_main_effects[n] %in% names(data@spec_cov))
@@ -324,7 +328,7 @@ set_modargs <- function(formula_phi,
             M_phi_shared <- dim(cov_phi_shared)[4]
 
         # For phi = "ij"
-        } else if (any(phi_shared_main_effects %in% names(data@site_cov))) {
+        } else if (type_phi == "ij") {
             # Generate covariate objects
             for (n in seq_along(phi_shared_main_effects)) {
                 if (phi_shared_main_effects[n] %in% names(data@spec_cov))
@@ -369,7 +373,7 @@ set_modargs <- function(formula_phi,
         theta_shared_main_effects <- main_effects(terms(formula_theta_shared))
 
         # For theta = "ijk"
-        if (any(theta_shared_main_effects %in% names(data@repl_cov))) {
+        if (type_theta == "ijk") {
             # Generate covariate objects
             for (n in seq_along(theta_shared_main_effects)) {
                 if (theta_shared_main_effects[n] %in% names(data@spec_cov))
@@ -387,7 +391,7 @@ set_modargs <- function(formula_phi,
             M_theta_shared <- dim(cov_theta_shared)[4]
 
         # For theta = "ij"
-        } else if (any(theta_shared_main_effects %in% names(data@site_cov))) {
+        } else if (type_theta == "ij") {
             # Generate covariate objects
             for (n in seq_along(theta_shared_main_effects)) {
                 if (theta_shared_main_effects[n] %in% names(data@spec_cov))
@@ -430,7 +434,7 @@ set_modargs <- function(formula_phi,
         psi_shared_main_effects <- main_effects(terms(formula_psi_shared))
 
         # For psi = "ij"
-        if (any(psi_shared_main_effects %in% names(data@site_cov))) {
+        if (type_psi == "ij") {
 
             # Generate covariate objects
             for (n in seq_along(psi_shared_main_effects)) {
@@ -480,7 +484,7 @@ set_modargs <- function(formula_phi,
         phi_main_effects <- main_effects(terms(formula_phi))
 
         # For phi = "ijk"
-        if ((any(phi_main_effects %in% names(data@repl_cov)))) {
+        if (type_phi == "ijk") {
             # Generate covariate objects
             for (n in seq_along(phi_main_effects)) {
                 if (phi_main_effects[n] %in% names(data@site_cov))
@@ -529,7 +533,7 @@ set_modargs <- function(formula_phi,
         theta_main_effects <- main_effects(terms(formula_theta))
 
         # For theta = "ijk"
-        if ((any(theta_main_effects %in% names(data@repl_cov)))) {
+        if (type_theta == "ijk") {
             # Generate covariate objects
             for (n in seq_along(theta_main_effects)) {
                 if (theta_main_effects[n] %in% names(data@site_cov))
@@ -590,19 +594,19 @@ set_modargs <- function(formula_phi,
                        m_theta[length(m_theta)] + dim(cov_psi)[[3]])
     }
 
-    out <- list(phi   = set_phi_theta(formula_phi, formula_phi_shared, data),
-                theta = set_phi_theta(formula_theta, formula_theta_shared, data),
-                psi   = set_psi(formula_psi, formula_psi_shared, data),
-                phi_shared       = phi_shared,
-                theta_shared     = theta_shared,
-                psi_shared       = psi_shared,
-                M                = M,
-                cov_phi          = cov_phi,
-                cov_theta        = cov_theta,
-                cov_psi          = cov_psi,
-                m_phi            = m_phi,
-                m_theta          = m_theta,
-                m_psi            = m_psi)
+    out <- list(phi          = type_phi,
+                theta        = type_theta,
+                psi          = type_psi,
+                phi_shared   = phi_shared,
+                theta_shared = theta_shared,
+                psi_shared   = psi_shared,
+                M            = M,
+                cov_phi      = cov_phi,
+                cov_theta    = cov_theta,
+                cov_psi      = cov_psi,
+                m_phi        = m_phi,
+                m_theta      = m_theta,
+                m_psi        = m_psi)
 
     if (phi_shared) {
         out$M_phi_shared   <- M_phi_shared
