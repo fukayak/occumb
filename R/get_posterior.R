@@ -1,11 +1,98 @@
-#' @title Extract posterior samples of parameters from a model-fit object.
-#' @description TODO: to be added.
-#' @details TODO: to be added.
+#' @name get_posterior
+#' @title Extract posterior samples or summary of parameters from a model-fit object.
+#' @description
+#'  \code{get_post_samples()} extracts posterior samples of the specified
+#'  parameters from a model-fit object.
+#'
+#'  \code{get_post_summary()} extracts posterior summary of the specified
+#'  parameters from a model-fit object.
+#' @details The functions return posterior samples or summary of one of the
+#'  following parameters in the model, stored in the model-fit object
+#'  \code{fit}:
+#'  \describe{
+#'  \item{\code{"z"}}{Site occupancy status of species.}
+#'  \item{\code{"pi"}}{Multinomial probabilities of species sequence read counts.}
+#'  \item{\code{"phi"}}{Sequence relative dominance of species.}
+#'  \item{\code{"theta"}}{Sequence capture probabilities of species.}
+#'  \item{\code{"psi"}}{Site occupancy probabilities of species.}
+#'  \item{\code{"alpha"}}{Species-specific effects on sequence relative dominance
+#'  (\code{phi}).}
+#'  \item{\code{"beta"}}{Species-specific effects on sequence capture
+#'  probabilities (\code{theta}).}
+#'  \item{\code{"gamma"}}{Species-specific effects on site occupancy
+#'  probabilities (\code{psi}).}
+#'  \item{\code{"alpha_shared"}}{Effects on sequence relative dominance
+#'  (\code{phi}) common across species.}
+#'  \item{\code{"beta_shared"}}{Effects on sequence capture probabilities
+#'  (\code{theta}) that are common across species.}
+#'  \item{\code{"gamma_shared"}}{Effects on site occupancy probabilities
+#'  (\code{psi}) that are common across species.}
+#'  \item{\code{"Mu"}}{Community-level averages of the species-specific effects
+#'  (\code{alpha}, \code{beta}, \code{gamma}).}
+#'  \item{\code{"sigma"}}{Standard deviations of the species-specific effects
+#'  (\code{alpha}, \code{beta}, \code{gamma}).}
+#'  \item{\code{"rho"}}{Correlation coefficients of the species-specific effects
+#'  (\code{alpha}, \code{beta}, \code{gamma}).}
+#'  }
+#'  See (xxx) for details of these parameters.
+#'
+#'  The parameter may have dimensions corresponding to species, sites,
+#'  replicates, and effects (covariates): the \code{dimension} and \code{label}
+#'  attributes are added to the output object to inform these dimensions.
+#'  If the sequence read count data \code{y} has species, site, or replicate
+#'  names appended as the \code{dimnames} attribute (see Details in
+#'  \code{\link{occumbData()}}), they will be copied into the \code{label}
+#'  attribute of the returned object.
 #' @param fit An \code{occumbFit} object.
-#' @param parameter TODO: to be added.
-#' @return TODO: to be added.
+#' @param parameter A string of parameter name. See Details for possible choices
+#'  and corresponding parameters.
+#' @return
+#'  \code{get_post_samples()} returns a vector, matrix, or array of posterior
+#'  samples of the selected parameter.
+#'
+#'  \code{get_post_summary()} returns a table (matrix) of posterior summary
+#'  of the selected parameter. The elements of the posterior summary are the
+#'  same as those obtained with the \code{\link[jagsUI]{jags()}} function in the
+#'  \code{jagsUI} package: they include mean, standard deviation, percentiles
+#'  of posterior samples; \code{overlap0} that checks if 0 falls in the
+#'  parameter's 95% credible interval; the proportion of the posterior with the
+#'  same sign as the mean, \code{f}; the \code{Rhat} statistic; and the
+#'  effective sample size, \code{n.eff}.
+#'
+#'  The \code{dimension} and \code{label} attributes of the output object
+#'  give information about the dimension of the parameter.
 #' @examples
-#' # to be added
+#' \dontrun{
+#' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
+#' I <- 2 # Number of species
+#' J <- 2 # Number of sites
+#' K <- 2 # Number of replicates
+#' y_named <- array(sample.int(I * J * K), dim = c(I, J, K))
+#' dimnames(y_named) <- list(c("common species", "uncommon species"),
+#'                           c("good site", "bad site"), NULL)
+#' data_named <- occumbData(
+#'     y = y_named,
+#'     spec_cov = list(cov1 = rnorm(I)),
+#'     site_cov = list(cov2 = rnorm(J),
+#'                     cov3 = factor(1:J)),
+#'     repl_cov = list(cov4 = matrix(rnorm(J * K), J, K)))
+#'
+#' # Fitting a null model
+#' fit <- occumb(data = data_named)
+#'
+#' # Extract posterior samples
+#' (post_sample_z <- get_post_samples(fit, "z"))
+#' # Look dimensions of the parameter
+#' attributes(post_sample_z)
+#'
+#' # Extract posterior summary
+#' (post_summary_z <- get_post_summary(fit, "z"))
+#' # Look dimensions of the parameter
+#' attributes(post_summary_z)
+#' }
+NULL
+
+#' @rdname get_posterior
 #' @export
 get_post_samples <- function(
     fit,
@@ -24,14 +111,7 @@ get_post_samples <- function(
     out
 }
 
-#' @title Extract posterior summary of parameters from a model-fit object.
-#' @description TODO: to be added.
-#' @details TODO: to be added.
-#' @param fit An \code{occumbFit} object.
-#' @param parameter TODO: to be added.
-#' @return TODO: to be added.
-#' @examples
-#' # to be added
+#' @rdname get_posterior
 #' @export
 get_post_summary <- function(
     fit,
