@@ -326,12 +326,19 @@ add_attributes2 <- function(obj, covariate, dimnames_y, type) {
             effect_name <- dimnames(covariate)[[length(dim(covariate))]]
         }
 
-        if (!is.null(dimnames_y[[1]]))
+        if (!is.null(dimnames_y[[1]])) {
             attr(obj, "label") <- list(
                 Sample  = NULL,
                 Species = dimnames_y[[1]],
                 Effects = effect_name
             )
+        } else {
+            attr(obj, "label") <- list(
+                Sample  = NULL,
+                Species = NULL,
+                Effects = effect_name
+            )
+        }
     }
 
     if (type == "summary") {
@@ -343,11 +350,17 @@ add_attributes2 <- function(obj, covariate, dimnames_y, type) {
             effect_name <- dimnames(covariate)[[length(dim(covariate))]]
         }
 
-        if (!is.null(dimnames_y[[1]]))
+        if (!is.null(dimnames_y[[1]])) {
             attr(obj, "label") <- list(
                 Species = dimnames_y[[1]],
                 Effects = effect_name
             )
+        } else {
+            attr(obj, "label") <- list(
+                Species = NULL,
+                Effects = effect_name
+            )
+        }
     }
 
     return(obj)
