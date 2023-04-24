@@ -572,8 +572,6 @@ set_modargs <- function(formula_phi,
         cov_psi <- 1
         M       <- M + 1
         m_psi   <- seq(m_theta[length(m_theta)] + 1, m_theta[length(m_theta)] + 1)
-
-    # For psi = "ij"
     } else {
         # Stop when formula_psi does not have an intercept
         check_intercept(formula_psi, "psi")
@@ -583,15 +581,15 @@ set_modargs <- function(formula_phi,
         # Generate covariate objects
         psi_main_effects <- main_effects(terms(formula_psi))
         for (n in seq_along(psi_main_effects))
-            eval(parse(text = sprintf("%s <- rep(extract_covariate(psi_main_effects[%s], data), each = dim(data@y)[1])", psi_main_effects[n], n)))
+            eval(parse(text = sprintf("%s <- extract_covariate(psi_main_effects[%s], data)", psi_main_effects[n], n)))
 
         # Set design matrix
         dm <- set_design_matrix(formula_psi)
-        cov_psi <- array(dm, c(dim(data@y)[1], dim(data@y)[2], ncol(dm)))
-        dimnames(cov_psi)[[3]] <- colnames(dm)
-        M       <- M + dim(cov_psi)[[3]]
-        m_psi   <- seq(m_theta[length(m_theta)] + 1,
-                       m_theta[length(m_theta)] + dim(cov_psi)[[3]])
+        cov_psi <- matrix(dm, nrow = dim(data@y)[2], ncol = ncol(dm))
+        colnames(cov_psi) <- colnames(dm)
+        M     <- M + ncol(cov_psi)
+        m_psi <- seq(m_theta[length(m_theta)] + 1,
+                     m_theta[length(m_theta)] + ncol(cov_psi))
     }
 
     out <- list(phi          = type_phi,
@@ -829,7 +827,7 @@ write_jags_model <- function(phi, theta, psi,
         if (psi == "ij")
             model <- c(model,
                        "        for (j in 1:J) {",
-                       "            logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[i, j, ]) + inprod(gamma_shared[], cov_psi_shared[i, j, ])",
+                       "            logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[j, ]) + inprod(gamma_shared[], cov_psi_shared[i, j, ])",
                        "        }")
     } else {
         if (psi == "i")
@@ -838,7 +836,7 @@ write_jags_model <- function(phi, theta, psi,
         if (psi == "ij")
             model <- c(model,
                        "        for (j in 1:J) {",
-                       "            logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[i, j, ])",
+                       "            logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[j, ])",
                        "        }")
     }
 

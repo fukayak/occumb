@@ -321,7 +321,7 @@ test_that("JAGS code is correct for 144 available models", {
             if (cases$psi[i] == "ij")
                 ans <- c(ans,
                          "        for (j in 1:J) {",
-                         "            logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[i, j, ]) + inprod(gamma_shared[], cov_psi_shared[i, j, ])",
+                         "            logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[j, ]) + inprod(gamma_shared[], cov_psi_shared[i, j, ])",
                          "        }")
         } else {
             if (cases$psi[i] == "i")
@@ -330,7 +330,7 @@ test_that("JAGS code is correct for 144 available models", {
             if (cases$psi[i] == "ij")
                 ans <- c(ans,
                          "        for (j in 1:J) {",
-                         "            logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[i, j, ])",
+                         "            logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[j, ])",
                          "        }")
         }
 

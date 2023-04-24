@@ -935,14 +935,12 @@ Note that only site covariates are allowed for formula_psi.",
     result <- set_modargs(~ 1, ~ 1, ~ cov3, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$psi, "ij")
     expect_equal(result$M, 4)
-    ans_cov <- array(dim = c(I, J, 2))
-    for (i in 1:I) {
-        for (j in 1:J) {
-            ans_cov[i, j, 1] <- 1
-            ans_cov[i, j, 2] <- cov3[j]
-        }
+    ans_cov <- array(dim = c(J, 2))
+    for (j in 1:J) {
+        ans_cov[j, 1] <- 1
+        ans_cov[j, 2] <- cov3[j]
     }
-    dimnames(ans_cov)[[3]] <- c("(Intercept)", "cov3")
+    colnames(ans_cov) <- c("(Intercept)", "cov3")
     expect_equal(result$cov_psi, ans_cov)
     expect_equal(result$m_psi, 3:4)
 
@@ -950,15 +948,13 @@ Note that only site covariates are allowed for formula_psi.",
     result <- set_modargs(~ 1, ~ 1, ~ cov4, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$psi, "ij")
     expect_equal(result$M, 5)
-    ans_cov <- array(dim = c(I, J, 3))
-    for (i in 1:I) {
-        for (j in 1:J) {
-            ans_cov[i, j, 1] <- 1
-            ans_cov[i, j, 2] <- as.numeric(cov4[j] == 2)
-            ans_cov[i, j, 3] <- as.numeric(cov4[j] == 3)
-        }
+    ans_cov <- array(dim = c(J, 3))
+    for (j in 1:J) {
+        ans_cov[j, 1] <- 1
+        ans_cov[j, 2] <- as.numeric(cov4[j] == 2)
+        ans_cov[j, 3] <- as.numeric(cov4[j] == 3)
     }
-    dimnames(ans_cov)[[3]] <- c("(Intercept)", "cov42", "cov43")
+    colnames(ans_cov) <- c("(Intercept)", "cov42", "cov43")
     expect_equal(result$cov_psi, ans_cov)
     expect_equal(result$m_psi, 3:5)
 
@@ -966,19 +962,17 @@ Note that only site covariates are allowed for formula_psi.",
     result <- set_modargs(~ 1, ~ 1, ~ cov3 * cov4, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$psi, "ij")
     expect_equal(result$M, 8)
-    ans_cov <- array(dim = c(I, J, 6))
-    for (i in 1:I) {
-        for (j in 1:J) {
-            ans_cov[i, j, 1] <- 1
-            ans_cov[i, j, 2] <- cov3[j]
-            ans_cov[i, j, 3] <- as.numeric(cov4[j] == 2)
-            ans_cov[i, j, 4] <- as.numeric(cov4[j] == 3)
-            ans_cov[i, j, 5] <- cov3[j] * as.numeric(cov4[j] == 2)
-            ans_cov[i, j, 6] <- cov3[j] * as.numeric(cov4[j] == 3)
-        }
+    ans_cov <- array(dim = c(J, 6))
+    for (j in 1:J) {
+        ans_cov[j, 1] <- 1
+        ans_cov[j, 2] <- cov3[j]
+        ans_cov[j, 3] <- as.numeric(cov4[j] == 2)
+        ans_cov[j, 4] <- as.numeric(cov4[j] == 3)
+        ans_cov[j, 5] <- cov3[j] * as.numeric(cov4[j] == 2)
+        ans_cov[j, 6] <- cov3[j] * as.numeric(cov4[j] == 3)
     }
-    dimnames(ans_cov)[[3]] <- c("(Intercept)", "cov3", "cov42", "cov43",
-                                "cov3:cov42", "cov3:cov43")
+    colnames(ans_cov) <- c("(Intercept)", "cov3", "cov42", "cov43",
+                           "cov3:cov42", "cov3:cov43")
     expect_equal(result$cov_psi, ans_cov)
     expect_equal(result$m_psi, 3:8)
 
