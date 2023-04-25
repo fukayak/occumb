@@ -15,7 +15,7 @@ data <- occumbData(y = array(0, dim = c(I, J, K)),
                    repl_cov = list(cov5 = cov5, cov6 = cov6))
 
 ### Tests for formula_phi_shared -----------------------------------------------
-test_that("Temp: phi_shared correct", {
+test_that("Procedures for phi_shared correct", {
     ## Output
     # spec_cov (continuous)
     result <- set_modargs(~ 1, ~ 1, ~ 1, ~ cov1, ~ 1, ~ 1, data = data)
@@ -241,7 +241,7 @@ Make sure they are found in either spec_cov, site_cov, or repl_cov.", "xxx"))
 })
 
 ### Tests for formula_theta_shared ---------------------------------------------
-test_that("Temp: theta_shared correct", {
+test_that("Procedures for theta_shared correct", {
     ## Output
     # spec_cov (continuous)
     result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ cov1, ~ 1, data = data)
@@ -467,7 +467,7 @@ Make sure they are found in either spec_cov, site_cov, or repl_cov.", "xxx"))
 })
 
 ### Tests for formula_psi_shared -----------------------------------------------
-test_that("Temp: psi_shared correct", {
+test_that("Procedures for psi_shared correct", {
     ## Output
     # spec_cov (continuous)
     result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ cov1, data = data)
@@ -606,7 +606,7 @@ Note that species covariates are not allowed for formula_phi.",
                          "cov1"))
 })
 
-test_that("Temp: phi correct", {
+test_that("Procedures for phi correct", {
     # site_cov (continuous)
     result <- set_modargs(~ cov3, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "ij")
@@ -740,7 +740,7 @@ Note that species covariates are not allowed for formula_phi",
 })
 
 ### Tests for formula_theta ----------------------------------------------------
-test_that("Temp: theta correct", {
+test_that("Procedures for theta correct", {
     ## Output
     # null model
     result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
@@ -888,7 +888,7 @@ Note that species covariates are not allowed for formula_theta.",
 })
 
 ### Tests for formula_psi ------------------------------------------------------
-test_that("Temp: psi correct", {
+test_that("Procedures for psi correct", {
     ## Output
     # null model
     result <- set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
