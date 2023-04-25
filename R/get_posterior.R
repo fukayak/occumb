@@ -161,6 +161,7 @@ qc_get_posterior <- function(fit, parameter) {
                              fit@occumb_args$formula_psi_shared,
                              fit@data)
 
+        pattern <- paste0(parameter, "\\[")
         if (parameter == "alpha_shared") {
             if (margs$M_phi_shared == 1)
                 pattern <- paste0(parameter)
@@ -170,8 +171,6 @@ qc_get_posterior <- function(fit, parameter) {
         } else if (parameter == "gamma_shared") {
             if (margs$M_psi_shared == 1)
                 pattern <- paste0(parameter)
-        } else {
-            pattern <- paste0(parameter, "\\[")
         }
 
         return(grep(pattern, rownames(fit@fit$summary)))
@@ -230,7 +229,7 @@ add_attributes <- function(obj, fit, parameter,
         return(add_attributes3(obj, margs$cov_theta_shared, type))
 
     if (parameter == "gamma_shared")
-        return(add_attributes3(obj, margs$cov_gamma_shared, type))
+        return(add_attributes3(obj, margs$cov_psi_shared, type))
 
     if (parameter == "Mu")
         return(add_attributes4(obj, margs, FALSE, type))

@@ -277,30 +277,30 @@ test_that("Extracted samples and attributes are correct when proper parameter na
     expect_identical(test,
                      eval(parse(text = paste0("fit2@fit$sims.list$", lpar[i]))))
 
-#    ## Tests for gamma_shared (~ cov2)
-#    i <- 11
-#    # Unnamed y
-#    test <- get_post_samples(fit1, lpar[i])
-#    expect_identical(attributes(test)$dimension,
-#                     c("Sample", "Effects"))
-#    expect_identical(attributes(test)$label,
-#                     list(Sample = NULL,
-#                          Effects = c("cov22")))
-#    attr(test, "dimension") <- NULL
-#    attr(test, "label") <- NULL
-#    expect_identical(test,
-#                     eval(parse(text = paste0("fit1@fit$sims.list$", lpar[i]))))
-#    # Named y
-#    test <- get_post_samples(fit2, lpar[i])
-#    expect_identical(attributes(test)$dimension,
-#                     c("Sample", "Effects"))
-#    expect_identical(attributes(test)$label,
-#                     list(Sample = NULL,
-#                          Effects = c("cov22")))
-#    attr(test, "dimension") <- NULL
-#    attr(test, "label") <- NULL
-#    expect_identical(test,
-#                     eval(parse(text = paste0("fit2@fit$sims.list$", lpar[i]))))
+    ## Tests for gamma_shared (~ cov2)
+    i <- 11
+    # Unnamed y
+    test <- get_post_samples(fit1, lpar[i])
+    expect_identical(attributes(test)$dimension,
+                     c("Sample", "Effects"))
+    expect_identical(attributes(test)$label,
+                     list(Sample = NULL,
+                          Effects = c("cov22")))
+    attr(test, "dimension") <- NULL
+    attr(test, "label") <- NULL
+    expect_identical(test,
+                     eval(parse(text = paste0("fit1@fit$sims.list$", lpar[i]))))
+    # Named y
+    test <- get_post_samples(fit2, lpar[i])
+    expect_identical(attributes(test)$dimension,
+                     c("Sample", "Effects"))
+    expect_identical(attributes(test)$label,
+                     list(Sample = NULL,
+                          Effects = c("cov22")))
+    attr(test, "dimension") <- NULL
+    attr(test, "label") <- NULL
+    expect_identical(test,
+                     eval(parse(text = paste0("fit2@fit$sims.list$", lpar[i]))))
 
     ## Tests for Mu/sigma
     for (i in 12:13) {
@@ -551,47 +551,47 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
     expect_error(get_post_samples(fit2, lpar[i]),
                  "alpha_shared is not included in the fitted model")
 
-#    ## Tests for beta_shared (~ cov2 * cov3)
-#    i <- 10
-#    # Unnamed y
-#    test <- get_post_summary(fit1, lpar[i])
-#    expect_identical(attributes(test)$dimension, c("Effects"))
-#    expect_identical(attributes(test)$label,
-#                     list(Effects = c("cov22", "cov3", "cov22:cov3")))
-#    attr(test, "dimension") <- NULL
-#    attr(test, "label") <- NULL
-#    ans <- fit1@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit1@fit$summary)), ]
-#    expect_identical(test, ans)
-#    # Named y
-#    test <- get_post_summary(fit2, lpar[i])
-#    expect_identical(attributes(test)$dimension, c("Effects"))
-#    expect_identical(attributes(test)$label,
-#                     list(Effects = c("cov22", "cov3", "cov22:cov3")))
-#    attr(test, "dimension") <- NULL
-#    attr(test, "label") <- NULL
-#    ans <- fit2@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit2@fit$summary)), ]
-#    expect_identical(test, ans)
+    ## Tests for beta_shared (~ cov2 * cov3)
+    i <- 10
+    # Unnamed y
+    test <- get_post_summary(fit1, lpar[i])
+    expect_identical(attributes(test)$dimension, c("Effects"))
+    expect_identical(attributes(test)$label,
+                     list(Effects = c("cov22", "cov3", "cov22:cov3")))
+    attr(test, "dimension") <- NULL
+    attr(test, "label") <- NULL
+    ans <- fit1@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit1@fit$summary)), ]
+    expect_identical(test, ans)
+    # Named y
+    test <- get_post_summary(fit2, lpar[i])
+    expect_identical(attributes(test)$dimension, c("Effects"))
+    expect_identical(attributes(test)$label,
+                     list(Effects = c("cov22", "cov3", "cov22:cov3")))
+    attr(test, "dimension") <- NULL
+    attr(test, "label") <- NULL
+    ans <- fit2@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit2@fit$summary)), ]
+    expect_identical(test, ans)
 
-#    ## Tests for gamma_shared (~ cov2)
-#    i <- 11
-#    # Unnamed y
-#    test <- get_post_summary(fit1, lpar[i])
-#    expect_identical(attributes(test)$dimension, c("Effects"))
-#    expect_identical(attributes(test)$label,
-#                     list(Effects = "cov22"))
-#    attr(test, "dimension") <- NULL
-#    attr(test, "label") <- NULL
-#    ans <- fit1@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit1@fit$summary)), ]
-#    expect_identical(test, ans)
-#    # Named y
-#    test <- get_post_summary(fit2, lpar[i])
-#    expect_identical(attributes(test)$dimension, c("Effects"))
-#    expect_identical(attributes(test)$label,
-#                     list(Effects = "cov22"))
-#    attr(test, "dimension") <- NULL
-#    attr(test, "label") <- NULL
-#    ans <- fit2@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit2@fit$summary)), ]
-#    expect_identical(test, ans)
+    ## Tests for gamma_shared (~ cov2)
+    i <- 11
+    # Unnamed y
+    test <- get_post_summary(fit1, lpar[i])
+    expect_identical(attributes(test)$dimension, c("Effects"))
+    expect_identical(attributes(test)$label,
+                     list(Effects = "cov22"))
+    attr(test, "dimension") <- NULL
+    attr(test, "label") <- NULL
+    ans <- fit1@fit$summary["gamma_shared", ]
+    expect_identical(test, ans)
+    # Named y
+    test <- get_post_summary(fit2, lpar[i])
+    expect_identical(attributes(test)$dimension, c("Effects"))
+    expect_identical(attributes(test)$label,
+                     list(Effects = "cov22"))
+    attr(test, "dimension") <- NULL
+    attr(test, "label") <- NULL
+    ans <- fit2@fit$summary["gamma_shared", ]
+    expect_identical(test, ans)
 
     ## Tests for Mu/sigma
     for (i in 12:13) {
