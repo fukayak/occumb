@@ -287,13 +287,13 @@ test_that("JAGS code is correct for 144 available models", {
             if (cases$theta[i] == "ij")
                 ans <- c(ans,
                          "        for (j in 1:J) {",
-                         "            logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ]) + inprod(beta_shared[], cov_theta_shared[i, j, ])",
+                         "            logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[j, ]) + inprod(beta_shared[], cov_theta_shared[i, j, ])",
                          "        }")
             if (cases$theta[i] == "ijk")
                 ans <- c(ans,
                          "        for (j in 1:J) {",
                          "            for (k in 1:K) {",
-                         "                logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ]) + inprod(beta_shared[], cov_theta_shared[i, j, k, ])",
+                         "                logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[j, k, ]) + inprod(beta_shared[], cov_theta_shared[i, j, k, ])",
                          "            }",
                          "        }")
         } else {
@@ -303,13 +303,13 @@ test_that("JAGS code is correct for 144 available models", {
             if (cases$theta[i] == "ij")
                 ans <- c(ans,
                          "        for (j in 1:J) {",
-                         "            logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ])",
+                         "            logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[j, ])",
                          "        }")
             if (cases$theta[i] == "ijk")
                 ans <- c(ans,
                          "        for (j in 1:J) {",
                          "            for (k in 1:K) {",
-                         "                logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ])",
+                         "                logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[j, k, ])",
                          "            }",
                          "        }")
         }

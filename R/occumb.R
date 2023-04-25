@@ -537,32 +537,32 @@ set_modargs <- function(formula_phi,
             # Generate covariate objects
             for (n in seq_along(theta_main_effects)) {
                 if (theta_main_effects[n] %in% names(data@site_cov))
-                    eval(parse(text = sprintf("%s <- rep(rep(extract_covariate(theta_main_effects[%s], data), each = dim(data@y)[1]), dim(data@y)[3])", theta_main_effects[n], n)))
+                    eval(parse(text = sprintf("%s <- rep(extract_covariate(theta_main_effects[%s], data), dim(data@y)[3])", theta_main_effects[n], n)))
                 if (theta_main_effects[n] %in% names(data@repl_cov))
-                    eval(parse(text = sprintf("%s <- rep(extract_covariate(theta_main_effects[%s], data), each = dim(data@y)[1])", theta_main_effects[n], n)))
+                    eval(parse(text = sprintf("%s <- c(extract_covariate(theta_main_effects[%s], data))", theta_main_effects[n], n)))
             }
 
             # Set design matrix
             dm <- set_design_matrix(formula_theta)
-            cov_theta <- array(dm, c(dim(data@y)[1], dim(data@y)[2], dim(data@y)[3], ncol(dm)))
-            dimnames(cov_theta)[[4]] <- colnames(dm)
-            M       <- M + dim(cov_theta)[4]
+            cov_theta <- array(dm, c(dim(data@y)[2], dim(data@y)[3], ncol(dm)))
+            dimnames(cov_theta)[[3]] <- colnames(dm)
+            M       <- M + dim(cov_theta)[3]
             m_theta <- seq(m_phi[length(m_phi)] + 1,
-                           m_phi[length(m_phi)] + dim(cov_theta)[4])
+                           m_phi[length(m_phi)] + dim(cov_theta)[3])
 
         # For theta = "ij"
         } else {
             # Generate covariate objects
             for (n in seq_along(theta_main_effects))
-                eval(parse(text = sprintf("%s <- rep(extract_covariate(theta_main_effects[%s], data), each = dim(data@y)[1])", theta_main_effects[n], n)))
+                eval(parse(text = sprintf("%s <- extract_covariate(theta_main_effects[%s], data)", theta_main_effects[n], n)))
 
             # Set design matrix
             dm <- set_design_matrix(formula_theta)
-            cov_theta <- array(dm, c(dim(data@y)[1], dim(data@y)[2], ncol(dm)))
-            dimnames(cov_theta)[[3]] <- colnames(dm)
-            M       <- M + dim(cov_theta)[3]
+            cov_theta <- matrix(dm, nrow = dim(data@y)[2], ncol = ncol(dm))
+            colnames(cov_theta) <- colnames(dm)
+            M       <- M + ncol(cov_theta)
             m_theta <- seq(m_phi[length(m_phi)] + 1,
-                           m_phi[length(m_phi)] + dim(cov_theta)[3])
+                           m_phi[length(m_phi)] + ncol(cov_theta))
         }
     }
 
@@ -793,13 +793,13 @@ write_jags_model <- function(phi, theta, psi,
         if (theta == "ij")
             model <- c(model,
                        "        for (j in 1:J) {",
-                       "            logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ]) + inprod(beta_shared[], cov_theta_shared[i, j, ])",
+                       "            logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[j, ]) + inprod(beta_shared[], cov_theta_shared[i, j, ])",
                        "        }")
         if (theta == "ijk")
             model <- c(model,
                        "        for (j in 1:J) {",
                        "            for (k in 1:K) {",
-                       "                logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ]) + inprod(beta_shared[], cov_theta_shared[i, j, k, ])",
+                       "                logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[j, k, ]) + inprod(beta_shared[], cov_theta_shared[i, j, k, ])",
                        "            }",
                        "        }")
     } else {
@@ -809,13 +809,13 @@ write_jags_model <- function(phi, theta, psi,
         if (theta == "ij")
             model <- c(model,
                        "        for (j in 1:J) {",
-                       "            logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ])",
+                       "            logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[j, ])",
                        "        }")
         if (theta == "ijk")
             model <- c(model,
                        "        for (j in 1:J) {",
                        "            for (k in 1:K) {",
-                       "                logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ])",
+                       "                logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[j, k, ])",
                        "            }",
                        "        }")
     }
