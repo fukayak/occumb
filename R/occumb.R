@@ -488,30 +488,30 @@ set_modargs <- function(formula_phi,
             # Generate covariate objects
             for (n in seq_along(phi_main_effects)) {
                 if (phi_main_effects[n] %in% names(data@site_cov))
-                    eval(parse(text = sprintf("%s <- rep(rep(extract_covariate(phi_main_effects[%s], data), each = dim(data@y)[1]), dim(data@y)[3])", phi_main_effects[n], n)))
+                    eval(parse(text = sprintf("%s <- rep(extract_covariate(phi_main_effects[%s], data), dim(data@y)[3])", phi_main_effects[n], n)))
                 if (phi_main_effects[n] %in% names(data@repl_cov))
-                    eval(parse(text = sprintf("%s <- rep(extract_covariate(phi_main_effects[%s], data), each = dim(data@y)[1])", phi_main_effects[n], n)))
+                    eval(parse(text = sprintf("%s <- c(extract_covariate(phi_main_effects[%s], data))", phi_main_effects[n], n)))
             }
 
             # Set design matrix
             dm <- set_design_matrix(formula_phi)
-            cov_phi <- array(dm, c(dim(data@y)[1], dim(data@y)[2], dim(data@y)[3], ncol(dm)))
-            dimnames(cov_phi)[[4]] <- colnames(dm)
-            M     <- M + dim(cov_phi)[4]
-            m_phi <- seq(1, dim(cov_phi)[4])
+            cov_phi <- array(dm, c(dim(data@y)[2], dim(data@y)[3], ncol(dm)))
+            dimnames(cov_phi)[[3]] <- colnames(dm)
+            M     <- M + dim(cov_phi)[3]
+            m_phi <- seq(1, dim(cov_phi)[3])
 
         # For phi = "ij"
         } else {
             # Generate covariate objects
             for (n in seq_along(phi_main_effects))
-                eval(parse(text = sprintf("%s <- rep(extract_covariate(phi_main_effects[%s], data), each = dim(data@y)[1])", phi_main_effects[n], n)))
+                eval(parse(text = sprintf("%s <- extract_covariate(phi_main_effects[%s], data)", phi_main_effects[n], n)))
 
             # Set design matrix
             dm <- set_design_matrix(formula_phi)
-            cov_phi <- array(dm, c(dim(data@y)[1], dim(data@y)[2], ncol(dm)))
-            dimnames(cov_phi)[[3]] <- colnames(dm)
-            M       <- M + dim(cov_phi)[3]
-            m_phi <- seq(1, dim(cov_phi)[3])
+            cov_phi <- matrix(dm, nrow = dim(data@y)[2], ncol = ncol(dm))
+            colnames(cov_phi) <- colnames(dm)
+            M     <- M + ncol(cov_phi)
+            m_phi <- seq(1, ncol(cov_phi))
         }
     }
 
@@ -759,13 +759,13 @@ write_jags_model <- function(phi, theta, psi,
         if (phi == "ij")
             model <- c(model,
                        "        for (j in 1:J) {",
-                       "            log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[i, j, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, ])",
+                       "            log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[j, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, ])",
                        "        }")
         if (phi == "ijk")
             model <- c(model,
                        "        for (j in 1:J) {",
                        "            for (k in 1:K) {",
-                       "                log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[i, j, k, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, k, ])",
+                       "                log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[j, k, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, k, ])",
                        "            }",
                        "        }")
     } else {
@@ -775,13 +775,13 @@ write_jags_model <- function(phi, theta, psi,
         if (phi == "ij")
             model <- c(model,
                        "        for (j in 1:J) {",
-                       "            log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[i, j, ])",
+                       "            log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[j, ])",
                        "        }")
         if (phi == "ijk")
             model <- c(model,
                        "        for (j in 1:J) {",
                        "            for (k in 1:K) {",
-                       "                log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[i, j, k, ])",
+                       "                log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[j, k, ])",
                        "            }",
                        "        }")
     }

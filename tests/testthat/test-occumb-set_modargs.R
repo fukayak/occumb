@@ -611,14 +611,12 @@ test_that("Temp: phi correct", {
     result <- set_modargs(~ cov3, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "ij")
     expect_equal(result$M, 4)
-    ans_cov <- array(dim = c(I, J, 2))
-    for (i in 1:I) {
-        for (j in 1:J) {
-            ans_cov[i, j, 1] <- 1
-            ans_cov[i, j, 2] <- cov3[j]
-        }
+    ans_cov <- array(dim = c(J, 2))
+    for (j in 1:J) {
+        ans_cov[j, 1] <- 1
+        ans_cov[j, 2] <- cov3[j]
     }
-    dimnames(ans_cov)[[3]] <- c("(Intercept)", "cov3")
+    colnames(ans_cov) <- c("(Intercept)", "cov3")
     expect_equal(result$cov_phi, ans_cov)
     expect_equal(result$m_phi, 1:2)
 
@@ -626,15 +624,13 @@ test_that("Temp: phi correct", {
     result <- set_modargs(~ cov4, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "ij")
     expect_equal(result$M, 5)
-    ans_cov <- array(dim = c(I, J, 3))
-    for (i in 1:I) {
-        for (j in 1:J) {
-            ans_cov[i, j, 1] <- 1
-            ans_cov[i, j, 2] <- as.numeric((cov4[j] == 2))
-            ans_cov[i, j, 3] <- as.numeric((cov4[j] == 3))
-        }
+    ans_cov <- array(dim = c(J, 3))
+    for (j in 1:J) {
+        ans_cov[j, 1] <- 1
+        ans_cov[j, 2] <- as.numeric((cov4[j] == 2))
+        ans_cov[j, 3] <- as.numeric((cov4[j] == 3))
     }
-    dimnames(ans_cov)[[3]] <- c("(Intercept)", "cov42", "cov43")
+    colnames(ans_cov) <- c("(Intercept)", "cov42", "cov43")
     expect_equal(result$cov_phi, ans_cov)
     expect_equal(result$m_phi, 1:3)
 
@@ -642,19 +638,17 @@ test_that("Temp: phi correct", {
     result <- set_modargs(~ cov3 * cov4, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "ij")
     expect_equal(result$M, 8)
-    ans_cov <- array(dim = c(I, J, 6))
-    for (i in 1:I) {
-        for (j in 1:J) {
-            ans_cov[i, j, 1] <- 1
-            ans_cov[i, j, 2] <- cov3[j]
-            ans_cov[i, j, 3] <- as.numeric(cov4[j] == 2)
-            ans_cov[i, j, 4] <- as.numeric(cov4[j] == 3)
-            ans_cov[i, j, 5] <- cov3[j] * as.numeric(cov4[j] == 2)
-            ans_cov[i, j, 6] <- cov3[j] * as.numeric(cov4[j] == 3)
-        }
+    ans_cov <- array(dim = c(J, 6))
+    for (j in 1:J) {
+        ans_cov[j, 1] <- 1
+        ans_cov[j, 2] <- cov3[j]
+        ans_cov[j, 3] <- as.numeric(cov4[j] == 2)
+        ans_cov[j, 4] <- as.numeric(cov4[j] == 3)
+        ans_cov[j, 5] <- cov3[j] * as.numeric(cov4[j] == 2)
+        ans_cov[j, 6] <- cov3[j] * as.numeric(cov4[j] == 3)
     }
-    dimnames(ans_cov)[[3]] <- c("(Intercept)", "cov3", "cov42", "cov43",
-                                "cov3:cov42", "cov3:cov43")
+    colnames(ans_cov)<- c("(Intercept)", "cov3", "cov42", "cov43",
+                          "cov3:cov42", "cov3:cov43")
     expect_equal(result$cov_phi, ans_cov)
     expect_equal(result$m_phi, 1:6)
 
@@ -662,16 +656,14 @@ test_that("Temp: phi correct", {
     result <- set_modargs(~ cov5, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "ijk")
     expect_equal(result$M, 4)
-    ans_cov <- array(dim = c(I, J, K, 2))
-    for (i in 1:I) {
-        for (j in 1:J) {
-            for (k in 1:K) {
-                ans_cov[i, j, k, 1] <- 1
-                ans_cov[i, j, k, 2] <- cov5[j, k]
-            }
+    ans_cov <- array(dim = c(J, K, 2))
+    for (j in 1:J) {
+        for (k in 1:K) {
+            ans_cov[j, k, 1] <- 1
+            ans_cov[j, k, 2] <- cov5[j, k]
         }
     }
-    dimnames(ans_cov)[[4]] <- c("(Intercept)", "cov5")
+    dimnames(ans_cov)[[3]] <- c("(Intercept)", "cov5")
     expect_equal(result$cov_phi, ans_cov)
     expect_equal(result$m_phi, 1:2)
 
@@ -679,18 +671,16 @@ test_that("Temp: phi correct", {
     result <- set_modargs(~ cov6, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "ijk")
     expect_equal(result$M, 6)
-    ans_cov <- array(dim = c(I, J, K, 4))
-    for (i in 1:I) {
-        for (j in 1:J) {
-            for (k in 1:K) {
-                ans_cov[i, j, k, 1] <- 1
-                ans_cov[i, j, k, 2] <- as.numeric((cov6[j, k] == 2))
-                ans_cov[i, j, k, 3] <- as.numeric((cov6[j, k] == 3))
-                ans_cov[i, j, k, 4] <- as.numeric((cov6[j, k] == 4))
-            }
+    ans_cov <- array(dim = c(J, K, 4))
+    for (j in 1:J) {
+        for (k in 1:K) {
+            ans_cov[j, k, 1] <- 1
+            ans_cov[j, k, 2] <- as.numeric((cov6[j, k] == 2))
+            ans_cov[j, k, 3] <- as.numeric((cov6[j, k] == 3))
+            ans_cov[j, k, 4] <- as.numeric((cov6[j, k] == 4))
         }
     }
-    dimnames(ans_cov)[[4]] <- c("(Intercept)", "cov62", "cov63", "cov64")
+    dimnames(ans_cov)[[3]] <- c("(Intercept)", "cov62", "cov63", "cov64")
     expect_equal(result$cov_phi, ans_cov)
     expect_equal(result$m_phi, 1:4)
 
@@ -698,22 +688,20 @@ test_that("Temp: phi correct", {
     result <- set_modargs(~ cov5 * cov6, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "ijk")
     expect_equal(result$M, 10)
-    ans_cov <- array(dim = c(I, J, K, 8))
-    for (i in 1:I) {
-        for (j in 1:J) {
-            for (k in 1:K) {
-                ans_cov[i, j, k, 1] <- 1
-                ans_cov[i, j, k, 2] <- cov5[j, k]
-                ans_cov[i, j, k, 3] <- as.numeric(cov6[j, k] == 2)
-                ans_cov[i, j, k, 4] <- as.numeric(cov6[j, k] == 3)
-                ans_cov[i, j, k, 5] <- as.numeric(cov6[j, k] == 4)
-                ans_cov[i, j, k, 6] <- cov5[j, k] * as.numeric(cov6[j, k] == 2)
-                ans_cov[i, j, k, 7] <- cov5[j, k] * as.numeric(cov6[j, k] == 3)
-                ans_cov[i, j, k, 8] <- cov5[j, k] * as.numeric(cov6[j, k] == 4)
-            }
+    ans_cov <- array(dim = c(J, K, 8))
+    for (j in 1:J) {
+        for (k in 1:K) {
+            ans_cov[j, k, 1] <- 1
+            ans_cov[j, k, 2] <- cov5[j, k]
+            ans_cov[j, k, 3] <- as.numeric(cov6[j, k] == 2)
+            ans_cov[j, k, 4] <- as.numeric(cov6[j, k] == 3)
+            ans_cov[j, k, 5] <- as.numeric(cov6[j, k] == 4)
+            ans_cov[j, k, 6] <- cov5[j, k] * as.numeric(cov6[j, k] == 2)
+            ans_cov[j, k, 7] <- cov5[j, k] * as.numeric(cov6[j, k] == 3)
+            ans_cov[j, k, 8] <- cov5[j, k] * as.numeric(cov6[j, k] == 4)
         }
     }
-    dimnames(ans_cov)[[4]] <- c("(Intercept)", "cov5", "cov62", "cov63", "cov64",
+    dimnames(ans_cov)[[3]] <- c("(Intercept)", "cov5", "cov62", "cov63", "cov64",
                                 "cov5:cov62", "cov5:cov63", "cov5:cov64")
     expect_equal(result$cov_phi, ans_cov)
     expect_equal(result$m_phi, 1:8)
@@ -722,22 +710,20 @@ test_that("Temp: phi correct", {
     result <- set_modargs(~ cov3 * cov6, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
     expect_equal(result$phi, "ijk")
     expect_equal(result$M, 10)
-    ans_cov <- array(dim = c(I, J, K, 8))
-    for (i in 1:I) {
-        for (j in 1:J) {
-            for (k in 1:K) {
-                ans_cov[i, j, k, 1] <- 1
-                ans_cov[i, j, k, 2] <- cov3[j]
-                ans_cov[i, j, k, 3] <- as.numeric(cov6[j, k] == 2)
-                ans_cov[i, j, k, 4] <- as.numeric(cov6[j, k] == 3)
-                ans_cov[i, j, k, 5] <- as.numeric(cov6[j, k] == 4)
-                ans_cov[i, j, k, 6] <- cov3[j] * as.numeric(cov6[j, k] == 2)
-                ans_cov[i, j, k, 7] <- cov3[j] * as.numeric(cov6[j, k] == 3)
-                ans_cov[i, j, k, 8] <- cov3[j] * as.numeric(cov6[j, k] == 4)
-            }
+    ans_cov <- array(dim = c(J, K, 8))
+    for (j in 1:J) {
+        for (k in 1:K) {
+            ans_cov[j, k, 1] <- 1
+            ans_cov[j, k, 2] <- cov3[j]
+            ans_cov[j, k, 3] <- as.numeric(cov6[j, k] == 2)
+            ans_cov[j, k, 4] <- as.numeric(cov6[j, k] == 3)
+            ans_cov[j, k, 5] <- as.numeric(cov6[j, k] == 4)
+            ans_cov[j, k, 6] <- cov3[j] * as.numeric(cov6[j, k] == 2)
+            ans_cov[j, k, 7] <- cov3[j] * as.numeric(cov6[j, k] == 3)
+            ans_cov[j, k, 8] <- cov3[j] * as.numeric(cov6[j, k] == 4)
         }
     }
-    dimnames(ans_cov)[[4]] <- c("(Intercept)", "cov3", "cov62", "cov63", "cov64",
+    dimnames(ans_cov)[[3]] <- c("(Intercept)", "cov3", "cov62", "cov63", "cov64",
                                 "cov3:cov62", "cov3:cov63", "cov3:cov64")
     expect_equal(result$cov_phi, ans_cov)
     expect_equal(result$m_phi, 1:8)

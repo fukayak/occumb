@@ -253,13 +253,13 @@ test_that("JAGS code is correct for 144 available models", {
             if (cases$phi[i] == "ij")
                 ans <- c(ans,
                          "        for (j in 1:J) {",
-                         "            log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[i, j, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, ])",
+                         "            log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[j, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, ])",
                          "        }")
             if (cases$phi[i] == "ijk")
                 ans <- c(ans,
                          "        for (j in 1:J) {",
                          "            for (k in 1:K) {",
-                         "                log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[i, j, k, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, k, ])",
+                         "                log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[j, k, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, k, ])",
                          "            }",
                          "        }")
         } else {
@@ -269,13 +269,13 @@ test_that("JAGS code is correct for 144 available models", {
             if (cases$phi[i] == "ij")
                 ans <- c(ans,
                          "        for (j in 1:J) {",
-                         "            log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[i, j, ])",
+                         "            log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[j, ])",
                          "        }")
             if (cases$phi[i] == "ijk")
                 ans <- c(ans,
                          "        for (j in 1:J) {",
                          "            for (k in 1:K) {",
-                         "                log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[i, j, k, ])",
+                         "                log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[j, k, ])",
                          "            }",
                          "        }")
         }
