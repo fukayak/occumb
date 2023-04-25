@@ -469,9 +469,15 @@ set_modargs <- function(formula_phi,
     ## phi
 
     if (formula_phi == ~ 1) {
-        cov_phi <- 1
-        M       <- M + 1
-        m_phi   <- 1
+        if (phi_shared & type_phi == "ijk") {
+            cov_phi <- array(1, dim = c(dim(data@y)[2], dim(data@y)[3], 1))
+        } else if (phi_shared & type_phi == "ij") {
+            cov_phi <- matrix(1, nrow = dim(data@y)[2], ncol = 1)
+        } else {
+            cov_phi <- 1
+        }
+        M     <- M + 1
+        m_phi <- 1
     } else {
         # Stop when formula_phi does not have an intercept
         check_intercept(formula_phi, "phi")
@@ -518,9 +524,15 @@ set_modargs <- function(formula_phi,
     ## theta
 
     if (formula_theta == ~ 1) {
-        cov_theta <- 1
-        M         <- M + 1
-        m_theta   <- seq(m_phi[length(m_phi)] + 1, m_phi[length(m_phi)] + 1)
+        if (theta_shared & type_theta == "ijk") {
+            cov_theta <- array(1, dim = c(dim(data@y)[2], dim(data@y)[3], 1))
+        } else if (theta_shared & type_theta == "ij") {
+            cov_theta <- matrix(1, nrow = dim(data@y)[2], ncol = 1)
+        } else {
+            cov_theta <- 1
+        }
+        M       <- M + 1
+        m_theta <- seq(m_phi[length(m_phi)] + 1, m_phi[length(m_phi)] + 1)
     } else {
         # Stop when formula_theta does not have an intercept
         check_intercept(formula_theta, "theta")
@@ -569,9 +581,12 @@ set_modargs <- function(formula_phi,
     ## psi
 
     if (formula_psi == ~ 1) {
-        cov_psi <- 1
-        M       <- M + 1
-        m_psi   <- seq(m_theta[length(m_theta)] + 1, m_theta[length(m_theta)] + 1)
+        if (psi_shared & type_psi == "ij")
+            cov_psi <- matrix(1, nrow = dim(data@y)[2], ncol = 1)
+        else
+            cov_psi <- 1
+        M     <- M + 1
+        m_psi <- seq(m_theta[length(m_theta)] + 1, m_theta[length(m_theta)] + 1)
     } else {
         # Stop when formula_psi does not have an intercept
         check_intercept(formula_psi, "psi")
