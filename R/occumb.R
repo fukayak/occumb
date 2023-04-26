@@ -2,7 +2,9 @@
 NULL
 
 # Class for model-fit results of occumb
-setClass("occumbFit", slots = c(fit = "jagsUI", data = "occumbData"))
+setClass("occumbFit", slots = c(fit = "jagsUI",
+                                data = "occumbData",
+                                occumb_args = "list"))
 
 #' @title Model-fitting function.
 #' 
@@ -204,7 +206,21 @@ occumb <- function(formula_phi = ~ 1,
                         parallel = parallel, ...)
 
     # Output
-    out <- methods::new("occumbFit", fit = fit, data = data)
+    out <- methods::new("occumbFit",
+                        fit = fit,
+                        data = data,
+                        occumb_args = c(
+                            list(formula_phi = formula_phi,
+                                 formula_theta = formula_theta,
+                                 formula_psi = formula_psi,
+                                 formula_phi_shared = formula_phi_shared,
+                                 formula_theta_shared = formula_theta_shared,
+                                 formula_psi_shared = formula_psi_shared,
+                                 prior_prec = prior_prec,
+                                 prior_ulim = prior_ulim),
+                            list(...)
+                        )
+    )
     out
 }
 
@@ -218,7 +234,7 @@ qc_occumb <- function(data,
                       formula_psi_shared) {
     # Check data
     if (!inherits(data, "occumbData"))
-        stop("An occumbData class object is expected for data")
+        stop("An occumbData class object is expected for data\n")
 
     # Check formulas
     formulas <- c("formula_phi",
@@ -235,7 +251,7 @@ qc_occumb <- function(data,
     bad_formula[5] <- !inherits(formula_theta_shared, "formula")
     bad_formula[6] <- !inherits(formula_psi_shared, "formula")
     if (any(bad_formula))
-        stop(sprintf("Formula is expected for: %s",
+        stop(sprintf("Formula is expected for: %s\n",
                      paste(formulas[bad_formula], collapse = ", ")))
 }
 
@@ -274,6 +290,10 @@ set_modargs <- function(formula_phi,
     theta_shared <- formula_theta_shared != ~ 1
     psi_shared   <- formula_psi_shared   != ~ 1
 
+    type_phi   <- set_phi_theta(formula_phi, formula_phi_shared, data)
+    type_theta <- set_phi_theta(formula_theta, formula_theta_shared, data)
+    type_psi   <- set_psi(formula_psi, formula_psi_shared, data)
+
     # phi_shared
 
     if (phi_shared) {
@@ -290,7 +310,7 @@ set_modargs <- function(formula_phi,
         phi_shared_main_effects <- main_effects(terms(formula_phi_shared))
 
         # For phi = "ijk"
-        if (any(phi_shared_main_effects %in% names(data@repl_cov))) {
+        if (type_phi == "ijk") {
             # Generate covariate objects
             for (n in seq_along(phi_shared_main_effects)) {
                 if (phi_shared_main_effects[n] %in% names(data@spec_cov))
@@ -308,7 +328,7 @@ set_modargs <- function(formula_phi,
             M_phi_shared <- dim(cov_phi_shared)[4]
 
         # For phi = "ij"
-        } else if (any(phi_shared_main_effects %in% names(data@site_cov))) {
+        } else if (type_phi == "ij") {
             # Generate covariate objects
             for (n in seq_along(phi_shared_main_effects)) {
                 if (phi_shared_main_effects[n] %in% names(data@spec_cov))
@@ -353,7 +373,7 @@ set_modargs <- function(formula_phi,
         theta_shared_main_effects <- main_effects(terms(formula_theta_shared))
 
         # For theta = "ijk"
-        if (any(theta_shared_main_effects %in% names(data@repl_cov))) {
+        if (type_theta == "ijk") {
             # Generate covariate objects
             for (n in seq_along(theta_shared_main_effects)) {
                 if (theta_shared_main_effects[n] %in% names(data@spec_cov))
@@ -371,7 +391,7 @@ set_modargs <- function(formula_phi,
             M_theta_shared <- dim(cov_theta_shared)[4]
 
         # For theta = "ij"
-        } else if (any(theta_shared_main_effects %in% names(data@site_cov))) {
+        } else if (type_theta == "ij") {
             # Generate covariate objects
             for (n in seq_along(theta_shared_main_effects)) {
                 if (theta_shared_main_effects[n] %in% names(data@spec_cov))
@@ -414,7 +434,7 @@ set_modargs <- function(formula_phi,
         psi_shared_main_effects <- main_effects(terms(formula_psi_shared))
 
         # For psi = "ij"
-        if (any(psi_shared_main_effects %in% names(data@site_cov))) {
+        if (type_psi == "ij") {
 
             # Generate covariate objects
             for (n in seq_along(psi_shared_main_effects)) {
@@ -449,9 +469,15 @@ set_modargs <- function(formula_phi,
     ## phi
 
     if (formula_phi == ~ 1) {
-        cov_phi <- 1
-        M       <- M + 1
-        m_phi   <- 1
+        if (phi_shared & type_phi == "ijk") {
+            cov_phi <- array(1, dim = c(dim(data@y)[2], dim(data@y)[3], 1))
+        } else if (phi_shared & type_phi == "ij") {
+            cov_phi <- matrix(1, nrow = dim(data@y)[2], ncol = 1)
+        } else {
+            cov_phi <- 1
+        }
+        M     <- M + 1
+        m_phi <- 1
     } else {
         # Stop when formula_phi does not have an intercept
         check_intercept(formula_phi, "phi")
@@ -464,43 +490,49 @@ set_modargs <- function(formula_phi,
         phi_main_effects <- main_effects(terms(formula_phi))
 
         # For phi = "ijk"
-        if ((any(phi_main_effects %in% names(data@repl_cov)))) {
+        if (type_phi == "ijk") {
             # Generate covariate objects
             for (n in seq_along(phi_main_effects)) {
                 if (phi_main_effects[n] %in% names(data@site_cov))
-                    eval(parse(text = sprintf("%s <- rep(rep(extract_covariate(phi_main_effects[%s], data), each = dim(data@y)[1]), dim(data@y)[3])", phi_main_effects[n], n)))
+                    eval(parse(text = sprintf("%s <- rep(extract_covariate(phi_main_effects[%s], data), dim(data@y)[3])", phi_main_effects[n], n)))
                 if (phi_main_effects[n] %in% names(data@repl_cov))
-                    eval(parse(text = sprintf("%s <- rep(extract_covariate(phi_main_effects[%s], data), each = dim(data@y)[1])", phi_main_effects[n], n)))
+                    eval(parse(text = sprintf("%s <- c(extract_covariate(phi_main_effects[%s], data))", phi_main_effects[n], n)))
             }
 
             # Set design matrix
             dm <- set_design_matrix(formula_phi)
-            cov_phi <- array(dm, c(dim(data@y)[1], dim(data@y)[2], dim(data@y)[3], ncol(dm)))
-            dimnames(cov_phi)[[4]] <- colnames(dm)
-            M     <- M + dim(cov_phi)[4]
-            m_phi <- seq(1, dim(cov_phi)[4])
+            cov_phi <- array(dm, c(dim(data@y)[2], dim(data@y)[3], ncol(dm)))
+            dimnames(cov_phi)[[3]] <- colnames(dm)
+            M     <- M + dim(cov_phi)[3]
+            m_phi <- seq(1, dim(cov_phi)[3])
 
         # For phi = "ij"
         } else {
             # Generate covariate objects
             for (n in seq_along(phi_main_effects))
-                eval(parse(text = sprintf("%s <- rep(extract_covariate(phi_main_effects[%s], data), each = dim(data@y)[1])", phi_main_effects[n], n)))
+                eval(parse(text = sprintf("%s <- extract_covariate(phi_main_effects[%s], data)", phi_main_effects[n], n)))
 
             # Set design matrix
             dm <- set_design_matrix(formula_phi)
-            cov_phi <- array(dm, c(dim(data@y)[1], dim(data@y)[2], ncol(dm)))
-            dimnames(cov_phi)[[3]] <- colnames(dm)
-            M       <- M + dim(cov_phi)[3]
-            m_phi <- seq(1, dim(cov_phi)[3])
+            cov_phi <- matrix(dm, nrow = dim(data@y)[2], ncol = ncol(dm))
+            colnames(cov_phi) <- colnames(dm)
+            M     <- M + ncol(cov_phi)
+            m_phi <- seq(1, ncol(cov_phi))
         }
     }
 
     ## theta
 
     if (formula_theta == ~ 1) {
-        cov_theta <- 1
-        M         <- M + 1
-        m_theta   <- seq(m_phi[length(m_phi)] + 1, m_phi[length(m_phi)] + 1)
+        if (theta_shared & type_theta == "ijk") {
+            cov_theta <- array(1, dim = c(dim(data@y)[2], dim(data@y)[3], 1))
+        } else if (theta_shared & type_theta == "ij") {
+            cov_theta <- matrix(1, nrow = dim(data@y)[2], ncol = 1)
+        } else {
+            cov_theta <- 1
+        }
+        M       <- M + 1
+        m_theta <- seq(m_phi[length(m_phi)] + 1, m_phi[length(m_phi)] + 1)
     } else {
         # Stop when formula_theta does not have an intercept
         check_intercept(formula_theta, "theta")
@@ -513,45 +545,48 @@ set_modargs <- function(formula_phi,
         theta_main_effects <- main_effects(terms(formula_theta))
 
         # For theta = "ijk"
-        if ((any(theta_main_effects %in% names(data@repl_cov)))) {
+        if (type_theta == "ijk") {
             # Generate covariate objects
             for (n in seq_along(theta_main_effects)) {
                 if (theta_main_effects[n] %in% names(data@site_cov))
-                    eval(parse(text = sprintf("%s <- rep(rep(extract_covariate(theta_main_effects[%s], data), each = dim(data@y)[1]), dim(data@y)[3])", theta_main_effects[n], n)))
+                    eval(parse(text = sprintf("%s <- rep(extract_covariate(theta_main_effects[%s], data), dim(data@y)[3])", theta_main_effects[n], n)))
                 if (theta_main_effects[n] %in% names(data@repl_cov))
-                    eval(parse(text = sprintf("%s <- rep(extract_covariate(theta_main_effects[%s], data), each = dim(data@y)[1])", theta_main_effects[n], n)))
+                    eval(parse(text = sprintf("%s <- c(extract_covariate(theta_main_effects[%s], data))", theta_main_effects[n], n)))
             }
 
             # Set design matrix
             dm <- set_design_matrix(formula_theta)
-            cov_theta <- array(dm, c(dim(data@y)[1], dim(data@y)[2], dim(data@y)[3], ncol(dm)))
-            dimnames(cov_theta)[[4]] <- colnames(dm)
-            M       <- M + dim(cov_theta)[4]
-            m_theta <- seq(m_phi + 1, m_phi + dim(cov_theta)[4])
+            cov_theta <- array(dm, c(dim(data@y)[2], dim(data@y)[3], ncol(dm)))
+            dimnames(cov_theta)[[3]] <- colnames(dm)
+            M       <- M + dim(cov_theta)[3]
+            m_theta <- seq(m_phi[length(m_phi)] + 1,
+                           m_phi[length(m_phi)] + dim(cov_theta)[3])
 
         # For theta = "ij"
         } else {
             # Generate covariate objects
             for (n in seq_along(theta_main_effects))
-                eval(parse(text = sprintf("%s <- rep(extract_covariate(theta_main_effects[%s], data), each = dim(data@y)[1])", theta_main_effects[n], n)))
+                eval(parse(text = sprintf("%s <- extract_covariate(theta_main_effects[%s], data)", theta_main_effects[n], n)))
 
             # Set design matrix
             dm <- set_design_matrix(formula_theta)
-            cov_theta <- array(dm, c(dim(data@y)[1], dim(data@y)[2], ncol(dm)))
-            dimnames(cov_theta)[[3]] <- colnames(dm)
-            M       <- M + dim(cov_theta)[3]
-            m_theta <- seq(m_phi + 1, m_phi + dim(cov_theta)[3])
+            cov_theta <- matrix(dm, nrow = dim(data@y)[2], ncol = ncol(dm))
+            colnames(cov_theta) <- colnames(dm)
+            M       <- M + ncol(cov_theta)
+            m_theta <- seq(m_phi[length(m_phi)] + 1,
+                           m_phi[length(m_phi)] + ncol(cov_theta))
         }
     }
 
     ## psi
 
     if (formula_psi == ~ 1) {
-        cov_psi <- 1
-        M       <- M + 1
-        m_psi   <- seq(m_theta[length(m_theta)] + 1, m_theta[length(m_theta)] + 1)
-
-    # For psi = "ij"
+        if (psi_shared & type_psi == "ij")
+            cov_psi <- matrix(1, nrow = dim(data@y)[2], ncol = 1)
+        else
+            cov_psi <- 1
+        M     <- M + 1
+        m_psi <- seq(m_theta[length(m_theta)] + 1, m_theta[length(m_theta)] + 1)
     } else {
         # Stop when formula_psi does not have an intercept
         check_intercept(formula_psi, "psi")
@@ -561,29 +596,30 @@ set_modargs <- function(formula_phi,
         # Generate covariate objects
         psi_main_effects <- main_effects(terms(formula_psi))
         for (n in seq_along(psi_main_effects))
-            eval(parse(text = sprintf("%s <- rep(extract_covariate(psi_main_effects[%s], data), each = dim(data@y)[1])", psi_main_effects[n], n)))
+            eval(parse(text = sprintf("%s <- extract_covariate(psi_main_effects[%s], data)", psi_main_effects[n], n)))
 
         # Set design matrix
         dm <- set_design_matrix(formula_psi)
-        cov_psi <- array(dm, c(dim(data@y)[1], dim(data@y)[2], ncol(dm)))
-        dimnames(cov_psi)[[3]] <- colnames(dm)
-        M       <- M + dim(cov_psi)[[3]]
-        m_psi   <- seq(m_theta + 1, m_theta + dim(cov_psi)[[3]])
+        cov_psi <- matrix(dm, nrow = dim(data@y)[2], ncol = ncol(dm))
+        colnames(cov_psi) <- colnames(dm)
+        M     <- M + ncol(cov_psi)
+        m_psi <- seq(m_theta[length(m_theta)] + 1,
+                     m_theta[length(m_theta)] + ncol(cov_psi))
     }
 
-    out <- list(phi   = set_phi_theta(formula_phi, formula_phi_shared, data),
-                theta = set_phi_theta(formula_theta, formula_theta_shared, data),
-                psi   = set_psi(formula_psi, formula_psi_shared, data),
-                phi_shared       = phi_shared,
-                theta_shared     = theta_shared,
-                psi_shared       = psi_shared,
-                M                = M,
-                cov_phi          = cov_phi,
-                cov_theta        = cov_theta,
-                cov_psi          = cov_psi,
-                m_phi            = m_phi,
-                m_theta          = m_theta,
-                m_psi            = m_psi)
+    out <- list(phi          = type_phi,
+                theta        = type_theta,
+                psi          = type_psi,
+                phi_shared   = phi_shared,
+                theta_shared = theta_shared,
+                psi_shared   = psi_shared,
+                M            = M,
+                cov_phi      = cov_phi,
+                cov_theta    = cov_theta,
+                cov_psi      = cov_psi,
+                m_phi        = m_phi,
+                m_theta      = m_theta,
+                m_psi        = m_psi)
 
     if (phi_shared) {
         out$M_phi_shared   <- M_phi_shared
@@ -738,13 +774,13 @@ write_jags_model <- function(phi, theta, psi,
         if (phi == "ij")
             model <- c(model,
                        "        for (j in 1:J) {",
-                       "            log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[i, j, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, ])",
+                       "            log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[j, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, ])",
                        "        }")
         if (phi == "ijk")
             model <- c(model,
                        "        for (j in 1:J) {",
                        "            for (k in 1:K) {",
-                       "                log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[i, j, k, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, k, ])",
+                       "                log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[j, k, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, k, ])",
                        "            }",
                        "        }")
     } else {
@@ -754,13 +790,13 @@ write_jags_model <- function(phi, theta, psi,
         if (phi == "ij")
             model <- c(model,
                        "        for (j in 1:J) {",
-                       "            log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[i, j, ])",
+                       "            log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[j, ])",
                        "        }")
         if (phi == "ijk")
             model <- c(model,
                        "        for (j in 1:J) {",
                        "            for (k in 1:K) {",
-                       "                log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[i, j, k, ])",
+                       "                log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[j, k, ])",
                        "            }",
                        "        }")
     }
@@ -772,13 +808,13 @@ write_jags_model <- function(phi, theta, psi,
         if (theta == "ij")
             model <- c(model,
                        "        for (j in 1:J) {",
-                       "            logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ]) + inprod(beta_shared[], cov_theta_shared[i, j, ])",
+                       "            logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[j, ]) + inprod(beta_shared[], cov_theta_shared[i, j, ])",
                        "        }")
         if (theta == "ijk")
             model <- c(model,
                        "        for (j in 1:J) {",
                        "            for (k in 1:K) {",
-                       "                logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ]) + inprod(beta_shared[], cov_theta_shared[i, j, k, ])",
+                       "                logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[j, k, ]) + inprod(beta_shared[], cov_theta_shared[i, j, k, ])",
                        "            }",
                        "        }")
     } else {
@@ -788,13 +824,13 @@ write_jags_model <- function(phi, theta, psi,
         if (theta == "ij")
             model <- c(model,
                        "        for (j in 1:J) {",
-                       "            logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ])",
+                       "            logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[j, ])",
                        "        }")
         if (theta == "ijk")
             model <- c(model,
                        "        for (j in 1:J) {",
                        "            for (k in 1:K) {",
-                       "                logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ])",
+                       "                logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[j, k, ])",
                        "            }",
                        "        }")
     }
@@ -806,7 +842,7 @@ write_jags_model <- function(phi, theta, psi,
         if (psi == "ij")
             model <- c(model,
                        "        for (j in 1:J) {",
-                       "            logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[i, j, ]) + inprod(gamma_shared[], cov_psi_shared[i, j, ])",
+                       "            logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[j, ]) + inprod(gamma_shared[], cov_psi_shared[i, j, ])",
                        "        }")
     } else {
         if (psi == "i")
@@ -815,7 +851,7 @@ write_jags_model <- function(phi, theta, psi,
         if (psi == "ij")
             model <- c(model,
                        "        for (j in 1:J) {",
-                       "            logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[i, j, ])",
+                       "            logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[j, ])",
                        "        }")
     }
 
@@ -890,7 +926,7 @@ set_phi_theta <- function(formula, formula_shared, data) {
 
 check_intercept <- function(formula, type = c("psi", "psi_shared")) {
     if (!has_intercept(formula))
-        stop(sprintf("No intercept in formula_%s: remove 0 or -1 from the formula",
+        stop(sprintf("No intercept in formula_%s: remove 0 or -1 from the formula\n",
                      type))
 }
 
@@ -907,27 +943,27 @@ check_wrong_terms <- function(formula, correct_terms,
     if (any(wrong_terms)) {
         if (type == "phi")
             stop(sprintf("Unexpected terms in formula_%s: %s
-Note that species covariates are not allowed for formula_%s.",
+Note that species covariates are not allowed for formula_%s.\n",
                          type, test_terms[wrong_terms], type)) 
         if (type == "theta")
             stop(sprintf("Unexpected terms in formula_%s: %s
-Note that species covariates are not allowed for formula_%s.",
+Note that species covariates are not allowed for formula_%s.\n",
                          type, test_terms[wrong_terms], type)) 
         if (type == "psi")
             stop(sprintf("Unexpected terms in formula_%s: %s
-Note that only site covariates are allowed for formula_%s.",
+Note that only site covariates are allowed for formula_%s.\n",
                          type, test_terms[wrong_terms], type)) 
         if (type == "phi_shared")
             stop(sprintf("Unexpected terms in formula_%s: %s
-Make sure they are found in either spec_cov, site_cov, or repl_cov.",
+Make sure they are found in either spec_cov, site_cov, or repl_cov.\n",
                          type, test_terms[wrong_terms])) 
         if (type == "theta_shared")
             stop(sprintf("Unexpected terms in formula_%s: %s
-Make sure they are found in either spec_cov, site_cov, or repl_cov.",
+Make sure they are found in either spec_cov, site_cov, or repl_cov.\n",
                          type, test_terms[wrong_terms])) 
         if (type == "psi_shared")
             stop(sprintf("Unexpected terms in formula_%s: %s
-Note that only site covariates, species covariates, or their interactions are allowed for formula_%s.",
+Note that only site covariates, species covariates, or their interactions are allowed for formula_%s.\n",
                          type, test_terms[wrong_terms], type)) 
     }
 }
@@ -981,10 +1017,6 @@ set_design_matrix <- function(formula, omit_intercept = FALSE) {
 # Getter ----------------------------------------------------------------------
 get_data <- function(occumbFit, variable) {
     eval(parse(text = paste0("occumbFit@data@", variable)))
-}
-
-get_post_samples <- function(occumbFit, parameter) {
-    eval(parse(text = paste0("occumbFit@fit$sims.list$", parameter)))
 }
 # -----------------------------------------------------------------------------
 

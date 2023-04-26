@@ -253,13 +253,13 @@ test_that("JAGS code is correct for 144 available models", {
             if (cases$phi[i] == "ij")
                 ans <- c(ans,
                          "        for (j in 1:J) {",
-                         "            log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[i, j, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, ])",
+                         "            log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[j, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, ])",
                          "        }")
             if (cases$phi[i] == "ijk")
                 ans <- c(ans,
                          "        for (j in 1:J) {",
                          "            for (k in 1:K) {",
-                         "                log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[i, j, k, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, k, ])",
+                         "                log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[j, k, ]) + inprod(alpha_shared[], cov_phi_shared[i, j, k, ])",
                          "            }",
                          "        }")
         } else {
@@ -269,13 +269,13 @@ test_that("JAGS code is correct for 144 available models", {
             if (cases$phi[i] == "ij")
                 ans <- c(ans,
                          "        for (j in 1:J) {",
-                         "            log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[i, j, ])",
+                         "            log(phi[i, j]) <- inprod(alpha[i, ], cov_phi[j, ])",
                          "        }")
             if (cases$phi[i] == "ijk")
                 ans <- c(ans,
                          "        for (j in 1:J) {",
                          "            for (k in 1:K) {",
-                         "                log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[i, j, k, ])",
+                         "                log(phi[i, j, k]) <- inprod(alpha[i, ], cov_phi[j, k, ])",
                          "            }",
                          "        }")
         }
@@ -287,13 +287,13 @@ test_that("JAGS code is correct for 144 available models", {
             if (cases$theta[i] == "ij")
                 ans <- c(ans,
                          "        for (j in 1:J) {",
-                         "            logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ]) + inprod(beta_shared[], cov_theta_shared[i, j, ])",
+                         "            logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[j, ]) + inprod(beta_shared[], cov_theta_shared[i, j, ])",
                          "        }")
             if (cases$theta[i] == "ijk")
                 ans <- c(ans,
                          "        for (j in 1:J) {",
                          "            for (k in 1:K) {",
-                         "                logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ]) + inprod(beta_shared[], cov_theta_shared[i, j, k, ])",
+                         "                logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[j, k, ]) + inprod(beta_shared[], cov_theta_shared[i, j, k, ])",
                          "            }",
                          "        }")
         } else {
@@ -303,13 +303,13 @@ test_that("JAGS code is correct for 144 available models", {
             if (cases$theta[i] == "ij")
                 ans <- c(ans,
                          "        for (j in 1:J) {",
-                         "            logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[i, j, ])",
+                         "            logit(theta[i, j]) <- inprod(beta[i, ], cov_theta[j, ])",
                          "        }")
             if (cases$theta[i] == "ijk")
                 ans <- c(ans,
                          "        for (j in 1:J) {",
                          "            for (k in 1:K) {",
-                         "                logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[i, j, k, ])",
+                         "                logit(theta[i, j, k]) <- inprod(beta[i, ], cov_theta[j, k, ])",
                          "            }",
                          "        }")
         }
@@ -321,7 +321,7 @@ test_that("JAGS code is correct for 144 available models", {
             if (cases$psi[i] == "ij")
                 ans <- c(ans,
                          "        for (j in 1:J) {",
-                         "            logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[i, j, ]) + inprod(gamma_shared[], cov_psi_shared[i, j, ])",
+                         "            logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[j, ]) + inprod(gamma_shared[], cov_psi_shared[i, j, ])",
                          "        }")
         } else {
             if (cases$psi[i] == "i")
@@ -330,7 +330,7 @@ test_that("JAGS code is correct for 144 available models", {
             if (cases$psi[i] == "ij")
                 ans <- c(ans,
                          "        for (j in 1:J) {",
-                         "            logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[i, j, ])",
+                         "            logit(psi[i, j]) <- inprod(gamma[i, ], cov_psi[j, ])",
                          "        }")
         }
 
@@ -387,30 +387,5 @@ test_that("Outputs are correct when proper variable names are given", {
     expect_identical(get_data(fit, "spec_cov"), spec_cov)
     expect_identical(get_data(fit, "site_cov"), site_cov)
     expect_identical(get_data(fit, "repl_cov"), repl_cov)
-})
-
-
-### Tests for get_post_samples ------------------------------------------------
-test_that("Outputs are correct when proper parameter names are given", {
-    I <- 2; J <- 2; K <- 2
-    y <- array(sample.int(I * J * K), dim = c(I, J, K))
-    spec_cov <- list(cov1 = rnorm(I))
-    site_cov <- list(cov2 = rnorm(J), cov3 = factor(1:J))
-    repl_cov <- list(cov4 = matrix(rnorm(J * K), J, K))
-    data <- occumbData(
-        y = y,
-        spec_cov = spec_cov,
-        site_cov = site_cov,
-        repl_cov = repl_cov)
-
-    fit <- occumb(data = data,
-                  n.chains = 1, n.burnin = 10, n.thin = 1, n.iter = 20,
-                  verbose = FALSE)
-
-    lpar <- names(fit@fit$sims.list)
-    for (i in seq_along(lpar)) {
-        expect_identical(get_post_samples(fit, lpar[i]),
-                         eval(parse(text = paste0("fit@fit$sims.list$", lpar[i]))))
-    }
 })
 

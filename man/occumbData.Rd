@@ -7,7 +7,8 @@
 occumbData(y, spec_cov = NULL, site_cov = NULL, repl_cov = NULL)
 }
 \arguments{
-\item{y}{A 3-D array of sequence read counts (integer values).
+\item{y}{A 3-D array of sequence read counts (integer values) that may have
+a \code{dimnames} attribute.
 Dimensions are ordered by species, site, and replicate.
 Data for missing replicates must be represented by zero vectors.
 NAs are not allowed.}
@@ -41,6 +42,8 @@ function \code{\link{occumb}()}.
 \details{
 The element names for \code{spec_cov}, \code{site_cov}, and \code{repl_cov}
 must all be unique.
+If \code{y} has a \code{dimnames} attribute, it is retained in the resulting
+\code{occumbData} object and can be referenced in subsequent analyses.
 }
 \examples{
 # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
@@ -49,6 +52,17 @@ J <- 2 # Number of sites
 K <- 2 # Number of replicates
 data <- occumbData(
     y = array(sample.int(I * J * K), dim = c(I, J, K)),
+    spec_cov = list(cov1 = rnorm(I)),
+    site_cov = list(cov2 = rnorm(J),
+                    cov3 = factor(1:J)),
+    repl_cov = list(cov4 = matrix(rnorm(J * K), J, K)))
+
+# A case for named y (with species and site names)
+y_named <- array(sample.int(I * J * K), dim = c(I, J, K))
+dimnames(y_named) <- list(c("common species", "uncommon species"),
+                          c("good site", "bad site"), NULL)
+data_named <- occumbData(
+    y = y_named,
     spec_cov = list(cov1 = rnorm(I)),
     site_cov = list(cov2 = rnorm(J),
                     cov3 = factor(1:J)),

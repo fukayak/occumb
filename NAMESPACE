@@ -2,6 +2,8 @@
 
 export(eval_util_L)
 export(eval_util_R)
+export(get_post_samples)
+export(get_post_summary)
 export(gof)
 export(list_cond_L)
 export(list_cond_R)
@@ -11,4 +13,3 @@ export(occumbData)
 exportMethods(plot)
 exportMethods(print)
 exportMethods(summary)
-importFrom(foreach,'%do%')

@@ -4,12 +4,19 @@
 \alias{gof}
 \title{Goodness-of-fit assessment of the fitted model.}
 \usage{
-gof(fit, stats = c("Freeman_Tukey", "deviance"), plot = TRUE)
+gof(
+  fit,
+  stats = c("Freeman_Tukey", "deviance"),
+  cores = parallel::detectCores(),
+  plot = TRUE
+)
 }
 \arguments{
 \item{fit}{An \code{occumbFit} object.}
 
 \item{stats}{The discrepancy statistics to be applied.}
+
+\item{cores}{The number of cores to use for parallelization.}
 
 \item{plot}{Logical, determine if draw scatter plots of the fit statistics.}
 }
@@ -48,6 +55,10 @@ An extreme Bayesian \eqn{p}-value may indicate an inadequate model fit.
 See, e.g., Gelman et al. (2014), Kéry and Royle (2016), and
 Conn et al. (2018) for more details on the procedures for posterior
 predictive checking.
+
+Computations can be run in parallel on multiple CPU cores where the \code{cores}
+argument controls the degree of parallelization. By default, all
+cores available in the user's environment are used.
 }
 \section{References}{
 
@@ -84,6 +95,6 @@ fit <- occumb(data = data)
 
 # Goodness-of-fit assessment
 gof_result <- gof(fit)
-gof_result$p_value  # print p-values
+gof_result$p_value  # print p-value
 }
 }

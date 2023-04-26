@@ -24,8 +24,13 @@
 #'  See, e.g., Gelman et al. (2014), Kéry and Royle (2016), and
 #'  Conn et al. (2018) for more details on the procedures for posterior
 #'  predictive checking.
+#'
+#'  Computations can be run in parallel on multiple CPU cores where the `cores`
+#'  argument controls the degree of parallelization. By default, all
+#'  cores available in the user's environment are used.
 #' @param fit An \code{occumbFit} object.
 #' @param stats The discrepancy statistics to be applied.
+#' @param cores The number of cores to use for parallelization.
 #' @param plot Logical, determine if draw scatter plots of the fit statistics.
 #' @return A list with the following named elements:
 #'      \describe{
@@ -66,15 +71,13 @@
 #' 
 #' # Goodness-of-fit assessment
 #' gof_result <- gof(fit)
-#' gof_result$p_value  # print p-values
+#' gof_result$p_value  # print p-value
 #' }
-#' @importFrom foreach '%do%'
 #' @export
 gof <- function(fit,
                 stats = c("Freeman_Tukey", "deviance"),
+                cores = parallel::detectCores(),
                 plot = TRUE) {
-
-    parallel <- FALSE   # To be implemented...
 
     # Validate arguments
     assert_occumbFit(fit)
@@ -88,20 +91,90 @@ gof <- function(fit,
     pi <- get_post_samples(fit, "pi")
     M  <- dim(pi)[1]
 
-    # Generate replicate data
-    if (parallel) { # Currently not available
+    # Generate replicate data and calculate fit statistics
+    if (cores == 1) {
+        y_rep <- lapply(X = seq_len(M),
+                        FUN = get_y_rep,
+                        y = y,
+                        N = N,
+                        pi = pi)
+        stats_obs <- unlist(
+            lapply(X = seq_len(M),
+                   FUN = get_stats,
+                   stats = stats,
+                   y = y,
+                   N = N,
+                   pi = pi)
+        )
+        stats_rep <- unlist(
+            lapply(X = seq_len(M),
+                   FUN = .get_stats,
+                   stats = stats,
+                   y_rep = y_rep,
+                   N = N,
+                   pi = pi)
+        )
     } else {
-        y_rep <- foreach::foreach(m = seq_len(M)) %do%
-            get_y_rep(y, N, pi[m, , , ])
-    }
+        if (.Platform$OS.type == "windows") {
+            # On Windows use makePSOCKcluster() and parLapply() for multiple cores
+            cl <- parallel::makePSOCKcluster(cores)
+            parallel::clusterEvalQ(cl, library(occumb))
+            on.exit(parallel::stopCluster(cl))
+            y_rep <- parallel::parLapply(cl = cl,
+                                         X = seq_len(M),
+                                         fun = get_y_rep,
+                                         y = y,
+                                         N = N,
+                                         pi = pi)
 
-    # Calculate fit statistics
-    if (parallel) { # Currently not available
-    } else {
-        stats_obs <- foreach::foreach(m = seq_len(M), .combine = c) %do%
-            get_stats(y, N, pi[m, , , ], stats)
-        stats_rep <- foreach::foreach(m = seq_len(M), .combine = c) %do%
-            get_stats(y_rep[[m]], N, pi[m, , , ], stats)
+            stats_obs <- unlist(
+                parallel::parLapply(cl = cl,
+                                    X = seq_len(M),
+                                    fun = get_stats,
+                                    stats = stats,
+                                    y = y,
+                                    N = N,
+                                    pi = pi)
+            )
+
+            stats_rep <- unlist(
+                parallel::parLapply(cl = cl,
+                                    X = seq_len(M),
+                                    fun = .get_stats,
+                                    stats = stats,
+                                    y_rep = y_rep,
+                                    N = N,
+                                    pi = pi)
+            )
+        } else {
+            # On Mac or Linux use mclapply() for multiple cores
+            y_rep <- parallel::mclapply(mc.cores = cores,
+                                        X = seq_len(M),
+                                        FUN = get_y_rep,
+                                        y = y,
+                                        N = N,
+                                        pi = pi)
+
+            stats_obs <- unlist(
+                parallel::mclapply(mc.cores = cores,
+                                    X = seq_len(M),
+                                    FUN = get_stats,
+                                    stats = stats,
+                                    y = y,
+                                    N = N,
+                                    pi = pi)
+            )
+
+            stats_rep <- unlist(
+                parallel::mclapply(mc.cores = cores,
+                                   X = seq_len(M),
+                                   FUN = .get_stats,
+                                   stats = stats,
+                                   y_rep = y_rep,
+                                   N = N,
+                                   pi = pi)
+            )
+        }
     }
 
     # Output (plot and object)
@@ -120,13 +193,13 @@ Freeman_Tukey <- function(y, N, pi) {
 # -----------------------------------------------------------------------------
 
 # Generate replicate data
-get_y_rep <- function(y, N, pi) {
+get_y_rep <- function(m, y, N, pi) {
     I <- dim(y)[1]; J <- dim(y)[2]; K <- dim(y)[3]
     y_rep_m <- array(dim = c(I, J, K))
     for (j in seq_len(J)) {
         for (k in seq_len(K)) {
             if (N[j, k] > 0) {
-                y_rep_m[, j, k] <- stats::rmultinom(1, N[j, k], pi[, j, k])
+                y_rep_m[, j, k] <- stats::rmultinom(1, N[j, k], pi[m, , j, k])
             } else {
                 y_rep_m[, j, k] <- 0
             }
@@ -136,16 +209,20 @@ get_y_rep <- function(y, N, pi) {
 }
 
 # Calculate fit statistics
-get_stats <- function(y, N, pi, stats) {
+.get_stats <- function(m, stats, y_rep, N, pi) {
+    get_stats(m, stats, y_rep[[m]], N, pi)
+}
+
+get_stats <- function(m, stats, y, N, pi) {
     J <- dim(y)[2]; K <- dim(y)[3]
     stats_m <- stats_m <- matrix(nrow = J, ncol = K)
     for (j in seq_len(J)) {
         for (k in seq_len(K)) {
             if (stats == "Freeman_Tukey") {
-                stats_m[j, k]  <- Freeman_Tukey(y[, j, k], N[j, k], pi[, j, k])
+                stats_m[j, k]  <- Freeman_Tukey(y[, j, k], N[j, k], pi[m, , j, k])
             }
             if (stats == "deviance") {
-                stats_m[j, k] <- -2 * llmulti(y[, j, k], N[j, k], pi[, j, k])
+                stats_m[j, k] <- -2 * llmulti(y[, j, k], N[j, k], pi[m, , j, k])
             }
         }
     }
