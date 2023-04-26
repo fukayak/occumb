@@ -1,4 +1,5 @@
 url: https://fukayak.github.io/occumb/
 template:
   bootstrap: 5
-
+development:
+  mode: auto
