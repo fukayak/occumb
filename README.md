@@ -4,7 +4,7 @@
 [![R-CMD-check](https://github.com/fukayak/occumb/workflows/R-CMD-check/badge.svg)](https://github.com/fukayak/occumb/actions)
 <!-- badges: end -->
 
-occumb is an R package that aims to apply [the multispecies site occupancy modeling for environmental DNA (eDNA) metabarcoding](https://doi.org/10.1111/2041-210X.13732) easily.
+occumb is an R package that provides functionalities to apply [the multispecies site occupancy modeling for environmental DNA (eDNA) metabarcoding](https://doi.org/10.1111/2041-210X.13732) easily.
 
 This package allows the users to fit the model with a fully Bayesian approach, using the conventional formulas in R. It enables the analysis of the detectability of species in different stages of the workflow of eDNA metabarcoding and inference of species site occupancy while accounting for false negatives. It also provides the functionality for a model-based inference to assist the optimization of the study design.
 
@@ -19,8 +19,9 @@ The current programs are an alpha version released to present the concept of pac
 - Specifications may change significantly in the future.
 
 ## Installation
+Because occumb relies on JAGS to run MCMC, you need first install it following the instructions on the [JAGS homepage](https://mcmc-jags.sourceforge.io/).
 
-You can install the latest version of occumb from the GitHub repository using the `install_github()` function in remotes (or devtools) package:
+You can then install the latest version of occumb from the GitHub repository using the `install_github()` function in the [remotes](https://github.com/r-lib/remotes) package:
 
 ``` r
 remotes::install_github("fukayak/occumb", ref = "main")
@@ -28,13 +29,14 @@ remotes::install_github("fukayak/occumb", ref = "main")
 
 ## Example
 
-The current version (v0.4.x) provides the following main functions:
+The current version (v0.5.x) provides the following main functions:
 
 - `occumbData()` builds a dataset object used for the multispecies site occupancy modeling.
 - `occumb()` fits a model, possibly with species, site, and replicate covariates.
 - `gof()` computes statistics for goodness-of-fit assessment of the model.
 - `loglik()` extracts the pointwise log-likelihood of the model.
-- `eval_util_L()` and `eval_util_R()` predicts expected utility (the expected number of detected species) at the local and regional scale, respectively.
+- `get_post_samples()` and `get_post_summary` extract posterior samples and summary of parameters from a model-fit object, respectively.
+- `eval_util_L()` and `eval_util_R()` predict expected utility (the expected number of detected species) at the local and regional scales, respectively.
 
 ``` r
 library(occumb)
@@ -53,11 +55,18 @@ data <- occumbData(
 # Fitting a null model (includes only species-specific intercepts)
 res0 <- occumb(data = data)
 
-# occumb() fits the model using jags() in the jagsUI package
-# You can thus get the same output as seen in the jagsUI results
+# occumb() fits the model using jags() in the jagsUI package.
+# You can thus get the same output as seen in the jagsUI results:
 res0
 summary(res0)
 plot(res0)
+
+# You can also extract posterior samples and posterior summaries of
+# specific parameters.
+# For example, the following lines get samples and summary for the
+# species site occupancy z:
+post_samples_z  <- get_post_samples(res0, "z")
+post_summary_z <- get_post_summary(res0, "z")
 
 # Add species-specific effects of site covariates in occupancy probabilities
 res1 <- occumb(formula_psi = ~ cov2, data = data)        # Continuous covariate
