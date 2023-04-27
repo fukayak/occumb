@@ -27,7 +27,6 @@ Imports:
 Collate: 
     'classes.R'
     'get_posterior.R'
-    'globals.R'
     'gof.R'
     'loglik.R'
     'occumbData.R'
