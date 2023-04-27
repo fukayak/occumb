@@ -1,3 +1,6 @@
+# occumb (development version)
+* Add `fish` data.
+
 # occumb 0.5.1 (2023/04/27)
 * Add pkgdown website.
 * Some bug fixes and internal changes.
