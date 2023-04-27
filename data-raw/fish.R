@@ -1,0 +1,13 @@
+## code to prepare `fish` dataset goes here
+setwd("<occumb directory>")
+devtools::load_all()
+
+load("./data-raw/data_fish.Rdata")
+fish <- occumbData(
+    y = y,
+    spec_cov = list(mismatch = mismatch),
+    site_cov = list(riverbank = riverbank),
+    repl_cov = NULL
+)
+
+usethis::use_data(fish, overwrite = TRUE)
