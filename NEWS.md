@@ -1,3 +1,7 @@
+# occumb 0.5.1 (2023/04/27)
+* Add pkgdown website.
+* Some bug fixes and internal changes.
+
 # occumb 0.5.0 (2023/04/26)
 * Add `get_post_samples()` and `get_post_summary()` functions.
 * Add option for parallel computation in `gof()` function.
