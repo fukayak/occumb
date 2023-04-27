@@ -206,20 +206,24 @@ occumb <- function(formula_phi = ~ 1,
                         parallel = parallel, ...)
 
     # Output
-    out <- methods::new("occumbFit",
-                        fit = fit,
-                        data = data,
-                        occumb_args = c(
-                            list(formula_phi = formula_phi,
-                                 formula_theta = formula_theta,
-                                 formula_psi = formula_psi,
-                                 formula_phi_shared = formula_phi_shared,
-                                 formula_theta_shared = formula_theta_shared,
-                                 formula_psi_shared = formula_psi_shared,
-                                 prior_prec = prior_prec,
-                                 prior_ulim = prior_ulim),
-                            list(...)
-                        )
+    out <- methods::new(
+        "occumbFit", fit = fit, data = data,
+        occumb_args = list(
+            formula_phi          = paste(as.character(formula_phi),
+                                         collapse = " "),
+            formula_theta        = paste(as.character(formula_theta),
+                                         collapse = " "),
+            formula_psi          = paste(as.character(formula_psi),
+                                         collapse = " "),
+            formula_phi_shared   = paste(as.character(formula_phi_shared),
+                                         collapse = " "),
+            formula_theta_shared = paste(as.character(formula_theta_shared),
+                                         collapse = " "),
+            formula_psi_shared   = paste(as.character(formula_psi_shared),
+                                         collapse = " "),
+            prior_prec           = prior_prec,
+            prior_ulim           = prior_ulim
+        )
     )
     out
 }

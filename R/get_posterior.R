@@ -153,12 +153,12 @@ qc_get_posterior <- function(fit, parameter) {
     # Identify rows to extract
     rows_extract <- function(fit, parameter) {
         # Get model arguments
-        margs <- set_modargs(fit@occumb_args$formula_phi,
-                             fit@occumb_args$formula_theta,
-                             fit@occumb_args$formula_psi,
-                             fit@occumb_args$formula_phi_shared,
-                             fit@occumb_args$formula_theta_shared,
-                             fit@occumb_args$formula_psi_shared,
+        margs <- set_modargs(stats::as.formula(fit@occumb_args$formula_phi),
+                             stats::as.formula(fit@occumb_args$formula_theta),
+                             stats::as.formula(fit@occumb_args$formula_psi),
+                             stats::as.formula(fit@occumb_args$formula_phi_shared),
+                             stats::as.formula(fit@occumb_args$formula_theta_shared),
+                             stats::as.formula(fit@occumb_args$formula_psi_shared),
                              fit@data)
 
         pattern <- paste0(parameter, "\\[")
@@ -188,12 +188,12 @@ add_attributes <- function(obj, fit, parameter,
                            type = c("samples", "summary")) {
 
     # Get model arguments
-    margs <- set_modargs(fit@occumb_args$formula_phi,
-                         fit@occumb_args$formula_theta,
-                         fit@occumb_args$formula_psi,
-                         fit@occumb_args$formula_phi_shared,
-                         fit@occumb_args$formula_theta_shared,
-                         fit@occumb_args$formula_psi_shared,
+    margs <- set_modargs(stats::as.formula(fit@occumb_args$formula_phi),
+                         stats::as.formula(fit@occumb_args$formula_theta),
+                         stats::as.formula(fit@occumb_args$formula_psi),
+                         stats::as.formula(fit@occumb_args$formula_phi_shared),
+                         stats::as.formula(fit@occumb_args$formula_theta_shared),
+                         stats::as.formula(fit@occumb_args$formula_psi_shared),
                          fit@data)
 
     dimnames_y <- dimnames(fit@data@y)
