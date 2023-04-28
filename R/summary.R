@@ -38,7 +38,7 @@ setMethod("summary", signature(object = "occumbData"),
                 return(labels)
         }
 
-        cat("An occumbData object: \n\n")
+        cat(crayon::bold("Sequence read conts: \n"))
         cat("Number of species, I =", dim(object@y)[1], "\n")
         cat("Number of sites, J =", dim(object@y)[2], "\n")
         cat("Maximum number of replicates per site, K =", dim(object@y)[3], "\n")
@@ -48,23 +48,23 @@ setMethod("summary", signature(object = "occumbData"),
         cat("Sequencing depth:", mean(N[N > 0]), "(average),",
             stats::sd(N[N > 0]), "(sd)", "\n\n")
 
-        cat("Species covariates: \n",
+        cat(crayon::bold("Species covariates: \n"),
             paste(get_list_cov(object@spec_cov), collapse = ", "),
             "\n")
-        cat("Site covariates: \n",
+        cat(crayon::bold("Site covariates: \n"),
             paste(get_list_cov(object@site_cov), collapse = ", "),
             "\n")
-        cat("Replicate covariates: \n",
+        cat(crayon::bold("Replicate covariates: \n"),
             paste(get_list_cov(object@repl_cov), collapse = ", "),
             "\n\n")
 
-        cat("Labels for species: \n",
+        cat(crayon::bold("Labels for species: \n"),
             paste(get_list_labels(dimnames(object@y)[[1]]), collapse = ", "),
             "\n")
-        cat("Labels for sites: \n",
+        cat(crayon::bold("Labels for sites: \n"),
             paste(get_list_labels(dimnames(object@y)[[2]]), collapse = ", "),
             "\n")
-        cat("Labels for replicates: \n",
+        cat(crayon::bold("Labels for replicates: \n"),
             paste(get_list_labels(dimnames(object@y)[[3]]), collapse = ", "),
             "\n")
     }

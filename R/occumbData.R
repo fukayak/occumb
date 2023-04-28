@@ -140,9 +140,11 @@ setClass("occumbData",
 #' )
 #'
 #' # Get an overview of the datasets
-#'  summary(data)
-#'  summary(data_named)
-#'  summary(fish)
+#' \dontrun{
+#' summary(data)
+#' summary(data_named)
+#' summary(fish)
+#' }
 #' @export
 occumbData <- function(y,
                        spec_cov = NULL,
