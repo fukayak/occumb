@@ -27,6 +27,7 @@ Imports:
 Collate: 
     'classes.R'
     'fish.R'
+    'fish_raw.R'
     'get_posterior.R'
     'gof.R'
     'loglik.R'
