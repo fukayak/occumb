@@ -34,7 +34,6 @@ reference:
   contents:
   - plot,occumbFit-method
   - print,occumbFit-method
-  - summary,occumbFit-method
 - title: "Dataset"
   desc: >
     Example dataset to illustrate function usage.

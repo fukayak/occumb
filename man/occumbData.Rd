@@ -75,4 +75,9 @@ fish <- occumbData(
     spec_cov = list(mismatch = fish_raw$mismatch),
     site_cov = list(riverbank = fish_raw$riverbank)
 )
+
+# Get an overview of the datasets
+ summary(data)
+ summary(data_named)
+ summary(fish)
 }
