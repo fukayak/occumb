@@ -1,5 +1,6 @@
 # occumb (development version)
 * Add `fish` and `fish_raw` data.
+* Add `summary` method for `occumbData` class.
 
 # occumb 0.5.1 (2023/04/27)
 * Add pkgdown website.
@@ -34,7 +35,7 @@
 # occumb v0.2.0 (2021/11/19)
 * Change occumbData class specification and `occumbData()` function.
 * Add `occumb()` function.
-* Add methods for occumbFit class: `plot`, `print`, `summary`.
+* Add methods for `occumbFit` class: `plot`, `print`, `summary`.
 
 # occumb v0.1.0 (2021/9/10)
 * Initial development of occumb package.
