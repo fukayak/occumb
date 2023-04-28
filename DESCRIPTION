@@ -1,6 +1,6 @@
 Package: occumb
 Title: Site Occupancy Modeling For Environmental DNA Metabarcoding
-Version: 0.5.1
+Version: 0.5.1.9001
 Authors@R: 
     person(given = "Keiichi",
            family = "Fukaya",
@@ -26,6 +26,8 @@ Imports:
     checkmate
 Collate: 
     'classes.R'
+    'fish.R'
+    'fish_raw.R'
     'get_posterior.R'
     'gof.R'
     'loglik.R'
@@ -37,3 +39,5 @@ Collate:
     'utility.R'
     'utils.R'
 URL: https://fukayak.github.io/occumb/
+Depends: 
+    R (>= 2.10)
