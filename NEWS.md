@@ -1,6 +1,7 @@
 # occumb (development version)
 * Add `fish` and `fish_raw` data.
 * Add `summary` method for `occumbData` class.
+* Fix a bug in `add_attribute4()` function.
 
 # occumb 0.5.1 (2023/04/27)
 * Add pkgdown website.
