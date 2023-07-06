@@ -39,8 +39,7 @@
 #'  `occumbFit` object contains a model with replicate covariates.
 #'
 #' Monte Carlo integration is executed in parallel on multiple CPU cores where
-#'  the `cores` argument controls the degree of parallelization. By default, all
-#'  cores available in the user's environment are used.
+#'  the `cores` argument controls the degree of parallelization.
 #' @param settings A data frame that specifies a set of conditions under which
 #'  the utility is evaluated. It must include a column named `K` and `N`, which
 #'  specifies the number of replicates per site and the sequencing depth per
@@ -93,7 +92,7 @@
 eval_util_L <- function(settings,
                         fit,
                         N_rep = 1,
-                        cores = parallel::detectCores()) {
+                        cores = 1L) {
 
     # Validate arguments
     qc_eval_util_L(settings, fit)
@@ -174,8 +173,7 @@ eval_util_L <- function(settings,
 #'  site or replicate covariates.
 #'
 #' Monte Carlo integration is executed in parallel on multiple CPU cores where
-#'  the `cores` argument controls the degree of parallelization. By default, all
-#'  cores available in the user's environment are used.
+#'  the `cores` argument controls the degree of parallelization.
 #' @param settings A data frame that specifies a set of conditions under which
 #'  the utility is evaluated. It must include a column named `J`, `K`, and `N`,
 #'  which specifies the number of sites, the number of replicates per site, and
@@ -241,7 +239,7 @@ eval_util_L <- function(settings,
 eval_util_R <- function(settings,
                         fit,
                         N_rep = 1,
-                        cores = parallel::detectCores()) {
+                        cores = 1L) {
 
     # Validate arguments ... to be added
     qc_eval_util_R(settings, fit)

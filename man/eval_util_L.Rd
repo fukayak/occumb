@@ -4,7 +4,7 @@
 \alias{eval_util_L}
 \title{Expected utility for local species diversity assessments.}
 \usage{
-eval_util_L(settings, fit, N_rep = 1, cores = parallel::detectCores())
+eval_util_L(settings, fit, N_rep = 1, cores = 1L)
 }
 \arguments{
 \item{settings}{A data frame that specifies a set of conditions under which
@@ -70,8 +70,7 @@ current version, \code{eval_util_L()} cannot be applied if the supplied
 \code{occumbFit} object contains a model with replicate covariates.
 
 Monte Carlo integration is executed in parallel on multiple CPU cores where
-the \code{cores} argument controls the degree of parallelization. By default, all
-cores available in the user's environment are used.
+the \code{cores} argument controls the degree of parallelization.
 }
 \section{References}{
 

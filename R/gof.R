@@ -26,8 +26,7 @@
 #'  predictive checking.
 #'
 #'  Computations can be run in parallel on multiple CPU cores where the `cores`
-#'  argument controls the degree of parallelization. By default, all
-#'  cores available in the user's environment are used.
+#'  argument controls the degree of parallelization.
 #' @param fit An \code{occumbFit} object.
 #' @param stats The discrepancy statistics to be applied.
 #' @param cores The number of cores to use for parallelization.
@@ -76,7 +75,7 @@
 #' @export
 gof <- function(fit,
                 stats = c("Freeman_Tukey", "deviance"),
-                cores = parallel::detectCores(),
+                cores = 1L,
                 plot = TRUE) {
 
     # Validate arguments

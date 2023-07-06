@@ -4,12 +4,7 @@
 \alias{gof}
 \title{Goodness-of-fit assessment of the fitted model.}
 \usage{
-gof(
-  fit,
-  stats = c("Freeman_Tukey", "deviance"),
-  cores = parallel::detectCores(),
-  plot = TRUE
-)
+gof(fit, stats = c("Freeman_Tukey", "deviance"), cores = 1L, plot = TRUE)
 }
 \arguments{
 \item{fit}{An \code{occumbFit} object.}
@@ -57,8 +52,7 @@ Conn et al. (2018) for more details on the procedures for posterior
 predictive checking.
 
 Computations can be run in parallel on multiple CPU cores where the \code{cores}
-argument controls the degree of parallelization. By default, all
-cores available in the user's environment are used.
+argument controls the degree of parallelization.
 }
 \section{References}{
 
