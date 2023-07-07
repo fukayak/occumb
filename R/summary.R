@@ -38,7 +38,7 @@ setMethod("summary", signature(object = "occumbData"),
                 return(labels)
         }
 
-        cat(crayon::bold("Sequence read conts: \n"))
+        cat(crayon::bold("Sequence read counts: \n"))
         cat("Number of species, I =", dim(object@y)[1], "\n")
         cat("Number of sites, J =", dim(object@y)[2], "\n")
         cat("Maximum number of replicates per site, K =", dim(object@y)[3], "\n")
