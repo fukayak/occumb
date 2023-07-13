@@ -113,5 +113,146 @@ gof_result <- gof(fit1, cores = 4)
 It is recommended to specify the `cores` argument explicitly for parallel computation.
 
 
+## Study design analysis
 
+The model fitted with `occumb()` can be used to find eDNA metabarcoding study designs that effectively detect species present. How many sites, within-site replicates, and sequencing depth will be required to ensure reliable species detection? What is the best balance between the number of sites visited, the number of within-site replicates, and sequencing depth under a limited budget? The multispecies site occupancy model fit by `occumb()` answers these questions by predicting the number of species expected to be detected under specific study designs.
+
+`eval_util_L()` and `eval_util_R()` are functions available for these purposes. These two functions assume species diversity assessment at different spatial scales (i.e., the former is for local (L), the latter for regional (R)). Specifically, `eval_util_L()` is appropriate if you are interested in assessing species diversity only for the study sites included in the dataset, and `eval_util_R()` is appropriate if you are interested in assessing species diversity in a broader area that includes the study sites in the dataset (i.e., the population of sites or a "metacommunity").
+
+In the context of the `fish` dataset, `eval_util_L()` evaluates the expected number of species detected per site at the 50 sites in the dataset under different combinations of the number of replicates and sequencing depth. For example, the following will give the expected number of species detected per site when the number of replicates ($K$) and the sequencing depth ($N$) take the values (1, 2, 3) and (1000, 10000, 100000), respectively.
+
+```{r, eval = FALSE}
+utilL1 <- eval_util_L(expand.grid(K = 1:3, N = c(1E3, 1E4, 1E5)),
+                      fit1, cores = 4)
+utilL1
+```
+
+```{r}
+#>   K     N  Utility
+#> 1 1 1e+03 13.03225
+#> 2 2 1e+03 16.72177
+#> 3 3 1e+03 18.21783
+#> 4 1 1e+04 14.34826
+#> 5 2 1e+04 17.72304
+#> 6 3 1e+04 18.92009
+#> 7 1 1e+05 15.04591
+#> 8 2 1e+05 18.20935
+#> 9 3 1e+05 19.23478
+```
+
+Note that it is recommended to specify the `cores` argument explicitly for parallel computation.
+
+If the cost per sequence read for high-throughput sequencing, the cost per replicate for library preparation, and the research budget values are each known, then the `list_cond_L()` function can be used to obtain a set of feasible settings under these cost and budget values. This can be given to `eval_util_L()` to identify the optimal study design under a budget constraint.
+
+```{r, eval = FALSE}
+settings <- list_cond_L(budget = 875 * 1E3,
+                        lambda1 = 0.01,
+                        lambda2 = 5000,
+                        fit1)
+utilL2 <- eval_util_L(settings, fit1, cores = 4)
+utilL2
+```
+
+```{r}
+#>   budget lambda1 lambda2 K          N  Utility
+#> 1 875000    0.01    5000 1 1250000.00 15.45671
+#> 2 875000    0.01    5000 2  375000.00 18.37862
+#> 3 875000    0.01    5000 3   83333.33 19.21953
+```
+
+Hence, under this specific budget and cost value, it is best to have K = 3 replicates per site for the most effective species detection.
+
+In contrast to `eval_util_L()`, `eval_util_R()` considers differences in the number of sites visited. Nevertheless, `eval_util_R()` can be applied in much the same way as `eval_util_L()`. Since `list_cond_R()` may return a huge list of possible settings, you may want to get a manually restricted list using its `J` and/or `K` arguments.
+
+```{r, eval = FALSE}
+# Use fit0 here since the current version of eval_util_R() does not support
+# site heterogeneity of occupancy probability.
+utilR1 <- eval_util_R(expand.grid(J = 1:3, K = 1:3, N = c(1E3, 1E4, 1E5)),
+                      fit0, cores = 4)
+utilR1
+```
+
+```{r}
+#>    J K     N  Utility
+#> 1  1 1 1e+03 13.02089
+#> 2  2 1 1e+03 18.75257
+#> 3  3 1 1e+03 22.28694
+#> 4  1 2 1e+03 16.75038
+#> 5  2 2 1e+03 22.84567
+#> 6  3 2 1e+03 26.37878
+#> 7  1 3 1e+03 18.22010
+#> 8  2 3 1e+03 24.50571
+#> 9  3 3 1e+03 28.16144
+#> 10 1 1 1e+04 14.39106
+#> 11 2 1 1e+04 20.38495
+#> 12 3 1 1e+04 23.88514
+#> 13 1 2 1e+04 17.72739
+#> 14 2 2 1e+04 24.01112
+#> 15 3 2 1e+04 27.58758
+#> 16 1 3 1e+04 18.95701
+#> 17 2 3 1e+04 25.38315
+#> 18 3 3 1e+04 29.11239
+#> 19 1 1 1e+05 14.99955
+#> 20 2 1 1e+05 21.19485
+#> 21 3 1 1e+05 24.77456
+#> 22 1 2 1e+05 18.17301
+#> 23 2 2 1e+05 24.54592
+#> 24 3 2 1e+05 28.28593
+#> 25 1 3 1e+05 19.18010
+#> 26 2 3 1e+05 25.78404
+#> 27 3 3 1e+05 29.49870
+```
+
+```{r, eval = FALSE}
+settings <- list_cond_R(budget = 1125 * 1E3,
+                        lambda1 = 0.01,
+                        lambda2 = 5000,
+                        lambda3 = 5000,
+                        J = seq(5, 50, 5),
+                        K = 1:4)
+utilR2 <- eval_util_R(settings, fit0, cores = 4)
+utilR2
+```
+
+```{r}
+#>     budget lambda1 lambda2 lambda3  J K           N  Utility
+#> 1  1125000    0.01    5000    5000  5 1 21500000.00 30.10762
+#> 2  1125000    0.01    5000    5000 10 1 10250000.00 35.66881
+#> 3  1125000    0.01    5000    5000 15 1  6500000.00 38.58941
+#> 4  1125000    0.01    5000    5000 20 1  4625000.00 40.54363
+#> 5  1125000    0.01    5000    5000 25 1  3500000.00 41.97652
+#> 6  1125000    0.01    5000    5000 30 1  2750000.00 43.03573
+#> 7  1125000    0.01    5000    5000 35 1  2214285.71 43.86356
+#> 8  1125000    0.01    5000    5000 40 1  1812500.00 44.63576
+#> 9  1125000    0.01    5000    5000 45 1  1500000.00 45.15320
+#> 10 1125000    0.01    5000    5000 50 1  1250000.00 45.60239
+#> 11 1125000    0.01    5000    5000  5 2 10500000.00 33.26731
+#> 12 1125000    0.01    5000    5000 10 2  4875000.00 38.67689
+#> 13 1125000    0.01    5000    5000 15 2  3000000.00 41.48350
+#> 14 1125000    0.01    5000    5000 20 2  2062500.00 43.33658
+#> 15 1125000    0.01    5000    5000 25 2  1500000.00 44.57691
+#> 16 1125000    0.01    5000    5000 30 2  1125000.00 45.48365
+#> 17 1125000    0.01    5000    5000 35 2   857142.86 46.19298
+#> 18 1125000    0.01    5000    5000 40 2   656250.00 46.72431
+#> 19 1125000    0.01    5000    5000 45 2   500000.00 47.16480
+#> 20 1125000    0.01    5000    5000 50 2   375000.00 47.46552
+#> 21 1125000    0.01    5000    5000  5 3  6833333.33 34.49460
+#> 22 1125000    0.01    5000    5000 10 3  3083333.33 39.92865
+#> 23 1125000    0.01    5000    5000 15 3  1833333.33 42.70624
+#> 24 1125000    0.01    5000    5000 20 3  1208333.33 44.45794
+#> 25 1125000    0.01    5000    5000 25 3   833333.33 45.64077
+#> 26 1125000    0.01    5000    5000 30 3   583333.33 46.42328
+#> 27 1125000    0.01    5000    5000 35 3   404761.90 47.04303
+#> 28 1125000    0.01    5000    5000 40 3   270833.33 47.47639
+#> 29 1125000    0.01    5000    5000 45 3   166666.67 47.80421
+#> 30 1125000    0.01    5000    5000 50 3    83333.33 48.02496
+#> 31 1125000    0.01    5000    5000  5 4  5000000.00 35.00271
+#> 32 1125000    0.01    5000    5000 10 4  2187500.00 40.55395
+#> 33 1125000    0.01    5000    5000 15 4  1250000.00 43.37786
+#> 34 1125000    0.01    5000    5000 20 4   781250.00 45.00144
+#> 35 1125000    0.01    5000    5000 25 4   500000.00 46.10021
+#> 36 1125000    0.01    5000    5000 30 4   312500.00 46.86324
+#> 37 1125000    0.01    5000    5000 35 4   178571.43 47.40744
+#> 38 1125000    0.01    5000    5000 40 4    78125.00 47.80381
+```
 
