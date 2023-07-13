@@ -102,3 +102,16 @@ fit1x <- occumb(formula_psi = ~ riverbank,
 ```
 
 
+## Goodness-of-fit assessment
+
+Assessing the goodness-of-fit of the fitted model is an essential step in data analysis based on statistical models. The goodness-of-fit of models fitted with `occumb()` can be evaluated using the `gof()` function which computes the Bayesian p-value via the posterior predictive check approach.
+
+```{r, eval = FALSE}
+gof_result <- gof(fit1, cores = 4)
+```
+
+It is recommended to specify the `cores` argument explicitly for parallel computation.
+
+
+
+
