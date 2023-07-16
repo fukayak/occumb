@@ -18,7 +18,9 @@ library(occumb)
 set.seed(1)
 ```
 
-## Dataset
+This section briefly describes the steps involved in a series of model-based analyses of eDNA metabarcoding data that can be performed using the `occumb` R package.
+
+## Prepare dataset
 
 We will use the package's built-in data `fish` (see `?fish` for documentation) to see how to analyze sequence count data with the `occumb` package.
 The `summary()` function can be used to display an overview of the dataset.
@@ -67,7 +69,7 @@ If you want to display the entire data, just type `fish`.
 fish
 ```
 
-## Model fitting
+## Fit models
 
 With the `fish` dataset (or if your dataset is constructed with `occumbData()`), you can fit a multispecies site occupancy model for eDNA metabarcoding using the `occumb()` function.
 
@@ -104,7 +106,7 @@ fit1x <- occumb(formula_psi = ~ riverbank,
 ```
 
 
-## Goodness-of-fit assessment
+## Assess goodness-of-fit
 
 Assessing the goodness-of-fit of the fitted model is an essential step in data analysis based on statistical models. The goodness-of-fit of models fitted with `occumb()` can be evaluated using the `gof()` function which computes the Bayesian p-value via the posterior predictive check approach.
 
@@ -115,7 +117,7 @@ gof_result <- gof(fit1, cores = 4)
 It is recommended to specify the `cores` argument explicitly for parallel computation.
 
 
-## Study design analysis
+## Analyze study design
 
 The model fitted with `occumb()` can be used to find eDNA metabarcoding study designs that effectively detect species present. How many sites, within-site replicates, and sequencing depth will be required to ensure reliable species detection? What is the best balance between the number of sites visited, the number of within-site replicates, and sequencing depth under a limited budget? The multispecies site occupancy model fit by `occumb()` answers these questions by predicting the number of species expected to be detected under specific study designs.
 
