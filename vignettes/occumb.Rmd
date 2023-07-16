@@ -90,6 +90,8 @@ fit1 <- occumb(formula_psi = ~ riverbank,
 
 Here, `riverbank` is specified as the covariate for site occupancy probability ($\psi$) in the `formula_psi` argument and `mismatch` as the covariate for relative dominance of sequence ($\phi$) in the `formula_phi_shared` argument. In the latter, since `mismatch` is a species covariate, the `formula_phi_shared` argument is used instead of `formula_phi` so that the effect of `mismatch` is constant across species; see `vignette("model_specification")` for more details.
 
+The above two model fits can take approximately one hour. Given that `occumb()` fits a class of complex hierarchical models with many parameters and unknown variables, it may require, depending on the dataset size, a long time and/or a lot of memory for model fitting.
+
 `occumb()` also has several arguments to control the Markov Chain Monte Carlo (MCMC) computation for fitting the model. For example, to obtain more precise posterior estimates than the example above, you can explicitly set the `n.iter` and `n.thin` arguments to get longer and less autocorrelated MCMC samples.
 
 ```{r, eval = FALSE}
