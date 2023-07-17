@@ -121,13 +121,14 @@ setMethod("summary", signature(object = "occumbData"),
         }
 
         cat(crayon::bold("Sequence read counts: \n"))
-        cat("Number of species, I =", dim(object@y)[1], "\n")
-        cat("Number of sites, J =", dim(object@y)[2], "\n")
-        cat("Maximum number of replicates per site, K =", dim(object@y)[3], "\n")
-        cat("Number of missing observations =", sum(N == 0), "\n")
-        cat("Number of replicates per site:", mean(reps_per_site), "(average),",
-            stats::sd(reps_per_site), "(sd)", "\n")
-        cat("Sequencing depth:", mean(N[N > 0]), "(average),",
+        cat(" Number of species, I =", dim(object@y)[1], "\n")
+        cat(" Number of sites, J =", dim(object@y)[2], "\n")
+        cat(" Maximum number of replicates per site, K =", dim(object@y)[3], "\n")
+        cat(" Number of missing observations =", sum(N == 0), "\n")
+        cat(" Number of replicates per site:",
+            round(mean(reps_per_site), 2), "(average),",
+            round(stats::sd(reps_per_site), 2), "(sd)", "\n")
+        cat(" Sequencing depth:", mean(N[N > 0]), "(average),",
             stats::sd(N[N > 0]), "(sd)", "\n\n")
 
         cat(crayon::bold("Species covariates: \n"),
