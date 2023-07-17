@@ -1,6 +1,7 @@
 # occumb (development version)
 * Add `fish` and `fish_raw` data.
 * Add `summary` method for `occumbData` class.
+* Add `summary` method for `occumbFit` class.
 * Change defaults for `cores` arguments for `gof()`, `eval_util_L()`, and `eval_util_L()` functions.
 * Fix `eval_util_L()` and `eval_util_R()` examples.
 * Fix a bug in `add_attribute4()` function.
