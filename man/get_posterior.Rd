@@ -32,10 +32,10 @@ samples of the selected parameter.
 of the selected parameter. The elements of the posterior summary are the
 same as those obtained with the \code{\link[jagsUI]{jags}()} function in the
 \code{jagsUI} package: they include mean, standard deviation, percentiles
-of posterior samples; \code{overlap0} that checks if 0 falls in the
-parameter's 95\% credible interval; the proportion of the posterior with the
-same sign as the mean, \code{f}; the \code{Rhat} statistic; and the
-effective sample size, \code{n.eff}.
+of posterior samples; the \code{Rhat} statistic; the effective sample size,
+\code{n.eff}; \code{overlap0} that checks if 0 falls in the parameter's 95\%
+credible interval; and the proportion of the posterior with the same sign
+as the mean, \code{f}.
 
 The \code{dimension} and \code{label} attributes of the output object
 give information about the dimension of the parameter.
