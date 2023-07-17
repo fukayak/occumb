@@ -28,12 +28,6 @@ reference:
   contents:
   - starts_with("eval_util")
   - starts_with("list_cond")
-- title: "Methods"
-  desc: >
-    Generic function methods applied to occumb package outputs.
-  contents:
-  - plot,occumbFit-method
-  - print,occumbFit-method
 - title: "Dataset"
   desc: >
     Example dataset to illustrate function usage.
