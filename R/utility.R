@@ -61,7 +61,7 @@
 #'      Multispecies site occupancy modelling and study design for spatially
 #'      replicated environmental DNA metabarcoding. \emph{Methods in Ecology
 #'      and Evolution} \strong{13}:183--193.
-#'      \url{https://doi.org/10.1111/2041-210X.13732}
+#'      \doi{10.1111/2041-210X.13732}
 #' @examples
 #' \dontrun{
 #' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
@@ -200,7 +200,7 @@ eval_util_L <- function(settings,
 #'      Multispecies site occupancy modelling and study design for spatially
 #'      replicated environmental DNA metabarcoding. \emph{Methods in Ecology
 #'      and Evolution} \strong{13}:183--193.
-#'      \url{https://doi.org/10.1111/2041-210X.13732}
+#'      \doi{10.1111/2041-210X.13732}
 #' @examples
 #' \dontrun{
 #' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)

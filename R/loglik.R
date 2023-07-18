@@ -7,7 +7,7 @@
 #'  evaluated with the posterior samples of parameter values. It can be used to
 #'  obtain criteria for model comparisons, including WAIC and PSIS-LOO. They
 #'  can be conveniently calculated by applying functions in the
-#'  \href{https://cran.r-project.org/web/packages/loo/index.html}{\code{loo}}
+#'  \href{https://CRAN.R-project.org/package=loo}{\code{loo}}
 #'  package to the output of \code{loglik} function: see Vehtari et al. (2017)
 #'  and the documentation of the \code{loo} package for details.
 #' @param fit An \code{occumbFit} object.
@@ -19,7 +19,7 @@
 #'  A. Vehtari, A. Gelman, J. Gabry (2017) Practical Bayesian model evaluation
 #'  using leave-one-out cross-validation and WAIC.
 #'  \emph{Statistics and Computing}, \strong{27}, 1413--1432.
-#'  \url{https://doi.org/10.1007/s11222-016-9696-4}
+#'  \doi{10.1007/s11222-016-9696-4}
 #' @examples
 #' \dontrun{
 #' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)

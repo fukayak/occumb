@@ -78,7 +78,7 @@ K. Fukaya, N. I. Kondo, S. S. Matsuzaki and T. Kadoya (2022)
 Multispecies site occupancy modelling and study design for spatially
 replicated environmental DNA metabarcoding. \emph{Methods in Ecology
 and Evolution} \strong{13}:183--193.
-\url{https://doi.org/10.1111/2041-210X.13732}
+\doi{10.1111/2041-210X.13732}
 }
 
 \examples{

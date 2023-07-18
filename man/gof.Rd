@@ -59,7 +59,7 @@ argument controls the degree of parallelization.
 P. B. Conn, D. S. Johnson, P. J. Williams, S. R. Melin and M. B. Hooten.
 (2018) A guide to Bayesian model checking for ecologists.
 \emph{Ecological Monographs} \strong{88}:526--542.
-\url{https://doi.org/10.1002/ecm.1314}
+\doi{10.1002/ecm.1314}
 
 A. Gelman, J. B. Carlin, H. S. Stern D. B. Dunson, A. Vehtari and
 D. B. Rubin (2013) \emph{Bayesian Data Analysis}. 3rd edition.
