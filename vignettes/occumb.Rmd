@@ -37,7 +37,7 @@ summary(fish)
 #>  Maximum number of replicates per site, K = 3 
 #>  Number of missing observations = 6 
 #>  Number of replicates per site: 2.88 (average), 0.33 (sd)
-#>  Sequencing depth: 77910.03 (average), 98034.66 (sd) 
+#>  Sequencing depth: 77910 (average), 98034.7 (sd)
 #> 
 #> Species covariates: 
 #>  mismatch (continuous) 
