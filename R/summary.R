@@ -128,8 +128,9 @@ setMethod("summary", signature(object = "occumbData"),
         cat(" Number of replicates per site:",
             round(mean(reps_per_site), 2), "(average),",
             round(stats::sd(reps_per_site), 2), "(sd)", "\n")
-        cat(" Sequencing depth:", mean(N[N > 0]), "(average),",
-            stats::sd(N[N > 0]), "(sd)", "\n\n")
+        cat(" Sequencing depth:",
+            round(mean(N[N > 0]), 1), "(average),",
+            round(stats::sd(N[N > 0]), 1), "(sd)", "\n\n")
 
         cat(crayon::bold("Species covariates: \n"),
             paste(get_list_cov(object@spec_cov), collapse = ", "),
