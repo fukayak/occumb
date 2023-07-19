@@ -77,9 +77,9 @@ setMethod("summary", signature(object = "occumbFit"),
 
         if (object@fit$mcmc.info$n.chains > 1) {
             if (max(unlist(object@fit$Rhat), na.rm = TRUE) > 1.1) {
-                cat(crayon::bold('**WARNING** Rhat values indicate convergence failure.','\n'))
+                cat('**WARNING** Rhat values indicate convergence failure (Rhat > 1.1).','\n')
             } else {
-                cat(crayon::bold('Successful convergence based on Rhat values (all < 1.1).','\n'))
+                cat('Successful convergence based on Rhat values (all < 1.1).','\n')
             }
         }
 
@@ -166,7 +166,8 @@ print_Rhat_neff <- function(param, object) {
         neff <- post_summary["n.eff"]
 
         cat(' ', param, ': \n', sep = "")
-        cat('  Number of parameters:', num_per, '\n')
+        if (param != "deviance")
+            cat('  Number of parameters:', num_per, '\n')
         cat('  Rhat: ', round(Rhat, 3), '\n')
         cat('  n.eff:', neff, '\n')
     } else {
