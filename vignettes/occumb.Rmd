@@ -455,8 +455,29 @@ Assessing the goodness-of-fit of the fitted model is an essential step in data a
 gof_result <- gof(fit1, cores = 4)
 ```
 
-It is recommended to specify the `cores` argument explicitly for parallel computation.
+It is recommended to specify the `cores` argument explicitly for parallel computation. By default, the `gof()` function outputs a scatter plot of fit statistics (in this case, the default Freeman-Tukey statistics).
 
+To see a summary of the result, just enter the name of the resulting object.
+
+```{r, eval = FALSE}
+gof_result
+```
+
+```{r}
+#> Posterior predictive check for an occumbFit object:
+#>  Statistics: Freeman-Tukey 
+#>  p-value:    0.19825 
+#>  Discrepancy statistics for observed data:   542.81 (mean), 17.92 (sd) 
+#>  Discrepancy statistics for replicated data: 523.24 (mean), 16.23 (sd) 
+```
+
+The moderate p-value indicates a lack of evidence of the model's inadequacy in fitting.
+
+The `plot()` function can be used to (re)draw the scatter plot of fit statistics from the resulting object.
+
+```{r, eval = FALSE}
+plot(gof_result)
+```
 
 ## Analyze study design
 
