@@ -28,10 +28,9 @@ reference:
   contents:
   - starts_with("eval_util")
   - starts_with("list_cond")
-- title: "Methods"
+- title: "Dataset"
   desc: >
-    Generic function methods applied to occumb package outputs.
+    Example dataset to illustrate function usage.
   contents:
-  - plot,occumbFit-method
-  - print,occumbFit-method
-  - summary,occumbFit-method
+  - fish
+  - fish_raw

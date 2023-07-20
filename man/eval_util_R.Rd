@@ -4,7 +4,7 @@
 \alias{eval_util_R}
 \title{Expected utility for regional species diversity assessments.}
 \usage{
-eval_util_R(settings, fit, N_rep = 1, cores = parallel::detectCores())
+eval_util_R(settings, fit, N_rep = 1, cores = 1L)
 }
 \arguments{
 \item{settings}{A data frame that specifies a set of conditions under which
@@ -70,8 +70,7 @@ cannot be applied if the supplied \code{occumbFit} object contains a model with
 site or replicate covariates.
 
 Monte Carlo integration is executed in parallel on multiple CPU cores where
-the \code{cores} argument controls the degree of parallelization. By default, all
-cores available in the user's environment are used.
+the \code{cores} argument controls the degree of parallelization.
 }
 \section{References}{
 
@@ -79,7 +78,7 @@ K. Fukaya, N. I. Kondo, S. S. Matsuzaki and T. Kadoya (2022)
 Multispecies site occupancy modelling and study design for spatially
 replicated environmental DNA metabarcoding. \emph{Methods in Ecology
 and Evolution} \strong{13}:183--193.
-\url{https://doi.org/10.1111/2041-210X.13732}
+\doi{10.1111/2041-210X.13732}
 }
 
 \examples{
@@ -99,9 +98,7 @@ data <- occumbData(
 fit <- occumb(data = data)
 
 # Estimate expected utility
-util1 <- eval_util_R(data.frame(J = rep(rep(1:3, each = 3), times = 3),
-                                K = rep(rep(1:3, each = 3), each = 3),
-                                N = rep(rep(c(1E3, 1E4, 1E5), times = 3), times = 3)),
+util1 <- eval_util_R(expand.grid(J = 1:3, K = 1:3, N = c(1E3, 1E4, 1E5)),
                      fit) # Arbitrary J, K, and N values
 util2 <- eval_util_R(list_cond_R(budget = 50000,
                                  lambda1 = 0.01,

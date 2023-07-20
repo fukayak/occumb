@@ -39,8 +39,7 @@
 #'  `occumbFit` object contains a model with replicate covariates.
 #'
 #' Monte Carlo integration is executed in parallel on multiple CPU cores where
-#'  the `cores` argument controls the degree of parallelization. By default, all
-#'  cores available in the user's environment are used.
+#'  the `cores` argument controls the degree of parallelization.
 #' @param settings A data frame that specifies a set of conditions under which
 #'  the utility is evaluated. It must include a column named `K` and `N`, which
 #'  specifies the number of replicates per site and the sequencing depth per
@@ -62,7 +61,7 @@
 #'      Multispecies site occupancy modelling and study design for spatially
 #'      replicated environmental DNA metabarcoding. \emph{Methods in Ecology
 #'      and Evolution} \strong{13}:183--193.
-#'      \url{https://doi.org/10.1111/2041-210X.13732}
+#'      \doi{10.1111/2041-210X.13732}
 #' @examples
 #' \dontrun{
 #' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
@@ -80,12 +79,17 @@
 #' fit <- occumb(data = data)
 #'
 #' # Estimate expected utility
-#' util1 <- eval_util_L(data.frame(K = rep(1:3, each = 3),
-#'                                 N = rep(c(1E3, 1E4, 1E5), times = 3)),
+#' util1 <- eval_util_L(expand.grid(K = 1:3, N = c(1E3, 1E4, 1E5)),
 #'                      fit) # Arbitrary K and N values
-#' util2 <- eval_util_L(list_cond_L(budget = 1E5, lambda1 = 0.01, lambda2 = 5000, fit),
+#' util2 <- eval_util_L(list_cond_L(budget = 1E5,
+#'                                  lambda1 = 0.01,
+#'                                  lambda2 = 5000,
+#'                                  fit),
 #'                      fit) # K and N values under specified budget and cost
-#' util3 <- eval_util_L(list_cond_L(budget = 1E5, lambda1 = 0.01, lambda2 = 5000, fit,
+#' util3 <- eval_util_L(list_cond_L(budget = 1E5,
+#'                                  lambda1 = 0.01,
+#'                                  lambda2 = 5000,
+#'                                  fit,
 #'                                  K = 1:5),
 #'                      fit) # K values restricted
 #' }
@@ -93,7 +97,7 @@
 eval_util_L <- function(settings,
                         fit,
                         N_rep = 1,
-                        cores = parallel::detectCores()) {
+                        cores = 1L) {
 
     # Validate arguments
     qc_eval_util_L(settings, fit)
@@ -174,8 +178,7 @@ eval_util_L <- function(settings,
 #'  site or replicate covariates.
 #'
 #' Monte Carlo integration is executed in parallel on multiple CPU cores where
-#'  the `cores` argument controls the degree of parallelization. By default, all
-#'  cores available in the user's environment are used.
+#'  the `cores` argument controls the degree of parallelization.
 #' @param settings A data frame that specifies a set of conditions under which
 #'  the utility is evaluated. It must include a column named `J`, `K`, and `N`,
 #'  which specifies the number of sites, the number of replicates per site, and
@@ -197,7 +200,7 @@ eval_util_L <- function(settings,
 #'      Multispecies site occupancy modelling and study design for spatially
 #'      replicated environmental DNA metabarcoding. \emph{Methods in Ecology
 #'      and Evolution} \strong{13}:183--193.
-#'      \url{https://doi.org/10.1111/2041-210X.13732}
+#'      \doi{10.1111/2041-210X.13732}
 #' @examples
 #' \dontrun{
 #' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
@@ -215,9 +218,7 @@ eval_util_L <- function(settings,
 #' fit <- occumb(data = data)
 #'
 #' # Estimate expected utility
-#' util1 <- eval_util_R(data.frame(J = rep(rep(1:3, each = 3), times = 3),
-#'                                 K = rep(rep(1:3, each = 3), each = 3),
-#'                                 N = rep(rep(c(1E3, 1E4, 1E5), times = 3), times = 3)),
+#' util1 <- eval_util_R(expand.grid(J = 1:3, K = 1:3, N = c(1E3, 1E4, 1E5)),
 #'                      fit) # Arbitrary J, K, and N values
 #' util2 <- eval_util_R(list_cond_R(budget = 50000,
 #'                                  lambda1 = 0.01,
@@ -241,7 +242,7 @@ eval_util_L <- function(settings,
 eval_util_R <- function(settings,
                         fit,
                         N_rep = 1,
-                        cores = parallel::detectCores()) {
+                        cores = 1L) {
 
     # Validate arguments ... to be added
     qc_eval_util_R(settings, fit)

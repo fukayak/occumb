@@ -4,7 +4,7 @@
 \alias{eval_util_L}
 \title{Expected utility for local species diversity assessments.}
 \usage{
-eval_util_L(settings, fit, N_rep = 1, cores = parallel::detectCores())
+eval_util_L(settings, fit, N_rep = 1, cores = 1L)
 }
 \arguments{
 \item{settings}{A data frame that specifies a set of conditions under which
@@ -70,8 +70,7 @@ current version, \code{eval_util_L()} cannot be applied if the supplied
 \code{occumbFit} object contains a model with replicate covariates.
 
 Monte Carlo integration is executed in parallel on multiple CPU cores where
-the \code{cores} argument controls the degree of parallelization. By default, all
-cores available in the user's environment are used.
+the \code{cores} argument controls the degree of parallelization.
 }
 \section{References}{
 
@@ -79,7 +78,7 @@ K. Fukaya, N. I. Kondo, S. S. Matsuzaki and T. Kadoya (2022)
 Multispecies site occupancy modelling and study design for spatially
 replicated environmental DNA metabarcoding. \emph{Methods in Ecology
 and Evolution} \strong{13}:183--193.
-\url{https://doi.org/10.1111/2041-210X.13732}
+\doi{10.1111/2041-210X.13732}
 }
 
 \examples{
@@ -99,12 +98,17 @@ data <- occumbData(
 fit <- occumb(data = data)
 
 # Estimate expected utility
-util1 <- eval_util_L(data.frame(K = rep(1:3, each = 3),
-                                N = rep(c(1E3, 1E4, 1E5), times = 3)),
+util1 <- eval_util_L(expand.grid(K = 1:3, N = c(1E3, 1E4, 1E5)),
                      fit) # Arbitrary K and N values
-util2 <- eval_util_L(list_cond_L(budget = 1E5, lambda1 = 0.01, lambda2 = 5000, fit),
+util2 <- eval_util_L(list_cond_L(budget = 1E5,
+                                 lambda1 = 0.01,
+                                 lambda2 = 5000,
+                                 fit),
                      fit) # K and N values under specified budget and cost
-util3 <- eval_util_L(list_cond_L(budget = 1E5, lambda1 = 0.01, lambda2 = 5000, fit,
+util3 <- eval_util_L(list_cond_L(budget = 1E5,
+                                 lambda1 = 0.01,
+                                 lambda2 = 5000,
+                                 fit,
                                  K = 1:5),
                      fit) # K values restricted
 }

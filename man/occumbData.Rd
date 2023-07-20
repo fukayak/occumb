@@ -53,9 +53,9 @@ K <- 2 # Number of replicates
 data <- occumbData(
     y = array(sample.int(I * J * K), dim = c(I, J, K)),
     spec_cov = list(cov1 = rnorm(I)),
-    site_cov = list(cov2 = rnorm(J),
-                    cov3 = factor(1:J)),
-    repl_cov = list(cov4 = matrix(rnorm(J * K), J, K)))
+    site_cov = list(cov2 = rnorm(J), cov3 = factor(1:J)),
+    repl_cov = list(cov4 = matrix(rnorm(J * K), J, K))
+)
 
 # A case for named y (with species and site names)
 y_named <- array(sample.int(I * J * K), dim = c(I, J, K))
@@ -64,7 +64,22 @@ dimnames(y_named) <- list(c("common species", "uncommon species"),
 data_named <- occumbData(
     y = y_named,
     spec_cov = list(cov1 = rnorm(I)),
-    site_cov = list(cov2 = rnorm(J),
-                    cov3 = factor(1:J)),
-    repl_cov = list(cov4 = matrix(rnorm(J * K), J, K)))
+    site_cov = list(cov2 = rnorm(J), cov3 = factor(1:J)),
+    repl_cov = list(cov4 = matrix(rnorm(J * K), J, K))
+)
+
+# A real data example
+data(fish_raw)
+fish <- occumbData(
+    y = fish_raw$y,
+    spec_cov = list(mismatch = fish_raw$mismatch),
+    site_cov = list(riverbank = fish_raw$riverbank)
+)
+
+# Get an overview of the datasets
+\dontrun{
+summary(data)
+summary(data_named)
+summary(fish)
+}
 }

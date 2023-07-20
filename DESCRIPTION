@@ -1,6 +1,6 @@
 Package: occumb
-Title: Site Occupancy Modeling For Environmental DNA Metabarcoding
-Version: 0.5.1
+Title: Site Occupancy Modeling for Environmental DNA Metabarcoding
+Version: 0.6.0
 Authors@R: 
     person(given = "Keiichi",
            family = "Fukaya",
@@ -16,6 +16,8 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Suggests: 
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports: 
@@ -23,17 +25,23 @@ Imports:
     stats,
     methods,
     graphics,
-    checkmate
+    checkmate,
+    crayon
 Collate: 
     'classes.R'
+    'fish.R'
+    'fish_raw.R'
     'get_posterior.R'
     'gof.R'
     'loglik.R'
     'occumbData.R'
     'occumb.R'
     'plot.R'
-    'print.R'
+    'show.R'
     'summary.R'
     'utility.R'
     'utils.R'
 URL: https://fukayak.github.io/occumb/
+Depends: 
+    R (>= 2.10)
+VignetteBuilder: knitr

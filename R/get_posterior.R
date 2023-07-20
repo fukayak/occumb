@@ -54,10 +54,10 @@
 #'  of the selected parameter. The elements of the posterior summary are the
 #'  same as those obtained with the \code{\link[jagsUI]{jags}()} function in the
 #'  \code{jagsUI} package: they include mean, standard deviation, percentiles
-#'  of posterior samples; \code{overlap0} that checks if 0 falls in the
-#'  parameter's 95% credible interval; the proportion of the posterior with the
-#'  same sign as the mean, \code{f}; the \code{Rhat} statistic; and the
-#'  effective sample size, \code{n.eff}.
+#'  of posterior samples; the \code{Rhat} statistic; the effective sample size,
+#'  \code{n.eff}; \code{overlap0} that checks if 0 falls in the parameter's 95%
+#'  credible interval; and the proportion of the posterior with the same sign
+#'  as the mean, \code{f}.
 #'
 #'  The \code{dimension} and \code{label} attributes of the output object
 #'  give information about the dimension of the parameter.
@@ -232,13 +232,13 @@ add_attributes <- function(obj, fit, parameter,
         return(add_attributes3(obj, margs$cov_psi_shared, type))
 
     if (parameter == "Mu")
-        return(add_attributes4(obj, margs, FALSE, type))
+        return(add_attributes4(obj, fit, FALSE, type))
 
     if (parameter == "sigma")
-        return(add_attributes4(obj, margs, FALSE, type))
+        return(add_attributes4(obj, fit, FALSE, type))
 
     if (parameter == "rho")
-        return(add_attributes4(obj, margs, TRUE, type))
+        return(add_attributes4(obj, fit, TRUE, type))
 }
 
 add_attributes1 <- function(obj, dimension = c("i", "ij", "ijk"),
@@ -393,10 +393,19 @@ add_attributes3 <- function(obj, covariate, type) {
     return(obj)
 }
 
-add_attributes4 <- function(obj, margs, is_rho, type) {
+add_attributes4 <- function(obj, fit, is_rho, type) {
+
+    # Get model arguments
+    margs <- set_modargs(stats::as.formula(fit@occumb_args$formula_phi),
+                         stats::as.formula(fit@occumb_args$formula_theta),
+                         stats::as.formula(fit@occumb_args$formula_psi),
+                         stats::as.formula(fit@occumb_args$formula_phi_shared),
+                         stats::as.formula(fit@occumb_args$formula_theta_shared),
+                         stats::as.formula(fit@occumb_args$formula_psi_shared),
+                         fit@data)
 
     if (type == "samples") {
-        if (identical(margs$cov_phi, 1)) {
+        if (identical(fit@occumb_args$formula_phi, "~ 1")) {
             effect_name_phi <- "phi | (Intercept)"
         } else {
             effect_name_phi <- paste(
@@ -405,7 +414,7 @@ add_attributes4 <- function(obj, margs, is_rho, type) {
             )
         }
 
-        if (identical(margs$cov_theta, 1)) {
+        if (identical(fit@occumb_args$formula_theta, "~ 1")) {
             effect_name_theta <- "theta | (Intercept)"
         } else {
             effect_name_theta <- paste(
@@ -414,7 +423,7 @@ add_attributes4 <- function(obj, margs, is_rho, type) {
             )
         }
 
-        if (identical(margs$cov_psi, 1)) {
+        if (identical(fit@occumb_args$formula_psi, "~ 1")) {
             effect_name_psi <- "psi | (Intercept)"
         } else {
             effect_name_psi <- paste(
@@ -440,7 +449,7 @@ add_attributes4 <- function(obj, margs, is_rho, type) {
     }
 
     if (type == "summary") {
-        if (identical(margs$cov_phi, 1)) {
+        if (identical(fit@occumb_args$formula_phi, "~ 1")) {
             effect_name_phi <- "phi | (Intercept)"
         } else {
             effect_name_phi <- paste(
@@ -449,7 +458,7 @@ add_attributes4 <- function(obj, margs, is_rho, type) {
             )
         }
 
-        if (identical(margs$cov_theta, 1)) {
+        if (identical(fit@occumb_args$formula_theta, "~ 1")) {
             effect_name_theta <- "theta | (Intercept)"
         } else {
             effect_name_theta <- paste(
@@ -458,7 +467,7 @@ add_attributes4 <- function(obj, margs, is_rho, type) {
             )
         }
 
-        if (identical(margs$cov_psi, 1)) {
+        if (identical(fit@occumb_args$formula_psi, "~ 1")) {
             effect_name_psi <- "psi | (Intercept)"
         } else {
             effect_name_psi <- paste(

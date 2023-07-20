@@ -1,3 +1,10 @@
+# Data format class for occumb
+setClass("occumbGof",
+         slots = c(stats = "character",
+                   p_value = "numeric",
+                   stats_obs = "numeric",
+                   stats_rep = "numeric"))
+
 #' @title Goodness-of-fit assessment of the fitted model.
 #' 
 #' @description \code{gof()} calculates some omnibus discrepancy measures and 
@@ -26,8 +33,7 @@
 #'  predictive checking.
 #'
 #'  Computations can be run in parallel on multiple CPU cores where the `cores`
-#'  argument controls the degree of parallelization. By default, all
-#'  cores available in the user's environment are used.
+#'  argument controls the degree of parallelization.
 #' @param fit An \code{occumbFit} object.
 #' @param stats The discrepancy statistics to be applied.
 #' @param cores The number of cores to use for parallelization.
@@ -43,7 +49,7 @@
 #'  P. B. Conn, D. S. Johnson, P. J. Williams, S. R. Melin and M. B. Hooten.
 #'  (2018) A guide to Bayesian model checking for ecologists.
 #'  \emph{Ecological Monographs} \strong{88}:526--542.
-#'  \url{https://doi.org/10.1002/ecm.1314}
+#'  \doi{10.1002/ecm.1314}
 #'
 #'  A. Gelman, J. B. Carlin, H. S. Stern D. B. Dunson, A. Vehtari and
 #'  D. B. Rubin (2013) \emph{Bayesian Data Analysis}. 3rd edition.
@@ -76,7 +82,7 @@
 #' @export
 gof <- function(fit,
                 stats = c("Freeman_Tukey", "deviance"),
-                cores = parallel::detectCores(),
+                cores = 1L,
                 plot = TRUE) {
 
     # Validate arguments
@@ -179,10 +185,11 @@ gof <- function(fit,
 
     # Output (plot and object)
     if (plot) plot_gof(stats_obs, stats_rep, stats)
-    out <- list(stats = stats,
-                p_value = Bayesian_p_value(stats_obs, stats_rep),
-                stats_obs = stats_obs,
-                stats_rep = stats_rep)
+    out <- methods::new("occumbGof",
+                        stats = stats,
+                        p_value = Bayesian_p_value(stats_obs, stats_rep),
+                        stats_obs = stats_obs,
+                        stats_rep = stats_rep)
     out
 }
 
@@ -235,12 +242,13 @@ Bayesian_p_value <- function(stat_obs, stat_rep) mean(stat_obs < stat_rep)
 # Plot function
 plot_gof <- function(stat_obs, stat_rep, statistics) {
     pval <- Bayesian_p_value(stat_obs, stat_rep)
+    stats_print <- ifelse(statistics == "Freeman_Tukey", "Freeman-Tukey", statistics)
     plot(stat_rep ~ stat_obs,
          xlim = range(c(stat_obs, stat_rep)),
          ylim = range(c(stat_obs, stat_rep)),
-         main = paste(statistics, "| Bayesian p-value =", pval),
-         xlab = paste0(statistics, "_obs"),
-         ylab = paste0(statistics, "_rep"))
+         main = paste(stats_print, "statistics | Bayesian p-value =", round(pval, 5)),
+         xlab = paste("Statistics for observed data"),
+         ylab = paste("Statistics for replicated data"))
     graphics::abline(a = 0, b = 1)
 }
 
