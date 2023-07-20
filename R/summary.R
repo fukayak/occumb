@@ -5,7 +5,7 @@ setGeneric("summary")
 
 setMethod("summary", signature(object = "occumbFit"),
     function(object, digits = 3, ...) {
-        cat(crayon::bold('Summary for', class(object), 'object \n\n'))
+        cat(crayon::bold('Summary for an', class(object), 'object \n\n'))
 
         N <- apply(object@data@y, c(2, 3), sum)
         reps_per_site <- apply(N, 1, function(x) sum(x > 0))
