@@ -18,11 +18,11 @@ setMethod("show", "occumbGof",
         cat(' p-value:   ', round(object@p_value, 5), '\n')
         cat(' Discrepancy statistics for observed data:   ',
             round(mean(object@stats_obs), 2), '(mean),',
-            round(sd(object@stats_obs), 2), '(sd)',
+            round(stats::sd(object@stats_obs), 2), '(sd)',
             '\n')
         cat(' Discrepancy statistics for replicated data: ',
             round(mean(object@stats_rep), 2), '(mean),',
-            round(sd(object@stats_rep), 2), '(sd)',
+            round(stats::sd(object@stats_rep), 2), '(sd)',
             '\n')
     }
 )
