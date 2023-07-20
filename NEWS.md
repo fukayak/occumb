@@ -1,4 +1,4 @@
-# occumb 0.6.0
+# occumb (development version)
 
 # occumb 0.6.0 (2023/07/20)
 * Add package vignette.
