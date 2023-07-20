@@ -12,7 +12,7 @@ species diversity assessment using Monte Carlo integration."><!-- mathjax --><sc
     
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.6.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -20,8 +20,17 @@ species diversity assessment using Monte Carlo integration."><!-- mathjax --><sc
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="active nav-item">
+      <ul class="navbar-nav me-auto"><li class="nav-item">
+  <a class="nav-link" href="../articles/occumb.html">Get started</a>
+</li>
+<li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
+</li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/model_specification.html">Model specification in occumb</a>
+  </div>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
@@ -48,7 +57,7 @@ species diversity assessment using Monte Carlo integration.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">eval_util_L</span><span class="op">(</span><span class="va">settings</span>, <span class="va">fit</span>, N_rep <span class="op">=</span> <span class="fl">1</span>, cores <span class="op">=</span> <span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">detectCores</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">eval_util_L</span><span class="op">(</span><span class="va">settings</span>, <span class="va">fit</span>, N_rep <span class="op">=</span> <span class="fl">1</span>, cores <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -121,8 +130,7 @@ detection process are constant across replicates. For this reason, in the
 current version, <code>eval_util_L()</code> cannot be applied if the supplied
 <code>occumbFit</code> object contains a model with replicate covariates.</p>
 <p>Monte Carlo integration is executed in parallel on multiple CPU cores where
-the <code>cores</code> argument controls the degree of parallelization. By default, all
-cores available in the user's environment are used.</p>
+the <code>cores</code> argument controls the degree of parallelization.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -132,7 +140,7 @@ cores available in the user's environment are used.</p>
 Multispecies site occupancy modelling and study design for spatially
 replicated environmental DNA metabarcoding. <em>Methods in Ecology
 and Evolution</em> <strong>13</strong>:183--193.
-<a href="https://doi.org/10.1111/2041-210X.13732" class="external-link">https://doi.org/10.1111/2041-210X.13732</a></p>
+<a href="https://doi.org/10.1111/2041-210X.13732" class="external-link">doi:10.1111/2041-210X.13732</a></p>
     </div>
 
     <div class="section level2">
@@ -153,12 +161,17 @@ and Evolution</em> <strong>13</strong>:183--193.
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="occumb.html">occumb</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Estimate expected utility</span></span></span>
-<span class="r-in"><span><span class="va">util1</span> <span class="op">&lt;-</span> <span class="fu">eval_util_L</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>K <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, each <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                                N <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1E3</span>, <span class="fl">1E4</span>, <span class="fl">1E5</span><span class="op">)</span>, times <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span><span class="va">util1</span> <span class="op">&lt;-</span> <span class="fu">eval_util_L</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>K <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, N <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1E3</span>, <span class="fl">1E4</span>, <span class="fl">1E5</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                     <span class="va">fit</span><span class="op">)</span> <span class="co"># Arbitrary K and N values</span></span></span>
-<span class="r-in"><span><span class="va">util2</span> <span class="op">&lt;-</span> <span class="fu">eval_util_L</span><span class="op">(</span><span class="fu"><a href="list_cond_L.html">list_cond_L</a></span><span class="op">(</span>budget <span class="op">=</span> <span class="fl">1E5</span>, lambda1 <span class="op">=</span> <span class="fl">0.01</span>, lambda2 <span class="op">=</span> <span class="fl">5000</span>, <span class="va">fit</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span><span class="va">util2</span> <span class="op">&lt;-</span> <span class="fu">eval_util_L</span><span class="op">(</span><span class="fu"><a href="list_cond_L.html">list_cond_L</a></span><span class="op">(</span>budget <span class="op">=</span> <span class="fl">1E5</span>,</span></span>
+<span class="r-in"><span>                                 lambda1 <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
+<span class="r-in"><span>                                 lambda2 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
+<span class="r-in"><span>                                 <span class="va">fit</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                     <span class="va">fit</span><span class="op">)</span> <span class="co"># K and N values under specified budget and cost</span></span></span>
-<span class="r-in"><span><span class="va">util3</span> <span class="op">&lt;-</span> <span class="fu">eval_util_L</span><span class="op">(</span><span class="fu"><a href="list_cond_L.html">list_cond_L</a></span><span class="op">(</span>budget <span class="op">=</span> <span class="fl">1E5</span>, lambda1 <span class="op">=</span> <span class="fl">0.01</span>, lambda2 <span class="op">=</span> <span class="fl">5000</span>, <span class="va">fit</span>,</span></span>
+<span class="r-in"><span><span class="va">util3</span> <span class="op">&lt;-</span> <span class="fu">eval_util_L</span><span class="op">(</span><span class="fu"><a href="list_cond_L.html">list_cond_L</a></span><span class="op">(</span>budget <span class="op">=</span> <span class="fl">1E5</span>,</span></span>
+<span class="r-in"><span>                                 lambda1 <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
+<span class="r-in"><span>                                 lambda2 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
+<span class="r-in"><span>                                 <span class="va">fit</span>,</span></span>
 <span class="r-in"><span>                                 K <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                     <span class="va">fit</span><span class="op">)</span> <span class="co"># K values restricted</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
