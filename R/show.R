@@ -16,11 +16,11 @@ setMethod("show", "occumbGof",
             ifelse(object@stats == "Freeman_Tukey", "Freeman-Tukey", object@stats),
             '\n')
         cat(' p-value:   ', round(object@p_value, 5), '\n')
-        cat(' Discrepancy statistics for observed data:   ',
+        cat(' Discrepancy statistics for observed data:  ',
             round(mean(object@stats_obs), 2), '(mean),',
             round(stats::sd(object@stats_obs), 2), '(sd)',
             '\n')
-        cat(' Discrepancy statistics for replicated data: ',
+        cat(' Discrepancy statistics for replicated data:',
             round(mean(object@stats_rep), 2), '(mean),',
             round(stats::sd(object@stats_rep), 2), '(sd)',
             '\n')
