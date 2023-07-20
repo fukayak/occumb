@@ -1,3 +1,10 @@
+# Data format class for occumb
+setClass("occumbGof",
+         slots = c(stats = "character",
+                   p_value = "numeric",
+                   stats_obs = "numeric",
+                   stats_rep = "numeric"))
+
 #' @title Goodness-of-fit assessment of the fitted model.
 #' 
 #' @description \code{gof()} calculates some omnibus discrepancy measures and 
@@ -178,10 +185,11 @@ gof <- function(fit,
 
     # Output (plot and object)
     if (plot) plot_gof(stats_obs, stats_rep, stats)
-    out <- list(stats = stats,
-                p_value = Bayesian_p_value(stats_obs, stats_rep),
-                stats_obs = stats_obs,
-                stats_rep = stats_rep)
+    out <- methods::new("occumbGof",
+                        stats = stats,
+                        p_value = Bayesian_p_value(stats_obs, stats_rep),
+                        stats_obs = stats_obs,
+                        stats_rep = stats_rep)
     out
 }
 
@@ -234,12 +242,13 @@ Bayesian_p_value <- function(stat_obs, stat_rep) mean(stat_obs < stat_rep)
 # Plot function
 plot_gof <- function(stat_obs, stat_rep, statistics) {
     pval <- Bayesian_p_value(stat_obs, stat_rep)
+    stats_print <- ifelse(statistics == "Freeman_Tukey", "Freeman-Tukey", statistics)
     plot(stat_rep ~ stat_obs,
          xlim = range(c(stat_obs, stat_rep)),
          ylim = range(c(stat_obs, stat_rep)),
-         main = paste(statistics, "| Bayesian p-value =", pval),
-         xlab = paste0(statistics, "_obs"),
-         ylab = paste0(statistics, "_rep"))
+         main = paste(stats_print, "statistics | Bayesian p-value =", round(pval, 5)),
+         xlab = paste("Statistics for observed data"),
+         ylab = paste("Statistics for replicated data"))
     graphics::abline(a = 0, b = 1)
 }
 

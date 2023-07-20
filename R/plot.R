@@ -9,3 +9,9 @@ setMethod("plot", signature(x = "occumbFit"),
     }
 )
 
+setMethod("plot", signature(x = "occumbGof"),
+    function(x, ...) {
+        plot_gof(x@stats_obs, x@stats_rep, x@stats)
+    }
+)
+
