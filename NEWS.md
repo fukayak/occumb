@@ -3,6 +3,7 @@
 * Add `summary` method for `occumbData` class.
 * Add `summary` method for `occumbFit` class.
 * Add `occumbGof` class and methods.
+* Add package vignette.
 * Change defaults for `cores` arguments for `gof()`, `eval_util_L()`, and `eval_util_L()` functions.
 * Fix `eval_util_L()` and `eval_util_R()` examples.
 * Fix a bug in `add_attribute4()` function.
