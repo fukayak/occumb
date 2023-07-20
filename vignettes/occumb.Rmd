@@ -110,12 +110,19 @@ fit1x <- occumb(formula_psi = ~ riverbank,
 
 With the `fit1` object, we will look at how to access and diagnose the posterior sample obtained using `occumb()`.
 
-The `print()` function summarizes the MCMC results, including a table of posterior estimates for each saved parameter. The `plot()` function draws a trace plot and a density plot for each parameter. Although results are not shown here, users who have used the `{jagsUI}` package should be familiar with the output of these functions. Model fitting in `occumb()` relies on functions provided by the `{jagsUI}` package, and the `plot()` and `print()` functions apply the methods for `{jagsUI}` objects.
+Just enter the object name `fit1` displays a summary of the MCMC results, including a table of posterior estimates for each saved parameter.
 
 ```{r, eval = FALSE}
-print(fit1)
+fit1
+```
+
+The `plot()` function draws a trace plot and a density plot for each parameter.
+
+```{r, eval = FALSE}
 plot(fit1)
 ```
+
+Although results are not shown here, users who have used the `{jagsUI}` package should be familiar with the output of these operations. Model fitting in `occumb()` relies on functions provided by the `{jagsUI}` package, and the above operations respectively apply the print and plot methods for `{jagsUI}` objects.
 
 The `summary()` function provides a high-level summary of the result. This is based on the summary method for `{jagsUI}` objects and modified for the `occumb()` output, which displays data summary, model equations, MCMC settings, and a quick overview of the convergence of relevant model parameters.
 
@@ -124,7 +131,7 @@ summary(fit1)
 ```
 
 ```{r}
-#> Summary for occumbFit object 
+#> Summary for an occumbFit object 
 #> 
 #> Summary of data:
 #>  Number of species, I = 50 
@@ -214,7 +221,7 @@ summary(fit1)
 #>  pD = 2152.9 and DIC = 19993.73 
 ```
 
-Overall, the results are close to convergence, but the convergence of `phi` and `alpha`, the parameters related to the relative dominance of species sequence reads, is not good (i.e., high values of `Rhat`); hence, longer MCMC runs will be required for a formal inference.
+Overall, the model is not so far from convergence, but the convergence of `phi` and `alpha`, the parameters related to the relative dominance of species sequence reads, is not good (i.e., high values of `Rhat`); hence, longer MCMC runs will be required for a formal inference.
 
 If you want to access posterior samples of individual parameters or their summaries, you can use the `get_post_samples()` and `get_post_summary()` functions. As an example, try to get a posterior summary of site occupancy probability `psi` using the `get_post_summary()` function.
 
