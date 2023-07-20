@@ -1,15 +1,12 @@
-# occumb (development version)
-* Add `fish` and `fish_raw` data.
-* Add `summary` method for `occumbData` class.
-* Add `summary` method for `occumbFit` class.
-* Add `occumbGof` class and methods.
+# occumb 0.6.0
+
+# occumb 0.6.0 (2023/07/20)
 * Add package vignette.
+* Add `fish` and `fish_raw` data.
+* Add `occumbGof` class.
+* Add and fix methods for `occumbData`, `occumbFit`, and `occumbGof` classes; the `plot()` method has been deprecated.
 * Change defaults for `cores` arguments for `gof()`, `eval_util_L()`, and `eval_util_L()` functions.
-* Fix `eval_util_L()` and `eval_util_R()` examples.
-* Fix a bug in `add_attribute4()` function.
-* Fix `plot()` and `print()` methods.
-* Fix `get_posterior` manual.
-* Replace `plot()` method with `print()` methods.
+* Some bug fixes, internal changes, and documentation improvements.
 
 # occumb 0.5.1 (2023/04/27)
 * Add pkgdown website.
