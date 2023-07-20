@@ -8,6 +8,7 @@
 * Fix a bug in `add_attribute4()` function.
 * Fix `plot()` and `print()` methods.
 * Fix `get_posterior` manual.
+* Replace `plot()` method with `print()` methods.
 
 # occumb 0.5.1 (2023/04/27)
 * Add pkgdown website.

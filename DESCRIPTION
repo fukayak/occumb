@@ -35,7 +35,7 @@ Collate:
     'occumbData.R'
     'occumb.R'
     'plot.R'
-    'print.R'
+    'show.R'
     'summary.R'
     'utility.R'
     'utils.R'
