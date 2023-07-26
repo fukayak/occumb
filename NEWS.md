@@ -1,4 +1,5 @@
 # occumb (development version)
+* Add model specification vignette.
 
 # occumb v0.6.0 (2023/07/20)
 * Add package vignette.
