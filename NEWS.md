@@ -6,7 +6,7 @@
 * Add package vignette.
 * Add `fish` and `fish_raw` data.
 * Add `occumbGof` class.
-* Add and fix methods for `occumbData`, `occumbFit`, and `occumbGof` classes; the `plot()` method has been deprecated.
+* Add and fix methods for `occumbData`, `occumbFit`, and `occumbGof` classes.
 * Change defaults for `cores` arguments for `gof()`, `eval_util_L()`, and `eval_util_R()` functions.
 * Some bug fixes, internal changes, and documentation improvements.
 
