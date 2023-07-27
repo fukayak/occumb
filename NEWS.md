@@ -1,4 +1,4 @@
-# occumb (development version)
+# occumb 0.6.1 (2023/07/27)
 * Add model specification vignette.
 * Some fixes and improvements of documentation.
 
