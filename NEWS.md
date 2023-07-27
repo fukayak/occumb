@@ -1,5 +1,6 @@
 # occumb (development version)
 * Add model specification vignette.
+* Some fixes and improvements of documentation.
 
 # occumb v0.6.0 (2023/07/20)
 * Add package vignette.
