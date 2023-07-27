@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.6.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,7 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/model_specification.html">Model specification in occumb</a>
+    <a class="dropdown-item" href="../articles/model_specification.html">Model specification in occumb()</a>
   </div>
 </li>
 <li class="nav-item">
@@ -114,15 +114,16 @@ the dataset.</p>
 <span><span class="co">#&gt;  L, C, R </span></span></code></pre></div>
 <p>Note that a summary of the sequence read count data is found in the
 first block of the output. It shows that the data was obtained from
-samples of 50 sites * (up to) 3 replicates, with 50 fish species
-recorded. A summary of the missing samples, number of replicates per
-site, and sequencing depth (i.e., the total number of sequence reads per
-sample) are also presented. The second block of the output indicates
-that <code>fish</code> data also has two covariates, one continuous
-species covariate, <code>mismatch</code>, and one discrete site
-covariate, <code>riverbank</code>, which can be used in the following
-analysis. The third block of the output shows labels given to the 50
-species, 50 sites, and three replicates.</p>
+samples of 50 sites <span class="math inline">\(\times\)</span> (up to)
+3 replicates, with 50 fish species recorded. A summary of the missing
+samples, number of replicates per site, and sequencing depth (i.e., the
+total number of sequence reads per sample) are also presented. The
+second block of the output indicates that <code>fish</code> data also
+has two covariates, one continuous species covariate,
+<code>mismatch</code>, and one discrete site covariate,
+<code>riverbank</code>, which can be used in the following analysis. The
+third block of the output shows labels given to the 50 species, 50
+sites, and three replicates.</p>
 <p>As such, the <code>fish</code> data brings together a set of data
 relevant to the analysis with the <code>occumb</code> package. When you
 are analyzing your own dataset, you can use <code><a href="../reference/occumbData.html">occumbData()</a></code> to
@@ -130,17 +131,18 @@ set up your data object.</p>
 <p>If you want to display the entire data, just type
 <code>fish</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fish</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">fish</span> <span class="co"># Result not shown</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="fit-models">Fit models<a class="anchor" aria-label="anchor" href="#fit-models"></a>
 </h2>
-<p>With the <code>fish</code> dataset (or if your dataset is constructed
-with <code><a href="../reference/occumbData.html">occumbData()</a></code>), you can fit a multispecies site
-occupancy model for eDNA metabarcoding using the <code><a href="../reference/occumb.html">occumb()</a></code>
-function.</p>
-<p>The <code><a href="../reference/occumb.html">occumb()</a></code> function has several arguments that accept
-model formulas to fit different model variants using the usual R formula
+<p>With the <code>fish</code> dataset (or your dataset constructed with
+<code><a href="../reference/occumbData.html">occumbData()</a></code>), you can fit a multispecies site occupancy
+model for eDNA metabarcoding using the <code><a href="../reference/occumb.html">occumb()</a></code> function
+which fits the model in a fully Bayesian approach via the Markov Chain
+Monte Carlo (MCMC) method implemented in <a href="https://mcmc-jags.sourceforge.io/" class="external-link">JAGS</a>.</p>
+<p><code><a href="../reference/occumb.html">occumb()</a></code> has several arguments that accept model
+formulas to fit different model variants using the usual R formula
 syntax. See <code><a href="../articles/model_specification.html">vignette("model_specification")</a></code> for an overview
 of the models that <code><a href="../reference/occumb.html">occumb()</a></code> can fit and details on how to
 specify models.</p>
@@ -171,12 +173,11 @@ constant across species; see
 <code><a href="../reference/occumb.html">occumb()</a></code> fits a class of complex hierarchical models with
 many parameters and unknown variables, it may require, depending on the
 dataset size, a long time and/or a lot of memory for model fitting.</p>
-<p><code><a href="../reference/occumb.html">occumb()</a></code> also has several arguments to control the
-Markov Chain Monte Carlo (MCMC) computation for fitting the model. For
-example, to obtain more precise posterior estimates than the example
-above, you can explicitly set the <code>n.iter</code> and
-<code>n.thin</code> arguments to get longer and less autocorrelated MCMC
-samples.</p>
+<p><code><a href="../reference/occumb.html">occumb()</a></code> also has several arguments to control MCMC
+computation for fitting the model. For example, to obtain more precise
+posterior estimates than the example above, you can explicitly set the
+<code>n.iter</code> and <code>n.thin</code> arguments to get longer and
+less autocorrelated MCMC samples.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit1x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/occumb.html">occumb</a></span><span class="op">(</span>formula_psi <span class="op">=</span> <span class="op">~</span> <span class="va">riverbank</span>,</span>
 <span>                formula_phi_shared <span class="op">=</span> <span class="op">~</span> <span class="va">mismatch</span>,</span>
@@ -194,17 +195,17 @@ diagnose the posterior sample obtained using <code><a href="../reference/occumb.
 the MCMC results, including a table of posterior estimates for each
 saved parameter.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fit1</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">fit1</span> <span class="co"># Result not shown</span></span></code></pre></div>
 <p>The <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function draws a trace plot and a density
 plot for each parameter.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit1</span><span class="op">)</span></span></code></pre></div>
-<p>Although results are not shown here, users who have used the
-<a href="https://github.com/kenkellner/jagsUI" class="external-link">jagsUI</a> package should be familiar with the output of
-these operations. Model fitting in <code><a href="../reference/occumb.html">occumb()</a></code> relies on
-functions provided by the <a href="https://github.com/kenkellner/jagsUI" class="external-link">jagsUI</a> package, and the above
-operations respectively apply the print and plot methods for
-<a href="https://github.com/kenkellner/jagsUI" class="external-link">jagsUI</a> objects.</p>
+<p><img src="images/plot_fit1.png"></p>
+<p>Users who have used the <a href="https://github.com/kenkellner/jagsUI" class="external-link">jagsUI</a> package should be
+familiar with the output of these operations. Model fitting in
+<code><a href="../reference/occumb.html">occumb()</a></code> relies on functions provided by the
+<a href="https://github.com/kenkellner/jagsUI" class="external-link">jagsUI</a> package, and the above operations respectively
+apply the print and plot methods for <a href="https://github.com/kenkellner/jagsUI" class="external-link">jagsUI</a> objects.</p>
 <p>The <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> function provides a high-level summary of
 the result. This is based on the summary method for
 <a href="https://github.com/kenkellner/jagsUI" class="external-link">jagsUI</a> objects and modified for the <code><a href="../reference/occumb.html">occumb()</a></code>
@@ -308,9 +309,11 @@ related to the relative dominance of species sequence reads, is not good
 be required for a formal inference.</p>
 <p>If you want to access posterior samples of individual parameters or
 their summaries, you can use the <code><a href="../reference/get_posterior.html">get_post_samples()</a></code> and
-<code><a href="../reference/get_posterior.html">get_post_summary()</a></code> functions. As an example, try to get a
-posterior summary of site occupancy probability <code>psi</code> using
-the <code><a href="../reference/get_posterior.html">get_post_summary()</a></code> function.</p>
+<code><a href="../reference/get_posterior.html">get_post_summary()</a></code> functions. This may require
+understanding the model parameters and their names: see
+<code><a href="../articles/model_specification.html">vignette("model_specification")</a></code> for details. As an example,
+try to get a posterior summary of site occupancy probability
+<code>psi</code> using the <code><a href="../reference/get_posterior.html">get_post_summary()</a></code> function.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">post_summary_psi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_posterior.html">get_post_summary</a></span><span class="op">(</span><span class="va">fit1</span>, <span class="st">"psi"</span><span class="op">)</span></span>
 <span><span class="va">post_summary_psi</span></span></code></pre></div>
@@ -324,7 +327,7 @@ the <code><a href="../reference/get_posterior.html">get_post_summary()</a></code
 <span><span class="co">#&gt; psi[6,1]   0.10737782 0.061179251 0.024299550 0.06246265 0.09573034 0.13925811 0.25577838 1.002291  1418        0 1</span></span>
 <span><span class="co">#&gt; psi[7,1]   0.84639119 0.053478041 0.730770215 0.81327035 0.85048238 0.88494478 0.93751979 1.003575   654        0 1</span></span>
 <span><span class="co">#&gt; psi[8,1]   0.94296846 0.028288919 0.875373936 0.92739641 0.94770976 0.96354354 0.98337253 1.002581  1006        0 1</span></span>
-<span><span class="co">#&gt; (The rest omitted)</span></span></code></pre></div>
+<span><span class="co">#&gt; (Omitted the remaining)</span></span></code></pre></div>
 <p>In the <code>fit1</code> model, <code>psi</code> is assumed to have
 different values for each site depending on the <code>riverbank</code>
 covariate. Therefore, <code>psi</code> is estimated for each 50 species
@@ -419,25 +422,37 @@ lactipes</em> at site 1.</p>
 <p><code>gamma</code> has two effect values for each species: the
 intercept <code>(Intercept)</code> and the effect of the absence of
 vegetation in the riverbank <code>riverbankwithout_vegetation</code>.
-Displaying the summary (results not shown below), we will see that, for
-many species, the absence of vegetation has a negative effect on
-<code>psi</code> (on its link scale).</p>
+Displaying the summary, we will see that, for many species, the absence
+of vegetation has a negative effect on <code>psi</code> (on its link
+scale).</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">post_summary_gamma</span></span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#&gt;                    mean        sd       2.5%          25%         50%         75%        97.5%      Rhat n.eff overlap0       f</span></span>
+<span><span class="co">#&gt; (Omitted the beginning)</span></span>
+<span><span class="co">#&gt; gamma[1,2]  -0.68135951 0.4102181 -1.4106885 -0.964385346 -0.71198673 -0.41908665  0.197784615 1.0031831   720        1 0.93875</span></span>
+<span><span class="co">#&gt; gamma[2,2]  -0.57124068 0.4861383 -1.4368696 -0.906331725 -0.60645174 -0.27472631  0.480190462 1.0141750   414        1 0.87925</span></span>
+<span><span class="co">#&gt; gamma[3,2]  -1.07479024 0.4260032 -1.9550037 -1.336688784 -1.07308990 -0.80888005 -0.213626578 1.0040679   632        0 0.99250</span></span>
+<span><span class="co">#&gt; gamma[4,2]  -0.96563859 0.5007208 -1.9760743 -1.276917710 -0.95208744 -0.64960250  0.016721077 1.0020286  1835        1 0.97225</span></span>
+<span><span class="co">#&gt; gamma[5,2]  -1.01038376 0.5436033 -2.1340409 -1.339282006 -0.98783592 -0.65193007  0.006887964 1.0148153   190        1 0.97400</span></span>
+<span><span class="co">#&gt; gamma[6,2]  -0.96443244 0.5694898 -2.1291123 -1.307706597 -0.96394933 -0.62099851  0.205483803 1.0043719   989        1 0.95325</span></span>
+<span><span class="co">#&gt; gamma[7,2]  -1.44522243 0.4356167 -2.4011743 -1.721131931 -1.39965212 -1.14153735 -0.689367497 1.0021543  1065        0 0.99925</span></span>
+<span><span class="co">#&gt; gamma[8,2]  -1.36146823 0.4820477 -2.3661876 -1.654265660 -1.32819584 -1.04709249 -0.483307820 1.0014346  1791        0 0.99900</span></span>
+<span><span class="co">#&gt; (Omitted the remaining)</span></span></code></pre></div>
 <p>Next, we will access posterior samples of <code>psi</code> using the
 <code><a href="../reference/get_posterior.html">get_post_samples()</a></code> function.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">post_sample_psi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_posterior.html">get_post_samples</a></span><span class="op">(</span><span class="va">fit1</span>, <span class="st">"psi"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">post_sample_psi</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#&gt; [1] 4000   50   50</span></span></code></pre></div>
 <p>The resulting object <code>post_sample_psi</code> is a 3-dimensional
 array containing the posterior sample of <code>psi</code>. Information
 about the dimensions of the extracted sample is given in its
 attributes.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">post_sample_psi</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">post_sample_psi</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#&gt; $dim</span></span>
 <span><span class="co">#&gt; [1] 4000   50   50</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -510,14 +525,14 @@ corresponds to the species and the third to the site. The labels for
 species and sites indicate that <code>post_sample_psi[, 1, 1]</code>
 contains the posterior sample of <code>psi</code> of <em>Abbottina
 rivularis</em> at site 1.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">post_sample_psi</span><span class="op">[</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span></span></code></pre></div>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">post_sample_psi</span><span class="op">[</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span></span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#&gt;  [1] 0.6673664 0.7505735 0.6416083 0.7011978 0.5935338 0.6087940 0.6159829</span></span>
 <span><span class="co">#&gt;  [8] 0.7758206 0.6710466 0.7423708 0.6244308 0.6237291 0.6344345 0.6715390</span></span>
 <span><span class="co">#&gt; [15] 0.6255393 0.7306071 0.6781538 0.7391794 0.6678208 0.6715868 0.7582302</span></span>
 <span><span class="co">#&gt; [22] 0.5947020 0.4880676 0.6958859 0.6202520 0.5487584 0.6781225 0.7073072</span></span>
-<span><span class="co">#&gt; (The rest omitted)</span></span></code></pre></div>
+<span><span class="co">#&gt; (Omitted the remaining)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="assess-goodness-of-fit">Assess goodness-of-fit<a class="anchor" aria-label="anchor" href="#assess-goodness-of-fit"></a>
@@ -527,7 +542,7 @@ step in data analysis based on statistical models. The goodness-of-fit
 of models fitted with <code><a href="../reference/occumb.html">occumb()</a></code> can be evaluated using the
 <code><a href="../reference/gof.html">gof()</a></code> function which computes the Bayesian p-value via the
 posterior predictive check approach.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gof_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gof.html">gof</a></span><span class="op">(</span><span class="va">fit1</span>, cores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
 <p>It is recommended to specify the <code>cores</code> argument
 explicitly for parallel computation. By default, the <code><a href="../reference/gof.html">gof()</a></code>
@@ -535,20 +550,21 @@ function outputs a scatter plot of fit statistics (in this case, the
 default Freeman-Tukey statistics).</p>
 <p>To see a summary of the result, just enter the name of the resulting
 object.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gof_result</span></span></code></pre></div>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gof_result</span></span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#&gt; Posterior predictive check for an occumbFit object:</span></span>
 <span><span class="co">#&gt;  Statistics: Freeman-Tukey </span></span>
-<span><span class="co">#&gt;  p-value:    0.19825 </span></span>
+<span><span class="co">#&gt;  p-value:    0.2005 </span></span>
 <span><span class="co">#&gt;  Discrepancy statistics for observed data:   542.81 (mean), 17.92 (sd) </span></span>
-<span><span class="co">#&gt;  Discrepancy statistics for replicated data: 523.24 (mean), 16.23 (sd) </span></span></code></pre></div>
+<span><span class="co">#&gt;  Discrepancy statistics for replicated data: 523.28 (mean), 16.47 (sd) </span></span></code></pre></div>
 <p>The moderate p-value indicates a lack of evidence of the model’s
 inadequacy in fitting.</p>
 <p>The <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function can be used to (re)draw the scatter
 plot of fit statistics from the resulting object.</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">gof_result</span><span class="op">)</span></span></code></pre></div>
+<p><img src="images/gof_fit1.png"></p>
 </div>
 <div class="section level2">
 <h2 id="analyze-study-design">Analyze study design<a class="anchor" aria-label="anchor" href="#analyze-study-design"></a>
@@ -577,13 +593,14 @@ or a “metacommunity”).</p>
 detected per site at the 50 sites in the dataset under different
 combinations of the number of replicates and sequencing depth. For
 example, the following will give the expected number of species detected
-per site when the number of replicates (<span class="math inline">\(K\)</span>) and the sequencing depth (<span class="math inline">\(N\)</span>) take the values (1, 2, 3) and (1000,
-10000, 100000), respectively.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+per site (referred to as <code>Utility</code> below) when the number of
+replicates <code>K</code> and the sequencing depth <code>N</code> take
+the values (1, 2, 3) and (1000, 10000, 100000), respectively.</p>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">utilL1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/eval_util_L.html">eval_util_L</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>K <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, N <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1E3</span>, <span class="fl">1E4</span>, <span class="fl">1E5</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>                      <span class="va">fit1</span>, cores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
 <span><span class="va">utilL1</span></span></code></pre></div>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#&gt;   K     N  Utility</span></span>
 <span><span class="co">#&gt; 1 1 1e+03 13.03225</span></span>
 <span><span class="co">#&gt; 2 2 1e+03 16.72177</span></span>
@@ -602,34 +619,38 @@ values are each known, then the <code><a href="../reference/list_cond_L.html">li
 be used to obtain a set of feasible settings under these cost and budget
 values. This can be given to <code><a href="../reference/eval_util_L.html">eval_util_L()</a></code> to identify the
 optimal study design under a budget constraint.</p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">settings</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/list_cond_L.html">list_cond_L</a></span><span class="op">(</span>budget <span class="op">=</span> <span class="fl">875</span> <span class="op">*</span> <span class="fl">1E3</span>,</span>
 <span>                        lambda1 <span class="op">=</span> <span class="fl">0.01</span>,</span>
 <span>                        lambda2 <span class="op">=</span> <span class="fl">5000</span>,</span>
 <span>                        <span class="va">fit1</span><span class="op">)</span></span>
 <span><span class="va">utilL2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/eval_util_L.html">eval_util_L</a></span><span class="op">(</span><span class="va">settings</span>, <span class="va">fit1</span>, cores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
 <span><span class="va">utilL2</span></span></code></pre></div>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#&gt;   budget lambda1 lambda2 K          N  Utility</span></span>
 <span><span class="co">#&gt; 1 875000    0.01    5000 1 1250000.00 15.45671</span></span>
 <span><span class="co">#&gt; 2 875000    0.01    5000 2  375000.00 18.37862</span></span>
 <span><span class="co">#&gt; 3 875000    0.01    5000 3   83333.33 19.21953</span></span></code></pre></div>
 <p>Hence, under this specific budget and cost value, it is best to have
-K = 3 replicates per site for the most effective species detection.</p>
+<code>K = 3</code> replicates per site for the most effective species
+detection.</p>
 <p>In contrast to <code><a href="../reference/eval_util_L.html">eval_util_L()</a></code>, <code><a href="../reference/eval_util_R.html">eval_util_R()</a></code>
 considers differences in the number of sites visited. Nevertheless,
 <code><a href="../reference/eval_util_R.html">eval_util_R()</a></code> can be applied in much the same way as
-<code><a href="../reference/eval_util_L.html">eval_util_L()</a></code>. Since <code><a href="../reference/list_cond_R.html">list_cond_R()</a></code> may return
-a huge list of possible settings, you may want to get a manually
-restricted list using its <code>J</code> and/or <code>K</code>
-arguments.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code><a href="../reference/eval_util_L.html">eval_util_L()</a></code>. In <code><a href="../reference/eval_util_R.html">eval_util_R()</a></code>,
+<code>Utility</code> is the number of species expected to be detected in
+the region of interest under the settings of number of sites
+<code>J</code>, number of replicates <code>K</code>, and the sequencing
+depth <code>N</code>. Since <code><a href="../reference/list_cond_R.html">list_cond_R()</a></code> may return a huge
+list of possible settings, you may want to get a manually restricted
+list using its <code>J</code> and/or <code>K</code> arguments.</p>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Use fit0 here since the current version of eval_util_R() does not support</span></span>
 <span><span class="co"># site heterogeneity of occupancy probability.</span></span>
 <span><span class="va">utilR1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/eval_util_R.html">eval_util_R</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>J <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, K <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, N <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1E3</span>, <span class="fl">1E4</span>, <span class="fl">1E5</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>                      <span class="va">fit0</span>, cores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
 <span><span class="va">utilR1</span></span></code></pre></div>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#&gt;    J K     N  Utility</span></span>
 <span><span class="co">#&gt; 1  1 1 1e+03 13.02089</span></span>
 <span><span class="co">#&gt; 2  2 1 1e+03 18.75257</span></span>
@@ -658,7 +679,7 @@ arguments.</p>
 <span><span class="co">#&gt; 25 1 3 1e+05 19.18010</span></span>
 <span><span class="co">#&gt; 26 2 3 1e+05 25.78404</span></span>
 <span><span class="co">#&gt; 27 3 3 1e+05 29.49870</span></span></code></pre></div>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">settings</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/list_cond_R.html">list_cond_R</a></span><span class="op">(</span>budget <span class="op">=</span> <span class="fl">1125</span> <span class="op">*</span> <span class="fl">1E3</span>,</span>
 <span>                        lambda1 <span class="op">=</span> <span class="fl">0.01</span>,</span>
 <span>                        lambda2 <span class="op">=</span> <span class="fl">5000</span>,</span>
@@ -667,7 +688,7 @@ arguments.</p>
 <span>                        K <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span></span>
 <span><span class="va">utilR2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/eval_util_R.html">eval_util_R</a></span><span class="op">(</span><span class="va">settings</span>, <span class="va">fit0</span>, cores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
 <span><span class="va">utilR2</span></span></code></pre></div>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#&gt;     budget lambda1 lambda2 lambda3  J K           N  Utility</span></span>
 <span><span class="co">#&gt; 1  1125000    0.01    5000    5000  5 1 21500000.00 30.10762</span></span>
 <span><span class="co">#&gt; 2  1125000    0.01    5000    5000 10 1 10250000.00 35.66881</span></span>

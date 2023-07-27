@@ -14,7 +14,7 @@ posterior samples."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aj
     
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.6.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,7 +31,7 @@ posterior samples."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aj
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/model_specification.html">Model specification in occumb</a>
+    <a class="dropdown-item" href="../articles/model_specification.html">Model specification in occumb()</a>
   </div>
 </li>
 <li class="nav-item">
@@ -207,17 +207,20 @@ variance) <code>prior_prec</code> is specified. For the standard deviation of
 species-specific effects, a uniform prior distribution with a lower limit of
 0 and an upper limit of <code>prior_ulim</code> is specified. For the correlation
 coefficient of species-specific effects, a uniform prior distribution in the
-range of \(-1\) to 1 is specified by default.</p>
+range of \(-\)1 to 1 is specified by default.</p>
+<p>Also see <a href="https://fukayak.github.io/occumb/articles/model_specification.html">the package vignette</a>
+for details on model specification in <code>occumb()</code>.</p>
 <p>The <code>data</code> argument requires a dataset object generated using
 <code>ocumbData()</code>: see the document of <code><a href="occumbData.html">occumbData</a>()</code>.</p>
 <p>The model is fit via the <code><a href="https://rdrr.io/pkg/jagsUI/man/jags.html" class="external-link">jags</a>()</code> function of the
-jagsUI package, where Markov chain Monte Carlo methods are used to
+<a href="https://cran.r-project.org/package=jagsUI" class="external-link">jagsUI</a> package, where
+Markov chain Monte Carlo methods are used to
 obtain posterior samples of parameters and latent variables.
 Arguments <code>n.chains</code>, <code>n.adapt</code>, <code>n.burnin</code>, <code>n.thin</code>,
 <code>n.iter</code>, and <code>parallel</code> are passed on to the argument of the
 same name in the <code><a href="https://rdrr.io/pkg/jagsUI/man/jags.html" class="external-link">jags</a>()</code> function.
-See the document of jagsUI's <code><a href="https://rdrr.io/pkg/jagsUI/man/jags.html" class="external-link">jags</a>()</code> function for
-details.</p>
+See the document of <a href="https://cran.r-project.org/package=jagsUI" class="external-link">jagsUI</a>'s
+<code><a href="https://rdrr.io/pkg/jagsUI/man/jags.html" class="external-link">jags</a>()</code> function for details.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
