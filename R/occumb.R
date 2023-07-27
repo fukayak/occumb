@@ -57,19 +57,23 @@ setClass("occumbFit", slots = c(fit = "jagsUI",
 #'  species-specific effects, a uniform prior distribution with a lower limit of
 #'  0 and an upper limit of \code{prior_ulim} is specified. For the correlation
 #'  coefficient of species-specific effects, a uniform prior distribution in the
-#'  range of \eqn{-1} to 1 is specified by default.
+#'  range of \eqn{-}1 to 1 is specified by default.
+#'
+#'  Also see \href{https://fukayak.github.io/occumb/articles/model_specification.html}{the package vignette}
+#'  for details on model specification in \code{occumb()}.
 #'
 #'  The \code{data} argument requires a dataset object generated using
 #'  \code{ocumbData()}: see the document of \code{\link{occumbData}()}.
 #'
 #'  The model is fit via the \code{\link[jagsUI]{jags}()} function of the
-#'  jagsUI package, where Markov chain Monte Carlo methods are used to
+#'  \href{https://cran.r-project.org/package=jagsUI}{jagsUI} package, where
+#'  Markov chain Monte Carlo methods are used to
 #'  obtain posterior samples of parameters and latent variables.
 #'  Arguments \code{n.chains}, \code{n.adapt}, \code{n.burnin}, \code{n.thin},
 #'  \code{n.iter}, and \code{parallel} are passed on to the argument of the
 #'  same name in the \code{\link[jagsUI]{jags}()} function.
-#'  See the document of jagsUI's \code{\link[jagsUI]{jags}()} function for
-#'  details.
+#'  See the document of \href{https://cran.r-project.org/package=jagsUI}{jagsUI}'s
+#'  \code{\link[jagsUI]{jags}()} function for details.
 #' @param formula_phi A right-hand side formula describing species-specific
 #'        effects of sequence relative dominance (\eqn{\phi}).
 #' @param formula_theta A right-hand side formula describing species-specific

@@ -34,7 +34,8 @@
 #'  \item{\code{"rho"}}{Correlation coefficients of the species-specific effects
 #'  (\code{alpha}, \code{beta}, \code{gamma}).}
 #'  }
-#'  See (xxx) for details of these parameters.
+#'  See \href{https://fukayak.github.io/occumb/articles/model_specification.html}{the package vignette}
+#'  for details of these parameters.
 #'
 #'  The parameter may have dimensions corresponding to species, sites,
 #'  replicates, and effects (covariates): the \code{dimension} and \code{label}

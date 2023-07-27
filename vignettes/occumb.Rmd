@@ -1,6 +1,9 @@
 ---
 title: "Introduction to occumb"
 output: rmarkdown::html_vignette
+resource_files:
+  - images/plot_fit1.png
+  - images/gof_fit1.png
 vignette: >
   %\VignetteIndexEntry{Introduction to occumb}
   %\VignetteEngine{knitr::rmarkdown}
@@ -55,7 +58,7 @@ summary(fish)
 ```
 
 Note that a summary of the sequence read count data is found in the first block of the output.
-It shows that the data was obtained from samples of 50 sites * (up to) 3 replicates, with 50 fish species recorded.
+It shows that the data was obtained from samples of 50 sites $\times$ (up to) 3 replicates, with 50 fish species recorded.
 A summary of the missing samples, number of replicates per site, and sequencing depth (i.e., the total number of sequence reads per sample) are also presented.
 The second block of the output indicates that `fish` data also has two covariates, one continuous species covariate, `mismatch`, and one discrete site covariate, `riverbank`, which can be used in the following analysis.
 The third block of the output shows labels given to the 50 species, 50 sites, and three replicates.
@@ -66,14 +69,14 @@ When you are analyzing your own dataset, you can use `occumbData()` to set up yo
 If you want to display the entire data, just type `fish`.
 
 ```{r, eval = FALSE}
-fish
+fish # Result not shown
 ```
 
 ## Fit models
 
-With the `fish` dataset (or if your dataset is constructed with `occumbData()`), you can fit a multispecies site occupancy model for eDNA metabarcoding using the `occumb()` function.
+With the `fish` dataset (or your dataset constructed with `occumbData()`), you can fit a multispecies site occupancy model for eDNA metabarcoding using the `occumb()` function which fits the model in a fully Bayesian approach via the Markov Chain Monte Carlo (MCMC) method implemented in [JAGS](https://mcmc-jags.sourceforge.io/).
 
-The `occumb()` function has several arguments that accept model formulas to fit different model variants using the usual R formula syntax. See `vignette("model_specification")` for an overview of the models that `occumb()` can fit and details on how to specify models.
+`occumb()` has several arguments that accept model formulas to fit different model variants using the usual R formula syntax. See `vignette("model_specification")` for an overview of the models that `occumb()` can fit and details on how to specify models.
 
 Fitting a null model (i.e., an intercept-only model, though the value of the intercept is species-specific) is very simple, as follows.
 
@@ -94,7 +97,7 @@ Here, `riverbank` is specified as the covariate for site occupancy probability (
 
 The above two model fits can take approximately one hour. Given that `occumb()` fits a class of complex hierarchical models with many parameters and unknown variables, it may require, depending on the dataset size, a long time and/or a lot of memory for model fitting.
 
-`occumb()` also has several arguments to control the Markov Chain Monte Carlo (MCMC) computation for fitting the model. For example, to obtain more precise posterior estimates than the example above, you can explicitly set the `n.iter` and `n.thin` arguments to get longer and less autocorrelated MCMC samples.
+`occumb()` also has several arguments to control MCMC computation for fitting the model. For example, to obtain more precise posterior estimates than the example above, you can explicitly set the `n.iter` and `n.thin` arguments to get longer and less autocorrelated MCMC samples.
 
 ```{r, eval = FALSE}
 fit1x <- occumb(formula_psi = ~ riverbank,
@@ -113,7 +116,7 @@ With the `fit1` object, we will look at how to access and diagnose the posterior
 Just enter the object name `fit1` displays a summary of the MCMC results, including a table of posterior estimates for each saved parameter.
 
 ```{r, eval = FALSE}
-fit1
+fit1 # Result not shown
 ```
 
 The `plot()` function draws a trace plot and a density plot for each parameter.
@@ -121,8 +124,9 @@ The `plot()` function draws a trace plot and a density plot for each parameter.
 ```{r, eval = FALSE}
 plot(fit1)
 ```
+![](images/plot_fit1.png)
 
-Although results are not shown here, users who have used the `{jagsUI}` package should be familiar with the output of these operations. Model fitting in `occumb()` relies on functions provided by the `{jagsUI}` package, and the above operations respectively apply the print and plot methods for `{jagsUI}` objects.
+Users who have used the `{jagsUI}` package should be familiar with the output of these operations. Model fitting in `occumb()` relies on functions provided by the `{jagsUI}` package, and the above operations respectively apply the print and plot methods for `{jagsUI}` objects.
 
 The `summary()` function provides a high-level summary of the result. This is based on the summary method for `{jagsUI}` objects and modified for the `occumb()` output, which displays data summary, model equations, MCMC settings, and a quick overview of the convergence of relevant model parameters.
 
@@ -223,7 +227,9 @@ summary(fit1)
 
 Overall, the model is not so far from convergence, but the convergence of `phi` and `alpha`, the parameters related to the relative dominance of species sequence reads, is not good (i.e., high values of `Rhat`); hence, longer MCMC runs will be required for a formal inference.
 
-If you want to access posterior samples of individual parameters or their summaries, you can use the `get_post_samples()` and `get_post_summary()` functions. As an example, try to get a posterior summary of site occupancy probability `psi` using the `get_post_summary()` function.
+If you want to access posterior samples of individual parameters or their summaries, you can use the `get_post_samples()` and `get_post_summary()` functions.
+This may require understanding the model parameters and their names: see `vignette("model_specification")` for details.
+As an example, try to get a posterior summary of site occupancy probability `psi` using the `get_post_summary()` function.
 
 ```{r, eval = FALSE}
 post_summary_psi <- get_post_summary(fit1, "psi")
@@ -240,7 +246,7 @@ post_summary_psi
 #> psi[6,1]   0.10737782 0.061179251 0.024299550 0.06246265 0.09573034 0.13925811 0.25577838 1.002291  1418        0 1
 #> psi[7,1]   0.84639119 0.053478041 0.730770215 0.81327035 0.85048238 0.88494478 0.93751979 1.003575   654        0 1
 #> psi[8,1]   0.94296846 0.028288919 0.875373936 0.92739641 0.94770976 0.96354354 0.98337253 1.002581  1006        0 1
-#> (The rest omitted)
+#> (Omitted the remaining)
 ```
 
 In the `fit1` model, `psi` is assumed to have different values for each site depending on the `riverbank` covariate. Therefore, `psi` is estimated for each 50 species $\times$ 50 sites (note that `psi` differs for each species by default), and two subscripts in parentheses distinguish them. So, which species and site parameter is `psi[1,1]`? How about `psi[2,1]`? Information about the dimension of the parameter is given in the attributes of the resulting object.
@@ -338,10 +344,24 @@ attributes(post_summary_gamma)$label$Effects
 #> [1] "(Intercept)"                 "riverbankwithout_vegetation"
 ```
 
-`gamma` has two effect values for each species: the intercept `(Intercept)` and the effect of the absence of vegetation in the riverbank `riverbankwithout_vegetation`. Displaying the summary (results not shown below), we will see that, for many species, the absence of vegetation has a negative effect on `psi` (on its link scale).
+`gamma` has two effect values for each species: the intercept `(Intercept)` and the effect of the absence of vegetation in the riverbank `riverbankwithout_vegetation`. Displaying the summary, we will see that, for many species, the absence of vegetation has a negative effect on `psi` (on its link scale).
 
 ```{r, eval = FALSE}
 post_summary_gamma
+```
+
+```{r}
+#>                    mean        sd       2.5%          25%         50%         75%        97.5%      Rhat n.eff overlap0       f
+#> (Omitted the beginning)
+#> gamma[1,2]  -0.68135951 0.4102181 -1.4106885 -0.964385346 -0.71198673 -0.41908665  0.197784615 1.0031831   720        1 0.93875
+#> gamma[2,2]  -0.57124068 0.4861383 -1.4368696 -0.906331725 -0.60645174 -0.27472631  0.480190462 1.0141750   414        1 0.87925
+#> gamma[3,2]  -1.07479024 0.4260032 -1.9550037 -1.336688784 -1.07308990 -0.80888005 -0.213626578 1.0040679   632        0 0.99250
+#> gamma[4,2]  -0.96563859 0.5007208 -1.9760743 -1.276917710 -0.95208744 -0.64960250  0.016721077 1.0020286  1835        1 0.97225
+#> gamma[5,2]  -1.01038376 0.5436033 -2.1340409 -1.339282006 -0.98783592 -0.65193007  0.006887964 1.0148153   190        1 0.97400
+#> gamma[6,2]  -0.96443244 0.5694898 -2.1291123 -1.307706597 -0.96394933 -0.62099851  0.205483803 1.0043719   989        1 0.95325
+#> gamma[7,2]  -1.44522243 0.4356167 -2.4011743 -1.721131931 -1.39965212 -1.14153735 -0.689367497 1.0021543  1065        0 0.99925
+#> gamma[8,2]  -1.36146823 0.4820477 -2.3661876 -1.654265660 -1.32819584 -1.04709249 -0.483307820 1.0014346  1791        0 0.99900
+#> (Omitted the remaining)
 ```
 
 Next, we will access posterior samples of `psi` using the `get_post_samples()` function.
@@ -442,7 +462,7 @@ post_sample_psi[, 1, 1]
 #>  [8] 0.7758206 0.6710466 0.7423708 0.6244308 0.6237291 0.6344345 0.6715390
 #> [15] 0.6255393 0.7306071 0.6781538 0.7391794 0.6678208 0.6715868 0.7582302
 #> [22] 0.5947020 0.4880676 0.6958859 0.6202520 0.5487584 0.6781225 0.7073072
-#> (The rest omitted)
+#> (Omitted the remaining)
 ```
 
 
@@ -466,9 +486,9 @@ gof_result
 ```{r}
 #> Posterior predictive check for an occumbFit object:
 #>  Statistics: Freeman-Tukey 
-#>  p-value:    0.19825 
+#>  p-value:    0.2005 
 #>  Discrepancy statistics for observed data:   542.81 (mean), 17.92 (sd) 
-#>  Discrepancy statistics for replicated data: 523.24 (mean), 16.23 (sd) 
+#>  Discrepancy statistics for replicated data: 523.28 (mean), 16.47 (sd) 
 ```
 
 The moderate p-value indicates a lack of evidence of the model's inadequacy in fitting.
@@ -478,6 +498,7 @@ The `plot()` function can be used to (re)draw the scatter plot of fit statistics
 ```{r, eval = FALSE}
 plot(gof_result)
 ```
+![](images/gof_fit1.png)
 
 ## Analyze study design
 
@@ -485,7 +506,7 @@ The model fitted with `occumb()` can be used to find eDNA metabarcoding study de
 
 `eval_util_L()` and `eval_util_R()` are functions available for these purposes. These two functions assume species diversity assessment at different spatial scales (i.e., the former is for local (L), the latter for regional (R)). Specifically, `eval_util_L()` is appropriate if you are interested in assessing species diversity only for the study sites included in the dataset, and `eval_util_R()` is appropriate if you are interested in assessing species diversity in a broader area that includes the study sites in the dataset (i.e., the population of sites or a "metacommunity").
 
-In the context of the `fish` dataset, `eval_util_L()` evaluates the expected number of species detected per site at the 50 sites in the dataset under different combinations of the number of replicates and sequencing depth. For example, the following will give the expected number of species detected per site when the number of replicates ($K$) and the sequencing depth ($N$) take the values (1, 2, 3) and (1000, 10000, 100000), respectively.
+In the context of the `fish` dataset, `eval_util_L()` evaluates the expected number of species detected per site at the 50 sites in the dataset under different combinations of the number of replicates and sequencing depth. For example, the following will give the expected number of species detected per site (referred to as `Utility` below) when the number of replicates `K` and the sequencing depth `N` take the values (1, 2, 3) and (1000, 10000, 100000), respectively.
 
 ```{r, eval = FALSE}
 utilL1 <- eval_util_L(expand.grid(K = 1:3, N = c(1E3, 1E4, 1E5)),
@@ -526,9 +547,12 @@ utilL2
 #> 3 875000    0.01    5000 3   83333.33 19.21953
 ```
 
-Hence, under this specific budget and cost value, it is best to have K = 3 replicates per site for the most effective species detection.
+Hence, under this specific budget and cost value, it is best to have `K = 3` replicates per site for the most effective species detection.
 
-In contrast to `eval_util_L()`, `eval_util_R()` considers differences in the number of sites visited. Nevertheless, `eval_util_R()` can be applied in much the same way as `eval_util_L()`. Since `list_cond_R()` may return a huge list of possible settings, you may want to get a manually restricted list using its `J` and/or `K` arguments.
+In contrast to `eval_util_L()`, `eval_util_R()` considers differences in the number of sites visited. Nevertheless, `eval_util_R()` can be applied in much the same way as `eval_util_L()`. 
+In `eval_util_R()`, `Utility` is the number of species expected to be detected in the region of interest under the settings of number of sites `J`, number of replicates `K`, and the sequencing depth `N`.
+Since `list_cond_R()` may return a huge list of possible settings, you may want to get a manually restricted list using its `J` and/or `K` arguments.
+
 
 ```{r, eval = FALSE}
 # Use fit0 here since the current version of eval_util_R() does not support
