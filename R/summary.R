@@ -103,10 +103,11 @@ setMethod("summary", signature(object = "occumbData"),
                 class_cov <- vector(length = length(covariates))
                 for (i in seq_along(covariates)) {
                     if (mode(covariates[[i]]) %in% c("logical", "character") |
-                        is.factor(covariates[[i]]))
+                        is.factor(covariates[[i]])) {
                         class_cov[i] <- "(categorical)"
-                    else
+                    } else {
                         class_cov[i] <- "(continuous)"
+                    }
                 }
                 out <- paste(names(covariates), class_cov, sep = " ")
             }
@@ -114,10 +115,11 @@ setMethod("summary", signature(object = "occumbData"),
         }
 
         get_list_labels <- function(labels) {
-            if (is.null(labels))
+            if (is.null(labels)) {
                 return("(None)")
-            else
+            } else {
                 return(labels)
+            }
         }
 
         cat(crayon::bold("Sequence read counts: \n"))
@@ -156,10 +158,11 @@ setMethod("summary", signature(object = "occumbData"),
 
 print_Rhat_neff <- function(param, object) {
 
-    if (param == "deviance")
+    if (param == "deviance") {
         post_summary <- object@fit$summary[param, ]
-    else
+    } else {
         post_summary <- get_post_summary(object, param)
+    }
 
     if (is.null(dim(post_summary))) {
         num_per <- 1

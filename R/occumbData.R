@@ -44,10 +44,11 @@ validate_occumbData <- function(object) {
                          names(object@site_cov)[sapply(object@site_cov, length) != J]))
     wrong_repl_cov <- vector(length = length(object@repl_cov))
     for (i in seq_along(object@repl_cov)) {
-        if (is.matrix(object@repl_cov[[i]]))
+        if (is.matrix(object@repl_cov[[i]])) {
             wrong_repl_cov[i] <- !identical(dim(object@repl_cov[[i]]), c(J, K))
-        else
+        } else {
             wrong_repl_cov[i] <- TRUE
+        }
     }
     if (sum(wrong_repl_cov))
         msg <- c(msg,
