@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="index.html">occumb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.6.0.9001</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.6.1.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,8 +76,7 @@
 
 <p>occumb is an R package that provides functionalities to apply <a href="https://doi.org/10.1111/2041-210X.13732" class="external-link">the multispecies site occupancy modeling for environmental DNA (eDNA) metabarcoding</a> easily.</p>
 <p>This package allows the users to fit the model with a fully Bayesian approach, using the conventional formulas in R. It enables the analysis of the detectability of species in different stages of the workflow of eDNA metabarcoding and inference of species site occupancy while accounting for false negatives. It also provides the functionality for a model-based inference to assist the optimization of the study design.</p>
-<p>The development of occumb would not be possible without, among others, <a href="https://mcmc-jags.sourceforge.io/" class="external-link">JAGS</a> and <a href="https://github.com/kenkellner/jagsUI" class="external-link">jagsUI</a> R package because it relies on the functionalities of these libraries for model fitting via Markov chain Monte Carlo (MCMC).</p>
-<p>See <code><a href="articles/occumb.html">vignette("occumb")</a></code> to learn how to use the package and the <a href="https://doi.org/10.1111/2041-210X.13732" class="external-link">original paper</a> for details of the model and inference.</p>
+<p>See <a href="https://fukayak.github.io/occumb/articles/occumb.html">the package vignette</a> to learn how to use the package and the <a href="https://doi.org/10.1111/2041-210X.13732" class="external-link">original paper</a> for details of the model and inference.</p>
 <div class="section level2">
 <h2 id="important-note">Important note<a class="anchor" aria-label="anchor" href="#important-note"></a>
 </h2>
@@ -93,9 +92,14 @@
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>You need first install JAGS following the instructions on the <a href="https://mcmc-jags.sourceforge.io/" class="external-link">JAGS homepage</a>.</p>
-<p>You can then install the latest version of occumb from the GitHub repository using the <code>install_github()</code> function in the <a href="https://remotes.r-lib.org" class="external-link">remotes</a> package:</p>
+<p>You can then install the latest version of occumb from the GitHub repository using the <code>install_github()</code> function in the <a href="https://CRAN.R-project.org/package=remotes" class="external-link">remotes</a> package:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"fukayak/occumb"</span>, ref <span class="op">=</span> <span class="st">"main"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="credits">Credits<a class="anchor" aria-label="anchor" href="#credits"></a>
+</h2>
+<p>The development of occumb would not be possible without, among others, <a href="https://mcmc-jags.sourceforge.io/" class="external-link">JAGS</a>, developed by Martyn Plummer, and <a href="https://CRAN.R-project.org/package=jagsUI" class="external-link">jagsUI</a> R package, developed by Kenneth F. Kellner, because it relies on the functionalities of these libraries for model fitting via Markov chain Monte Carlo (MCMC).</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="license">
