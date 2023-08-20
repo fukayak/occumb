@@ -352,8 +352,8 @@ test_that("Extracted samples and attributes are correct when proper parameter na
                                        "psi | (Intercept)")))
     attr(test, "dimension") <- NULL
     attr(test, "label") <- NULL
-    expect_identical(test,
-                     eval(parse(text = paste0("fit1@fit$sims.list$", lpar[i]))))
+    ans <- omit_elements_rho(eval(parse(text = paste0("fit1@fit$sims.list$", lpar[i]))))
+    expect_identical(test, ans)
     # Named y
     test <- get_post_samples(fit2, lpar[i])
     expect_identical(attributes(test)$dimension,
@@ -370,8 +370,8 @@ test_that("Extracted samples and attributes are correct when proper parameter na
                                        "psi | (Intercept)")))
     attr(test, "dimension") <- NULL
     attr(test, "label") <- NULL
-    expect_identical(test,
-                     eval(parse(text = paste0("fit2@fit$sims.list$", lpar[i]))))
+    ans <- omit_elements_rho(eval(parse(text = paste0("fit2@fit$sims.list$", lpar[i]))))
+    expect_identical(test, ans)
 })
 
 ### Tests for get_post_summary -------------------------------------------------
@@ -638,6 +638,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
     attr(test, "dimension") <- NULL
     attr(test, "label") <- NULL
     ans <- fit1@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit1@fit$summary)), ]
+    ans <- ans[rho_use(8), ]
     expect_identical(test, ans)
     # Named y
     test <- get_post_summary(fit2, lpar[i])
@@ -654,6 +655,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
     attr(test, "dimension") <- NULL
     attr(test, "label") <- NULL
     ans <- fit2@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit2@fit$summary)), ]
+    ans <- ans[rho_use(8), ]
     expect_identical(test, ans)
 
 })

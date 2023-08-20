@@ -144,6 +144,10 @@ qc_get_posterior <- function(fit, parameter) {
         parse(text = paste0("fit@fit$sims.list$", parameter))
     )
 
+    # Delete elements in rho except for the upper triangle
+    if (parameter == "rho")
+        samples_extracted <- omit_elements_rho(samples_extracted)
+
     # Add attributes
     out <- add_attributes(samples_extracted, fit, parameter, "samples")
     out
@@ -162,19 +166,23 @@ qc_get_posterior <- function(fit, parameter) {
                              stats::as.formula(fit@occumb_args$formula_psi_shared),
                              fit@data)
 
-        pattern <- paste0(parameter, "\\[")
-        if (parameter == "alpha_shared") {
-            if (margs$M_phi_shared == 1)
-                pattern <- paste0(parameter)
-        } else if (parameter == "beta_shared") {
-            if (margs$M_theta_shared == 1)
-                pattern <- paste0(parameter)
-        } else if (parameter == "gamma_shared") {
-            if (margs$M_psi_shared == 1)
-                pattern <- paste0(parameter)
-        }
+        if (parameter == "rho") {
+            return(match(rho_use(margs$M), rownames(fit@fit$summary)))
+        } else {
+            pattern <- paste0(parameter, "\\[")
+            if (parameter == "alpha_shared") {
+                if (margs$M_phi_shared == 1)
+                    pattern <- paste0(parameter)
+            } else if (parameter == "beta_shared") {
+                if (margs$M_theta_shared == 1)
+                    pattern <- paste0(parameter)
+            } else if (parameter == "gamma_shared") {
+                if (margs$M_psi_shared == 1)
+                    pattern <- paste0(parameter)
+            }
 
-        return(grep(pattern, rownames(fit@fit$summary)))
+            return(grep(pattern, rownames(fit@fit$summary)))
+        }
     }
 
     # Extract summary of the specified parameter
@@ -183,6 +191,25 @@ qc_get_posterior <- function(fit, parameter) {
     # Add attributes
     out <- add_attributes(summary_extracted, fit, parameter, "summary")
     out
+}
+
+rho_use <- function(M) {
+    out <- c()
+    for (i in 1:(M - 1)) {
+        for (j in (i + 1):M) {
+            out <- c(out, sprintf("rho[%s,%s]", i, j))
+        }
+    }
+    return(out)
+}
+
+omit_elements_rho <- function(samples_extracted) {
+    out <- samples_extracted
+    for (n in seq_len(dim(out)[1])) {
+        diag(out[n, , ]) <- NA
+        out[n, , ][lower.tri(out[n, , ])] <- NA
+    }
+    return(out)
 }
 
 add_attributes <- function(obj, fit, parameter,
