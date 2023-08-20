@@ -1,3 +1,7 @@
+# occumb (development version)
+* `get_post_summary()` and `get_post_samples()` omit unused elements in `rho`.
+* Fixed errors in specifying if/else.
+
 # occumb 0.6.1 (2023/07/27)
 * Add model specification vignette.
 * Some fixes and improvements of documentation.
