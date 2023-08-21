@@ -168,9 +168,7 @@ test_that("Code for initial value function is correct for 144 available models",
             "         spec_eff = matrix(stats::rnorm(const$I * margs$M, sd = 0.1),",
             "                           const$I, margs$M),",
             "         Mu       = stats::rnorm(margs$M, sd = 0.1),",
-            "         sigma    = stats::rnorm(margs$M, mean = 1, sd = 0.1),",
-            "         rho      = matrix(stats::rnorm(margs$M^2, sd = 0.1),",
-            "                           margs$M, margs$M))",
+            "         sigma    = stats::rnorm(margs$M, mean = 1, sd = 0.1))",
             "}")
 
         res <- inits_code(const, margs)

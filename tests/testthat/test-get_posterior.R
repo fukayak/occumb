@@ -344,15 +344,14 @@ test_that("Extracted samples and attributes are correct when proper parameter na
                      list(Sample = NULL,
                           Effects1 = c("phi | (Intercept)", "phi | cov62",
                                        "phi | cov63", "phi | cov64",
-                                       "theta | (Intercept)", "theta | cov42", "theta | cov43",
-                                       "psi | (Intercept)"),
+                                       "theta | (Intercept)", "theta | cov42", "theta | cov43"),
                           Effects2 = c("phi | (Intercept)", "phi | cov62",
                                        "phi | cov63", "phi | cov64",
                                        "theta | (Intercept)", "theta | cov42", "theta | cov43",
                                        "psi | (Intercept)")))
     attr(test, "dimension") <- NULL
     attr(test, "label") <- NULL
-    ans <- omit_elements_rho(eval(parse(text = paste0("fit1@fit$sims.list$", lpar[i]))))
+    ans <- eval(parse(text = paste0("fit1@fit$sims.list$", lpar[i])))
     expect_identical(test, ans)
     # Named y
     test <- get_post_samples(fit2, lpar[i])
@@ -362,15 +361,14 @@ test_that("Extracted samples and attributes are correct when proper parameter na
                      list(Sample = NULL,
                           Effects1 = c("phi | (Intercept)", "phi | cov62",
                                        "phi | cov63", "phi | cov64",
-                                       "theta | (Intercept)", "theta | cov42", "theta | cov43",
-                                       "psi | (Intercept)"),
+                                       "theta | (Intercept)", "theta | cov42", "theta | cov43"),
                           Effects2 = c("phi | (Intercept)", "phi | cov62",
                                        "phi | cov63", "phi | cov64",
                                        "theta | (Intercept)", "theta | cov42", "theta | cov43",
                                        "psi | (Intercept)")))
     attr(test, "dimension") <- NULL
     attr(test, "label") <- NULL
-    ans <- omit_elements_rho(eval(parse(text = paste0("fit2@fit$sims.list$", lpar[i]))))
+    ans <- eval(parse(text = paste0("fit2@fit$sims.list$", lpar[i])))
     expect_identical(test, ans)
 })
 
@@ -629,8 +627,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
     expect_identical(attributes(test)$label,
                      list(Effects1 = c("phi | (Intercept)", "phi | cov62",
                                        "phi | cov63", "phi | cov64",
-                                       "theta | (Intercept)", "theta | cov42", "theta | cov43",
-                                       "psi | (Intercept)"),
+                                       "theta | (Intercept)", "theta | cov42", "theta | cov43"),
                           Effects2 = c("phi | (Intercept)", "phi | cov62",
                                        "phi | cov63", "phi | cov64",
                                        "theta | (Intercept)", "theta | cov42", "theta | cov43",
@@ -638,7 +635,6 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
     attr(test, "dimension") <- NULL
     attr(test, "label") <- NULL
     ans <- fit1@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit1@fit$summary)), ]
-    ans <- ans[rho_use(8), ]
     expect_identical(test, ans)
     # Named y
     test <- get_post_summary(fit2, lpar[i])
@@ -646,8 +642,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
     expect_identical(attributes(test)$label,
                      list(Effects1 = c("phi | (Intercept)", "phi | cov62",
                                        "phi | cov63", "phi | cov64",
-                                       "theta | (Intercept)", "theta | cov42", "theta | cov43",
-                                       "psi | (Intercept)"),
+                                       "theta | (Intercept)", "theta | cov42", "theta | cov43"),
                           Effects2 = c("phi | (Intercept)", "phi | cov62",
                                        "phi | cov63", "phi | cov64",
                                        "theta | (Intercept)", "theta | cov42", "theta | cov43",
@@ -655,7 +650,6 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
     attr(test, "dimension") <- NULL
     attr(test, "label") <- NULL
     ans <- fit2@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit2@fit$summary)), ]
-    ans <- ans[rho_use(8), ]
     expect_identical(test, ans)
 
 })
