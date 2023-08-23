@@ -1,4 +1,5 @@
 # occumb (development version)
+* Add `z`, `theta`, and `phi` arguments to `eval_util_L()`.
 * Fix specification and initial values of `rho` so that only upper diagonal elements are saved.
 * `get_post_summary()` and `get_post_samples()` omit unused elements in `rho`.
 * Fixed errors in specifying if/else.

@@ -5,10 +5,12 @@
 #' @details
 #' The utility of the local species diversity assessment can be defined, for a
 #'  given set of sites, as the expected number of detected species per site
-#'  (Fukaya et al. 2022). `eval_util_L()` evaluates this utility for the set of
-#'  sites included in the `occumbFit` object (specifically, the sites for which
-#'  the latent occupancy state \eqn{z}{z} is estimated) for the combination of
-#'  `K` and `N` values specified in the `conditions` argument.
+#'  (Fukaya et al. 2022). `eval_util_L()` evaluates this utility for arbitrary
+#'  sets of sites that can potentially have different values for site occupancy
+#'  status of species, \eqn{z}{z}, sequence capture probabilities of species,
+#'  \eqn{\theta}{theta}, and sequence relative dominance of species,
+#'  \eqn{\phi}{phi}, for the combination of `K` and `N` values specified in the
+#'  `conditions` argument.
 #'  Such evaluations can be used to balance `K` and `N` to maximize the utility
 #'  under a constant budget (possible combinations of `K` and `N` under
 #'  specified budget and cost values are easily obtained using `list_cond_L()`;
@@ -26,17 +28,32 @@
 #'  is proportional to the relative frequency of the sequence of species
 #'  \eqn{i}{i}, conditional on its presence in replicate \eqn{k}{k} at site
 #'  \eqn{j}{j} (Fukaya et al. 2022).
-#' Expectations are taken with respect to the posterior predictive distributions
-#'  of \eqn{\boldsymbol{r} = \{r_{ijk}\}}{r} and
+#' Expectations are taken with respect to posterior (or, possibly prior)
+#'  predictive distributions of \eqn{\boldsymbol{r} = \{r_{ijk}\}}{r} and
 #'  \eqn{\boldsymbol{u} = \{u_{ijk}\}}{u}, which are evaluated numerically by
-#'  Monte Carlo integration using MCMC samples in the `occumbFit` object. Higher
+#'  Monte Carlo integration. The predictive distributions of
+#'  \eqn{\boldsymbol{r}}{r} and \eqn{\boldsymbol{u}}{u} depend on the model
+#'  parameters \eqn{z}{z}, \eqn{\theta}{theta}, and \eqn{\phi}{phi} values.
+#'  Their posterior (or prior) distribution is specified by supplying an
+#'  `occumbFit` object containing their posterior samples via the `fit` argument
+#'  or by supplying a matrix or array of posterior (or prior) samples of
+#'  parameter values via the `z`, `theta`, and `phi` arguments. Higher
 #'  approximation accuracy can be obtained by increasing the value of `N_rep`.
 #'
-#' The expected utility is evaluated assuming that all replicates are
-#'  homogeneous in the sense that the model parameters associated with the
-#'  detection process are constant across replicates. For this reason, in the
-#'  current version, `eval_util_L()` cannot be applied if the supplied
-#'  `occumbFit` object contains a model with replicate covariates.
+#' The `eval_util_L()` function can be executed by supplying the `fit` argument
+#'  without specifying the `z`, `theta`, and `phi` arguments, by supplying the
+#'  three `z`, `theta`, and `phi` arguments without the `fit` argument, or by
+#'  supplying the `fit` argument and any or all of the `z`, `theta`, and `phi`
+#'  arguments.
+#'
+#' The expected utility is evaluated assuming homogeneity of replicates, in the
+#'  sense that \eqn{\theta}{theta} and \eqn{\phi}{phi}, the model parameters
+#'  associated with the species detection process, are constant across
+#'  replicates within a site. For this reason, `eval_util_L()` does not accept
+#'  replicate-specific \eqn{\theta}{theta} and \eqn{\phi}{phi}. If the
+#'  `occumbFit` object supplied in the `fit` argument has a replicate-specific
+#'  parameter, parameter samples to be used in the utility evaluation must be
+#'  provided explicitly via `theta` or `phi` argument.
 #'
 #' Monte Carlo integration is executed in parallel on multiple CPU cores where
 #'  the `cores` argument controls the degree of parallelization.
@@ -49,9 +66,18 @@
 #'  Additional columns are ignored but may be included.
 #' @param fit An `occumbFit` object containing a posterior sample of the
 #'  relevant parameters.
+#' @param z Sample values of site occupancy status of species stored in an array
+#'  with sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.
+#' @param theta Sample values of sequence capture probabilities of species
+#'  stored in a matrix with sample \eqn{\times}{*} species dimension or an array
+#'  with sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.
+#' @param phi Sample values of sequence relative dominance of species stored in
+#'  a matrix with sample \eqn{\times}{*} species dimension or an array with
+#' sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.
 #' @param N_rep Controls the sample size for Monte Carlo integration.
-#'   The integral is evaluated using a total of `N_sample * N_rep` random samples,
-#'   where `N_sample` is the size of the MCMC sample provided as `fit`.
+#'  The integral is evaluated using a total of `N_sample * N_rep` random samples,
+#'  where `N_sample` is the maximum size of the MCMC sample in the `fit`
+#'  argument and the parameter sample in the `z`, `theta`, and `phi` arguments.
 #' @param cores The number of cores to use for parallelization.
 #' @return A data frame with a column named `Utility` in which the estimates of
 #'  expected utility are stored. This is obtained by adding the `Utility` column
@@ -95,32 +121,51 @@
 #' }
 #' @export
 eval_util_L <- function(settings,
-                        fit,
+                        fit = NULL,
+                        z = NULL,
+                        theta = NULL,
+                        phi = NULL,
                         N_rep = 1,
                         cores = 1L) {
 
     # Validate arguments
-    qc_eval_util_L(settings, fit)
+    qc_eval_util_L(settings, fit, z, theta, phi)
 
-    # Extract posterior samples
-    z     <- get_post_samples(fit, "z")
-    theta <- get_post_samples(fit, "theta")
-    phi   <- get_post_samples(fit, "phi")
+    # Set parameter values
+    if (is.null(z))
+        z <- get_post_samples(fit, "z")
+
+    if (is.null(theta))
+        theta <- get_post_samples(fit, "theta")
+
+    if (is.null(phi))
+        phi <- get_post_samples(fit, "phi")
+
+    # Resampling to match sample size
+    n_samples <- c(dim(z)[1], dim(theta)[1], dim(phi)[1])
+
+    if (n_samples[1] < max(n_samples))
+        z <- z[sample.int(n_samples[1], max(n_samples), replace = TRUE), , ]
+
+    if (n_samples[2] < max(n_samples)) {
+        if (length(dim(theta)) == 2)
+            theta <- theta[sample.int(n_samples[2], max(n_samples), replace = TRUE), ]
+        if (length(dim(theta)) == 3)
+            theta <- theta[sample.int(n_samples[2], max(n_samples), replace = TRUE), , ]
+    }
+
+    if (n_samples[3] < max(n_samples)) {
+        if (length(dim(phi)) == 2)
+            phi <- phi[sample.int(n_samples[3], max(n_samples), replace = TRUE), ]
+        if (length(dim(phi)) == 3)
+            phi <- phi[sample.int(n_samples[3], max(n_samples), replace = TRUE), , ]
+    }
 
     # Adapt theta/phi when they are species-specific
-    if (length(dim(theta)) == 2) {
-        theta <- array(dim = dim(z))
-        for (j in seq_len(dim(theta)[3]))
-            theta[, , j] <- get_post_samples(fit, "theta")
-    }
-    if (length(dim(phi)) == 2) {
-        phi <- array(dim = dim(z))
-        for (j in seq_len(dim(phi)[3]))
-            phi[, , j] <- get_post_samples(fit, "phi")
-    }
-
-    # Adapt theta/phi when they are replicate-specific
-    # ... to be added
+    if (length(dim(theta)) == 2)
+        theta <- outer(theta, rep(1, dim(z)[3]))
+    if (length(dim(phi)) == 2)
+        phi <- outer(phi, rep(1, dim(z)[3]))
 
     # Calculate expected utility
     result <- rep(NA, nrow(settings))
@@ -456,7 +501,7 @@ list_cond_R <- function(budget, lambda1, lambda2, lambda3, J = NULL, K = NULL) {
     data.frame(out)
 }
 
-qc_eval_util_L <- function(settings, fit) {
+qc_eval_util_L <- function(settings, fit, z, theta, phi) {
     # Assert that settings is a data frame and contains the required columns
     checkmate::assert_data_frame(settings)
     if (!checkmate::testSubset("K", names(settings)))
@@ -468,14 +513,71 @@ qc_eval_util_L <- function(settings, fit) {
     if (!checkmate::test_numeric(settings[, "N"], lower = 1))
         stop("'N' contains values less than one.\n")
 
-    # Assert that fit is an occumbFit object
-    assert_occumbFit(fit)
+    # Assert that either fit or (z, theta, phi) is provided
+    if (is.null(fit) & !(!is.null(z) & !is.null(theta) & !is.null(phi)))
+        stop("Parameter values are not fully specified: use fit argument or otherwise use all of z, theta, phi arguments.\n")
 
-    # Assert that model parameters are not replicate-specific
-    if (length(dim(get_post_samples(fit, "theta"))) == 4)
-        stop("'theta' is replicate-specific: the current 'eval_util_L' is not applicable to models with replicate-specific parameters.\n")
-    if (length(dim(get_post_samples(fit, "phi"))) == 4)
-        stop("'phi' is replicate-specific: the current 'eval_util_L' is not applicable to models with replicate-specific parameters.\n")
+    if (!is.null(fit)) {
+        # Assert that fit is an occumbFit object
+        assert_occumbFit(fit)
+
+        # Stop when modeled parameters are replicate-specific
+        if (length(dim(get_post_samples(fit, "theta"))) == 4)
+            stop("'fit' contains replicate-specific theta: specify appropriate theta values via the 'theta' argument to run.\n")
+        if (length(dim(get_post_samples(fit, "phi"))) == 4)
+            stop("'fit' contains replicate-specific phi: specify appropriate phi values via the 'phi' argument to run.\n")
+    }
+
+    # Assert that z, theta, and phi have an appropriate dimension and elements
+    checkmate::assert_array(z, d = 3, null.ok = TRUE)
+    checkmate::assert_array(theta, min.d = 2, max.d = 3, null.ok = TRUE)
+    checkmate::assert_array(phi, min.d = 2, max.d = 3, null.ok = TRUE)
+    checkmate::assert_integerish(z, lower = 0, upper = 1,
+                                 any.missing = FALSE, null.ok = TRUE)
+    checkmate::assert_numeric(theta, lower = 0, upper = 1,
+                              any.missing = FALSE, null.ok = TRUE)
+    checkmate::assert_numeric(phi, lower = 0, any.missing = FALSE, null.ok = TRUE)
+
+    # Assert that dimensions of z, theta, and phi agree with fit
+    if (!is.null(fit)) {
+        I <- dim(fit@data@y)[1]
+        J <- dim(fit@data@y)[2]
+
+        if (!is.null(z)) {
+            if (dim(z)[2] != I)
+                stop(paste0("Mismatch in species dimension: dim(z)[2] must be ", I, ".\n"))
+            if (dim(z)[3] != J)
+                stop(paste0("Mismatch in site dimension: dim(z)[3] must be ", J, ".\n"))
+        }
+        if (!is.null(theta)) {
+            if (dim(theta)[2] != I)
+                stop(paste0("Mismatch in species dimension: dim(theta)[2] must be ", I, ".\n"))
+            if (length(dim(theta)) == 3 & dim(theta)[3] != J)
+                stop(paste0("Mismatch in site dimension: dim(theta)[3] must be ", J, ".\n"))
+        }
+        if (!is.null(phi)) {
+            if (dim(phi)[2] != I)
+                stop(paste0("Mismatch in species dimension: dim(phi)[2] must be ", I, ".\n"))
+            if (length(dim(phi)) == 3 & dim(phi)[3] != J)
+                stop(paste0("Mismatch in site dimension: dim(phi)[3] must be ", J, ".\n"))
+        }
+    } else {
+        has_site_dim <- c(TRUE, length(dim(theta)) == 3, length(dim(phi)) == 3)
+        vI <- c(dim(z)[2], dim(theta)[2], dim(phi)[2])
+        vJ <- c(dim(z)[3],
+                ifelse(has_site_dim[2], dim(theta)[3], NA),
+                ifelse(has_site_dim[3], dim(phi)[3], NA))
+        vJ <- vJ[has_site_dim]
+        terms <- c("dim(z)[3]", "dim(theta)[3]", "dim(phi)[3]")[has_site_dim]
+
+        if (length(unique(vI)) != 1)
+            stop("Mismatch in species dimension: dim(z)[2], dim(theta)[2], and dim(phi)[2] must be equal.\n")
+        if (length(unique(vJ)) != 1)
+            stop(paste0("Mismatch in site dimension: ",
+                        knitr::combine_words(terms), " must be equal.\n"))
+    }
+
+    invisible(NULL)
 }
 
 qc_eval_util_R <- function(settings, fit) {

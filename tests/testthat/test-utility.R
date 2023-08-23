@@ -338,22 +338,169 @@ test_that("find_maxJ/K() throws an error when the budget is too large", {
 
 
 ### Tests for qc_eval_util_L ---------------------------------------------------
+I <- dim(res0@data@y)[1]
+J <- dim(res0@data@y)[2]
+
 test_that("qc_eval_util_L() blocks inappropriate settings", {
-    expect_error(qc_eval_util_L(data.frame(Kx = rep(1, 2), N = rep(1, 2)), res0),
+    expect_error(qc_eval_util_L(data.frame(Kx = rep(1, 2), N = rep(1, 2)), res0,
+                                NULL, NULL, NULL),
                  "The 'settings' argument does not contain column 'K'.")
-    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), Nx = rep(1, 2)), res0),
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), Nx = rep(1, 2)), res0,
+                                NULL, NULL, NULL),
                  "The 'settings' argument does not contain column 'N'.")
-    expect_error(qc_eval_util_L(data.frame(K = rep(0, 2), N = rep(1, 2)), res0),
+    expect_error(qc_eval_util_L(data.frame(K = rep(0, 2), N = rep(1, 2)), res0,
+                                NULL, NULL, NULL),
                  "'K' contains values less than one.")
-    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(0, 2)), res0),
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(0, 2)), res0,
+                                NULL, NULL, NULL),
                  "'N' contains values less than one.")
 })
 
+test_that("qc_eval_util_L() allows sufficient arguments", {
+    expect_invisible(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)),
+                                    res0, NULL, NULL, NULL))
+    expect_invisible(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)),
+                                    NULL,
+                                    array(1, dim = c(1, I, J)),
+                                    array(1, dim = c(1, I, J)),
+                                    array(1, dim = c(1, I, J))))
+    expect_invisible(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)),
+                                    res0,
+                                    array(1, dim = c(1, I, J)),
+                                    NULL,
+                                    NULL))
+    expect_invisible(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)),
+                                    res0,
+                                    NULL,
+                                    array(1, dim = c(1, I, J)),
+                                    NULL))
+    expect_invisible(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)),
+                                    res0,
+                                    NULL,
+                                    NULL,
+                                    array(1, dim = c(1, I, J))))
+    expect_invisible(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)),
+                                    res0,
+                                    array(1, dim = c(1, I, J)),
+                                    array(1, dim = c(1, I, J)),
+                                    NULL))
+    expect_invisible(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)),
+                                    res0,
+                                    array(1, dim = c(1, I, J)),
+                                    NULL,
+                                    array(1, dim = c(1, I, J))))
+    expect_invisible(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)),
+                                    res0,
+                                    NULL,
+                                    array(1, dim = c(1, I, J)),
+                                    array(1, dim = c(1, I, J))))
+    expect_invisible(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)),
+                                    res0,
+                                    array(1, dim = c(1, I, J)),
+                                    array(1, dim = c(1, I, J)),
+                                    array(1, dim = c(1, I, J))))
+})
+
+test_that("qc_eval_util_L() blocks insufficient arguments", {
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)),
+                                NULL, NULL, NULL, NULL),
+                 "Parameter values are not fully specified: use fit argument or otherwise use all of z, theta, phi arguments.")
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)),
+                                NULL,
+                                array(1, dim = c(1, I, J)),
+                                NULL,
+                                NULL),
+                 "Parameter values are not fully specified: use fit argument or otherwise use all of z, theta, phi arguments.")
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)),
+                                NULL,
+                                NULL,
+                                array(1, dim = c(1, I, J)),
+                                NULL),
+                 "Parameter values are not fully specified: use fit argument or otherwise use all of z, theta, phi arguments.")
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)),
+                                NULL,
+                                NULL,
+                                NULL,
+                                array(1, dim = c(1, I, J))),
+                 "Parameter values are not fully specified: use fit argument or otherwise use all of z, theta, phi arguments.")
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)),
+                                NULL,
+                                NULL,
+                                array(1, dim = c(1, I, J)),
+                                array(1, dim = c(1, I, J))),
+                 "Parameter values are not fully specified: use fit argument or otherwise use all of z, theta, phi arguments.")
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)),
+                                NULL,
+                                array(1, dim = c(1, I, J)),
+                                NULL,
+                                array(1, dim = c(1, I, J))),
+                 "Parameter values are not fully specified: use fit argument or otherwise use all of z, theta, phi arguments.")
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)),
+                                NULL,
+                                array(1, dim = c(1, I, J)),
+                                array(1, dim = c(1, I, J)),
+                                NULL),
+                 "Parameter values are not fully specified: use fit argument or otherwise use all of z, theta, phi arguments.")
+})
+
 test_that("qc_eval_util_L() blocks models with replicate-specific parameters", {
-    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)), res7),
-                 "'phi' is replicate-specific: the current 'eval_util_L' is not applicable to models with replicate-specific parameters.")
-    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)), res8),
-                 "'theta' is replicate-specific: the current 'eval_util_L' is not applicable to models with replicate-specific parameters.")
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)), res7,
+                                NULL, NULL, NULL),
+                 "'fit' contains replicate-specific phi: specify appropriate phi values via the 'phi' argument to run.")
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)), res8,
+                                NULL, NULL, NULL),
+                 "'fit' contains replicate-specific theta: specify appropriate theta values via the 'theta' argument to run.")
+})
+
+test_that("qc_eval_util_L() blocks dimension mismatch between z, theta, phi and fit", {
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)), res0,
+                                array(1, dim = c(1, I + 1, J)), NULL, NULL),
+                 paste0("Mismatch in species dimension: dim\\(z\\)\\[2\\] must be ", I, ".\n"))
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)), res0,
+                                array(1, dim = c(1, I, J + 1)), NULL, NULL),
+                 paste0("Mismatch in site dimension: dim\\(z\\)\\[3\\] must be ", J, ".\n"))
+
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)), res0,
+                                NULL, array(1, dim = c(1, I + 1, J)), NULL),
+                 paste0("Mismatch in species dimension: dim\\(theta\\)\\[2\\] must be ", I, ".\n"))
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)), res0,
+                                NULL, array(1, dim = c(1, I, J + 1)), NULL),
+                 paste0("Mismatch in site dimension: dim\\(theta\\)\\[3\\] must be ", J, ".\n"))
+
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)), res0,
+                                NULL, NULL, array(1, dim = c(1, I + 1, J))),
+                 paste0("Mismatch in species dimension: dim\\(phi\\)\\[2\\] must be ", I, ".\n"))
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)), res0,
+                                NULL, NULL, array(1, dim = c(1, I, J + 1))),
+                 paste0("Mismatch in site dimension: dim\\(phi\\)\\[3\\] must be ", J, ".\n"))
+
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)), NULL,
+                                array(1, dim = c(1, I + 1, J)),
+                                array(1, dim = c(1, I, J)),
+                                array(1, dim = c(1, I, J))),
+                 "Mismatch in species dimension: dim\\(z\\)\\[2\\], dim\\(theta\\)\\[2\\], and dim\\(phi\\)\\[2\\] must be equal.")
+
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)), NULL,
+                                array(1, dim = c(1, I, J)),
+                                array(1, dim = c(1, I, J + 1)),
+                                array(1, dim = c(1, I, J))),
+                 "Mismatch in site dimension: dim\\(z\\)\\[3\\], dim\\(theta\\)\\[3\\], and dim\\(phi\\)\\[3\\] must be equal.")
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)), NULL,
+                                array(1, dim = c(1, I, J)),
+                                array(1, dim = c(1, I, J)),
+                                array(1, dim = c(1, I, J + 1))),
+                 "Mismatch in site dimension: dim\\(z\\)\\[3\\], dim\\(theta\\)\\[3\\], and dim\\(phi\\)\\[3\\] must be equal.")
+
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)), NULL,
+                                array(1, dim = c(1, I, J)),
+                                array(1, dim = c(1, I, J + 1)),
+                                array(1, dim = c(1, I))),
+                 "Mismatch in site dimension: dim\\(z\\)\\[3\\] and dim\\(theta\\)\\[3\\] must be equal.")
+    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(1, 2)), NULL,
+                                array(1, dim = c(1, I, J)),
+                                array(1, dim = c(1, I)),
+                                array(1, dim = c(1, I, J + 1))),
+                 "Mismatch in site dimension: dim\\(z\\)\\[3\\] and dim\\(phi\\)\\[3\\] must be equal.")
 })
 
 

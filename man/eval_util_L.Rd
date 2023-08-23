@@ -4,7 +4,15 @@
 \alias{eval_util_L}
 \title{Expected utility for local species diversity assessments.}
 \usage{
-eval_util_L(settings, fit, N_rep = 1, cores = 1L)
+eval_util_L(
+  settings,
+  fit = NULL,
+  z = NULL,
+  theta = NULL,
+  phi = NULL,
+  N_rep = 1,
+  cores = 1L
+)
 }
 \arguments{
 \item{settings}{A data frame that specifies a set of conditions under which
@@ -18,9 +26,21 @@ Additional columns are ignored but may be included.}
 \item{fit}{An \code{occumbFit} object containing a posterior sample of the
 relevant parameters.}
 
+\item{z}{Sample values of site occupancy status of species stored in an array
+with sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.}
+
+\item{theta}{Sample values of sequence capture probabilities of species
+stored in a matrix with sample \eqn{\times}{*} species dimension or an array
+with sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.}
+
+\item{phi}{Sample values of sequence relative dominance of species stored in
+a matrix with sample \eqn{\times}{*} species dimension or an array with
+sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.}
+
 \item{N_rep}{Controls the sample size for Monte Carlo integration.
 The integral is evaluated using a total of \code{N_sample * N_rep} random samples,
-where \code{N_sample} is the size of the MCMC sample provided as \code{fit}.}
+where \code{N_sample} is the maximum size of the MCMC sample in the \code{fit}
+argument and the parameter sample in the \code{z}, \code{theta}, and \code{phi} arguments.}
 
 \item{cores}{The number of cores to use for parallelization.}
 }
@@ -36,10 +56,12 @@ species diversity assessment using Monte Carlo integration.
 \details{
 The utility of the local species diversity assessment can be defined, for a
 given set of sites, as the expected number of detected species per site
-(Fukaya et al. 2022). \code{eval_util_L()} evaluates this utility for the set of
-sites included in the \code{occumbFit} object (specifically, the sites for which
-the latent occupancy state \eqn{z}{z} is estimated) for the combination of
-\code{K} and \code{N} values specified in the \code{conditions} argument.
+(Fukaya et al. 2022). \code{eval_util_L()} evaluates this utility for arbitrary
+sets of sites that can potentially have different values for site occupancy
+status of species, \eqn{z}{z}, sequence capture probabilities of species,
+\eqn{\theta}{theta}, and sequence relative dominance of species,
+\eqn{\phi}{phi}, for the combination of \code{K} and \code{N} values specified in the
+\code{conditions} argument.
 Such evaluations can be used to balance \code{K} and \code{N} to maximize the utility
 under a constant budget (possible combinations of \code{K} and \code{N} under
 specified budget and cost values are easily obtained using \code{list_cond_L()};
@@ -57,17 +79,32 @@ at site \eqn{j}{j} and \eqn{r_{ijk}}{r[i, j, k]} is a latent variable that
 is proportional to the relative frequency of the sequence of species
 \eqn{i}{i}, conditional on its presence in replicate \eqn{k}{k} at site
 \eqn{j}{j} (Fukaya et al. 2022).
-Expectations are taken with respect to the posterior predictive distributions
-of \eqn{\boldsymbol{r} = \{r_{ijk}\}}{r} and
+Expectations are taken with respect to posterior (or, possibly prior)
+predictive distributions of \eqn{\boldsymbol{r} = \{r_{ijk}\}}{r} and
 \eqn{\boldsymbol{u} = \{u_{ijk}\}}{u}, which are evaluated numerically by
-Monte Carlo integration using MCMC samples in the \code{occumbFit} object. Higher
+Monte Carlo integration. The predictive distributions of
+\eqn{\boldsymbol{r}}{r} and \eqn{\boldsymbol{u}}{u} depend on the model
+parameters \eqn{z}{z}, \eqn{\theta}{theta}, and \eqn{\phi}{phi} values.
+Their posterior (or prior) distribution is specified by supplying an
+\code{occumbFit} object containing their posterior samples via the \code{fit} argument
+or by supplying a matrix or array of posterior (or prior) samples of
+parameter values via the \code{z}, \code{theta}, and \code{phi} arguments. Higher
 approximation accuracy can be obtained by increasing the value of \code{N_rep}.
 
-The expected utility is evaluated assuming that all replicates are
-homogeneous in the sense that the model parameters associated with the
-detection process are constant across replicates. For this reason, in the
-current version, \code{eval_util_L()} cannot be applied if the supplied
-\code{occumbFit} object contains a model with replicate covariates.
+The \code{eval_util_L()} function can be executed by supplying the \code{fit} argument
+without specifying the \code{z}, \code{theta}, and \code{phi} arguments, by supplying the
+three \code{z}, \code{theta}, and \code{phi} arguments without the \code{fit} argument, or by
+supplying the \code{fit} argument and any or all of the \code{z}, \code{theta}, and \code{phi}
+arguments.
+
+The expected utility is evaluated assuming homogeneity of replicates, in the
+sense that \eqn{\theta}{theta} and \eqn{\phi}{phi}, the model parameters
+associated with the species detection process, are constant across
+replicates within a site. For this reason, \code{eval_util_L()} does not accept
+replicate-specific \eqn{\theta}{theta} and \eqn{\phi}{phi}. If the
+\code{occumbFit} object supplied in the \code{fit} argument has a replicate-specific
+parameter, parameter samples to be used in the utility evaluation must be
+provided explicitly via \code{theta} or \code{phi} argument.
 
 Monte Carlo integration is executed in parallel on multiple CPU cores where
 the \code{cores} argument controls the degree of parallelization.
