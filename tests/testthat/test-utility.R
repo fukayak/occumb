@@ -1,6 +1,3 @@
-additional_test <- FALSE
-
-
 ### Tests for eval_util_L/R ----------------------------------------------------
 I <- 2 # Number of species
 J <- 2 # Number of sites
@@ -105,45 +102,102 @@ test_that("eval_util_L() outputs a data frame with the additional Utility column
     expect_equal(test6[, -ncol(test6)], settings)
 })
 
-if (additional_test) {
-    test_that("eval_util_R() outputs a data frame with the additional Utility column", {
-        settings <- data.frame(J = rep(1, 3), K = rep(1, 3), N = rep(1, 3), x = NA)
+test_that("eval_util_R() outputs a data frame with the additional Utility column", {
+    settings <- data.frame(J = rep(1, 3), K = rep(1, 3), N = rep(1, 3), x = NA)
 
-        # Null model
-        for (n in seq_len(1E4)) {
-            test0 <- try(eval_util_R(settings, res0, cores = 1), silent = TRUE)
-            if (class(test0) != "try-error") break
-        }
-        checkmate::expect_data_frame(test0)
-        expect_equal(colnames(test0), c(colnames(settings), "Utility"))
-        expect_equal(test0[, -ncol(test0)], settings)
+    # Null model
+    test0 <- eval_util_R(settings, res0, cores = 1)
+    checkmate::expect_data_frame(test0)
+    expect_equal(colnames(test0), c(colnames(settings), "Utility"))
+    expect_equal(test0[, -ncol(test0)], settings)
 
-        # Model with species covariates
-        for (n in seq_len(1E4)) {
-            test4 <- try(eval_util_R(settings, res4, cores = 1), silent = TRUE)
-            if (class(test4) != "try-error") break
-        }
-        checkmate::expect_data_frame(test4)
-        expect_equal(colnames(test4), c(colnames(settings), "Utility"))
-        expect_equal(test4[, -ncol(test4)], settings)
+    test0x <- eval_util_R(settings, res0, N_rep = 2, cores = 1)
+    checkmate::expect_data_frame(test0x)
+    expect_equal(colnames(test0x), c(colnames(settings), "Utility"))
+    expect_equal(test0x[, -ncol(test0x)], settings)
 
-        for (n in seq_len(1E4)) {
-            test5 <- try(eval_util_R(settings, res5, cores = 1), silent = TRUE)
-            if (class(test5) != "try-error") break
-        }
-        checkmate::expect_data_frame(test5)
-        expect_equal(colnames(test5), c(colnames(settings), "Utility"))
-        expect_equal(test5[, -ncol(test5)], settings)
+    # Model with site covariates
+    test1 <- eval_util_R(settings, res1, cores = 1)
+    checkmate::expect_data_frame(test1)
+    expect_equal(colnames(test1), c(colnames(settings), "Utility"))
+    expect_equal(test1[, -ncol(test1)], settings)
 
-        for (n in seq_len(1E4)) {
-            test6 <- try(eval_util_R(settings, res6, cores = 1), silent = TRUE)
-            if (class(test6) != "try-error") break
-        }
-        checkmate::expect_data_frame(test6)
-        expect_equal(colnames(test6), c(colnames(settings), "Utility"))
-        expect_equal(test6[, -ncol(test6)], settings)
-    })
-}
+    test1x <- eval_util_R(settings, res1, N_rep = 2, cores = 1)
+    checkmate::expect_data_frame(test1x)
+    expect_equal(colnames(test1x), c(colnames(settings), "Utility"))
+    expect_equal(test1x[, -ncol(test1x)], settings)
+
+    test1a <- eval_util_R(settings, res1a, cores = 1)
+    checkmate::expect_data_frame(test1a)
+    expect_equal(colnames(test1a), c(colnames(settings), "Utility"))
+    expect_equal(test1a[, -ncol(test1a)], settings)
+
+    test1ax <- eval_util_R(settings, res1a, N_rep = 2, cores = 1)
+    checkmate::expect_data_frame(test1ax)
+    expect_equal(colnames(test1ax), c(colnames(settings), "Utility"))
+    expect_equal(test1ax[, -ncol(test1ax)], settings)
+
+    test1b <- eval_util_R(settings, res1b, cores = 1)
+    checkmate::expect_data_frame(test1b)
+    expect_equal(colnames(test1b), c(colnames(settings), "Utility"))
+    expect_equal(test1b[, -ncol(test1b)], settings)
+
+    test1bx <- eval_util_R(settings, res1b, N_rep = 2, cores = 1)
+    checkmate::expect_data_frame(test1bx)
+    expect_equal(colnames(test1bx), c(colnames(settings), "Utility"))
+    expect_equal(test1bx[, -ncol(test1bx)], settings)
+
+    test2 <- eval_util_R(settings, res2, cores = 1)
+    checkmate::expect_data_frame(test2)
+    expect_equal(colnames(test2), c(colnames(settings), "Utility"))
+    expect_equal(test2[, -ncol(test2)], settings)
+
+    test2x <- eval_util_R(settings, res2, N_rep = 2, cores = 1)
+    checkmate::expect_data_frame(test2x)
+    expect_equal(colnames(test2x), c(colnames(settings), "Utility"))
+    expect_equal(test2x[, -ncol(test2x)], settings)
+
+    test3 <- eval_util_R(settings, res3, cores = 1)
+    checkmate::expect_data_frame(test3)
+    expect_equal(colnames(test3), c(colnames(settings), "Utility"))
+    expect_equal(test3[, -ncol(test3)], settings)
+
+    test3x <- eval_util_R(settings, res3, N_rep = 2, cores = 1)
+    checkmate::expect_data_frame(test3x)
+    expect_equal(colnames(test3x), c(colnames(settings), "Utility"))
+    expect_equal(test3x[, -ncol(test3x)], settings)
+
+    # Model with species covariates
+    test4 <- eval_util_R(settings, res4, cores = 1)
+    checkmate::expect_data_frame(test4)
+    expect_equal(colnames(test4), c(colnames(settings), "Utility"))
+    expect_equal(test4[, -ncol(test4)], settings)
+
+    test4x <- eval_util_R(settings, res4, N_rep = 2, cores = 1)
+    checkmate::expect_data_frame(test4x)
+    expect_equal(colnames(test4x), c(colnames(settings), "Utility"))
+    expect_equal(test4x[, -ncol(test4x)], settings)
+
+    test5 <- eval_util_R(settings, res5, cores = 1)
+    checkmate::expect_data_frame(test5)
+    expect_equal(colnames(test5), c(colnames(settings), "Utility"))
+    expect_equal(test5[, -ncol(test5)], settings)
+
+    test5x <- eval_util_R(settings, res5, N_rep = 2, cores = 1)
+    checkmate::expect_data_frame(test5x)
+    expect_equal(colnames(test5x), c(colnames(settings), "Utility"))
+    expect_equal(test5x[, -ncol(test5x)], settings)
+
+    test6 <- eval_util_R(settings, res6, cores = 1)
+    checkmate::expect_data_frame(test6)
+    expect_equal(colnames(test6), c(colnames(settings), "Utility"))
+    expect_equal(test6[, -ncol(test6)], settings)
+
+    test6x <- eval_util_R(settings, res6, N_rep = 2, cores = 1)
+    checkmate::expect_data_frame(test6x)
+    expect_equal(colnames(test6x), c(colnames(settings), "Utility"))
+    expect_equal(test6x[, -ncol(test6x)], settings)
+})
 
 
 ### Tests for list_cond_L ------------------------------------------------------
@@ -533,26 +587,6 @@ test_that("qc_eval_util_R() blocks inappropriate settings", {
 })
 
 test_that("qc_eval_util_R() blocks models with site-specific parameters", {
-    expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
-                                           K = rep(1, 2),
-                                           N = rep(1, 2)), res1),
-                 "'psi' is site-specific: the current 'eval_util_R' is not applicable to models with site-specific parameters.")
-    expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
-                                           K = rep(1, 2),
-                                           N = rep(1, 2)), res1a),
-                 "'theta' is site-specific: the current 'eval_util_R' is not applicable to models with site-specific parameters.")
-    expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
-                                           K = rep(1, 2),
-                                           N = rep(1, 2)), res1b),
-                 "'phi' is site-specific: the current 'eval_util_R' is not applicable to models with site-specific parameters.")
-    expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
-                                           K = rep(1, 2),
-                                           N = rep(1, 2)), res2),
-                 "'psi' is site-specific: the current 'eval_util_R' is not applicable to models with site-specific parameters.")
-    expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
-                                           K = rep(1, 2),
-                                           N = rep(1, 2)), res3),
-                 "'psi' is site-specific: the current 'eval_util_R' is not applicable to models with site-specific parameters.")
     expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
                                            K = rep(1, 2),
                                            N = rep(1, 2)), res7),

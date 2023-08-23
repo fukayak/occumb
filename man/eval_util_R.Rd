@@ -63,11 +63,20 @@ of \eqn{\boldsymbol{r} = \{r_{ijk}\}}{r} and
 Monte Carlo integration using MCMC samples in the \code{occumbFit} object. Higher
 approximation accuracy can be obtained by increasing the value of \code{N_rep}.
 
-The expected utility is evaluated assuming that all sites and replicates are
-homogeneous in the sense that the model parameters are constant across sites
-and replicates. For this reason, in the current version, \code{eval_util_R()}
+The expected utility is evaluated assuming that all replicates are
+homogeneous in the sense that the model parameters are constant across
+replicates. For this reason, in the current version, \code{eval_util_R()}
 cannot be applied if the supplied \code{occumbFit} object contains a model with
-site or replicate covariates.
+replicate covariates.
+
+If the relevant parameters are modeled as a function of site covariates, the
+expected utility is evaluated to account for the site heterogeneity of the
+parameters. Specifically, to incorporate site heterogeneity, the parameter
+values for each \code{J} site are determined by selecting site-specific
+parameters estimated in the model via random sampling with replacement.
+Thus, the expected utility is evaluated by assuming the set of parameter
+values for the sites modeled in the \code{fit} as a statistical population of
+site-specific parameters.
 
 Monte Carlo integration is executed in parallel on multiple CPU cores where
 the \code{cores} argument controls the degree of parallelization.

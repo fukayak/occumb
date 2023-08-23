@@ -216,11 +216,20 @@ eval_util_L <- function(settings,
 #'  Monte Carlo integration using MCMC samples in the `occumbFit` object. Higher
 #'  approximation accuracy can be obtained by increasing the value of `N_rep`.
 #'
-#' The expected utility is evaluated assuming that all sites and replicates are
-#'  homogeneous in the sense that the model parameters are constant across sites
-#'  and replicates. For this reason, in the current version, `eval_util_R()`
+#' The expected utility is evaluated assuming that all replicates are
+#'  homogeneous in the sense that the model parameters are constant across
+#'  replicates. For this reason, in the current version, `eval_util_R()`
 #'  cannot be applied if the supplied `occumbFit` object contains a model with
-#'  site or replicate covariates.
+#'  replicate covariates.
+#'
+#' If the relevant parameters are modeled as a function of site covariates, the
+#'  expected utility is evaluated to account for the site heterogeneity of the
+#'  parameters. Specifically, to incorporate site heterogeneity, the parameter
+#'  values for each `J` site are determined by selecting site-specific
+#'  parameters estimated in the model via random sampling with replacement.
+#'  Thus, the expected utility is evaluated by assuming the set of parameter
+#'  values for the sites modeled in the `fit` as a statistical population of
+#'  site-specific parameters.
 #'
 #' Monte Carlo integration is executed in parallel on multiple CPU cores where
 #'  the `cores` argument controls the degree of parallelization.
@@ -289,35 +298,54 @@ eval_util_R <- function(settings,
                         N_rep = 1,
                         cores = 1L) {
 
-    # Validate arguments ... to be added
+    # Validate arguments
     qc_eval_util_R(settings, fit)
 
     # Extract posterior samples
-    psi <- get_post_samples(fit, "psi")
+    psi   <- get_post_samples(fit, "psi")
+    theta <- get_post_samples(fit, "theta")
+    phi   <- get_post_samples(fit, "phi")
 
-    # Adapt psi/theta/phi when they are site- or replicate-specific
-    # ... to be added
+    # Determine site dimension
+    has_site_dim <- c(length(dim(psi))   == 3,
+                      length(dim(theta)) == 3,
+                      length(dim(phi))   == 3)
+    N_site <-
+        if (has_site_dim[1]) {
+            dim(psi)[3]
+        } else if (has_site_dim[2]) {
+            dim(theta)[3]
+        } else if (has_site_dim[3]) {
+            dim(phi)[3]
+        }
+
+    # Make N_rep copies of psi, theta, and phi
+    if (N_rep > 1) {
+        psi   <- copy_psi_theta_phi(psi, has_site_dim[1], N_rep)
+        theta <- copy_psi_theta_phi(theta, has_site_dim[2], N_rep)
+        phi   <- copy_psi_theta_phi(phi, has_site_dim[3], N_rep)
+    }
 
     # Calculate expected utility
     result <- rep(NA, nrow(settings))
     for (i in seq_len(nrow(settings))) {
-        # Generate z (dim = N_sample * N_species * N_site)
-        z <- array(NA, dim = c(dim(psi)[1], dim(psi)[2], settings[i, "J"]))
-        for (j in seq_len(dim(z)[3]))
-            z[, , j] <- sample_z(psi)
+        # Random sampling of sites
+        J <- settings[i, "J"]
+        site_use <- matrix(nrow = dim(psi)[1], ncol = J)
+        if (any(has_site_dim)) {
+            for (n in seq_len(nrow(site_use)))
+                site_use[n, ] <- sample.int(N_site, J, replace = TRUE)
+        }
 
-        # Adapt dimension of theta/phi
-        theta <- array(dim = dim(z))
-        for (j in seq_len(dim(theta)[3]))
-            theta[, , j] <- get_post_samples(fit, "theta")
-        phi <- array(dim = dim(z))
-        for (j in seq_len(dim(phi)[3]))
-            phi[, , j] <- get_post_samples(fit, "phi")
+        # Prepare z, theta, and phi (dim = N_sample * N_species * N_site)
+        z_i     <- get_z_i(psi, has_site_dim[1], site_use)
+        theta_i <- get_theta_phi_i(theta, has_site_dim[2], site_use)
+        phi_i   <- get_theta_phi_i(phi, has_site_dim[3], site_use)
 
-        result[i] <- eutil(z = z, theta = theta, phi = phi,
+        result[i] <- eutil(z = z_i, theta = theta_i, phi = phi_i,
                            K = settings[i, "K"], N = settings[i, "N"],
                            scale = "regional",
-                           N_rep = N_rep, cores = cores)
+                           N_rep = 1, cores = cores)
     }
 
     # Output
@@ -600,12 +628,6 @@ qc_eval_util_R <- function(settings, fit) {
     assert_occumbFit(fit)
 
     # Assert that model parameters are not site- or replicate-specific
-    if (length(dim(get_post_samples(fit, "psi"))) == 3)
-        stop("'psi' is site-specific: the current 'eval_util_R' is not applicable to models with site-specific parameters.\n")
-    if (length(dim(get_post_samples(fit, "theta"))) == 3)
-        stop("'theta' is site-specific: the current 'eval_util_R' is not applicable to models with site-specific parameters.\n")
-    if (length(dim(get_post_samples(fit, "phi"))) == 3)
-        stop("'phi' is site-specific: the current 'eval_util_R' is not applicable to models with site-specific parameters.\n")
     if (length(dim(get_post_samples(fit, "theta"))) == 4)
         stop("'theta' is replicate-specific: the current 'eval_util_R' is not applicable to models with replicate-specific parameters.\n")
     if (length(dim(get_post_samples(fit, "phi"))) == 4)
@@ -844,17 +866,14 @@ find_maxJ <- function(budget, lambda2, lambda3, ulim = 1E6) {
 
 # Sample z except for all zero cases
 sample_z <- function(psi) {
-    z <- array(stats::rbinom(dim(psi)[1] * dim(psi)[2], 1, psi), dim = dim(psi))
+    z <- stats::rbinom(length(psi), 1, psi)
 
-    # Find cases where all species have z = 0 to resample
-    allzero <- which(rowSums(z) == 0)
-    if (length(allzero)) {
-        for (n in seq_along(allzero)) {
-            while(sum(z[allzero[n], ]) == 0)
-                z[allzero[n], ] <- stats::rbinom(ncol(psi), 1, psi[allzero[n], ])
-        }
+    # Resample when all species have z = 0
+    if (sum(z)) {
         return(z)
     } else {
+        while(sum(z) == 0)
+            z <- stats::rbinom(length(psi), 1, psi)
         return(z)
     }
 }
@@ -876,5 +895,48 @@ sample_u <- function(z_theta) {
     } else {
         return(u)
     }
+}
+
+get_z_i <- function(psi, has_site_dim, site_use) {
+    out <- array(NA, dim = c(dim(psi)[1], dim(psi)[2], ncol(site_use)))
+
+    if (has_site_dim) {
+        for (j in seq_len(dim(out)[3])) {
+            for (n in seq_len(dim(out)[1]))
+                out[n, , j] <- sample_z(psi[n, , site_use[n, j]])
+        }
+    } else {
+        for (j in seq_len(dim(out)[3])) {
+            for (n in seq_len(dim(out)[1]))
+                out[n, , j] <- sample_z(psi[n, ])
+        }
+    }
+
+    out
+}
+
+get_theta_phi_i <- function(param, has_site_dim, site_use) {
+    if (has_site_dim) {
+        out <- array(NA, dim = c(dim(param)[1], dim(param)[2], ncol(site_use)))
+
+        for (j in seq_len(dim(out)[3])) {
+            for (n in seq_len(dim(out)[1])) {
+                out[n, , j] <- param[n, , site_use[n, j]]
+            }
+        }
+    } else {
+        out <- outer(param, rep(1, ncol(site_use)))
+    }
+
+    out
+}
+
+copy_psi_theta_phi <- function(param, has_site_dim, N_rep) {
+    if (has_site_dim) {
+        out <- param[rep(seq_len(dim(param)[1]), N_rep), , ]
+    } else {
+        out <- param[rep(seq_len(dim(param)[1]), N_rep), ]
+    }
+    out
 }
 
