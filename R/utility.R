@@ -44,7 +44,11 @@
 #'  without specifying the `z`, `theta`, and `phi` arguments, by supplying the
 #'  three `z`, `theta`, and `phi` arguments without the `fit` argument, or by
 #'  supplying the `fit` argument and any or all of the `z`, `theta`, and `phi`
-#'  arguments.
+#'  arguments. If `z`, `theta`, or `phi` arguments are specified in addition
+#'  to `fit`, the parameter values given in these arguments are used
+#'  preferentially to evaluate expected utility. If sample sizes differ among
+#'  parameters, parameters with smaller sample sizes are resampled with
+#'  replacement to align sample sizes across parameters.
 #'
 #' The expected utility is evaluated assuming homogeneity of replicates, in the
 #'  sense that \eqn{\theta}{theta} and \eqn{\phi}{phi}, the model parameters
@@ -64,8 +68,7 @@
 #'  `K` and `N` must be numeric vectors greater than 0. When `K` contains a
 #'  decimal, the decimal part is discarded and treated as an integer.
 #'  Additional columns are ignored but may be included.
-#' @param fit An `occumbFit` object containing a posterior sample of the
-#'  relevant parameters.
+#' @param fit An `occumbFit` object.
 #' @param z Sample values of site occupancy status of species stored in an array
 #'  with sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.
 #' @param theta Sample values of sequence capture probabilities of species
@@ -73,7 +76,7 @@
 #'  with sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.
 #' @param phi Sample values of sequence relative dominance of species stored in
 #'  a matrix with sample \eqn{\times}{*} species dimension or an array with
-#' sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.
+#'  sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.
 #' @param N_rep Controls the sample size for Monte Carlo integration.
 #'  The integral is evaluated using a total of `N_sample * N_rep` random samples,
 #'  where `N_sample` is the maximum size of the MCMC sample in the `fit`
@@ -269,9 +272,9 @@ eval_util_L <- function(settings,
 #'  with sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.
 #' @param phi Sample values of sequence relative dominance of species stored in
 #'  a matrix with sample \eqn{\times}{*} species dimension or an array with
-#' sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.
+#'  sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.
 #' @param N_rep Controls the sample size for Monte Carlo integration.
-#'   The integral is evaluated using a total of `N_sample * N_rep` random samples,
+#'  The integral is evaluated using a total of `N_sample * N_rep` random samples,
 #'  where `N_sample` is the maximum size of the MCMC sample in the `fit`
 #'  argument and the parameter sample in the `psi`, `theta`, and `phi` arguments.
 #' @param cores The number of cores to use for parallelization.
