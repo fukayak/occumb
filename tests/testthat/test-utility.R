@@ -197,6 +197,49 @@ test_that("eval_util_R() outputs a data frame with the additional Utility column
     checkmate::expect_data_frame(test6x)
     expect_equal(colnames(test6x), c(colnames(settings), "Utility"))
     expect_equal(test6x[, -ncol(test6x)], settings)
+
+    # Use psi, theta, phi arguments
+    test0_psi1 <- eval_util_R(settings, res0,
+                              psi = matrix(runif(1 * I), 1, I),
+                              cores = 1)
+    checkmate::expect_data_frame(test0_psi1)
+    expect_equal(colnames(test0_psi1), c(colnames(settings), "Utility"))
+    expect_equal(test0_psi1[, -ncol(test0_psi1)], settings)
+
+    test0_psi2 <- eval_util_R(settings, res0,
+                              psi = array(runif(1 * I * J), c(1, I, J)),
+                              cores = 1)
+    checkmate::expect_data_frame(test0_psi2)
+    expect_equal(colnames(test0_psi2), c(colnames(settings), "Utility"))
+    expect_equal(test0_psi2[, -ncol(test0_psi2)], settings)
+
+    test0_theta1 <- eval_util_R(settings, res0,
+                                theta = matrix(runif(1 * I), 1, I),
+                                cores = 1)
+    checkmate::expect_data_frame(test0_theta1)
+    expect_equal(colnames(test0_theta1), c(colnames(settings), "Utility"))
+    expect_equal(test0_theta1[, -ncol(test0_theta1)], settings)
+
+    test0_theta2 <- eval_util_R(settings, res0,
+                                theta = array(runif(1 * I * J), c(1, I, J)),
+                                cores = 1)
+    checkmate::expect_data_frame(test0_theta2)
+    expect_equal(colnames(test0_theta2), c(colnames(settings), "Utility"))
+    expect_equal(test0_theta2[, -ncol(test0_theta2)], settings)
+
+    test0_phi1 <- eval_util_R(settings, res0,
+                              phi = matrix(runif(1 * I), 1, I),
+                              cores = 1)
+    checkmate::expect_data_frame(test0_phi1)
+    expect_equal(colnames(test0_phi1), c(colnames(settings), "Utility"))
+    expect_equal(test0_phi1[, -ncol(test0_phi1)], settings)
+
+    test0_phi2 <- eval_util_R(settings, res0,
+                              phi = array(runif(1 * I * J), c(1, I, J)),
+                              cores = 1)
+    checkmate::expect_data_frame(test0_phi2)
+    expect_equal(colnames(test0_phi2), c(colnames(settings), "Utility"))
+    expect_equal(test0_phi2[, -ncol(test0_phi2)], settings)
 })
 
 
@@ -559,6 +602,11 @@ test_that("qc_eval_util_L() blocks dimension mismatch between z, theta, phi and 
 
 
 ### Tests for qc_eval_util_R ---------------------------------------------------
+I <- dim(res0@data@y)[1]
+J <- dim(res0@data@y)[2]
+df_test  <- data.frame(J = rep(1, 2), K = rep(1, 2), N = rep(1, 2))
+arr_test <- array(1, dim = c(1, I, J))
+
 test_that("qc_eval_util_R() blocks inappropriate settings", {
     expect_error(qc_eval_util_R(data.frame(Jx = rep(1, 2),
                                            K = rep(1, 2),
@@ -586,16 +634,159 @@ test_that("qc_eval_util_R() blocks inappropriate settings", {
                  "'N' contains values less than one.")
 })
 
-test_that("qc_eval_util_R() blocks models with site-specific parameters", {
-    expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
-                                           K = rep(1, 2),
-                                           N = rep(1, 2)), res7),
-                 "'phi' is replicate-specific: the current 'eval_util_R' is not applicable to models with replicate-specific parameters.")
-    expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
-                                           K = rep(1, 2),
-                                           N = rep(1, 2)), res8),
-                 "'theta' is replicate-specific: the current 'eval_util_R' is not applicable to models with replicate-specific parameters.")
+test_that("qc_eval_util_R() allows sufficient arguments", {
+    expect_invisible(qc_eval_util_R(df_test,
+                                    res0, NULL, NULL, NULL))
+    expect_invisible(qc_eval_util_R(df_test,
+                                    NULL,
+                                    arr_test,
+                                    arr_test,
+                                    arr_test))
+    expect_invisible(qc_eval_util_R(df_test,
+                                    res0,
+                                    arr_test,
+                                    NULL,
+                                    NULL))
+    expect_invisible(qc_eval_util_R(df_test,
+                                    res0,
+                                    NULL,
+                                    arr_test,
+                                    NULL))
+    expect_invisible(qc_eval_util_R(df_test,
+                                    res0,
+                                    NULL,
+                                    NULL,
+                                    arr_test))
+    expect_invisible(qc_eval_util_R(df_test,
+                                    res0,
+                                    arr_test,
+                                    arr_test,
+                                    NULL))
+    expect_invisible(qc_eval_util_R(df_test,
+                                    res0,
+                                    arr_test,
+                                    NULL,
+                                    arr_test))
+    expect_invisible(qc_eval_util_R(df_test,
+                                    res0,
+                                    NULL,
+                                    arr_test,
+                                    arr_test))
+    expect_invisible(qc_eval_util_R(df_test,
+                                    res0,
+                                    arr_test,
+                                    arr_test,
+                                    arr_test))
 })
+
+test_that("qc_eval_util_R() blocks insufficient arguments", {
+    error_message <- "Parameter values are not fully specified: use fit argument or otherwise use all of psi, theta, phi arguments."
+    expect_error(qc_eval_util_R(df_test, NULL, NULL, NULL, NULL),
+                 error_message)
+    expect_error(qc_eval_util_R(df_test,
+                                NULL,
+                                arr_test,
+                                NULL,
+                                NULL),
+                 error_message)
+    expect_error(qc_eval_util_R(df_test,
+                                NULL,
+                                NULL,
+                                arr_test,
+                                NULL),
+                 error_message)
+    expect_error(qc_eval_util_R(df_test,
+                                NULL,
+                                NULL,
+                                NULL,
+                                arr_test),
+                 error_message)
+    expect_error(qc_eval_util_R(df_test,
+                                NULL,
+                                NULL,
+                                arr_test,
+                                arr_test),
+                 error_message)
+    expect_error(qc_eval_util_R(df_test,
+                                NULL,
+                                arr_test,
+                                NULL,
+                                arr_test),
+                 error_message)
+    expect_error(qc_eval_util_R(df_test,
+                                NULL,
+                                arr_test,
+                                arr_test,
+                                NULL),
+                 error_message)
+})
+
+test_that("qc_eval_util_R() blocks models with replicate-specific parameters", {
+    expect_error(qc_eval_util_R(df_test, res7,
+                                NULL, NULL, NULL),
+                 "'fit' contains replicate-specific phi: specify appropriate phi values via the 'phi' argument to run.")
+    expect_error(qc_eval_util_R(df_test, res8,
+                                NULL, NULL, NULL),
+                 "'fit' contains replicate-specific theta: specify appropriate theta values via the 'theta' argument to run.")
+})
+
+test_that("qc_eval_util_R() blocks species/site dimension mismatch between psi, theta, phi, and fit", {
+    expect_error(qc_eval_util_R(df_test, res0,
+                                array(1, dim = c(1, I + 1, J)), NULL, NULL),
+                 paste0("Mismatch in species dimension: dim\\(psi\\)\\[2\\] must be ", I, ".\n"))
+    expect_error(qc_eval_util_R(df_test, res0,
+                                array(1, dim = c(1, I, J + 1)), NULL, NULL),
+                 paste0("Mismatch in site dimension: dim\\(psi\\)\\[3\\] must be ", J, ".\n"))
+
+    expect_error(qc_eval_util_R(df_test, res0,
+                                NULL, array(1, dim = c(1, I + 1, J)), NULL),
+                 paste0("Mismatch in species dimension: dim\\(theta\\)\\[2\\] must be ", I, ".\n"))
+    expect_error(qc_eval_util_R(df_test, res0,
+                                NULL, array(1, dim = c(1, I, J + 1)), NULL),
+                 paste0("Mismatch in site dimension: dim\\(theta\\)\\[3\\] must be ", J, ".\n"))
+
+    expect_error(qc_eval_util_R(df_test, res0,
+                                NULL, NULL, array(1, dim = c(1, I + 1, J))),
+                 paste0("Mismatch in species dimension: dim\\(phi\\)\\[2\\] must be ", I, ".\n"))
+    expect_error(qc_eval_util_R(df_test, res0,
+                                NULL, NULL, array(1, dim = c(1, I, J + 1))),
+                 paste0("Mismatch in site dimension: dim\\(phi\\)\\[3\\] must be ", J, ".\n"))
+
+    expect_error(qc_eval_util_R(df_test, NULL,
+                                array(1, dim = c(1, I + 1, J)),
+                                array(1, dim = c(1, I, J)),
+                                array(1, dim = c(1, I, J))),
+                 "Mismatch in species dimension: dim\\(psi\\)\\[2\\], dim\\(theta\\)\\[2\\], and dim\\(phi\\)\\[2\\] must be equal.")
+
+    expect_error(qc_eval_util_R(df_test, NULL,
+                                array(1, dim = c(1, I, J)),
+                                array(1, dim = c(1, I, J + 1)),
+                                array(1, dim = c(1, I, J))),
+                 "Mismatch in site dimension: dim\\(psi\\)\\[3\\], dim\\(theta\\)\\[3\\], and dim\\(phi\\)\\[3\\] must be equal.")
+    expect_error(qc_eval_util_R(df_test, NULL,
+                                array(1, dim = c(1, I, J)),
+                                array(1, dim = c(1, I, J)),
+                                array(1, dim = c(1, I, J + 1))),
+                 "Mismatch in site dimension: dim\\(psi\\)\\[3\\], dim\\(theta\\)\\[3\\], and dim\\(phi\\)\\[3\\] must be equal.")
+
+    expect_error(qc_eval_util_R(df_test, NULL,
+                                array(1, dim = c(1, I, J)),
+                                array(1, dim = c(1, I, J + 1)),
+                                array(1, dim = c(1, I))),
+                 "Mismatch in site dimension: dim\\(psi\\)\\[3\\] and dim\\(theta\\)\\[3\\] must be equal.")
+    expect_error(qc_eval_util_R(df_test, NULL,
+                                array(1, dim = c(1, I, J)),
+                                array(1, dim = c(1, I)),
+                                array(1, dim = c(1, I, J + 1))),
+                 "Mismatch in site dimension: dim\\(psi\\)\\[3\\] and dim\\(phi\\)\\[3\\] must be equal.")
+    expect_error(qc_eval_util_R(df_test, NULL,
+                                array(1, dim = c(1, I)),
+                                array(1, dim = c(1, I, J)),
+                                array(1, dim = c(1, I, J + 1))),
+                 "Mismatch in site dimension: dim\\(theta\\)\\[3\\] and dim\\(phi\\)\\[3\\] must be equal.")
+})
+
+
 
 
 ### Tests for eutil ------------------------------------------------------------

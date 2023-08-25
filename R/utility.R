@@ -210,26 +210,46 @@ eval_util_L <- function(settings,
 #'  is proportional to the relative frequency of the sequence of species
 #'  \eqn{i}{i}, conditional on its presence in replicate \eqn{k}{k} at site
 #'  \eqn{j}{j} (Fukaya et al. 2022).
-#' Expectations are taken with respect to the posterior predictive distributions
-#'  of \eqn{\boldsymbol{r} = \{r_{ijk}\}}{r} and
+#' Expectations are taken with respect to the posterior (or, possibly prior)
+#'  predictive distributions of \eqn{\boldsymbol{r} = \{r_{ijk}\}}{r} and
 #'  \eqn{\boldsymbol{u} = \{u_{ijk}\}}{u}, which are evaluated numerically by
-#'  Monte Carlo integration using MCMC samples in the `occumbFit` object. Higher
+#'  Monte Carlo integration. The predictive distributions of
+#'  \eqn{\boldsymbol{r}}{r} and \eqn{\boldsymbol{u}}{u} depend on the model
+#'  parameters \eqn{\psi}{psi}, \eqn{\theta}{theta}, and \eqn{\phi}{phi} values.
+#'  Their posterior (or prior) distribution is specified by supplying an
+#'  `occumbFit` object containing their posterior samples via the `fit` argument
+#'  or by supplying a matrix or array of posterior (or prior) samples of
+#'  parameter values via the `psi`, `theta`, and `phi` arguments. Higher
 #'  approximation accuracy can be obtained by increasing the value of `N_rep`.
+#' 
+#' The `eval_util_R()` function can be executed by supplying the `fit` argument
+#'  without specifying the `psi`, `theta`, and `phi` arguments, by supplying the
+#'  three `psi`, `theta`, and `phi` arguments without the `fit` argument, or by
+#'  supplying the `fit` argument and any or all of the `psi`, `theta`, and `phi`
+#'  arguments. If `psi`, `theta`, or `phi` arguments are specified in addition
+#'  to `fit`, the parameter values given in these arguments are used
+#'  preferentially to evaluate expected utility. If sample sizes differ among
+#'  parameters, parameters with smaller sample sizes are resampled with
+#'  replacement to align sample sizes across parameters.
 #'
-#' The expected utility is evaluated assuming that all replicates are
-#'  homogeneous in the sense that the model parameters are constant across
-#'  replicates. For this reason, in the current version, `eval_util_R()`
-#'  cannot be applied if the supplied `occumbFit` object contains a model with
-#'  replicate covariates.
+#' The expected utility is evaluated assuming homogeneity of replicates, in the
+#'  sense that \eqn{\theta}{theta} and \eqn{\phi}{phi}, the model parameters
+#'  associated with the species detection process, are constant across
+#'  replicates within a site. For this reason, `eval_util_R()` does not accept
+#'  replicate-specific \eqn{\theta}{theta} and \eqn{\phi}{phi}. If the
+#'  `occumbFit` object supplied in the `fit` argument has a replicate-specific
+#'  parameter, parameter samples to be used in the utility evaluation must be
+#'  provided explicitly via `theta` or `phi` argument.
 #'
-#' If the relevant parameters are modeled as a function of site covariates, the
-#'  expected utility is evaluated to account for the site heterogeneity of the
-#'  parameters. Specifically, to incorporate site heterogeneity, the parameter
-#'  values for each `J` site are determined by selecting site-specific
-#'  parameters estimated in the model via random sampling with replacement.
-#'  Thus, the expected utility is evaluated by assuming the set of parameter
-#'  values for the sites modeled in the `fit` as a statistical population of
-#'  site-specific parameters.
+#' If the parameters are modeled as a function of site covariates in the `fit`
+#'  object, or if the `psi`, `theta`, and/or `phi` arguments have site dimension,
+#'  the expected utility is evaluated to account for the site heterogeneity of
+#'  the parameters. Specifically, to incorporate site heterogeneity, the
+#'  parameter values for each `J` site are determined by selecting site-specific
+#'  parameter values in the `fit` or that supplied in `psi`, `theta`, and `phi`
+#'  via random sampling with replacement. Thus, the expected utility is
+#'  evaluated by assuming the set of supplied parameter values as a statistical
+#'  population of site-specific parameters.
 #'
 #' Monte Carlo integration is executed in parallel on multiple CPU cores where
 #'  the `cores` argument controls the degree of parallelization.
@@ -240,11 +260,20 @@ eval_util_L <- function(settings,
 #'  `J`, `K`, and `N` must be numeric vectors greater than 0. When `J` and `K`
 #'  contains a decimal, the decimal part is discarded and treated as an integer.
 #'  Additional columns are ignored but may be included.
-#' @param fit An `occumbFit` object containing a posterior sample of the
-#'  relevant parameters.
+#' @param fit An `occumbFit` object.
+#' @param psi Sample values of site occupancy probabilities of species
+#'  stored in a matrix with sample \eqn{\times}{*} species dimension or an array
+#'  with sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.
+#' @param theta Sample values of sequence capture probabilities of species
+#'  stored in a matrix with sample \eqn{\times}{*} species dimension or an array
+#'  with sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.
+#' @param phi Sample values of sequence relative dominance of species stored in
+#'  a matrix with sample \eqn{\times}{*} species dimension or an array with
+#' sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.
 #' @param N_rep Controls the sample size for Monte Carlo integration.
 #'   The integral is evaluated using a total of `N_sample * N_rep` random samples,
-#'   where `N_sample` is the size of the MCMC sample provided as `fit`.
+#'  where `N_sample` is the maximum size of the MCMC sample in the `fit`
+#'  argument and the parameter sample in the `psi`, `theta`, and `phi` arguments.
 #' @param cores The number of cores to use for parallelization.
 #' @return A data frame with a column named `Utility` in which the estimates of
 #'  expected utility are stored. This is obtained by adding the `Utility` column
@@ -294,17 +323,25 @@ eval_util_L <- function(settings,
 #' }
 #' @export
 eval_util_R <- function(settings,
-                        fit,
+                        fit = NULL,
+                        psi = NULL,
+                        theta = NULL,
+                        phi = NULL,
                         N_rep = 1,
                         cores = 1L) {
 
     # Validate arguments
-    qc_eval_util_R(settings, fit)
+    qc_eval_util_R(settings, fit, psi, theta, phi)
 
-    # Extract posterior samples
-    psi   <- get_post_samples(fit, "psi")
-    theta <- get_post_samples(fit, "theta")
-    phi   <- get_post_samples(fit, "phi")
+    # Set parameter values
+    if (is.null(psi))
+        psi <- get_post_samples(fit, "psi")
+
+    if (is.null(theta))
+        theta <- get_post_samples(fit, "theta")
+
+    if (is.null(phi))
+        phi <- get_post_samples(fit, "phi")
 
     # Determine site dimension
     has_site_dim <- c(length(dim(psi))   == 3,
@@ -318,6 +355,16 @@ eval_util_R <- function(settings,
         } else if (has_site_dim[3]) {
             dim(phi)[3]
         }
+
+    # Resampling to match sample size
+    n_samples <- c(dim(psi)[1], dim(theta)[1], dim(phi)[1])
+
+    if (n_samples[1] < max(n_samples))
+        psi <- resample_z_psi_theta_phi(psi, has_site_dim[1], max(n_samples))
+    if (n_samples[2] < max(n_samples))
+        theta <- resample_z_psi_theta_phi(theta, has_site_dim[2], max(n_samples))
+    if (n_samples[3] < max(n_samples))
+        phi <- resample_z_psi_theta_phi(phi, has_site_dim[3], max(n_samples))
 
     # Make N_rep copies of psi, theta, and phi
     if (N_rep > 1) {
@@ -608,7 +655,7 @@ qc_eval_util_L <- function(settings, fit, z, theta, phi) {
     invisible(NULL)
 }
 
-qc_eval_util_R <- function(settings, fit) {
+qc_eval_util_R <- function(settings, fit, psi, theta, phi) {
     # Assert that settings is a data frame and contains the required columns
     checkmate::assert_data_frame(settings)
     if (!checkmate::testSubset("J", names(settings)))
@@ -624,14 +671,73 @@ qc_eval_util_R <- function(settings, fit) {
     if (!checkmate::test_numeric(settings[, "N"], lower = 1))
         stop("'N' contains values less than one.\n")
 
-    # Assert that fit is an occumbFit object
-    assert_occumbFit(fit)
+    # Assert that either fit or (psi, theta, phi) is provided
+    if (is.null(fit) & !(!is.null(psi) & !is.null(theta) & !is.null(phi)))
+        stop("Parameter values are not fully specified: use fit argument or otherwise use all of psi, theta, phi arguments.\n")
 
-    # Assert that model parameters are not site- or replicate-specific
-    if (length(dim(get_post_samples(fit, "theta"))) == 4)
-        stop("'theta' is replicate-specific: the current 'eval_util_R' is not applicable to models with replicate-specific parameters.\n")
-    if (length(dim(get_post_samples(fit, "phi"))) == 4)
-        stop("'phi' is replicate-specific: the current 'eval_util_R' is not applicable to models with replicate-specific parameters.\n")
+    if (!is.null(fit)) {
+        # Assert that fit is an occumbFit object
+        assert_occumbFit(fit)
+
+        # Stop when modeled parameters are replicate-specific
+        if (length(dim(get_post_samples(fit, "theta"))) == 4)
+            stop("'fit' contains replicate-specific theta: specify appropriate theta values via the 'theta' argument to run.\n")
+        if (length(dim(get_post_samples(fit, "phi"))) == 4)
+            stop("'fit' contains replicate-specific phi: specify appropriate phi values via the 'phi' argument to run.\n")
+    }
+
+    # Assert that psi, theta, and phi have an appropriate dimension and elements
+    checkmate::assert_array(psi, min.d = 2, max.d = 3, null.ok = TRUE)
+    checkmate::assert_array(theta, min.d = 2, max.d = 3, null.ok = TRUE)
+    checkmate::assert_array(phi, min.d = 2, max.d = 3, null.ok = TRUE)
+    checkmate::assert_numeric(psi, lower = 0, upper = 1,
+                              any.missing = FALSE, null.ok = TRUE)
+    checkmate::assert_numeric(theta, lower = 0, upper = 1,
+                              any.missing = FALSE, null.ok = TRUE)
+    checkmate::assert_numeric(phi, lower = 0, any.missing = FALSE, null.ok = TRUE)
+
+    # Assert equality in species/site dimensions of psi, theta, phi, and fit
+    if (!is.null(fit)) {
+        I <- dim(fit@data@y)[1]
+        J <- dim(fit@data@y)[2]
+
+        if (!is.null(psi)) {
+            if (dim(psi)[2] != I)
+                stop(paste0("Mismatch in species dimension: dim(psi)[2] must be ", I, ".\n"))
+            if (length(dim(psi)) == 3 & dim(psi)[3] != J)
+                stop(paste0("Mismatch in site dimension: dim(psi)[3] must be ", J, ".\n"))
+        }
+        if (!is.null(theta)) {
+            if (dim(theta)[2] != I)
+                stop(paste0("Mismatch in species dimension: dim(theta)[2] must be ", I, ".\n"))
+            if (length(dim(theta)) == 3 & dim(theta)[3] != J)
+                stop(paste0("Mismatch in site dimension: dim(theta)[3] must be ", J, ".\n"))
+        }
+        if (!is.null(phi)) {
+            if (dim(phi)[2] != I)
+                stop(paste0("Mismatch in species dimension: dim(phi)[2] must be ", I, ".\n"))
+            if (length(dim(phi)) == 3 & dim(phi)[3] != J)
+                stop(paste0("Mismatch in site dimension: dim(phi)[3] must be ", J, ".\n"))
+        }
+    } else {
+        has_site_dim <- c(length(dim(psi)) == 3,
+                          length(dim(theta)) == 3,
+                          length(dim(phi)) == 3)
+        vI <- c(dim(psi)[2], dim(theta)[2], dim(phi)[2])
+        vJ <- c(dim(psi)[3],
+                ifelse(has_site_dim[2], dim(theta)[3], NA),
+                ifelse(has_site_dim[3], dim(phi)[3], NA))
+        vJ <- vJ[has_site_dim]
+        terms <- c("dim(psi)[3]", "dim(theta)[3]", "dim(phi)[3]")[has_site_dim]
+
+        if (length(unique(vI)) != 1)
+            stop("Mismatch in species dimension: dim(psi)[2], dim(theta)[2], and dim(phi)[2] must be equal.\n")
+        if (length(unique(vJ)) != 1)
+            stop(paste0("Mismatch in site dimension: ",
+                        knitr::combine_words(terms), " must be equal.\n"))
+    }
+
+    invisible(NULL)
 }
 
 # @title Monte-Carlo integration to obtain expected utility.
@@ -929,6 +1035,14 @@ get_theta_phi_i <- function(param, has_site_dim, site_use) {
     }
 
     out
+}
+
+resample_z_psi_theta_phi <- function(param, has_site_dim, n_sample) {
+    if (has_site_dim) {
+        return(param[sample.int(dim(param)[1], n_sample, replace = TRUE), , ])
+    } else {
+        return(param[sample.int(dim(param)[1], n_sample, replace = TRUE), ])
+    }
 }
 
 copy_psi_theta_phi <- function(param, has_site_dim, N_rep) {

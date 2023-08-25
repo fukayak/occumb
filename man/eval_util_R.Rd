@@ -4,7 +4,15 @@
 \alias{eval_util_R}
 \title{Expected utility for regional species diversity assessments.}
 \usage{
-eval_util_R(settings, fit, N_rep = 1, cores = 1L)
+eval_util_R(
+  settings,
+  fit = NULL,
+  psi = NULL,
+  theta = NULL,
+  phi = NULL,
+  N_rep = 1,
+  cores = 1L
+)
 }
 \arguments{
 \item{settings}{A data frame that specifies a set of conditions under which
@@ -15,12 +23,24 @@ the sequencing depth per replicate, respectively.
 contains a decimal, the decimal part is discarded and treated as an integer.
 Additional columns are ignored but may be included.}
 
-\item{fit}{An \code{occumbFit} object containing a posterior sample of the
-relevant parameters.}
+\item{fit}{An \code{occumbFit} object.}
+
+\item{psi}{Sample values of site occupancy probabilities of species
+stored in a matrix with sample \eqn{\times}{*} species dimension or an array
+with sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.}
+
+\item{theta}{Sample values of sequence capture probabilities of species
+stored in a matrix with sample \eqn{\times}{*} species dimension or an array
+with sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.}
+
+\item{phi}{Sample values of sequence relative dominance of species stored in
+a matrix with sample \eqn{\times}{*} species dimension or an array with
+sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.}
 
 \item{N_rep}{Controls the sample size for Monte Carlo integration.
 The integral is evaluated using a total of \code{N_sample * N_rep} random samples,
-where \code{N_sample} is the size of the MCMC sample provided as \code{fit}.}
+where \code{N_sample} is the maximum size of the MCMC sample in the \code{fit}
+argument and the parameter sample in the \code{psi}, \code{theta}, and \code{phi} arguments.}
 
 \item{cores}{The number of cores to use for parallelization.}
 }
@@ -57,26 +77,46 @@ at site \eqn{j}{j} and \eqn{r_{ijk}}{r[i, j, k]} is a latent variable that
 is proportional to the relative frequency of the sequence of species
 \eqn{i}{i}, conditional on its presence in replicate \eqn{k}{k} at site
 \eqn{j}{j} (Fukaya et al. 2022).
-Expectations are taken with respect to the posterior predictive distributions
-of \eqn{\boldsymbol{r} = \{r_{ijk}\}}{r} and
+Expectations are taken with respect to the posterior (or, possibly prior)
+predictive distributions of \eqn{\boldsymbol{r} = \{r_{ijk}\}}{r} and
 \eqn{\boldsymbol{u} = \{u_{ijk}\}}{u}, which are evaluated numerically by
-Monte Carlo integration using MCMC samples in the \code{occumbFit} object. Higher
+Monte Carlo integration. The predictive distributions of
+\eqn{\boldsymbol{r}}{r} and \eqn{\boldsymbol{u}}{u} depend on the model
+parameters \eqn{\psi}{psi}, \eqn{\theta}{theta}, and \eqn{\phi}{phi} values.
+Their posterior (or prior) distribution is specified by supplying an
+\code{occumbFit} object containing their posterior samples via the \code{fit} argument
+or by supplying a matrix or array of posterior (or prior) samples of
+parameter values via the \code{psi}, \code{theta}, and \code{phi} arguments. Higher
 approximation accuracy can be obtained by increasing the value of \code{N_rep}.
 
-The expected utility is evaluated assuming that all replicates are
-homogeneous in the sense that the model parameters are constant across
-replicates. For this reason, in the current version, \code{eval_util_R()}
-cannot be applied if the supplied \code{occumbFit} object contains a model with
-replicate covariates.
+The \code{eval_util_R()} function can be executed by supplying the \code{fit} argument
+without specifying the \code{psi}, \code{theta}, and \code{phi} arguments, by supplying the
+three \code{psi}, \code{theta}, and \code{phi} arguments without the \code{fit} argument, or by
+supplying the \code{fit} argument and any or all of the \code{psi}, \code{theta}, and \code{phi}
+arguments. If \code{psi}, \code{theta}, or \code{phi} arguments are specified in addition
+to \code{fit}, the parameter values given in these arguments are used
+preferentially to evaluate expected utility. If sample sizes differ among
+parameters, parameters with smaller sample sizes are resampled with
+replacement to align sample sizes across parameters.
 
-If the relevant parameters are modeled as a function of site covariates, the
-expected utility is evaluated to account for the site heterogeneity of the
-parameters. Specifically, to incorporate site heterogeneity, the parameter
-values for each \code{J} site are determined by selecting site-specific
-parameters estimated in the model via random sampling with replacement.
-Thus, the expected utility is evaluated by assuming the set of parameter
-values for the sites modeled in the \code{fit} as a statistical population of
-site-specific parameters.
+The expected utility is evaluated assuming homogeneity of replicates, in the
+sense that \eqn{\theta}{theta} and \eqn{\phi}{phi}, the model parameters
+associated with the species detection process, are constant across
+replicates within a site. For this reason, \code{eval_util_R()} does not accept
+replicate-specific \eqn{\theta}{theta} and \eqn{\phi}{phi}. If the
+\code{occumbFit} object supplied in the \code{fit} argument has a replicate-specific
+parameter, parameter samples to be used in the utility evaluation must be
+provided explicitly via \code{theta} or \code{phi} argument.
+
+If the parameters are modeled as a function of site covariates in the \code{fit}
+object, or if the \code{psi}, \code{theta}, and/or \code{phi} arguments have site dimension,
+the expected utility is evaluated to account for the site heterogeneity of
+the parameters. Specifically, to incorporate site heterogeneity, the
+parameter values for each \code{J} site are determined by selecting site-specific
+parameter values in the \code{fit} or that supplied in \code{psi}, \code{theta}, and \code{phi}
+via random sampling with replacement. Thus, the expected utility is
+evaluated by assuming the set of supplied parameter values as a statistical
+population of site-specific parameters.
 
 Monte Carlo integration is executed in parallel on multiple CPU cores where
 the \code{cores} argument controls the degree of parallelization.
