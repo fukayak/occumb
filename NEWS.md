@@ -1,4 +1,5 @@
 # occumb (development version)
+* Add `psi`, `theta`, and `phi` arguments to `eval_util_R()`.
 * Fix `eval_util_R()` to account for site-heterogeneity of parameters.
 * Add `z`, `theta`, and `phi` arguments to `eval_util_L()`.
 * Fix specification and initial values of `rho` so that only upper diagonal elements are saved.
