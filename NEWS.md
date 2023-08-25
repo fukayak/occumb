@@ -1,4 +1,9 @@
 # occumb (development version)
+* Refactor `eval_util_L/R()`.
+* Improve tests and documents for `eval_util_L/R()`.
+* Add `psi`, `theta`, and `phi` arguments to `eval_util_R()`.
+* Fix `eval_util_R()` to account for site-heterogeneity of parameters.
+* Add `z`, `theta`, and `phi` arguments to `eval_util_L()`.
 * Fix `summary()` method for `occumFit` object for cases when `n.chains` = 1.
 * Fix specification and initial values of `rho` so that only upper diagonal elements are saved.
 * `get_post_summary()` and `get_post_samples()` omit unused elements in `rho`.
