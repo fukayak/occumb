@@ -23,8 +23,7 @@ replicate, respectively.
 decimal, the decimal part is discarded and treated as an integer.
 Additional columns are ignored but may be included.}
 
-\item{fit}{An \code{occumbFit} object containing a posterior sample of the
-relevant parameters.}
+\item{fit}{An \code{occumbFit} object.}
 
 \item{z}{Sample values of site occupancy status of species stored in an array
 with sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.}
@@ -95,7 +94,11 @@ The \code{eval_util_L()} function can be executed by supplying the \code{fit} ar
 without specifying the \code{z}, \code{theta}, and \code{phi} arguments, by supplying the
 three \code{z}, \code{theta}, and \code{phi} arguments without the \code{fit} argument, or by
 supplying the \code{fit} argument and any or all of the \code{z}, \code{theta}, and \code{phi}
-arguments.
+arguments. If \code{z}, \code{theta}, or \code{phi} arguments are specified in addition
+to \code{fit}, the parameter values given in these arguments are used
+preferentially to evaluate expected utility. If sample sizes differ among
+parameters, parameters with smaller sample sizes are resampled with
+replacement to align sample sizes across parameters.
 
 The expected utility is evaluated assuming homogeneity of replicates, in the
 sense that \eqn{\theta}{theta} and \eqn{\phi}{phi}, the model parameters
