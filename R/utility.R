@@ -144,30 +144,25 @@ eval_util_L <- function(settings,
     if (is.null(phi))
         phi <- get_post_samples(fit, "phi")
 
+    # Determine site dimension
+    has_site_dim <- c(TRUE,
+                      length(dim(theta)) == 3,
+                      length(dim(phi))   == 3)
+
     # Resampling to match sample size
     n_samples <- c(dim(z)[1], dim(theta)[1], dim(phi)[1])
 
     if (n_samples[1] < max(n_samples))
-        z <- z[sample.int(n_samples[1], max(n_samples), replace = TRUE), , ]
-
-    if (n_samples[2] < max(n_samples)) {
-        if (length(dim(theta)) == 2)
-            theta <- theta[sample.int(n_samples[2], max(n_samples), replace = TRUE), ]
-        if (length(dim(theta)) == 3)
-            theta <- theta[sample.int(n_samples[2], max(n_samples), replace = TRUE), , ]
-    }
-
-    if (n_samples[3] < max(n_samples)) {
-        if (length(dim(phi)) == 2)
-            phi <- phi[sample.int(n_samples[3], max(n_samples), replace = TRUE), ]
-        if (length(dim(phi)) == 3)
-            phi <- phi[sample.int(n_samples[3], max(n_samples), replace = TRUE), , ]
-    }
+        z <- resample_z_psi_theta_phi(z, has_site_dim[1], max(n_samples))
+    if (n_samples[2] < max(n_samples))
+        theta <- resample_z_psi_theta_phi(theta, has_site_dim[2], max(n_samples))
+    if (n_samples[3] < max(n_samples))
+        phi <- resample_z_psi_theta_phi(phi, has_site_dim[3], max(n_samples))
 
     # Adapt theta/phi when they are species-specific
-    if (length(dim(theta)) == 2)
+    if (!has_site_dim[2])
         theta <- outer(theta, rep(1, dim(z)[3]))
-    if (length(dim(phi)) == 2)
+    if (!has_site_dim[3])
         phi <- outer(phi, rep(1, dim(z)[3]))
 
     # Calculate expected utility
@@ -616,7 +611,7 @@ qc_eval_util_L <- function(settings, fit, z, theta, phi) {
                               any.missing = FALSE, null.ok = TRUE)
     checkmate::assert_numeric(phi, lower = 0, any.missing = FALSE, null.ok = TRUE)
 
-    # Assert that dimensions of z, theta, and phi agree with fit
+    # Assert equality in species/site dimensions of z, theta, phi, and fit
     if (!is.null(fit)) {
         I <- dim(fit@data@y)[1]
         J <- dim(fit@data@y)[2]
