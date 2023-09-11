@@ -30,7 +30,7 @@
 * Add `get_post_samples()` and `get_post_summary()` functions.
 * Add option for parallel computation in `gof()` function.
 * Fix some bugs in `occumb()` functions.
-* Fix an issue of parall computation of `eval_util_L()` and `eval_util_R()` functions on Windows.
+* Fix an issue of parallel computation of `eval_util_L()` and `eval_util_R()` functions on Windows.
 
 # occumb v0.4.2 (2022/12/13)
 * Fix an issue of parallel computation of `eval_util_L()` and `eval_util_R()` functions on Windows.

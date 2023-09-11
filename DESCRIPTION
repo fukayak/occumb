@@ -17,6 +17,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Suggests: 
     rmarkdown,
+    spelling,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports: 
@@ -40,7 +41,10 @@ Collate:
     'summary.R'
     'utility.R'
     'utils.R'
-URL: https://fukayak.github.io/occumb/
+URL: https://fukayak.github.io/occumb/, https://github.com/fukayak/occumb
 Depends: 
     R (>= 2.10)
 VignetteBuilder: knitr
+SystemRequirements: JAGS (http://mcmc-jags.sourceforge.net)
+BugReports: https://github.com/fukayak/occumb/issues
+Language: en-US
