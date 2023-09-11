@@ -8,6 +8,7 @@
 * Fix specification and initial values of `rho` so that only upper diagonal elements are saved.
 * `get_post_summary()` and `get_post_samples()` omit unused elements in `rho`.
 * Fixed errors in specifying if/else.
+* Removed `loglik()` function from the package.
 
 # occumb 0.6.1 (2023/07/27)
 * Add model specification vignette.
