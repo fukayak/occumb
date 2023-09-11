@@ -21,7 +21,6 @@ reference:
   contents:
   - starts_with("get_post")
   - gof
-  - loglik
 - title: "Study design for effective species detection"
   desc: >
     Functions for the model-based assessment of study design.

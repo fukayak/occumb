@@ -33,7 +33,6 @@ Collate:
     'fish_raw.R'
     'get_posterior.R'
     'gof.R'
-    'loglik.R'
     'occumbData.R'
     'occumb.R'
     'plot.R'
