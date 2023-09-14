@@ -1,6 +1,6 @@
 Package: occumb
 Title: Site Occupancy Modeling for Environmental DNA Metabarcoding
-Version: 0.6.1.9006
+Version: 1.0.0
 Authors@R: 
     person(given = "Keiichi",
            family = "Fukaya",
