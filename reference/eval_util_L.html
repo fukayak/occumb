@@ -12,7 +12,7 @@ species diversity assessment using Monte Carlo integration."><!-- mathjax --><sc
     
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,7 +38,13 @@ species diversity assessment using Monte Carlo integration."><!-- mathjax --><sc
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
-      <ul class="navbar-nav"></ul></div>
+      <ul class="navbar-nav"><li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/fukayak/occumb/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul></div>
 
     
   </div>
@@ -46,7 +52,7 @@ species diversity assessment using Monte Carlo integration."><!-- mathjax --><sc
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Expected utility for local species diversity assessments.</h1>
-      
+      <small class="dont-index">Source: <a href="https://github.com/fukayak/occumb/blob/HEAD/R/utility.R" class="external-link"><code>R/utility.R</code></a></small>
       <div class="d-none name"><code>eval_util_L.Rd</code></div>
     </div>
 
@@ -57,7 +63,15 @@ species diversity assessment using Monte Carlo integration.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">eval_util_L</span><span class="op">(</span><span class="va">settings</span>, <span class="va">fit</span>, N_rep <span class="op">=</span> <span class="fl">1</span>, cores <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">eval_util_L</span><span class="op">(</span></span>
+<span>  <span class="va">settings</span>,</span>
+<span>  fit <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  z <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  theta <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  phi <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  N_rep <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  cores <span class="op">=</span> <span class="fl">1L</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -73,14 +87,31 @@ Additional columns are ignored but may be included.</p></dd>
 
 
 <dt>fit</dt>
-<dd><p>An <code>occumbFit</code> object containing a posterior sample of the
-relevant parameters.</p></dd>
+<dd><p>An <code>occumbFit</code> object.</p></dd>
+
+
+<dt>z</dt>
+<dd><p>Sample values of site occupancy status of species stored in an array
+with sample \(\times\) species \(\times\) site dimension.</p></dd>
+
+
+<dt>theta</dt>
+<dd><p>Sample values of sequence capture probabilities of species
+stored in a matrix with sample \(\times\) species dimension or an array
+with sample \(\times\) species \(\times\) site dimension.</p></dd>
+
+
+<dt>phi</dt>
+<dd><p>Sample values of sequence relative dominance of species stored in
+a matrix with sample \(\times\) species dimension or an array with
+sample \(\times\) species \(\times\) site dimension.</p></dd>
 
 
 <dt>N_rep</dt>
 <dd><p>Controls the sample size for Monte Carlo integration.
 The integral is evaluated using a total of <code>N_sample * N_rep</code> random samples,
-where <code>N_sample</code> is the size of the MCMC sample provided as <code>fit</code>.</p></dd>
+where <code>N_sample</code> is the maximum size of the MCMC sample in the <code>fit</code>
+argument and the parameter sample in the <code>z</code>, <code>theta</code>, and <code>phi</code> arguments.</p></dd>
 
 
 <dt>cores</dt>
@@ -99,10 +130,12 @@ to the data frame provided in the <code>settings</code> argument.</p>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The utility of the local species diversity assessment can be defined, for a
 given set of sites, as the expected number of detected species per site
-(Fukaya et al. 2022). <code>eval_util_L()</code> evaluates this utility for the set of
-sites included in the <code>occumbFit</code> object (specifically, the sites for which
-the latent occupancy state \(z\) is estimated) for the combination of
-<code>K</code> and <code>N</code> values specified in the <code>conditions</code> argument.
+(Fukaya et al. 2022). <code>eval_util_L()</code> evaluates this utility for arbitrary
+sets of sites that can potentially have different values for site occupancy
+status of species, \(z\), sequence capture probabilities of species,
+\(\theta\), and sequence relative dominance of species,
+\(\phi\), for the combination of <code>K</code> and <code>N</code> values specified in the
+<code>conditions</code> argument.
 Such evaluations can be used to balance <code>K</code> and <code>N</code> to maximize the utility
 under a constant budget (possible combinations of <code>K</code> and <code>N</code> under
 specified budget and cost values are easily obtained using <code><a href="list_cond_L.html">list_cond_L()</a></code>;
@@ -119,16 +152,34 @@ at site \(j\) and \(r_{ijk}\) is a latent variable that
 is proportional to the relative frequency of the sequence of species
 \(i\), conditional on its presence in replicate \(k\) at site
 \(j\) (Fukaya et al. 2022).
-Expectations are taken with respect to the posterior predictive distributions
-of \(\boldsymbol{r} = \{r_{ijk}\}\) and
+Expectations are taken with respect to posterior (or, possibly prior)
+predictive distributions of \(\boldsymbol{r} = \{r_{ijk}\}\) and
 \(\boldsymbol{u} = \{u_{ijk}\}\), which are evaluated numerically by
-Monte Carlo integration using MCMC samples in the <code>occumbFit</code> object. Higher
+Monte Carlo integration. The predictive distributions of
+\(\boldsymbol{r}\) and \(\boldsymbol{u}\) depend on the model
+parameters \(z\), \(\theta\), and \(\phi\) values.
+Their posterior (or prior) distribution is specified by supplying an
+<code>occumbFit</code> object containing their posterior samples via the <code>fit</code> argument
+or by supplying a matrix or array of posterior (or prior) samples of
+parameter values via the <code>z</code>, <code>theta</code>, and <code>phi</code> arguments. Higher
 approximation accuracy can be obtained by increasing the value of <code>N_rep</code>.</p>
-<p>The expected utility is evaluated assuming that all replicates are
-homogeneous in the sense that the model parameters associated with the
-detection process are constant across replicates. For this reason, in the
-current version, <code>eval_util_L()</code> cannot be applied if the supplied
-<code>occumbFit</code> object contains a model with replicate covariates.</p>
+<p>The <code>eval_util_L()</code> function can be executed by supplying the <code>fit</code> argument
+without specifying the <code>z</code>, <code>theta</code>, and <code>phi</code> arguments, by supplying the
+three <code>z</code>, <code>theta</code>, and <code>phi</code> arguments without the <code>fit</code> argument, or by
+supplying the <code>fit</code> argument and any or all of the <code>z</code>, <code>theta</code>, and <code>phi</code>
+arguments. If <code>z</code>, <code>theta</code>, or <code>phi</code> arguments are specified in addition
+to <code>fit</code>, the parameter values given in these arguments are used
+preferentially to evaluate expected utility. If sample sizes differ among
+parameters, parameters with smaller sample sizes are resampled with
+replacement to align sample sizes across parameters.</p>
+<p>The expected utility is evaluated assuming homogeneity of replicates, in the
+sense that \(\theta\) and \(\phi\), the model parameters
+associated with the species detection process, are constant across
+replicates within a site. For this reason, <code>eval_util_L()</code> does not accept
+replicate-specific \(\theta\) and \(\phi\). If the
+<code>occumbFit</code> object supplied in the <code>fit</code> argument has a replicate-specific
+parameter, parameter samples to be used in the utility evaluation must be
+provided explicitly via <code>theta</code> or <code>phi</code> argument.</p>
 <p>Monte Carlo integration is executed in parallel on multiple CPU cores where
 the <code>cores</code> argument controls the degree of parallelization.</p>
     </div>

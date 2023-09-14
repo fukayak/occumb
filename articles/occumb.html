@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,14 @@
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
 </form>
 
-      <ul class="navbar-nav"></ul>
+      <ul class="navbar-nav">
+<li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/fukayak/occumb/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 
     
@@ -70,7 +77,7 @@
       <img src="" class="logo" alt=""><h1>Introduction to occumb</h1>
             
       
-      
+      <small class="dont-index">Source: <a href="https://github.com/fukayak/occumb/blob/HEAD/vignettes/occumb.Rmd" class="external-link"><code>vignettes/occumb.Rmd</code></a></small>
       <div class="d-none name"><code>occumb.Rmd</code></div>
     </div>
 
@@ -237,7 +244,7 @@ a quick overview of the convergence of relevant model parameters.</p>
 <span><span class="co">#&gt; Saved parameters:</span></span>
 <span><span class="co">#&gt;  Mu sigma rho alpha beta gamma alpha_shared phi theta psi z pi deviance </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; MCMC ran in parallel for 46.39 minutes at time 2023-07-13 15:44:34.56973:</span></span>
+<span><span class="co">#&gt; MCMC ran in parallel for 43.593 minutes at time 2023-09-11 20:16:31.787026:</span></span>
 <span><span class="co">#&gt;  For each of 4 chains:</span></span>
 <span><span class="co">#&gt;   Adaptation:            100 iterations (sufficient)</span></span>
 <span><span class="co">#&gt;   Burn-in:               10000 iterations</span></span>
@@ -248,60 +255,60 @@ a quick overview of the convergence of relevant model parameters.</p>
 <span><span class="co">#&gt; Summary of posterior samples: </span></span>
 <span><span class="co">#&gt;  Mu: </span></span>
 <span><span class="co">#&gt;   Number of parameters: 4 </span></span>
-<span><span class="co">#&gt;   Rhat:  1.001 (min), 1.008 (median), 1.046 (mean), 1.168 (max) </span></span>
-<span><span class="co">#&gt;   n.eff: 20 (min), 378 (median), 814.2 (mean), 2481 (max) </span></span>
+<span><span class="co">#&gt;   Rhat:  1.009 (min), 1.027 (median), 1.043 (mean), 1.109 (max) </span></span>
+<span><span class="co">#&gt;   n.eff: 30 (min), 117.5 (median), 154.2 (mean), 352 (max) </span></span>
 <span><span class="co">#&gt;  sigma: </span></span>
 <span><span class="co">#&gt;   Number of parameters: 4 </span></span>
-<span><span class="co">#&gt;   Rhat:  1.011 (min), 1.046 (median), 1.046 (mean), 1.081 (max) </span></span>
-<span><span class="co">#&gt;   n.eff: 37 (min), 141.5 (median), 167 (mean), 348 (max) </span></span>
+<span><span class="co">#&gt;   Rhat:  1.004 (min), 1.04 (median), 1.074 (mean), 1.213 (max) </span></span>
+<span><span class="co">#&gt;   n.eff: 17 (min), 67.5 (median), 217 (mean), 716 (max) </span></span>
 <span><span class="co">#&gt;  rho: </span></span>
-<span><span class="co">#&gt;   Number of parameters: 16 </span></span>
-<span><span class="co">#&gt;   Rhat:  1 (min), 1.001 (median), 1.028 (mean), 1.222 (max) </span></span>
-<span><span class="co">#&gt;   n.eff: 17 (min), 1772 (median), 2039.5 (mean), 4000 (max) </span></span>
+<span><span class="co">#&gt;   Number of parameters: 6 </span></span>
+<span><span class="co">#&gt;   Rhat:  1.042 (min), 1.107 (median), 1.106 (mean), 1.187 (max) </span></span>
+<span><span class="co">#&gt;   n.eff: 19 (min), 33.5 (median), 40.7 (mean), 79 (max) </span></span>
 <span><span class="co">#&gt;  alpha: </span></span>
 <span><span class="co">#&gt;   Number of parameters: 50 </span></span>
-<span><span class="co">#&gt;   Rhat:  1.008 (min), 1.158 (median), 1.205 (mean), 2.248 (max) </span></span>
-<span><span class="co">#&gt;   n.eff: 6 (min), 23.5 (median), 48.6 (mean), 466 (max) </span></span>
+<span><span class="co">#&gt;   Rhat:  1.027 (min), 1.093 (median), 1.157 (mean), 1.77 (max) </span></span>
+<span><span class="co">#&gt;   n.eff: 7 (min), 34 (median), 40.6 (mean), 104 (max) </span></span>
 <span><span class="co">#&gt;  beta: </span></span>
 <span><span class="co">#&gt;   Number of parameters: 50 </span></span>
-<span><span class="co">#&gt;   Rhat:  1.002 (min), 1.02 (median), 1.029 (mean), 1.117 (max) </span></span>
-<span><span class="co">#&gt;   n.eff: 36 (min), 160 (median), 269.2 (mean), 1768 (max) </span></span>
+<span><span class="co">#&gt;   Rhat:  1.002 (min), 1.018 (median), 1.028 (mean), 1.237 (max) </span></span>
+<span><span class="co">#&gt;   n.eff: 16 (min), 183.5 (median), 349.9 (mean), 4000 (max) </span></span>
 <span><span class="co">#&gt;  gamma: </span></span>
 <span><span class="co">#&gt;   Number of parameters: 100 </span></span>
-<span><span class="co">#&gt;   Rhat:  1 (min), 1.005 (median), 1.007 (mean), 1.062 (max) </span></span>
-<span><span class="co">#&gt;   n.eff: 51 (min), 599.5 (median), 950 (mean), 4000 (max) </span></span>
+<span><span class="co">#&gt;   Rhat:  1.001 (min), 1.019 (median), 1.029 (mean), 1.136 (max) </span></span>
+<span><span class="co">#&gt;   n.eff: 24 (min), 173.5 (median), 363.5 (mean), 2756 (max) </span></span>
 <span><span class="co">#&gt;  alpha_shared: </span></span>
 <span><span class="co">#&gt;   Number of parameters: 1 </span></span>
-<span><span class="co">#&gt;   Rhat:  1.402 </span></span>
-<span><span class="co">#&gt;   n.eff: 11 </span></span>
+<span><span class="co">#&gt;   Rhat:  1.1 </span></span>
+<span><span class="co">#&gt;   n.eff: 31 </span></span>
 <span><span class="co">#&gt;  phi: </span></span>
 <span><span class="co">#&gt;   Number of parameters: 50 </span></span>
-<span><span class="co">#&gt;   Rhat:  1.002 (min), 1.053 (median), 1.158 (mean), 2.5 (max) </span></span>
-<span><span class="co">#&gt;   n.eff: 5 (min), 54 (median), 167.1 (mean), 4000 (max) </span></span>
+<span><span class="co">#&gt;   Rhat:  1.001 (min), 1.07 (median), 1.127 (mean), 1.664 (max) </span></span>
+<span><span class="co">#&gt;   n.eff: 8 (min), 42.5 (median), 202.7 (mean), 3161 (max) </span></span>
 <span><span class="co">#&gt;  theta: </span></span>
 <span><span class="co">#&gt;   Number of parameters: 50 </span></span>
-<span><span class="co">#&gt;   Rhat:  1.002 (min), 1.018 (median), 1.024 (mean), 1.084 (max) </span></span>
-<span><span class="co">#&gt;   n.eff: 39 (min), 173 (median), 273.2 (mean), 1820 (max) </span></span>
+<span><span class="co">#&gt;   Rhat:  1.002 (min), 1.016 (median), 1.024 (mean), 1.219 (max) </span></span>
+<span><span class="co">#&gt;   n.eff: 16 (min), 196 (median), 358.1 (mean), 4000 (max) </span></span>
 <span><span class="co">#&gt;  psi: </span></span>
 <span><span class="co">#&gt;   Number of parameters: 2500 </span></span>
-<span><span class="co">#&gt;   Rhat:  1 (min), 1.003 (median), 1.006 (mean), 1.047 (max) </span></span>
-<span><span class="co">#&gt;   n.eff: 65 (min), 894 (median), 1401.7 (mean), 4000 (max) </span></span>
+<span><span class="co">#&gt;   Rhat:  1 (min), 1.008 (median), 1.013 (mean), 1.101 (max) </span></span>
+<span><span class="co">#&gt;   n.eff: 36 (min), 396 (median), 679.3 (mean), 4000 (max) </span></span>
 <span><span class="co">#&gt;  z: </span></span>
 <span><span class="co">#&gt;   Number of parameters: 2500 </span></span>
-<span><span class="co">#&gt;   Rhat:  1 (min), 1.005 (median), 1.009 (mean), 1.099 (max), 946 (Number of NAs) </span></span>
-<span><span class="co">#&gt;   n.eff: 1 (min), 1220 (median), 1665.4 (mean), 4000 (max) </span></span>
+<span><span class="co">#&gt;   Rhat:  1 (min), 1.006 (median), 1.009 (mean), 1.184 (max), 946 (Number of NAs) </span></span>
+<span><span class="co">#&gt;   n.eff: 1 (min), 1233.5 (median), 1628.6 (mean), 4000 (max) </span></span>
 <span><span class="co">#&gt;  pi: </span></span>
 <span><span class="co">#&gt;   Number of parameters: 7500 </span></span>
-<span><span class="co">#&gt;   Rhat:  1 (min), 1.077 (median), 1.1 (mean), 1.293 (max), 28 (Number of NAs) </span></span>
-<span><span class="co">#&gt;   n.eff: 1 (min), 1 (median), 1016.5 (mean), 4000 (max) </span></span>
+<span><span class="co">#&gt;   Rhat:  1 (min), 1.078 (median), 1.102 (mean), 1.294 (max), 30 (Number of NAs) </span></span>
+<span><span class="co">#&gt;   n.eff: 1 (min), 1 (median), 1009.1 (mean), 4000 (max) </span></span>
 <span><span class="co">#&gt;  deviance: </span></span>
 <span><span class="co">#&gt;   Rhat:  1.001 </span></span>
-<span><span class="co">#&gt;   n.eff: 3259 </span></span>
+<span><span class="co">#&gt;   n.eff: 1332 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; **WARNING** Rhat values indicate convergence failure (Rhat &gt; 1.1). </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; DIC info: (pD = var(deviance)/2)</span></span>
-<span><span class="co">#&gt;  pD = 2152.9 and DIC = 19993.73 </span></span></code></pre></div>
+<span><span class="co">#&gt;  pD = 2131.5 and DIC = 19973.82 </span></span></code></pre></div>
 <p>Overall, the model is not so far from convergence, but the
 convergence of <code>phi</code> and <code>alpha</code>, the parameters
 related to the relative dominance of species sequence reads, is not good
@@ -645,40 +652,37 @@ depth <code>N</code>. Since <code><a href="../reference/list_cond_R.html">list_c
 list of possible settings, you may want to get a manually restricted
 list using its <code>J</code> and/or <code>K</code> arguments.</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Use fit0 here since the current version of eval_util_R() does not support</span></span>
-<span><span class="co"># site heterogeneity of occupancy probability.</span></span>
-<span><span class="va">utilR1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/eval_util_R.html">eval_util_R</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>J <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, K <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, N <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1E3</span>, <span class="fl">1E4</span>, <span class="fl">1E5</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>                      <span class="va">fit0</span>, cores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">utilR1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/eval_util_R.html">eval_util_R</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>J <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, K <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, N <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1E3</span>, <span class="fl">1E4</span>, <span class="fl">1E5</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                      <span class="va">fit1</span>, cores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
 <span><span class="va">utilR1</span></span></code></pre></div>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#&gt;    J K     N  Utility</span></span>
-<span><span class="co">#&gt; 1  1 1 1e+03 13.02089</span></span>
-<span><span class="co">#&gt; 2  2 1 1e+03 18.75257</span></span>
-<span><span class="co">#&gt; 3  3 1 1e+03 22.28694</span></span>
-<span><span class="co">#&gt; 4  1 2 1e+03 16.75038</span></span>
-<span><span class="co">#&gt; 5  2 2 1e+03 22.84567</span></span>
-<span><span class="co">#&gt; 6  3 2 1e+03 26.37878</span></span>
-<span><span class="co">#&gt; 7  1 3 1e+03 18.22010</span></span>
-<span><span class="co">#&gt; 8  2 3 1e+03 24.50571</span></span>
-<span><span class="co">#&gt; 9  3 3 1e+03 28.16144</span></span>
-<span><span class="co">#&gt; 10 1 1 1e+04 14.39106</span></span>
-<span><span class="co">#&gt; 11 2 1 1e+04 20.38495</span></span>
-<span><span class="co">#&gt; 12 3 1 1e+04 23.88514</span></span>
-<span><span class="co">#&gt; 13 1 2 1e+04 17.72739</span></span>
-<span><span class="co">#&gt; 14 2 2 1e+04 24.01112</span></span>
-<span><span class="co">#&gt; 15 3 2 1e+04 27.58758</span></span>
-<span><span class="co">#&gt; 16 1 3 1e+04 18.95701</span></span>
-<span><span class="co">#&gt; 17 2 3 1e+04 25.38315</span></span>
-<span><span class="co">#&gt; 18 3 3 1e+04 29.11239</span></span>
-<span><span class="co">#&gt; 19 1 1 1e+05 14.99955</span></span>
-<span><span class="co">#&gt; 20 2 1 1e+05 21.19485</span></span>
-<span><span class="co">#&gt; 21 3 1 1e+05 24.77456</span></span>
-<span><span class="co">#&gt; 22 1 2 1e+05 18.17301</span></span>
-<span><span class="co">#&gt; 23 2 2 1e+05 24.54592</span></span>
-<span><span class="co">#&gt; 24 3 2 1e+05 28.28593</span></span>
-<span><span class="co">#&gt; 25 1 3 1e+05 19.18010</span></span>
-<span><span class="co">#&gt; 26 2 3 1e+05 25.78404</span></span>
-<span><span class="co">#&gt; 27 3 3 1e+05 29.49870</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">#&gt; 1  1 1 1e+03 13.06227</span></span>
+<span><span class="co">#&gt; 2  2 1 1e+03 18.77537</span></span>
+<span><span class="co">#&gt; 3  3 1 1e+03 22.21901</span></span>
+<span><span class="co">#&gt; 4  1 2 1e+03 16.75208</span></span>
+<span><span class="co">#&gt; 5  2 2 1e+03 22.80510</span></span>
+<span><span class="co">#&gt; 6  3 2 1e+03 26.33776</span></span>
+<span><span class="co">#&gt; 7  1 3 1e+03 18.18526</span></span>
+<span><span class="co">#&gt; 8  2 3 1e+03 24.63089</span></span>
+<span><span class="co">#&gt; 9  3 3 1e+03 28.13433</span></span>
+<span><span class="co">#&gt; 10 1 1 1e+04 14.36287</span></span>
+<span><span class="co">#&gt; 11 2 1 1e+04 20.30642</span></span>
+<span><span class="co">#&gt; 12 3 1 1e+04 23.85725</span></span>
+<span><span class="co">#&gt; 13 1 2 1e+04 17.65318</span></span>
+<span><span class="co">#&gt; 14 2 2 1e+04 23.98433</span></span>
+<span><span class="co">#&gt; 15 3 2 1e+04 27.55905</span></span>
+<span><span class="co">#&gt; 16 1 3 1e+04 19.03370</span></span>
+<span><span class="co">#&gt; 17 2 3 1e+04 25.30884</span></span>
+<span><span class="co">#&gt; 18 3 3 1e+04 29.14037</span></span>
+<span><span class="co">#&gt; 19 1 1 1e+05 14.97290</span></span>
+<span><span class="co">#&gt; 20 2 1 1e+05 21.16216</span></span>
+<span><span class="co">#&gt; 21 3 1 1e+05 24.76543</span></span>
+<span><span class="co">#&gt; 22 1 2 1e+05 18.25193</span></span>
+<span><span class="co">#&gt; 23 2 2 1e+05 24.64478</span></span>
+<span><span class="co">#&gt; 24 3 2 1e+05 28.20150</span></span>
+<span><span class="co">#&gt; 25 1 3 1e+05 19.33757</span></span>
+<span><span class="co">#&gt; 26 2 3 1e+05 25.85813</span></span>
+<span><span class="co">#&gt; 27 3 3 1e+05 29.68874</span></span></code></pre></div>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">settings</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/list_cond_R.html">list_cond_R</a></span><span class="op">(</span>budget <span class="op">=</span> <span class="fl">1125</span> <span class="op">*</span> <span class="fl">1E3</span>,</span>
 <span>                        lambda1 <span class="op">=</span> <span class="fl">0.01</span>,</span>
@@ -686,48 +690,48 @@ list using its <code>J</code> and/or <code>K</code> arguments.</p>
 <span>                        lambda3 <span class="op">=</span> <span class="fl">5000</span>,</span>
 <span>                        J <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">50</span>, <span class="fl">5</span><span class="op">)</span>,</span>
 <span>                        K <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span></span>
-<span><span class="va">utilR2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/eval_util_R.html">eval_util_R</a></span><span class="op">(</span><span class="va">settings</span>, <span class="va">fit0</span>, cores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="va">utilR2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/eval_util_R.html">eval_util_R</a></span><span class="op">(</span><span class="va">settings</span>, <span class="va">fit1</span>, cores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
 <span><span class="va">utilR2</span></span></code></pre></div>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#&gt;     budget lambda1 lambda2 lambda3  J K           N  Utility</span></span>
-<span><span class="co">#&gt; 1  1125000    0.01    5000    5000  5 1 21500000.00 30.10762</span></span>
-<span><span class="co">#&gt; 2  1125000    0.01    5000    5000 10 1 10250000.00 35.66881</span></span>
-<span><span class="co">#&gt; 3  1125000    0.01    5000    5000 15 1  6500000.00 38.58941</span></span>
-<span><span class="co">#&gt; 4  1125000    0.01    5000    5000 20 1  4625000.00 40.54363</span></span>
-<span><span class="co">#&gt; 5  1125000    0.01    5000    5000 25 1  3500000.00 41.97652</span></span>
-<span><span class="co">#&gt; 6  1125000    0.01    5000    5000 30 1  2750000.00 43.03573</span></span>
-<span><span class="co">#&gt; 7  1125000    0.01    5000    5000 35 1  2214285.71 43.86356</span></span>
-<span><span class="co">#&gt; 8  1125000    0.01    5000    5000 40 1  1812500.00 44.63576</span></span>
-<span><span class="co">#&gt; 9  1125000    0.01    5000    5000 45 1  1500000.00 45.15320</span></span>
-<span><span class="co">#&gt; 10 1125000    0.01    5000    5000 50 1  1250000.00 45.60239</span></span>
-<span><span class="co">#&gt; 11 1125000    0.01    5000    5000  5 2 10500000.00 33.26731</span></span>
-<span><span class="co">#&gt; 12 1125000    0.01    5000    5000 10 2  4875000.00 38.67689</span></span>
-<span><span class="co">#&gt; 13 1125000    0.01    5000    5000 15 2  3000000.00 41.48350</span></span>
-<span><span class="co">#&gt; 14 1125000    0.01    5000    5000 20 2  2062500.00 43.33658</span></span>
-<span><span class="co">#&gt; 15 1125000    0.01    5000    5000 25 2  1500000.00 44.57691</span></span>
-<span><span class="co">#&gt; 16 1125000    0.01    5000    5000 30 2  1125000.00 45.48365</span></span>
-<span><span class="co">#&gt; 17 1125000    0.01    5000    5000 35 2   857142.86 46.19298</span></span>
-<span><span class="co">#&gt; 18 1125000    0.01    5000    5000 40 2   656250.00 46.72431</span></span>
-<span><span class="co">#&gt; 19 1125000    0.01    5000    5000 45 2   500000.00 47.16480</span></span>
-<span><span class="co">#&gt; 20 1125000    0.01    5000    5000 50 2   375000.00 47.46552</span></span>
-<span><span class="co">#&gt; 21 1125000    0.01    5000    5000  5 3  6833333.33 34.49460</span></span>
-<span><span class="co">#&gt; 22 1125000    0.01    5000    5000 10 3  3083333.33 39.92865</span></span>
-<span><span class="co">#&gt; 23 1125000    0.01    5000    5000 15 3  1833333.33 42.70624</span></span>
-<span><span class="co">#&gt; 24 1125000    0.01    5000    5000 20 3  1208333.33 44.45794</span></span>
-<span><span class="co">#&gt; 25 1125000    0.01    5000    5000 25 3   833333.33 45.64077</span></span>
-<span><span class="co">#&gt; 26 1125000    0.01    5000    5000 30 3   583333.33 46.42328</span></span>
-<span><span class="co">#&gt; 27 1125000    0.01    5000    5000 35 3   404761.90 47.04303</span></span>
-<span><span class="co">#&gt; 28 1125000    0.01    5000    5000 40 3   270833.33 47.47639</span></span>
-<span><span class="co">#&gt; 29 1125000    0.01    5000    5000 45 3   166666.67 47.80421</span></span>
-<span><span class="co">#&gt; 30 1125000    0.01    5000    5000 50 3    83333.33 48.02496</span></span>
-<span><span class="co">#&gt; 31 1125000    0.01    5000    5000  5 4  5000000.00 35.00271</span></span>
-<span><span class="co">#&gt; 32 1125000    0.01    5000    5000 10 4  2187500.00 40.55395</span></span>
-<span><span class="co">#&gt; 33 1125000    0.01    5000    5000 15 4  1250000.00 43.37786</span></span>
-<span><span class="co">#&gt; 34 1125000    0.01    5000    5000 20 4   781250.00 45.00144</span></span>
-<span><span class="co">#&gt; 35 1125000    0.01    5000    5000 25 4   500000.00 46.10021</span></span>
-<span><span class="co">#&gt; 36 1125000    0.01    5000    5000 30 4   312500.00 46.86324</span></span>
-<span><span class="co">#&gt; 37 1125000    0.01    5000    5000 35 4   178571.43 47.40744</span></span>
-<span><span class="co">#&gt; 38 1125000    0.01    5000    5000 40 4    78125.00 47.80381</span></span></code></pre></div>
+<span><span class="co">#&gt; 1  1125000    0.01    5000    5000  5 1 21500000.00 30.04136</span></span>
+<span><span class="co">#&gt; 2  1125000    0.01    5000    5000 10 1 10250000.00 35.64544</span></span>
+<span><span class="co">#&gt; 3  1125000    0.01    5000    5000 15 1  6500000.00 38.60797</span></span>
+<span><span class="co">#&gt; 4  1125000    0.01    5000    5000 20 1  4625000.00 40.60944</span></span>
+<span><span class="co">#&gt; 5  1125000    0.01    5000    5000 25 1  3500000.00 42.02112</span></span>
+<span><span class="co">#&gt; 6  1125000    0.01    5000    5000 30 1  2750000.00 43.15096</span></span>
+<span><span class="co">#&gt; 7  1125000    0.01    5000    5000 35 1  2214285.71 43.89833</span></span>
+<span><span class="co">#&gt; 8  1125000    0.01    5000    5000 40 1  1812500.00 44.71556</span></span>
+<span><span class="co">#&gt; 9  1125000    0.01    5000    5000 45 1  1500000.00 45.22666</span></span>
+<span><span class="co">#&gt; 10 1125000    0.01    5000    5000 50 1  1250000.00 45.71167</span></span>
+<span><span class="co">#&gt; 11 1125000    0.01    5000    5000  5 2 10500000.00 33.34409</span></span>
+<span><span class="co">#&gt; 12 1125000    0.01    5000    5000 10 2  4875000.00 38.81906</span></span>
+<span><span class="co">#&gt; 13 1125000    0.01    5000    5000 15 2  3000000.00 41.58322</span></span>
+<span><span class="co">#&gt; 14 1125000    0.01    5000    5000 20 2  2062500.00 43.47530</span></span>
+<span><span class="co">#&gt; 15 1125000    0.01    5000    5000 25 2  1500000.00 44.69525</span></span>
+<span><span class="co">#&gt; 16 1125000    0.01    5000    5000 30 2  1125000.00 45.58398</span></span>
+<span><span class="co">#&gt; 17 1125000    0.01    5000    5000 35 2   857142.86 46.27036</span></span>
+<span><span class="co">#&gt; 18 1125000    0.01    5000    5000 40 2   656250.00 46.82490</span></span>
+<span><span class="co">#&gt; 19 1125000    0.01    5000    5000 45 2   500000.00 47.24841</span></span>
+<span><span class="co">#&gt; 20 1125000    0.01    5000    5000 50 2   375000.00 47.56585</span></span>
+<span><span class="co">#&gt; 21 1125000    0.01    5000    5000  5 3  6833333.33 34.55557</span></span>
+<span><span class="co">#&gt; 22 1125000    0.01    5000    5000 10 3  3083333.33 40.03808</span></span>
+<span><span class="co">#&gt; 23 1125000    0.01    5000    5000 15 3  1833333.33 42.85560</span></span>
+<span><span class="co">#&gt; 24 1125000    0.01    5000    5000 20 3  1208333.33 44.51759</span></span>
+<span><span class="co">#&gt; 25 1125000    0.01    5000    5000 25 3   833333.33 45.67757</span></span>
+<span><span class="co">#&gt; 26 1125000    0.01    5000    5000 30 3   583333.33 46.48685</span></span>
+<span><span class="co">#&gt; 27 1125000    0.01    5000    5000 35 3   404761.90 47.14072</span></span>
+<span><span class="co">#&gt; 28 1125000    0.01    5000    5000 40 3   270833.33 47.60570</span></span>
+<span><span class="co">#&gt; 29 1125000    0.01    5000    5000 45 3   166666.67 47.93433</span></span>
+<span><span class="co">#&gt; 30 1125000    0.01    5000    5000 50 3    83333.33 48.12801</span></span>
+<span><span class="co">#&gt; 31 1125000    0.01    5000    5000  5 4  5000000.00 35.17767</span></span>
+<span><span class="co">#&gt; 32 1125000    0.01    5000    5000 10 4  2187500.00 40.72769</span></span>
+<span><span class="co">#&gt; 33 1125000    0.01    5000    5000 15 4  1250000.00 43.51095</span></span>
+<span><span class="co">#&gt; 34 1125000    0.01    5000    5000 20 4   781250.00 45.16898</span></span>
+<span><span class="co">#&gt; 35 1125000    0.01    5000    5000 25 4   500000.00 46.23139</span></span>
+<span><span class="co">#&gt; 36 1125000    0.01    5000    5000 30 4   312500.00 46.98586</span></span>
+<span><span class="co">#&gt; 37 1125000    0.01    5000    5000 35 4   178571.43 47.53393</span></span>
+<span><span class="co">#&gt; 38 1125000    0.01    5000    5000 40 4    78125.00 47.89744</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
