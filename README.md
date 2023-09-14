@@ -10,24 +10,26 @@ This package allows the users to fit the model with a fully Bayesian approach, u
 
 See [the package vignette](https://fukayak.github.io/occumb/articles/occumb.html) to learn how to use the package and the [original paper](https://doi.org/10.1111/2041-210X.13732) for details of the model and inference.
 
-## Important note
-The current programs are an alpha version released to present the concept of package development. In other words, please be aware of the following points when you want to try this package:
-
-- Some of the planned features have not yet been implemented.
-- The functions may not have been thoroughly tested.
-- Documentation may be insufficient.
-- Specifications may change significantly in the future.
-
 ## Installation
 You need first install JAGS following the instructions on the [JAGS homepage](https://mcmc-jags.sourceforge.io/).
 
-You can then install the latest version of occumb from the GitHub repository using the `install_github()` function in the [remotes](https://CRAN.R-project.org/package=remotes) package:
+You can then install the latest stable version of the package from CRAN:
+
+``` r
+install.packages("occumb")
+```
+
+or the GitHub repository:
 
 ``` r
 remotes::install_github("fukayak/occumb", ref = "main")
 ```
 
+## Contact information
+
+Questions and bug reports can be emailed to Keiichi Fukaya (fukaya.keiichi@nies.go.jp).
+
 ## Credits
 
-The development of occumb would not be possible without, among others, [JAGS](https://mcmc-jags.sourceforge.io/), developed by Martyn Plummer, and [jagsUI](https://CRAN.R-project.org/package=jagsUI) R package, developed by Kenneth F. Kellner, because it relies on the functionalities of these libraries for model fitting via Markov chain Monte Carlo (MCMC).
+The development of occumb would not be possible without, among others, Martyn Plummer's [JAGS](https://mcmc-jags.sourceforge.io/) and Ken Kellner's [jagsUI](https://CRAN.R-project.org/package=jagsUI) R package, because the main functionality of occumb for model fitting via Markov chain Monte Carlo (MCMC) rely on these libraries. Taku Kadoya encouraged the author to develop the package. Koji Makiyama, Shinya Uryu, and Kentaro Matsuura contributed to the development of package testing. Funding was provided by Japan Society for the Promotion of Science (KAKENHI, Nos 20K06102 and 23H02240).
 

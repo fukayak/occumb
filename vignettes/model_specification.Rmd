@@ -66,11 +66,11 @@ In the figure, the arrows directed at `psi[i]`, `theta[i]`, and `phi[i]` indicat
 
 # Covariate modeling of `psi`, `theta`, and `phi`
 
-The variabilition in `psi`, `theta`, and `phi` can be modeled as a function of covariates in a manner similar to generalized linear models (GLMs) and generalized linear mixed models (GLMMs).
+Variation in `psi`, `theta`, and `phi` can be modeled as a function of covariates in a manner similar to generalized linear models (GLMs) and generalized linear mixed models (GLMMs).
 That is, the covariates are incorporated into linear predictors on the appropriate link scales for the parameters (logit for `psi` and `theta` and log for `phi`).
 The `occumb()` function allows for covariate modeling using standard R formula syntax.
 
-There are three types of related covariates: species covariates that can take on different values for each species (e.g., traits), site covariates that can take on different values for each site (e.g., environment), and replicate covariates that can take on different values for each combination of site and replicate (e.g., the amount of water filtered).
+There are three types of related covariates: **species covariates** that can take on different values for each species (e.g., traits), **site covariates** that can take on different values for each site (e.g., environment), and **replicate covariates** that can take on different values for each combination of site and replicate (e.g., the amount of water filtered).
 These covariates can be included in the data object via the `spec_cov`, `site_cov`, and `repl_cov` arguments of the `occumbData()` function and used to specify models in the `occumb()` function.
 
 The `occumb()` function specifies covariates for each parameter using the `formula_<parameter name>` and `formula_<parameter name>_shared` arguments.
@@ -136,6 +136,17 @@ Here is an example of more complex cases involving interactions between differen
 
 In `occumb()`, species-specific effects on `phi` are denoted as `alpha`, and shared effects on `phi` are denoted as `alpha_shared`.
 As with the other two parameters, `occumb()` always estimates the species-specific intercept `alpha[i, 1]`.
+
+The following table summarizes the covariate types accepted by each `formula` argument.
+
+| Argument               | `spec_cov` | `site_cov` | `repl_cov` |
+| :----                  | :----:     | :----:     | :----:     |
+| `formula_phi`          |            | ✓          | ✓          |
+| `formula_theta`        |            | ✓          | ✓          |
+| `formula_psi`          |            | ✓          |            |
+| `formula_phi_shared`   | ✓          | ✓          | ✓          |
+| `formula_theta_shared` | ✓          | ✓          | ✓          |
+| `formula_psi_shared`   | ✓          | ✓          |            |
 
 
 # Prior distributions

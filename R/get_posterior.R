@@ -437,7 +437,7 @@ add_attributes4 <- function(obj, fit, is_rho, type) {
             attr(obj, "dimension") <- c("Sample", "Effects 1", "Effects 2")
             attr(obj, "label") <- list(
                 Sample  = NULL,
-                Effects1 = c(effect_name_phi, effect_name_theta, effect_name_psi),
+                Effects1 = c(effect_name_phi, effect_name_theta, effect_name_psi[-length(effect_name_psi)]),
                 Effects2 = c(effect_name_phi, effect_name_theta, effect_name_psi)
             )
         } else {
@@ -480,7 +480,7 @@ add_attributes4 <- function(obj, fit, is_rho, type) {
         if (is_rho) {
             attr(obj, "dimension") <- c("Effects 1", "Effects 2")
             attr(obj, "label") <- list(
-                Effects1 = c(effect_name_phi, effect_name_theta, effect_name_psi),
+                Effects1 = c(effect_name_phi, effect_name_theta, effect_name_psi[-length(effect_name_psi)]),
                 Effects2 = c(effect_name_phi, effect_name_theta, effect_name_psi)
             )
         } else {

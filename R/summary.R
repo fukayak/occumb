@@ -81,6 +81,8 @@ setMethod("summary", signature(object = "occumbFit"),
             } else {
                 cat('Successful convergence based on Rhat values (all < 1.1).','\n')
             }
+        } else {
+            cat('**WARNING** Set n.chains > 1 to monitor Rhat and n.eff values.','\n')
         }
 
         if (object@fit$calc.DIC) {
@@ -103,10 +105,11 @@ setMethod("summary", signature(object = "occumbData"),
                 class_cov <- vector(length = length(covariates))
                 for (i in seq_along(covariates)) {
                     if (mode(covariates[[i]]) %in% c("logical", "character") |
-                        is.factor(covariates[[i]]))
+                        is.factor(covariates[[i]])) {
                         class_cov[i] <- "(categorical)"
-                    else
+                    } else {
                         class_cov[i] <- "(continuous)"
+                    }
                 }
                 out <- paste(names(covariates), class_cov, sep = " ")
             }
@@ -114,10 +117,11 @@ setMethod("summary", signature(object = "occumbData"),
         }
 
         get_list_labels <- function(labels) {
-            if (is.null(labels))
+            if (is.null(labels)) {
                 return("(None)")
-            else
+            } else {
                 return(labels)
+            }
         }
 
         cat(crayon::bold("Sequence read counts: \n"))
@@ -156,53 +160,64 @@ setMethod("summary", signature(object = "occumbData"),
 
 print_Rhat_neff <- function(param, object) {
 
-    if (param == "deviance")
+    if (param == "deviance") {
         post_summary <- object@fit$summary[param, ]
-    else
+    } else {
         post_summary <- get_post_summary(object, param)
+    }
 
     if (is.null(dim(post_summary))) {
         num_per <- 1
-        Rhat <- post_summary["Rhat"]
-        neff <- post_summary["n.eff"]
-
         cat(' ', param, ': \n', sep = "")
         if (param != "deviance")
             cat('  Number of parameters:', num_per, '\n')
-        cat('  Rhat: ', round(Rhat, 3), '\n')
-        cat('  n.eff:', neff, '\n')
+
+        if (object@fit$mcmc.info$n.chain > 1) {
+            Rhat <- post_summary["Rhat"]
+            neff <- post_summary["n.eff"]
+            cat('  Rhat: ', round(Rhat, 3), '\n')
+            cat('  n.eff:', neff, '\n')
+        } else {
+            cat('  Rhat:  (not available)', '\n')
+            cat('  n.eff: (not available)', '\n')
+        }
     } else {
         num_per <- nrow(post_summary)
-        Rhat <- post_summary[, "Rhat"]
-        neff <- post_summary[, "n.eff"]
-
         cat(' ', param, ': \n', sep = "")
         cat('  Number of parameters:', num_per, '\n')
-        if (any(is.na(Rhat))) {
-            if (sum(is.na(Rhat)) == length(Rhat)) {
-                cat('  Rhat: ', NA, '(min),', NA, '(median),',
-                    NA, '(mean),', NA, '(max),',
-                    sum(is.na(Rhat)), '(Number of NAs)', '\n')
+
+        if (object@fit$mcmc.info$n.chain > 1) {
+            Rhat <- post_summary[, "Rhat"]
+            neff <- post_summary[, "n.eff"]
+            if (any(is.na(Rhat))) {
+                if (sum(is.na(Rhat)) == length(Rhat)) {
+                    cat('  Rhat: ', NA, '(min),', NA, '(median),',
+                        NA, '(mean),', NA, '(max),',
+                        sum(is.na(Rhat)), '(Number of NAs)', '\n')
+                } else {
+                    cat('  Rhat: ',
+                        round(min(Rhat, na.rm = TRUE), 3), '(min),',
+                        round(stats::median(Rhat, na.rm = TRUE), 3), '(median),',
+                        round(mean(Rhat, na.rm = TRUE), 3), '(mean),',
+                        round(max(Rhat, na.rm = TRUE), 3), '(max),',
+                        sum(is.na(Rhat)), '(Number of NAs)', '\n')
+                }
             } else {
                 cat('  Rhat: ',
-                    round(min(Rhat, na.rm = TRUE), 3), '(min),',
-                    round(stats::median(Rhat, na.rm = TRUE), 3), '(median),',
-                    round(mean(Rhat, na.rm = TRUE), 3), '(mean),',
-                    round(max(Rhat, na.rm = TRUE), 3), '(max),',
-                    sum(is.na(Rhat)), '(Number of NAs)', '\n')
+                    round(min(Rhat), 3), '(min),',
+                    round(stats::median(Rhat), 3), '(median),',
+                    round(mean(Rhat), 3), '(mean),',
+                    round(max(Rhat), 3), '(max)', '\n')
             }
+            cat('  n.eff:',
+                round(min(neff), 1), '(min),',
+                round(stats::median(neff), 1), '(median),',
+                round(mean(neff), 1), '(mean),',
+                round(max(neff), 1), '(max)', '\n')
         } else {
-            cat('  Rhat: ',
-                round(min(Rhat), 3), '(min),',
-                round(stats::median(Rhat), 3), '(median),',
-                round(mean(Rhat), 3), '(mean),',
-                round(max(Rhat), 3), '(max)', '\n')
+            cat('  Rhat:  (not available)', '\n')
+            cat('  n.eff: (not available)', '\n')
         }
-        cat('  n.eff:',
-            round(min(neff), 1), '(min),',
-            round(stats::median(neff), 1), '(median),',
-            round(mean(neff), 1), '(mean),',
-            round(max(neff), 1), '(max)', '\n')
     }
 }
 

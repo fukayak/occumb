@@ -24,15 +24,11 @@
         for (m2 in (m1 + 1):M) {
             Sigma[m1, m2] <- rho[m1, m2] * sigma[m1] * sigma[m2]
             Sigma[m2, m1] <- rho[m1, m2] * sigma[m1] * sigma[m2]
+            rho[m1, m2] ~ dunif(-1, 1)
         }
     }
 
     for (m in 1:M) {
         sigma[m] ~ dunif(0, prior_ulim)
-    }
-    for (m1 in 1:M) {
-        for (m2 in 1:M) {
-            rho[m1, m2] ~ dunif(-1, 1)
-        }
     }
 
