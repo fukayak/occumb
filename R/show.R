@@ -1,8 +1,6 @@
 #' @include occumb.R
 NULL
 
-#setGeneric("show")
-
 setMethod("show", "occumbFit",
     function(object) {
         print(object@fit)
