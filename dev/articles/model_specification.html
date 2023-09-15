@@ -27,7 +27,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.6.1.9006</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,7 +56,14 @@
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
 </form>
 
-      <ul class="navbar-nav"></ul>
+      <ul class="navbar-nav">
+<li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/fukayak/occumb/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 
     
@@ -71,7 +78,7 @@
       <img src="" class="logo" alt=""><h1>Model specification in occumb()</h1>
             
       
-      
+      <small class="dont-index">Source: <a href="https://github.com/fukayak/occumb/blob/HEAD/vignettes/model_specification.Rmd" class="external-link"><code>vignettes/model_specification.Rmd</code></a></small>
       <div class="d-none name"><code>model_specification.Rmd</code></div>
     </div>
 
@@ -180,7 +187,7 @@ covariance matrix <code>Sigma</code>. Details are discussed below.</p>
 <h2 id="covariate-modeling-of-psi-theta-and-phi">Covariate modeling of <code>psi</code>, <code>theta</code>, and
 <code>phi</code><a class="anchor" aria-label="anchor" href="#covariate-modeling-of-psi-theta-and-phi"></a>
 </h2>
-<p>The variabilition in <code>psi</code>, <code>theta</code>, and
+<p>Variation in <code>psi</code>, <code>theta</code>, and
 <code>phi</code> can be modeled as a function of covariates in a manner
 similar to generalized linear models (GLMs) and generalized linear mixed
 models (GLMMs). That is, the covariates are incorporated into linear
@@ -188,10 +195,11 @@ predictors on the appropriate link scales for the parameters (logit for
 <code>psi</code> and <code>theta</code> and log for <code>phi</code>).
 The <code><a href="../reference/occumb.html">occumb()</a></code> function allows for covariate modeling using
 standard R formula syntax.</p>
-<p>There are three types of related covariates: species covariates that
-can take on different values for each species (e.g., traits), site
-covariates that can take on different values for each site (e.g.,
-environment), and replicate covariates that can take on different values
+<p>There are three types of related covariates: <strong>species
+covariates</strong> that can take on different values for each species
+(e.g., traits), <strong>site covariates</strong> that can take on
+different values for each site (e.g., environment), and
+<strong>replicate covariates</strong> that can take on different values
 for each combination of site and replicate (e.g., the amount of water
 filtered). These covariates can be included in the data object via the
 <code>spec_cov</code>, <code>site_cov</code>, and <code>repl_cov</code>
@@ -395,6 +403,54 @@ covariates.</p>
 on <code>phi</code> are denoted as <code>alpha_shared</code>. As with
 the other two parameters, <code><a href="../reference/occumb.html">occumb()</a></code> always estimates the
 species-specific intercept <code>alpha[i, 1]</code>.</p>
+<p>The following table summarizes the covariate types accepted by each
+<code>formula</code> argument.</p>
+<table class="table">
+<thead><tr class="header">
+<th align="left">Argument</th>
+<th align="center"><code>spec_cov</code></th>
+<th align="center"><code>site_cov</code></th>
+<th align="center"><code>repl_cov</code></th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>formula_phi</code></td>
+<td align="center"></td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+</tr>
+<tr class="even">
+<td align="left"><code>formula_theta</code></td>
+<td align="center"></td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>formula_psi</code></td>
+<td align="center"></td>
+<td align="center">✓</td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="left"><code>formula_phi_shared</code></td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>formula_theta_shared</code></td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+</tr>
+<tr class="even">
+<td align="left"><code>formula_psi_shared</code></td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+<td align="center"></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section level2">
 <h2 id="prior-distributions">Prior distributions<a class="anchor" aria-label="anchor" href="#prior-distributions"></a>

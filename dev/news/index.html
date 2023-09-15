@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.6.1.9006</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,7 +36,13 @@
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
-      <ul class="navbar-nav"></ul></div>
+      <ul class="navbar-nav"><li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/fukayak/occumb/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul></div>
 
     
   </div>
@@ -44,22 +50,21 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Changelog</h1>
-      
+      <small>Source: <a href="https://github.com/fukayak/occumb/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="occumb-development-version">occumb (development version)<a class="anchor" aria-label="anchor" href="#occumb-development-version"></a></h2>
-<ul><li>Refactor <code>eval_util_L/R()</code>.</li>
-<li>Improve tests and documents for <code>eval_util_L/R()</code>.</li>
+<ul><li>
+<code>plot</code> and <code>summary</code> methods are exported correctly.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.0.0" id="occumb-100-20230914">occumb 1.0.0 (2023/09/14)<a class="anchor" aria-label="anchor" href="#occumb-100-20230914"></a></h2>
+<ul><li>Add <code>z</code>, <code>theta</code>, and <code>phi</code> arguments to <code><a href="../reference/eval_util_L.html">eval_util_L()</a></code>.</li>
 <li>Add <code>psi</code>, <code>theta</code>, and <code>phi</code> arguments to <code><a href="../reference/eval_util_R.html">eval_util_R()</a></code>.</li>
 <li>Fix <code><a href="../reference/eval_util_R.html">eval_util_R()</a></code> to account for site-heterogeneity of parameters.</li>
-<li>Add <code>z</code>, <code>theta</code>, and <code>phi</code> arguments to <code><a href="../reference/eval_util_L.html">eval_util_L()</a></code>.</li>
-<li>Fix <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> method for <code>occumFit</code> object for cases when <code>n.chains</code> = 1.</li>
-<li>Fix specification and initial values of <code>rho</code> so that only upper diagonal elements are saved.</li>
-<li>
-<code><a href="../reference/get_posterior.html">get_post_summary()</a></code> and <code><a href="../reference/get_posterior.html">get_post_samples()</a></code> omit unused elements in <code>rho</code>.</li>
-<li>Fixed errors in specifying if/else.</li>
-<li>Removed <code>loglik()</code> function from the package.</li>
+<li>Remove <code>loglik()</code> function from the package.</li>
+<li>Some bug fixes, internal changes, and document improvements.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.6.1" id="occumb-061-20230727">occumb 0.6.1 (2023/07/27)<a class="anchor" aria-label="anchor" href="#occumb-061-20230727"></a></h2>
@@ -85,7 +90,7 @@
 <ul><li>Add <code><a href="../reference/get_posterior.html">get_post_samples()</a></code> and <code><a href="../reference/get_posterior.html">get_post_summary()</a></code> functions.</li>
 <li>Add option for parallel computation in <code><a href="../reference/gof.html">gof()</a></code> function.</li>
 <li>Fix some bugs in <code><a href="../reference/occumb.html">occumb()</a></code> functions.</li>
-<li>Fix an issue of parall computation of <code><a href="../reference/eval_util_L.html">eval_util_L()</a></code> and <code><a href="../reference/eval_util_R.html">eval_util_R()</a></code> functions on Windows.</li>
+<li>Fix an issue of parallel computation of <code><a href="../reference/eval_util_L.html">eval_util_L()</a></code> and <code><a href="../reference/eval_util_R.html">eval_util_R()</a></code> functions on Windows.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.2" id="occumb-v042-20221213">occumb v0.4.2 (2022/12/13)<a class="anchor" aria-label="anchor" href="#occumb-v042-20221213"></a></h2>

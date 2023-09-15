@@ -57,4 +57,16 @@
   <url>
     <loc>https://fukayak.github.io/occumb/dev/reference/occumbData.html</loc>
   </url>
+  <url>
+    <loc>https://fukayak.github.io/occumb/dev/reference/plot-occumbFit-method.html</loc>
+  </url>
+  <url>
+    <loc>https://fukayak.github.io/occumb/dev/reference/plot-occumbGof-method.html</loc>
+  </url>
+  <url>
+    <loc>https://fukayak.github.io/occumb/dev/reference/summary-occumbData-method.html</loc>
+  </url>
+  <url>
+    <loc>https://fukayak.github.io/occumb/dev/reference/summary-occumbFit-method.html</loc>
+  </url>
 </urlset>
