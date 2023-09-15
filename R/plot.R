@@ -24,7 +24,7 @@ setMethod("plot", "occumbFit",
 #' @export
 setMethod("plot", "occumbGof",
     function(x, y = NULL, ...) {
-        plot_gof(x@stats_obs, x@stats_rep, x@stats)
+        plot_gof(x@stats_obs, x@stats_rep, x@stats, ...)
     }
 )
 
