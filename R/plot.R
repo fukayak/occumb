@@ -9,6 +9,7 @@ NULL
 #' @param y \code{NULL}
 #' @param ... Additional arguments passed to the plot method for
 #'  \href{https://cran.r-project.org/package=jagsUI}{jagsUI} object.
+#' @import jagsUI
 #' @export
 setMethod("plot", "occumbFit",
     function(x, y = NULL, ...) {

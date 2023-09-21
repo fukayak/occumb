@@ -1,6 +1,6 @@
 Package: occumb
 Title: Site Occupancy Modeling for Environmental DNA Metabarcoding
-Version: 1.0.0.9001
+Version: 1.0.0.9002
 Authors@R: 
     person(given = "Keiichi",
            family = "Fukaya",
@@ -21,7 +21,6 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports: 
-    jagsUI,
     stats,
     methods,
     graphics,
@@ -43,6 +42,7 @@ Collate:
     'utils.R'
 URL: https://fukayak.github.io/occumb/, https://github.com/fukayak/occumb
 Depends: 
+    jagsUI,
     R (>= 2.10)
 VignetteBuilder: knitr
 SystemRequirements: JAGS (http://mcmc-jags.sourceforge.net)
