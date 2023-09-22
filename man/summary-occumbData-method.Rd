@@ -9,6 +9,9 @@
 \arguments{
 \item{object}{An \code{occumbData} object.}
 }
+\value{
+Returns \code{NULL} invisibly.
+}
 \description{
 Summarizes dataset stored in an \code{occumbData} object.
 }

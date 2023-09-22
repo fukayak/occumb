@@ -163,7 +163,7 @@ data <- occumbData(
                     cov3 = factor(1:J)),
     repl_cov = list(cov4 = matrix(rnorm(J * K), J, K)))
 
-\dontrun{
+\donttest{
 # Fitting a null model (includes only species-specific intercepts)
 res0 <- occumb(data = data)
 
@@ -186,6 +186,6 @@ res8 <- occumb(formula_theta = ~ cov4, data = data) # theta
 # Specify the prior distribution and MCMC settings explicitly
 res9 <- occumb(data = data, prior_prec = 1E-2, prior_ulim = 1E2,
                n.chains = 1, n.burnin = 1000, n.thin = 1, n.iter = 2000)
-res10 <- occumb(data = data, parallel = TRUE) # Run MCMC in parallel
+res10 <- occumb(data = data, parallel = TRUE, n.cores = 2) # Run MCMC in parallel
 }
 }

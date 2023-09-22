@@ -4,6 +4,7 @@ NULL
 #' @title Summary method for occumbFit class.
 #' @description Summarizes model fitting result stored in an \code{occumbFit} object.
 #' @param object An \code{occumbFit} object.
+#' @return  Returns \code{NULL} invisibly.
 #' @export
 setMethod("summary", signature(object = "occumbFit"),
     function(object) {
@@ -98,6 +99,7 @@ setMethod("summary", signature(object = "occumbFit"),
 #' @title Summary method for occumbData class.
 #' @description Summarizes dataset stored in an \code{occumbData} object.
 #' @param object An \code{occumbData} object.
+#' @return  Returns \code{NULL} invisibly.
 #' @export
 setMethod("summary", signature(object = "occumbData"),
     function(object) {

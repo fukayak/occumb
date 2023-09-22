@@ -1,5 +1,15 @@
 # occumb (version 1.0.1)
 
+## Resubmission
+
+This is a resubmission. In this version I have:
+
+- Added a reference describing the methods in the package to the Description field of the `DESCRIPTION` file.
+
+- Added the Value field to `.Rd` files regarding exported methods (i.e., `plot` and `summary`).
+
+- Removed `\dontrun` in cases where the execution time of example codes was < 5 sec and otherwise replaced `\dontrun` with `\donttest`. Also, fixed bugs in the example codes found during this process.
+
 ## Test environments
 
 - local: Linux Mint 20.1 R 4.3.1
