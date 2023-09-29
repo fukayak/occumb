@@ -13,6 +13,9 @@
 
 \item{...}{Additional arguments passed to the default \code{plot} method.}
 }
+\value{
+Returns \code{NULL} invisibly.
+}
 \description{
 Draws a scatter plot of fit statistics.
 }

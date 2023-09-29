@@ -9,6 +9,7 @@ NULL
 #' @param y \code{NULL}
 #' @param ... Additional arguments passed to the plot method for
 #'  \href{https://cran.r-project.org/package=jagsUI}{jagsUI} object.
+#' @return  No return value, called for side effects.
 #' @import jagsUI
 #' @export
 setMethod("plot", "occumbFit",
@@ -22,6 +23,7 @@ setMethod("plot", "occumbFit",
 #' @param x An \code{occumbGof} object.
 #' @param y \code{NULL}
 #' @param ... Additional arguments passed to the default \code{plot} method.
+#' @return  Returns \code{NULL} invisibly.
 #' @export
 setMethod("plot", "occumbGof",
     function(x, y = NULL, ...) {

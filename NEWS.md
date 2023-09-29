@@ -1,7 +1,6 @@
-# occumb (development version)
-* `plot()` and `summary()` methods are exported correctly.
-* `gof()` accepts additional arguments for figure formatting.
-* Move `jagsUI` package from Imports to Depends to enable `plot()` method.
+# occumb 1.0.1 (2023/09/21)
+* This patch release fixes issues with `plot()` and `summary()` methods not being exported correctly.
+* It also improves `gof()` to accept additional arguments for figure formatting.
 
 # occumb 1.0.0 (2023/09/14)
 * Add `z`, `theta`, and `phi` arguments to `eval_util_L()`.

@@ -14,6 +14,9 @@
 \item{...}{Additional arguments passed to the plot method for
 \href{https://cran.r-project.org/package=jagsUI}{jagsUI} object.}
 }
+\value{
+No return value, called for side effects.
+}
 \description{
 Applies \href{https://cran.r-project.org/package=jagsUI}{jagsUI}'s
 plot method to an \code{occumbFit} object to draw trace plots

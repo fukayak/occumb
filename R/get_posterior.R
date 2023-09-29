@@ -63,7 +63,7 @@
 #'  The \code{dimension} and \code{label} attributes of the output object
 #'  give information about the dimension of the parameter.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
 #' I <- 2 # Number of species
 #' J <- 2 # Number of sites

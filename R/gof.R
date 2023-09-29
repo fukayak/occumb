@@ -61,7 +61,7 @@ setClass("occumbGof",
 #'  and BUGS. Volume 1: Prelude and Static Models}. Academic Press.
 #'  \url{https://www.mbr-pwrc.usgs.gov/pubanalysis/keryroylebook/}
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
 #' I <- 2 # Number of species
 #' J <- 2 # Number of sites
@@ -78,7 +78,7 @@ setClass("occumbGof",
 #' 
 #' # Goodness-of-fit assessment
 #' gof_result <- gof(fit)
-#' gof_result$p_value  # print p-value
+#' gof_result
 #' }
 #' @export
 gof <- function(fit,

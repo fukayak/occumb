@@ -92,7 +92,7 @@
 #'      and Evolution} \strong{13}:183--193.
 #'      \doi{10.1111/2041-210X.13732}
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
 #' I <- 2 # Number of species
 #' J <- 2 # Number of sites
@@ -283,7 +283,7 @@ eval_util_L <- function(settings,
 #'      and Evolution} \strong{13}:183--193.
 #'      \doi{10.1111/2041-210X.13732}
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
 #' I <- 2 # Number of species
 #' J <- 2 # Number of sites

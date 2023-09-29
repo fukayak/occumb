@@ -9,6 +9,9 @@
 \arguments{
 \item{object}{An \code{occumbFit} object.}
 }
+\value{
+Returns \code{NULL} invisibly.
+}
 \description{
 Summarizes model fitting result stored in an \code{occumbFit} object.
 }
