@@ -9,27 +9,35 @@ reference:
   desc: >
     Functions for building a dataset object used for model-fitting.
   contents:
-  - occumbData
+    - occumbData
 - title: "Model fitting"
   desc: >
     Functions for fitting a model.
   contents:
-  - occumb
+    - occumb
 - title: "Model assessment"
   desc: >
     Functions for assessment of the fitted model.
   contents:
-  - starts_with("get_post")
-  - gof
+    - starts_with("get_post")
+    - gof
 - title: "Study design for effective species detection"
   desc: >
     Functions for the model-based assessment of study design.
   contents:
-  - starts_with("eval_util")
-  - starts_with("list_cond")
+    - starts_with("eval_util")
+    - starts_with("list_cond")
+- title: "S4 methods"
+  desc: >
+    Generic function methods applied to occumb package outputs.
+  contents:
+    - plot,occumbFit-method
+    - plot,occumbGof-method
+    - summary,occumbData-method
+    - summary,occumbFit-method
 - title: "Dataset"
   desc: >
     Example dataset to illustrate function usage.
   contents:
-  - fish
-  - fish_raw
+    - fish
+    - fish_raw

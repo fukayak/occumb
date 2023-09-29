@@ -38,6 +38,7 @@ setClass("occumbGof",
 #' @param stats The discrepancy statistics to be applied.
 #' @param cores The number of cores to use for parallelization.
 #' @param plot Logical, determine if draw scatter plots of the fit statistics.
+#' @param ... Additional arguments passed to the default \code{plot} method.
 #' @return A list with the following named elements:
 #'      \describe{
 #'          \item{\code{stats}}{The discrepancy statistics applied.}
@@ -60,7 +61,7 @@ setClass("occumbGof",
 #'  and BUGS. Volume 1: Prelude and Static Models}. Academic Press.
 #'  \url{https://www.mbr-pwrc.usgs.gov/pubanalysis/keryroylebook/}
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
 #' I <- 2 # Number of species
 #' J <- 2 # Number of sites
@@ -77,13 +78,13 @@ setClass("occumbGof",
 #' 
 #' # Goodness-of-fit assessment
 #' gof_result <- gof(fit)
-#' gof_result$p_value  # print p-value
+#' gof_result
 #' }
 #' @export
 gof <- function(fit,
                 stats = c("Freeman_Tukey", "deviance"),
                 cores = 1L,
-                plot = TRUE) {
+                plot = TRUE, ...) {
 
     # Validate arguments
     assert_occumbFit(fit)
@@ -184,7 +185,7 @@ gof <- function(fit,
     }
 
     # Output (plot and object)
-    if (plot) plot_gof(stats_obs, stats_rep, stats)
+    if (plot) plot_gof(stats_obs, stats_rep, stats, ...)
     out <- methods::new("occumbGof",
                         stats = stats,
                         p_value = Bayesian_p_value(stats_obs, stats_rep),
@@ -240,7 +241,7 @@ get_stats <- function(m, stats, y, N, pi) {
 Bayesian_p_value <- function(stat_obs, stat_rep) mean(stat_obs < stat_rep)
 
 # Plot function
-plot_gof <- function(stat_obs, stat_rep, statistics) {
+plot_gof <- function(stat_obs, stat_rep, statistics, ...) {
     pval <- Bayesian_p_value(stat_obs, stat_rep)
     stats_print <- ifelse(statistics == "Freeman_Tukey", "Freeman-Tukey", statistics)
     plot(stat_rep ~ stat_obs,
@@ -248,7 +249,7 @@ plot_gof <- function(stat_obs, stat_rep, statistics) {
          ylim = range(c(stat_obs, stat_rep)),
          main = paste(stats_print, "statistics | Bayesian p-value =", round(pval, 5)),
          xlab = paste("Statistics for observed data"),
-         ylab = paste("Statistics for replicated data"))
+         ylab = paste("Statistics for replicated data"), ...)
     graphics::abline(a = 0, b = 1)
 }
 

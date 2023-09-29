@@ -88,7 +88,7 @@ names appended as the \code{dimnames} attribute (see Details in
 attribute of the returned object.
 }
 \examples{
-\dontrun{
+\donttest{
 # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
 I <- 2 # Number of species
 J <- 2 # Number of sites

@@ -4,7 +4,7 @@
 \alias{gof}
 \title{Goodness-of-fit assessment of the fitted model.}
 \usage{
-gof(fit, stats = c("Freeman_Tukey", "deviance"), cores = 1L, plot = TRUE)
+gof(fit, stats = c("Freeman_Tukey", "deviance"), cores = 1L, plot = TRUE, ...)
 }
 \arguments{
 \item{fit}{An \code{occumbFit} object.}
@@ -14,6 +14,8 @@ gof(fit, stats = c("Freeman_Tukey", "deviance"), cores = 1L, plot = TRUE)
 \item{cores}{The number of cores to use for parallelization.}
 
 \item{plot}{Logical, determine if draw scatter plots of the fit statistics.}
+
+\item{...}{Additional arguments passed to the default \code{plot} method.}
 }
 \value{
 A list with the following named elements:
@@ -72,7 +74,7 @@ and BUGS. Volume 1: Prelude and Static Models}. Academic Press.
 }
 
 \examples{
-\dontrun{
+\donttest{
 # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
 I <- 2 # Number of species
 J <- 2 # Number of sites
@@ -89,6 +91,6 @@ fit <- occumb(data = data)
 
 # Goodness-of-fit assessment
 gof_result <- gof(fit)
-gof_result$p_value  # print p-value
+gof_result
 }
 }

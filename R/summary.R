@@ -1,10 +1,13 @@
 #' @include occumb.R
 NULL
 
-setGeneric("summary")
-
+#' @title Summary method for occumbFit class.
+#' @description Summarizes model fitting result stored in an \code{occumbFit} object.
+#' @param object An \code{occumbFit} object.
+#' @return  Returns \code{NULL} invisibly.
+#' @export
 setMethod("summary", signature(object = "occumbFit"),
-    function(object, digits = 3, ...) {
+    function(object) {
         cat(crayon::bold('Summary for an', class(object), 'object \n\n'))
 
         N <- apply(object@data@y, c(2, 3), sum)
@@ -88,13 +91,18 @@ setMethod("summary", signature(object = "occumbFit"),
         if (object@fit$calc.DIC) {
             cat(crayon::bold('\nDIC info: (pD = var(deviance)/2)\n'),
                 'pD =', round(object@fit$pD, 1),
-                'and DIC =', round(object@fit$DIC,digits),'\n')
+                'and DIC =', round(object@fit$DIC, 3),'\n')
         }
     }
 )
 
+#' @title Summary method for occumbData class.
+#' @description Summarizes dataset stored in an \code{occumbData} object.
+#' @param object An \code{occumbData} object.
+#' @return  Returns \code{NULL} invisibly.
+#' @export
 setMethod("summary", signature(object = "occumbData"),
-    function(object, ...) {
+    function(object) {
         N <- apply(object@y, c(2, 3), sum)
         reps_per_site <- apply(N, 1, function(x) sum(x > 0))
 
