@@ -1,3 +1,6 @@
+# occumb (development version)
+* Fix license issue: occumb is licensed under GPLv3.
+
 # occumb 1.0.1 (2023/09/21)
 * This patch release fixes issues with `plot()` and `summary()` methods not being exported correctly.
 * It also improves `gof()` to accept additional arguments for figure formatting.
