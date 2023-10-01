@@ -12,7 +12,7 @@ function occumb()."><meta name="robots" content="noindex"><!-- mathjax --><scrip
     
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.0.9001</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.1.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -148,11 +148,72 @@ If <code>y</code> has a <code>dimnames</code> attribute, it is retained in the r
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get an overview of the datasets</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Sequence read counts: </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Number of species, I = 2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Number of sites, J = 2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Maximum number of replicates per site, K = 2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Number of missing observations = 0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Number of replicates per site: 2 (average), 0 (sd) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Sequencing depth: 9 (average), 4.2 (sd) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Species covariates: </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  cov1 (continuous) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Site covariates: </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  cov2 (continuous), cov3 (categorical) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Replicate covariates: </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  cov4 (continuous) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Labels for species: </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  (None) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Labels for sites: </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  (None) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Labels for replicates: </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  (None) </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">data_named</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Sequence read counts: </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Number of species, I = 2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Number of sites, J = 2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Maximum number of replicates per site, K = 2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Number of missing observations = 0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Number of replicates per site: 2 (average), 0 (sd) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Sequencing depth: 9 (average), 5 (sd) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Species covariates: </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  cov1 (continuous) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Site covariates: </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  cov2 (continuous), cov3 (categorical) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Replicate covariates: </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  cov4 (continuous) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Labels for species: </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  common species, uncommon species </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Labels for sites: </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  good site, bad site </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Labels for replicates: </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  (None) </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fish</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Sequence read counts: </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Number of species, I = 50 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Number of sites, J = 50 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Maximum number of replicates per site, K = 3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Number of missing observations = 6 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Number of replicates per site: 2.88 (average), 0.33 (sd) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Sequencing depth: 77910 (average), 98034.7 (sd) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Species covariates: </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  mismatch (continuous) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Site covariates: </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  riverbank (categorical) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Replicate covariates: </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  (None) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Labels for species: </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Abbottina rivularis, Acanthogobius lactipes, Acheilognathus macropterus, Acheilognathus rhombeus, Anguilla japonica, Biwia zezera, Carassius cuvieri, Carassius spp., Channa argus, Ctenopharyngodon idella, Cyprinus carpio, Gambusia affinis, Gnathopogon spp., Gymnogobius castaneus, Gymnogobius petschiliensis, Gymnogobius urotaenia, Hemibarbus spp., Hypomesus nipponensis, Hypophthalmichthys spp., Hyporhamphus intermedius, Ictalurus punctatus, Ischikauia steenackeri, Lepomis macrochirus macrochirus, Leucopsarion petersii, Megalobrama amblycephala, Micropterus dolomieu dolomieu, Micropterus salmoides, Misgurnus spp., Monopterus albus, Mugil cephalus cephalus, Mylopharyngodon piceus, Nipponocypris sieboldii, Nipponocypris temminckii, Opsariichthys platypus, Opsariichthys uncirostris uncirostris, Oryzias latipes, Plecoglossus altivelis altivelis, Pseudogobio spp., Pseudorasbora parva, Rhinogobius spp., Rhodeus ocellatus ocellatus, Salangichthys microdon, Sarcocheilichthys variegatus microoculus, Silurus asotus, Squalidus chankaensis biwae, Tachysurus tokiensis, Tanakia lanceolata, Tribolodon brandtii maruta, Tribolodon hakonensis, Tridentiger spp. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Labels for sites: </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Labels for replicates: </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  L, C, R </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

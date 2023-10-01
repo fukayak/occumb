@@ -14,7 +14,7 @@ posterior samples."><meta name="robots" content="noindex"><!-- mathjax --><scrip
     
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.0.9001</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.1.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -252,31 +252,334 @@ and Evolution</em> <strong>13</strong>:183--193.
 <span class="r-in"><span>                    cov3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">J</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    repl_cov <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>cov4 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">J</span> <span class="op">*</span> <span class="va">K</span><span class="op">)</span>, <span class="va">J</span>, <span class="va">K</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co"># Fitting a null model (includes only species-specific intercepts)</span></span></span>
 <span class="r-in"><span><span class="va">res0</span> <span class="op">&lt;-</span> <span class="fu">occumb</span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Processing function input....... </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Compiling model graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Resolving undeclared variables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Allocating nodes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Graph information:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Observed stochastic nodes: 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Unobserved stochastic nodes: 31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Total graph size: 133</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Initializing model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Adaptive phase..... </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Adaptive phase complete </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Burn-in phase, 10000 iterations x 4 chains </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sampling from joint posterior, 10000 iterations x 4 chains </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Calculating statistics....... </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>At least one Rhat value could not be calculated.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done. </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Add species-specific effects of site covariates in occupancy probabilities</span></span></span>
 <span class="r-in"><span><span class="va">res1</span> <span class="op">&lt;-</span> <span class="fu">occumb</span><span class="op">(</span>formula_psi <span class="op">=</span> <span class="op">~</span> <span class="va">cov2</span>, data <span class="op">=</span> <span class="va">data</span><span class="op">)</span>        <span class="co"># Continuous covariate</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Processing function input....... </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Compiling model graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Resolving undeclared variables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Allocating nodes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Graph information:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Observed stochastic nodes: 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Unobserved stochastic nodes: 36</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Total graph size: 156</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Initializing model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Adaptive phase..... </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Adaptive phase complete </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Burn-in phase, 10000 iterations x 4 chains </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sampling from joint posterior, 10000 iterations x 4 chains </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Calculating statistics....... </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>At least one Rhat value could not be calculated.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done. </span>
 <span class="r-in"><span><span class="va">res2</span> <span class="op">&lt;-</span> <span class="fu">occumb</span><span class="op">(</span>formula_psi <span class="op">=</span> <span class="op">~</span> <span class="va">cov3</span>, data <span class="op">=</span> <span class="va">data</span><span class="op">)</span>        <span class="co"># Categorical covariate</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Processing function input....... </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Compiling model graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Resolving undeclared variables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Allocating nodes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Graph information:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Observed stochastic nodes: 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Unobserved stochastic nodes: 36</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Total graph size: 156</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Initializing model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Adaptive phase..... </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Adaptive phase complete </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Burn-in phase, 10000 iterations x 4 chains </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sampling from joint posterior, 10000 iterations x 4 chains </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Calculating statistics....... </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>At least one Rhat value could not be calculated.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done. </span>
 <span class="r-in"><span><span class="va">res3</span> <span class="op">&lt;-</span> <span class="fu">occumb</span><span class="op">(</span>formula_psi <span class="op">=</span> <span class="op">~</span> <span class="va">cov2</span> <span class="op">*</span> <span class="va">cov3</span>, data <span class="op">=</span> <span class="va">data</span><span class="op">)</span> <span class="co"># Interaction</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Processing function input....... </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Compiling model graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Resolving undeclared variables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Allocating nodes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Graph information:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Observed stochastic nodes: 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Unobserved stochastic nodes: 49</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Total graph size: 190</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Initializing model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Adaptive phase..... </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Adaptive phase complete </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Burn-in phase, 10000 iterations x 4 chains </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sampling from joint posterior, 10000 iterations x 4 chains </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Calculating statistics....... </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>At least one Rhat value could not be calculated.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done. </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Add species covariate in the three parameters</span></span></span>
 <span class="r-in"><span><span class="co"># Note that species covariates are modeled as common effects</span></span></span>
 <span class="r-in"><span><span class="va">res4</span> <span class="op">&lt;-</span> <span class="fu">occumb</span><span class="op">(</span>formula_phi_shared <span class="op">=</span> <span class="op">~</span> <span class="va">cov1</span>, data <span class="op">=</span> <span class="va">data</span><span class="op">)</span>   <span class="co"># phi</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Processing function input....... </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Compiling model graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Resolving undeclared variables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Allocating nodes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Graph information:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Observed stochastic nodes: 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Unobserved stochastic nodes: 32</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Total graph size: 141</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Initializing model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Adaptive phase..... </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Adaptive phase complete </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Burn-in phase, 10000 iterations x 4 chains </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sampling from joint posterior, 10000 iterations x 4 chains </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Calculating statistics....... </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>At least one Rhat value could not be calculated.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done. </span>
 <span class="r-in"><span><span class="va">res5</span> <span class="op">&lt;-</span> <span class="fu">occumb</span><span class="op">(</span>formula_theta_shared <span class="op">=</span> <span class="op">~</span> <span class="va">cov1</span>, data <span class="op">=</span> <span class="va">data</span><span class="op">)</span> <span class="co"># theta</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Processing function input....... </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Compiling model graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Resolving undeclared variables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Allocating nodes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Graph information:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Observed stochastic nodes: 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Unobserved stochastic nodes: 32</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Total graph size: 141</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Initializing model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Adaptive phase..... </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Adaptive phase complete </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Burn-in phase, 10000 iterations x 4 chains </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sampling from joint posterior, 10000 iterations x 4 chains </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Calculating statistics....... </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>At least one Rhat value could not be calculated.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done. </span>
 <span class="r-in"><span><span class="va">res6</span> <span class="op">&lt;-</span> <span class="fu">occumb</span><span class="op">(</span>formula_psi_shared <span class="op">=</span> <span class="op">~</span> <span class="va">cov1</span>, data <span class="op">=</span> <span class="va">data</span><span class="op">)</span>   <span class="co"># psi</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Processing function input....... </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Compiling model graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Resolving undeclared variables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Allocating nodes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Graph information:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Observed stochastic nodes: 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Unobserved stochastic nodes: 32</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Total graph size: 141</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Initializing model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Adaptive phase..... </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Adaptive phase complete </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Burn-in phase, 10000 iterations x 4 chains </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sampling from joint posterior, 10000 iterations x 4 chains </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Calculating statistics....... </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>At least one Rhat value could not be calculated.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done. </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Add replicate covariates</span></span></span>
 <span class="r-in"><span><span class="co"># Note that replicate covariates can only be specified for theta and phi</span></span></span>
 <span class="r-in"><span><span class="va">res7</span> <span class="op">&lt;-</span> <span class="fu">occumb</span><span class="op">(</span>formula_phi <span class="op">=</span> <span class="op">~</span> <span class="va">cov4</span>, data <span class="op">=</span> <span class="va">data</span><span class="op">)</span>   <span class="co"># phi</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Processing function input....... </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Compiling model graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Resolving undeclared variables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Allocating nodes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Graph information:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Observed stochastic nodes: 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Unobserved stochastic nodes: 36</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Total graph size: 170</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Initializing model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Adaptive phase..... </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Adaptive phase complete </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Burn-in phase, 10000 iterations x 4 chains </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sampling from joint posterior, 10000 iterations x 4 chains </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Calculating statistics....... </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>At least one Rhat value could not be calculated.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done. </span>
 <span class="r-in"><span><span class="va">res8</span> <span class="op">&lt;-</span> <span class="fu">occumb</span><span class="op">(</span>formula_theta <span class="op">=</span> <span class="op">~</span> <span class="va">cov4</span>, data <span class="op">=</span> <span class="va">data</span><span class="op">)</span> <span class="co"># theta</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Processing function input....... </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Compiling model graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Resolving undeclared variables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Allocating nodes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Graph information:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Observed stochastic nodes: 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Unobserved stochastic nodes: 36</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Total graph size: 174</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Initializing model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Adaptive phase..... </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Adaptive phase complete </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Burn-in phase, 10000 iterations x 4 chains </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sampling from joint posterior, 10000 iterations x 4 chains </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Calculating statistics....... </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>At least one Rhat value could not be calculated.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done. </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Specify the prior distribution and MCMC settings explicitly</span></span></span>
 <span class="r-in"><span><span class="va">res9</span> <span class="op">&lt;-</span> <span class="fu">occumb</span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, prior_prec <span class="op">=</span> <span class="fl">1E-2</span>, prior_ulim <span class="op">=</span> <span class="fl">1E2</span>,</span></span>
 <span class="r-in"><span>               n.chains <span class="op">=</span> <span class="fl">1</span>, n.burnin <span class="op">=</span> <span class="fl">1000</span>, n.thin <span class="op">=</span> <span class="fl">1</span>, n.iter <span class="op">=</span> <span class="fl">2000</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">res10</span> <span class="op">&lt;-</span> <span class="fu">occumb</span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, parallel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># Run MCMC in parallel</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Processing function input....... </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Compiling model graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Resolving undeclared variables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Allocating nodes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Graph information:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Observed stochastic nodes: 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Unobserved stochastic nodes: 31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Total graph size: 133</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Initializing model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Adaptive phase..... </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Adaptive phase complete </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Burn-in phase, 1000 iterations x 1 chains </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sampling from joint posterior, 1000 iterations x 1 chains </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Calculating statistics....... </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>At least one Rhat value could not be calculated.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done. </span>
+<span class="r-in"><span><span class="va">res10</span> <span class="op">&lt;-</span> <span class="fu">occumb</span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, parallel <span class="op">=</span> <span class="cn">TRUE</span>, n.cores <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="co"># Run MCMC in parallel</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Processing function input....... </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Beginning parallel processing using 2 cores. Console output will be suppressed.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Parallel processing completed.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Calculating statistics....... </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>At least one Rhat value could not be calculated.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done. </span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

@@ -14,7 +14,7 @@ predictive check approach."><meta name="robots" content="noindex"><!-- mathjax -
     
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.0.9001</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.1.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -155,7 +155,7 @@ and BUGS. Volume 1: Prelude and Static Models</em>. Academic Press.
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co"># Generate the smallest random dataset (2 species * 2 sites * 2 reps)</span></span></span>
 <span class="r-in"><span><span class="va">I</span> <span class="op">&lt;-</span> <span class="fl">2</span> <span class="co"># Number of species</span></span></span>
 <span class="r-in"><span><span class="va">J</span> <span class="op">&lt;-</span> <span class="fl">2</span> <span class="co"># Number of sites</span></span></span>
@@ -169,11 +169,46 @@ and BUGS. Volume 1: Prelude and Static Models</em>. Academic Press.
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Fitting a null model</span></span></span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="occumb.html">occumb</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Processing function input....... </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Compiling model graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Resolving undeclared variables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Allocating nodes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Graph information:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Observed stochastic nodes: 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Unobserved stochastic nodes: 31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Total graph size: 133</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Initializing model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Adaptive phase..... </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Adaptive phase complete </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Burn-in phase, 10000 iterations x 4 chains </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sampling from joint posterior, 10000 iterations x 4 chains </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Calculating statistics....... </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>At least one Rhat value could not be calculated.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done. </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Goodness-of-fit assessment</span></span></span>
 <span class="r-in"><span><span class="va">gof_result</span> <span class="op">&lt;-</span> <span class="fu">gof</span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">gof_result</span><span class="op">$</span><span class="va">p_value</span>  <span class="co"># print p-value</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-plt img"><img src="gof-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="va">gof_result</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Posterior predictive check for an occumbFit object:</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Statistics: Freeman-Tukey </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  p-value:    0.443 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Discrepancy statistics for observed data:   1.38 (mean), 0.86 (sd) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Discrepancy statistics for replicated data: 1.32 (mean), 1.12 (sd) </span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
