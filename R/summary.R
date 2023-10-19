@@ -6,6 +6,8 @@ NULL
 #' @param object An \code{occumbFit} object.
 #' @return  Returns \code{NULL} invisibly.
 #' @export
+# This code was created on July 17, 2023 by modifying the source code of the
+# summary.jagsUI() function in the jagsUI package licensed under the GPLv3.
 setMethod("summary", signature(object = "occumbFit"),
     function(object) {
         cat(crayon::bold('Summary for an', class(object), 'object \n\n'))

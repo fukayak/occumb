@@ -1,17 +1,17 @@
 Package: occumb
 Title: Site Occupancy Modeling for Environmental DNA Metabarcoding
-Version: 1.0.1
-Authors@R: 
-    person(given = "Keiichi",
-           family = "Fukaya",
-           role = c("aut", "cre"),
-           email = "fukayak99@gmail.com")
+Version: 1.0.2
+Authors@R: c(
+    person("Keiichi", "Fukaya", , "fukayak99@gmail.com", role = c("aut", "cre")),
+    person("Ken", "Kellner", role = "cph",
+           comment = "summary method for occumbFit class")
+  )
 Description: Fits multispecies site occupancy models to environmental DNA
     metabarcoding data collected using spatially-replicated survey design.
     Model fitting results can be used to evaluate and compare the effectiveness
     of species detection to find an efficient survey design.
     Reference: Fukaya et al. (2022) <doi:10.1111/2041-210X.13732>.
-License: MIT + file LICENSE
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
