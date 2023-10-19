@@ -15,7 +15,7 @@
 \href{https://cran.r-project.org/package=jagsUI}{jagsUI} object.}
 }
 \value{
-No return value, called for side effects.
+Returns \code{NULL} invisibly.
 }
 \description{
 Applies \href{https://cran.r-project.org/package=jagsUI}{jagsUI}'s
