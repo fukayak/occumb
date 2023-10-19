@@ -1,6 +1,7 @@
 # occumb (development version)
 * Fix license issue: occumb is licensed under GPLv3.
 * Fix document of the `plot()` method for `occumbFit` class.
+* Fix document of `occumbData()`.
 
 # occumb 1.0.1 (2023/09/21)
 * This patch release fixes issues with `plot()` and `summary()` methods not being exported correctly.

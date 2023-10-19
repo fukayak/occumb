@@ -79,7 +79,7 @@ setClass("occumbData",
 
 #' Constructor for occumbData data class.
 #' 
-#' \code{occumbData}() creates a data list compatible with the model-fitting
+#' \code{occumbData()} creates a data list compatible with the model-fitting
 #' function \code{\link{occumb}()}.
 #' 
 #' The element names for \code{spec_cov}, \code{site_cov}, and \code{repl_cov}
@@ -108,7 +108,7 @@ setClass("occumbData",
 #'                 (i.e., the number of sites \eqn{\times}{*} number of
 #'                 replicates). Characters are automatically converted to
 #'                 factors. NAs are not allowed.
-#' @return  An S4 object of the `occumbData` class.
+#' @return  An S4 object of the \code{occumbData} class.
 #' @examples
 #' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
 #' I <- 2 # Number of species

@@ -36,7 +36,7 @@ factors. NAs are not allowed.}
 An S4 object of the \code{occumbData} class.
 }
 \description{
-\code{occumbData}() creates a data list compatible with the model-fitting
+\code{occumbData()} creates a data list compatible with the model-fitting
 function \code{\link{occumb}()}.
 }
 \details{
