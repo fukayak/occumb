@@ -164,12 +164,12 @@ gof <- function(fit,
 
             stats_obs <- unlist(
                 parallel::mclapply(mc.cores = cores,
-                                    X = seq_len(M),
-                                    FUN = get_stats,
-                                    stats = stats,
-                                    y = y,
-                                    N = N,
-                                    pi = pi)
+                                   X = seq_len(M),
+                                   FUN = get_stats,
+                                   stats = stats,
+                                   y = y,
+                                   N = N,
+                                   pi = pi)
             )
 
             stats_rep <- unlist(
@@ -223,7 +223,7 @@ get_y_rep <- function(m, y, N, pi) {
 
 get_stats <- function(m, stats, y, N, pi) {
     J <- dim(y)[2]; K <- dim(y)[3]
-    stats_m <- stats_m <- matrix(nrow = J, ncol = K)
+    stats_m <- matrix(nrow = J, ncol = K)
     for (j in seq_len(J)) {
         for (k in seq_len(K)) {
             if (stats == "Freeman_Tukey") {
