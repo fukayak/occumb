@@ -5,30 +5,27 @@ NULL
 validate_occumbData <- function(object) {
     msg <- NULL
 
+    ## y is not an array of lists.
     if (is.list(object@y)) {
-        ## y is not an array of lists.
         msg <- c(msg,
                  "'y' should be a 3D-array of integers, not lists.")
         return(msg)
-    } else if (length(dim(object@y)) != 3) {
-        ## y is a 3D-array.
-        msg <- c(msg,
-                 "'y' should be a 3D-array.")
     }
+
+    ## y is a 3D-array of integers with no missing values.
+    if (!checkmate::test_array(object@y, d = 3))
+        msg <- c(msg, "'y' should be a 3D-array.")
+    if (!checkmate::test_array(object@y, any.missing = FALSE))
+        ## No missing values in y.
+        msg <- c(msg,
+                 "Missing values are not allowed in 'y'.")
+    if (!checkmate::test_array(object@y, mode = "integerish"))
+        ## y elements are integers.
+        msg <- c(msg, "'y' contains non-integer value(s).")
 
     I <- dim(object@y)[1] # Number of species
     J <- dim(object@y)[2] # Number of sites
     K <- dim(object@y)[3] # Number of replicates
-
-    if (sum(is.na(object@y)) > 0) {
-        ## No missing values in y.
-        msg <- c(msg,
-                 "Missing values are not allowed in 'y'.")
-    } else if (sum(object@y %% 1 != 0)) {
-        ## y elements are integers.
-        msg <- c(msg,
-                 "'y' contains non-integer value(s).")
-    }
 
     ## No overlap in the covariate names.
     cov_names <- c(names(object@spec_cov),

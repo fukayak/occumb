@@ -1,4 +1,5 @@
 # occumb (development version)
+* Refactor validation for `y` in `occumbData()` with `checkmate` functions.
 * Add `occumbData` validation for cases when elements of `y` are lists.
 * Rename class `optional_list` to `list_or_NULL`.
 * Minor internal changes to `gof()`.
