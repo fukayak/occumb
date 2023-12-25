@@ -23,6 +23,10 @@ validate_occumbData <- function(object) {
         ## y elements are integers.
         msg <- c(msg, "'y' contains non-integer value(s).")
 
+    if (!checkmate::test_integerish(object@y, lower = 0))
+        ## y elements are non-negative.
+        msg <- c(msg, "'y' contains negative value(s).")
+
     I <- dim(object@y)[1] # Number of species
     J <- dim(object@y)[2] # Number of sites
     K <- dim(object@y)[3] # Number of replicates
