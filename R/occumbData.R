@@ -12,19 +12,20 @@ validate_occumbData <- function(object) {
         return(msg)
     }
 
-    ## y is a 3D-array of integers with no missing values.
+    ## y is a 3d-array.
     if (!checkmate::test_array(object@y, d = 3))
         msg <- c(msg, "'y' should be a 3D-array.")
+
+    ## No missing values in y.
     if (!checkmate::test_array(object@y, any.missing = FALSE))
-        ## No missing values in y.
-        msg <- c(msg,
-                 "Missing values are not allowed in 'y'.")
+        msg <- c(msg, "'y' contains missing value(s).")
+
+    ## y elements are integers.
     if (!checkmate::test_array(object@y, mode = "integerish"))
-        ## y elements are integers.
         msg <- c(msg, "'y' contains non-integer value(s).")
 
+    ## y elements are non-negative.
     if (!checkmate::test_integerish(object@y, lower = 0))
-        ## y elements are non-negative.
         msg <- c(msg, "'y' contains negative value(s).")
 
     I <- dim(object@y)[1] # Number of species
