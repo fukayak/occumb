@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.2.9005</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.2.9008</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,10 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="occumb-development-version">occumb (development version)<a class="anchor" aria-label="anchor" href="#occumb-development-version"></a></h2>
-<ul><li>Fix <code>occumbData</code> message for cases when <code>y</code> has missing values.</li>
+<ul><li>Add <code>occumbData</code> validation for cases when covariates have infinite values.</li>
+<li>Add <code>occumbData</code> validation for cases when covariates have unnamed element.</li>
+<li>Refactor validation for covariates in <code><a href="../reference/occumbData.html">occumbData()</a></code> with <code>checkmate</code> functions.</li>
+<li>Fix <code>occumbData</code> message for cases when <code>y</code> has missing values.</li>
 <li>Add <code>occumbData</code> validation for cases when <code>y</code> has negative values.</li>
 <li>Refactor validation for <code>y</code> in <code><a href="../reference/occumbData.html">occumbData()</a></code> with <code>checkmate</code> functions.</li>
 <li>Add <code>occumbData</code> validation for cases when elements of <code>y</code> are lists.</li>
