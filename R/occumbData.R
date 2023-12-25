@@ -32,6 +32,17 @@ validate_occumbData <- function(object) {
     J <- dim(object@y)[2] # Number of sites
     K <- dim(object@y)[3] # Number of replicates
 
+    ## Covariates are named list.
+    if (!is.null(object@spec_cov) &
+        !checkmate::test_names(names(object@spec_cov)))
+        msg <- c(msg, "'spec_cov' contains unnamed element(s).")
+    if (!is.null(object@site_cov) &
+        !checkmate::test_names(names(object@site_cov)))
+        msg <- c(msg, "'site_cov' contains unnamed element(s).")
+    if (!is.null(object@repl_cov) &
+        !checkmate::test_names(names(object@repl_cov)))
+        msg <- c(msg, "'repl_cov' contains unnamed element(s).")
+
     ## No missing values in covariates.
     if (!checkmate::test_vector(unlist(object@spec_cov),
                                 any.missing = FALSE,

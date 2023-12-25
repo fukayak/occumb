@@ -18,6 +18,34 @@ test_that("Integer check works", {
                  "'y' contains non-integer value.")
 })
 
+test_that("Check for covariate names works", {
+    unnamed_list1 <- unnamed_list2 <- list(rep(1, 2), rep(1, 2))
+    names(unnamed_list2) <- c("a", "")
+    expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
+                                   spec_cov = unnamed_list1),
+                 "'spec_cov' contains unnamed element.")
+    expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
+                                   spec_cov = unnamed_list2),
+                 "'spec_cov' contains unnamed element.")
+    unnamed_list1 <- unnamed_list2 <- list(rep(1, 3), rep(1, 3))
+    names(unnamed_list2) <- c("a", "")
+    expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
+                                   site_cov = unnamed_list1),
+                 "'site_cov' contains unnamed element.")
+    expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
+                                   site_cov = unnamed_list2),
+                 "'site_cov' contains unnamed element.")
+    unnamed_list1 <- unnamed_list2 <-
+        list(matrix(1:2, 1, 2), matrix(1:2, 1, 2))
+    names(unnamed_list2) <- c("a", "")
+    expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
+                                   repl_cov = unnamed_list1),
+                 "'repl_cov' contains unnamed element.")
+    expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
+                                   repl_cov = unnamed_list2),
+                 "'repl_cov' contains unnamed element.")
+})
+
 test_that("Check for covariate name overlap works", {
     expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
                                    spec_cov = list(a = NULL, b = NULL),
