@@ -1,4 +1,5 @@
 # occumb (development version)
+* Refactor validation for covariates in `occumbData()` with `checkmate` functions.
 * Fix `occumbData` message for cases when `y` has missing values.
 * Add `occumbData` validation for cases when `y` has negative values.
 * Refactor validation for `y` in `occumbData()` with `checkmate` functions.

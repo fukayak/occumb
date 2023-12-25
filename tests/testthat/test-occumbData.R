@@ -43,13 +43,13 @@ test_that("Dimension check for covariates works", {
 test_that("Check for covariate missing values works", {
     expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
                                    spec_cov = list(a = c(1, NA))),
-                 "Missing values are not allowed in 'spec_cov'.")
+                 "'spec_cov' contains missing value.")
     expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
                                    site_cov = list(b = c(1, NA))),
-                 "Missing values are not allowed in 'site_cov'.")
+                 "'site_cov' contains missing value.")
     expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
                                    repl_cov = list(c = matrix(c(1:3, NA), 2, 2))),
-                 "Missing values are not allowed in 'repl_cov'.")
+                 "'repl_cov' contains missing value.")
 })
 
 ### Test for check_covariate_mode() --------------------------------------------

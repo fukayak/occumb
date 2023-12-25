@@ -32,6 +32,20 @@ validate_occumbData <- function(object) {
     J <- dim(object@y)[2] # Number of sites
     K <- dim(object@y)[3] # Number of replicates
 
+    ## No missing values in covariates.
+    if (!checkmate::test_vector(unlist(object@spec_cov),
+                                any.missing = FALSE,
+                                null.ok = TRUE))
+        msg <- c(msg, "'spec_cov' contains missing value(s).")
+    if (!checkmate::test_vector(unlist(object@site_cov),
+                                any.missing = FALSE,
+                                null.ok = TRUE))
+        msg <- c(msg, "'site_cov' contains missing value(s).")
+    if (!checkmate::test_vector(unlist(object@repl_cov),
+                                any.missing = FALSE,
+                                null.ok = TRUE))
+        msg <- c(msg, "'repl_cov' contains missing value(s).")
+
     ## No overlap in the covariate names.
     cov_names <- c(names(object@spec_cov),
                    names(object@site_cov),
@@ -62,17 +76,6 @@ validate_occumbData <- function(object) {
         msg <- c(msg,
                  sprintf("'%s' should be a matrix with J rows and K columns.",
                          names(object@repl_cov)[wrong_repl_cov]))
-
-    ## No missing values in covariates.
-    if (sum(is.na(unlist(object@spec_cov))) > 0)
-        msg <- c(msg,
-                 "Missing values are not allowed in 'spec_cov'.")
-    if (sum(is.na(unlist(object@site_cov))) > 0)
-        msg <- c(msg,
-                 "Missing values are not allowed in 'site_cov'.")
-    if (sum(is.na(unlist(object@repl_cov))) > 0)
-        msg <- c(msg,
-                 "Missing values are not allowed in 'repl_cov'.")
 
     ifelse(is.null(msg), TRUE, msg)
 }
