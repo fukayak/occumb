@@ -1,4 +1,5 @@
 # occumb (development version)
+* Add `occumbData` validation for cases when covariates have infinite values.
 * Add `occumbData` validation for cases when covariates have unnamed element.
 * Refactor validation for covariates in `occumbData()` with `checkmate` functions.
 * Fix `occumbData` message for cases when `y` has missing values.

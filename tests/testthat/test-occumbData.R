@@ -80,6 +80,18 @@ test_that("Check for covariate missing values works", {
                  "'repl_cov' contains missing value.")
 })
 
+test_that("Check for covariate infinite values works", {
+    expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
+                                   spec_cov = list(a = c(1, Inf))),
+                 "'spec_cov' contains infinite value.")
+    expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
+                                   site_cov = list(b = c(1, Inf))),
+                 "'site_cov' contains infinite value.")
+    expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
+                                   repl_cov = list(c = matrix(c(1:3, Inf), 2, 2))),
+                 "'repl_cov' contains infinite value.")
+})
+
 ### Test for check_covariate_mode() --------------------------------------------
 test_that("Check for unacceptable covariate mode works", {
     spec_cov <- list(a = rnorm(1), b = c(0 + 1i))

@@ -57,6 +57,14 @@ validate_occumbData <- function(object) {
                                 null.ok = TRUE))
         msg <- c(msg, "'repl_cov' contains missing value(s).")
 
+    ## No infinite values in covariates.
+    if (checkmate::anyInfinite(unlist(object@spec_cov)))
+        msg <- c(msg, "'spec_cov' contains infinite value(s).")
+    if (checkmate::anyInfinite(unlist(object@site_cov)))
+        msg <- c(msg, "'site_cov' contains infinite value(s).")
+    if (checkmate::anyInfinite(unlist(object@repl_cov)))
+        msg <- c(msg, "'repl_cov' contains infinite value(s).")
+
     ## No overlap in the covariate names.
     cov_names <- c(names(object@spec_cov),
                    names(object@site_cov),
