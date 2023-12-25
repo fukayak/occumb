@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.2.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.2.9005</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,12 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="occumb-development-version">occumb (development version)<a class="anchor" aria-label="anchor" href="#occumb-development-version"></a></h2>
-<ul><li>Minor internal changes to gof()</li>
+<ul><li>Fix <code>occumbData</code> message for cases when <code>y</code> has missing values.</li>
+<li>Add <code>occumbData</code> validation for cases when <code>y</code> has negative values.</li>
+<li>Refactor validation for <code>y</code> in <code><a href="../reference/occumbData.html">occumbData()</a></code> with <code>checkmate</code> functions.</li>
+<li>Add <code>occumbData</code> validation for cases when elements of <code>y</code> are lists.</li>
+<li>Rename class <code>optional_list</code> to <code>list_or_NULL</code>.</li>
+<li>Minor internal changes to <code><a href="../reference/gof.html">gof()</a></code>.</li>
 </ul><div class="section level3">
 <h3 id="occumb-development-version-1">occumb 1.0.2 (2023/10/19)<a class="anchor" aria-label="anchor" href="#occumb-development-version-1"></a></h3>
 <ul><li>Fix license issue: occumb is licensed under GPLv3.</li>
