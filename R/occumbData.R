@@ -5,10 +5,16 @@ NULL
 validate_occumbData <- function(object) {
     msg <- NULL
 
-    ## y is a 3D-array.
-    if (length(dim(object@y)) != 3)
+    if (is.list(object@y)) {
+        ## y is not an array of lists.
+        msg <- c(msg,
+                 "'y' should be a 3D-array of integers, not lists.")
+        return(msg)
+    } else if (length(dim(object@y)) != 3) {
+        ## y is a 3D-array.
         msg <- c(msg,
                  "'y' should be a 3D-array.")
+    }
 
     I <- dim(object@y)[1] # Number of species
     J <- dim(object@y)[2] # Number of sites

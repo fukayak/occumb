@@ -1,4 +1,5 @@
 # occumb (development version)
+* Add `occumbData` validation for cases when elements of `y` are lists.
 * Rename class `optional_list` to `list_or_NULL`.
 * Minor internal changes to `gof()`.
 
