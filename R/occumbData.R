@@ -72,9 +72,9 @@ validate_occumbData <- function(object) {
 # Data format class for occumb
 setClass("occumbData",
          slots = c(y = "array",
-                   spec_cov = "optional_list",
-                   site_cov = "optional_list",
-                   repl_cov = "optional_list"),
+                   spec_cov = "list_or_NULL",
+                   site_cov = "list_or_NULL",
+                   repl_cov = "list_or_NULL"),
          validity = validate_occumbData)
 
 #' Constructor for occumbData data class.

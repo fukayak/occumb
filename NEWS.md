@@ -1,5 +1,6 @@
 # occumb (development version)
-* Minor internal changes to gof()
+* Rename class `optional_list` to `list_or_NULL`.
+* Minor internal changes to `gof()`.
 
 ## occumb 1.0.2 (2023/10/19)
 * Fix license issue: occumb is licensed under GPLv3.
