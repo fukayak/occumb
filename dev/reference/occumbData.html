@@ -12,7 +12,7 @@ function occumb()."><meta name="robots" content="noindex"><!-- mathjax --><scrip
     
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.2.9008</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.2.9013</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,36 +69,39 @@ function <code><a href="occumb.html">occumb</a>()</code>.</p>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>y</dt>
-<dd><p>A 3-D array of sequence read counts (integer values) that may have
-a <code>dimnames</code> attribute.
+<dd><p>A 3-D array of sequence read counts (<code>integer</code> values) that may
+have a <code>dimnames</code> attribute.
 Dimensions are ordered by species, site, and replicate.
 Data for missing replicates must be represented by zero vectors.
-NAs are not allowed.</p></dd>
+<code>NA</code>s are not allowed.</p></dd>
 
 
 <dt>spec_cov</dt>
 <dd><p>A named list of species covariates.
-Each element must be a vector of numeric, factor, or
-character whose length is equal to <code>dim(y)[1]</code> (i.e.,
-the number of species). Characters are automatically
-converted to factors. NAs are not allowed.</p></dd>
+Each covariate can be a vector of continuous (<code>numeric</code>
+or <code>integer</code>) or discrete (<code>logical</code>,
+<code>factor</code>, or <code>character</code>) variables whose length
+equals <code>dim(y)[1]</code> (i.e., the number of species).
+<code>NA</code>s are not allowed.</p></dd>
 
 
 <dt>site_cov</dt>
 <dd><p>A named list of site covariates.
-Each element must be a vector of numeric, factor, or
-character whose length is equal to <code>dim(y)[2]</code> (i.e.,
-the number of sites). Characters are automatically converted
-to factors. NAs are not allowed.</p></dd>
+Each covariate can be a vector of continuous (<code>numeric</code>
+or <code>integer</code>) or discrete (<code>logical</code>,
+<code>factor</code>, or <code>character</code>) variables whose length
+equals <code>dim(y)[1]</code> (i.e., the number of sites).
+<code>NA</code>s are not allowed.</p></dd>
 
 
 <dt>repl_cov</dt>
 <dd><p>A named list of replicate covariates.
-Each element must be a matrix of numeric, factor, or
-character whose dimension is equal to <code>dim(y)[2:3]</code>
-(i.e., the number of sites \(\times\) number of
-replicates). Characters are automatically converted to
-factors. NAs are not allowed.</p></dd>
+Each covariate can be a matrix of continuous (<code>numeric</code>
+or <code>integer</code>) or discrete (<code>logical</code> or
+<code>character</code>) variables whose dimension equals
+<code>dim(y)[2:3]</code> (i.e., the number of sites \(\times\)
+number of replicates).
+<code>NA</code>s are not allowed.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -109,8 +112,8 @@ factors. NAs are not allowed.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The element names for <code>spec_cov</code>, <code>site_cov</code>, and <code>repl_cov</code>
-must all be unique.
+    <p>The element (i.e., covariate) names for <code>spec_cov</code>, <code>site_cov</code>, and
+<code>repl_cov</code> must all be unique.
 If <code>y</code> has a <code>dimnames</code> attribute, it is retained in the resulting
 <code>occumbData</code> object and can be referenced in subsequent analyses.</p>
     </div>
@@ -155,7 +158,7 @@ If <code>y</code> has a <code>dimnames</code> attribute, it is retained in the r
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Maximum number of replicates per site, K = 2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Number of missing observations = 0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Number of replicates per site: 2 (average), 0 (sd) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Sequencing depth: 9 (average), 1.8 (sd) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Sequencing depth: 9 (average), 2.7 (sd) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Species covariates: </span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  cov1 (continuous) </span>
@@ -177,7 +180,7 @@ If <code>y</code> has a <code>dimnames</code> attribute, it is retained in the r
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Maximum number of replicates per site, K = 2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Number of missing observations = 0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Number of replicates per site: 2 (average), 0 (sd) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Sequencing depth: 9 (average), 1.6 (sd) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Sequencing depth: 9 (average), 1.4 (sd) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Species covariates: </span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  cov1 (continuous) </span>
