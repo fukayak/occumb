@@ -7,30 +7,33 @@
 occumbData(y, spec_cov = NULL, site_cov = NULL, repl_cov = NULL)
 }
 \arguments{
-\item{y}{A 3-D array of sequence read counts (integer values) that may have
-a \code{dimnames} attribute.
+\item{y}{A 3-D array of sequence read counts (\code{integer} values) that may
+have a \code{dimnames} attribute.
 Dimensions are ordered by species, site, and replicate.
 Data for missing replicates must be represented by zero vectors.
-NAs are not allowed.}
+\code{NA}s are not allowed.}
 
 \item{spec_cov}{A named list of species covariates.
-Each element must be a vector of numeric, factor, or
-character whose length is equal to \code{dim(y)[1]} (i.e.,
-the number of species). Characters are automatically
-converted to factors. NAs are not allowed.}
+Each covariate can be a vector of continuous (\code{numeric}
+or \code{integer}) or discrete (\code{logical},
+\code{factor}, or \code{character}) variables whose length
+equals \code{dim(y)[1]} (i.e., the number of species).
+\code{NA}s are not allowed.}
 
 \item{site_cov}{A named list of site covariates.
-Each element must be a vector of numeric, factor, or
-character whose length is equal to \code{dim(y)[2]} (i.e.,
-the number of sites). Characters are automatically converted
-to factors. NAs are not allowed.}
+Each covariate can be a vector of continuous (\code{numeric}
+or \code{integer}) or discrete (\code{logical},
+\code{factor}, or \code{character}) variables whose length
+equals \code{dim(y)[1]} (i.e., the number of sites).
+\code{NA}s are not allowed.}
 
 \item{repl_cov}{A named list of replicate covariates.
-Each element must be a matrix of numeric, factor, or
-character whose dimension is equal to \code{dim(y)[2:3]}
-(i.e., the number of sites \eqn{\times}{*} number of
-replicates). Characters are automatically converted to
-factors. NAs are not allowed.}
+Each covariate can be a matrix of continuous (\code{numeric}
+or \code{integer}) or discrete (\code{logical} or
+\code{character}) variables whose dimension equals
+\code{dim(y)[2:3]} (i.e., the number of sites \eqn{\times}{*}
+number of replicates).
+\code{NA}s are not allowed.}
 }
 \value{
 An S4 object of the \code{occumbData} class.
@@ -40,8 +43,8 @@ An S4 object of the \code{occumbData} class.
 function \code{\link{occumb}()}.
 }
 \details{
-The element names for \code{spec_cov}, \code{site_cov}, and \code{repl_cov}
-must all be unique.
+The element (i.e., covariate) names for \code{spec_cov}, \code{site_cov}, and
+\code{repl_cov} must all be unique.
 If \code{y} has a \code{dimnames} attribute, it is retained in the resulting
 \code{occumbData} object and can be referenced in subsequent analyses.
 }

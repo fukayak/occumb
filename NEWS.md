@@ -1,4 +1,5 @@
 # occumb (development version)
+* Fix `occumbData()` document.
 * Improve `occumbData()` validation for covariate classes.
 * Improve error messages in `occumbData()`.
 * Refactor and improve unit tests for `occumbData()`.
