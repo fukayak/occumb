@@ -119,6 +119,18 @@ test_that("Dimension check for covariates works", {
         "'a' and 'b' must have a number of rows equal to the number of species and a number of columns equal to the number of sites")
 })
 
+test_that("Check for covariate classes works", {
+    # complex
+    spec_cov <- list(a = rnorm(2), b = rep(0 + 1i, 2))
+    site_cov <- list(c = rnorm(2), d = rep(0 + 1i, 2))
+    repl_cov <- list(e = matrix(1:4, 2, 2), f = matrix(rep(0 + 1i, 4), 2, 2))
+    expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
+                                   spec_cov = spec_cov,
+                                   site_cov = site_cov,
+                                   repl_cov = repl_cov),
+                 "'b', 'd', and 'f' must be logical, numeric, integer, factor, or character")
+})
+
 test_that("Check for missing covariate values works", {
     expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
                                    spec_cov = list(a = c(1, NA))),
@@ -141,16 +153,5 @@ test_that("Check for infinite covariate values works", {
     expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
                                    repl_cov = list(c = matrix(c(1:3, Inf), 2, 2))),
                  "'repl_cov' contains infinite value")
-})
-
-### Test for check_covariate_mode() --------------------------------------------
-test_that("Check for unacceptable covariate mode works", {
-    spec_cov <- list(a = rnorm(1), b = c(0 + 1i))
-    site_cov <- list(c = rnorm(1), d = c(0 + 1i))
-    repl_cov <- list(e = rnorm(1), f = c(0 + 1i))
-    expect_error(check_covariate_mode(spec_cov, site_cov, repl_cov),
-                 sprintf("Unacceptable mode: the following covariates must be numeric, factor, or character. \n %s",
-                         paste(sprintf("%s: %s", c("b", "d", "f"), rep("complex", 3)),
-                               collapse = "; ")))
 })
 

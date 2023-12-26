@@ -1,9 +1,10 @@
 # occumb (development version)
+* Improve `occumbData()` validation for covariate classes.
 * Improve error messages in `occumbData()`.
 * Refactor and improve unit tests for `occumbData()`.
 * Refactor `validate_occumbData()` and improve related tests.
-* Add `occumbData` validation for cases when covariates have infinite values.
-* Add `occumbData` validation for cases when covariates have unnamed element.
+* Add `occumbData()` validation for cases when covariates have infinite values.
+* Add `occumbData()` validation for cases when covariates have unnamed element.
 * Refactor validation for covariates in `occumbData()` with `checkmate` functions.
 * Fix `occumbData` message for cases when `y` has missing values.
 * Add `occumbData` validation for cases when `y` has negative values.
