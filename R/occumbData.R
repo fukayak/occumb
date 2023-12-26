@@ -43,6 +43,46 @@ validate_occumbData <- function(object) {
         !checkmate::test_names(names(object@repl_cov)))
         msg <- c(msg, "'repl_cov' contains unnamed element(s).")
 
+    ## No overlap in the covariate names.
+    cov_names <- c(names(object@spec_cov),
+                   names(object@site_cov),
+                   names(object@repl_cov))
+    if (sum(table(cov_names) > 1))
+        msg <- c(msg,
+                 sprintf("Duplicated covariate names are not allowed: %s",
+                         knitr::combine_words(
+                            names(table(cov_names))[table(cov_names) > 1],
+                            before = "'", after = "'", and = "")))
+
+    ## Appropriate covariate dimensions.
+    if (sum(sapply(object@spec_cov, length) != I)) {
+        wrong_spec_cov <- names(object@spec_cov)[sapply(object@spec_cov, length) != I]
+        msg <- c(msg,
+                 sprintf("Length of %s should match the number of species.",
+                         knitr::combine_words(wrong_spec_cov,
+                                              before = "'", after = "'")))
+    }
+    if (sum(sapply(object@site_cov, length) != J)) {
+        wrong_site_cov <- names(object@site_cov)[sapply(object@site_cov, length) != J]
+        msg <- c(msg,
+                 sprintf("Length of %s should match the number of sites.",
+                         knitr::combine_words(wrong_site_cov,
+                                              before = "'", after = "'")))
+    }
+    wrong_repl_cov <- vector(length = length(object@repl_cov))
+    for (i in seq_along(object@repl_cov)) {
+        if (is.matrix(object@repl_cov[[i]])) {
+            wrong_repl_cov[i] <- !identical(dim(object@repl_cov[[i]]), c(J, K))
+        } else {
+            wrong_repl_cov[i] <- TRUE
+        }
+    }
+    if (sum(wrong_repl_cov))
+        msg <- c(msg,
+                 sprintf("%s should be a matrix with J rows and K columns.",
+                         knitr::combine_words(names(object@repl_cov)[wrong_repl_cov],
+                                              before = "'", after = "'")))
+
     ## No missing values in covariates.
     if (!checkmate::test_vector(unlist(object@spec_cov),
                                 any.missing = FALSE,
@@ -64,37 +104,6 @@ validate_occumbData <- function(object) {
         msg <- c(msg, "'site_cov' contains infinite value(s).")
     if (checkmate::anyInfinite(unlist(object@repl_cov)))
         msg <- c(msg, "'repl_cov' contains infinite value(s).")
-
-    ## No overlap in the covariate names.
-    cov_names <- c(names(object@spec_cov),
-                   names(object@site_cov),
-                   names(object@repl_cov))
-    if(sum(table(cov_names) > 1))
-        msg <- c(msg,
-                 sprintf("Duplicated covariate names are not allowed: '%s'",
-                         names(table(cov_names))[table(cov_names) > 1]))
-
-    ## Appropriate covariate dimensions.
-    if (sum(sapply(object@spec_cov, length) != I))
-        msg <- c(msg,
-                 sprintf("Length of '%s' should match the number of species.",
-                         names(object@spec_cov)[sapply(object@spec_cov, length) != I]))
-    if (sum(sapply(object@site_cov, length) != J))
-        msg <- c(msg,
-                 sprintf("Length of '%s' should match the number of sites.",
-                         names(object@site_cov)[sapply(object@site_cov, length) != J]))
-    wrong_repl_cov <- vector(length = length(object@repl_cov))
-    for (i in seq_along(object@repl_cov)) {
-        if (is.matrix(object@repl_cov[[i]])) {
-            wrong_repl_cov[i] <- !identical(dim(object@repl_cov[[i]]), c(J, K))
-        } else {
-            wrong_repl_cov[i] <- TRUE
-        }
-    }
-    if (sum(wrong_repl_cov))
-        msg <- c(msg,
-                 sprintf("'%s' should be a matrix with J rows and K columns.",
-                         names(object@repl_cov)[wrong_repl_cov]))
 
     ifelse(is.null(msg), TRUE, msg)
 }
