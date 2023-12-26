@@ -9,25 +9,25 @@ validate_occumbData <- function(object) {
     ## y is not an array of lists.
     if (is.list(object@y)) {
         msg <- c(msg,
-                 "'y' should be a 3D-array of integers, not lists.")
+                 "Elements of 'y' are lists but should be integers")
         return(msg)
     }
 
     ## y is a 3d-array.
     if (!checkmate::test_array(object@y, d = 3))
-        msg <- c(msg, "'y' should be a 3D-array.")
+        msg <- c(msg, "'y' is not a 3D-array")
 
     ## No missing values in y.
     if (!checkmate::test_array(object@y, any.missing = FALSE))
-        msg <- c(msg, "'y' contains missing value(s).")
+        msg <- c(msg, "'y' contains missing value(s)")
 
     ## y elements are integers.
     if (!checkmate::test_array(object@y, mode = "integerish"))
-        msg <- c(msg, "'y' contains non-integer value(s).")
+        msg <- c(msg, "'y' contains non-integer value(s)")
 
     ## y elements are non-negative.
     if (!checkmate::test_integerish(object@y, lower = 0))
-        msg <- c(msg, "'y' contains negative value(s).")
+        msg <- c(msg, "'y' contains negative value(s)")
 
     I <- dim(object@y)[1] # Number of species
     J <- dim(object@y)[2] # Number of sites
@@ -37,13 +37,13 @@ validate_occumbData <- function(object) {
     ## Covariates are named list.
     if (!is.null(object@spec_cov) &
         !checkmate::test_names(names(object@spec_cov)))
-        msg <- c(msg, "'spec_cov' contains unnamed element(s).")
+        msg <- c(msg, "'spec_cov' contains unnamed element(s)")
     if (!is.null(object@site_cov) &
         !checkmate::test_names(names(object@site_cov)))
-        msg <- c(msg, "'site_cov' contains unnamed element(s).")
+        msg <- c(msg, "'site_cov' contains unnamed element(s)")
     if (!is.null(object@repl_cov) &
         !checkmate::test_names(names(object@repl_cov)))
-        msg <- c(msg, "'repl_cov' contains unnamed element(s).")
+        msg <- c(msg, "'repl_cov' contains unnamed element(s)")
 
     ## No overlap in the covariate names.
     cov_names <- c(names(object@spec_cov),
@@ -60,14 +60,14 @@ validate_occumbData <- function(object) {
     if (sum(sapply(object@spec_cov, length) != I)) {
         wrong_spec_cov <- names(object@spec_cov)[sapply(object@spec_cov, length) != I]
         msg <- c(msg,
-                 sprintf("Length of %s should match the number of species.",
+                 sprintf("%s must have a length equal to the number of species",
                          knitr::combine_words(wrong_spec_cov,
                                               before = "'", after = "'")))
     }
     if (sum(sapply(object@site_cov, length) != J)) {
         wrong_site_cov <- names(object@site_cov)[sapply(object@site_cov, length) != J]
         msg <- c(msg,
-                 sprintf("Length of %s should match the number of sites.",
+                 sprintf("%s must have a length equal to the number of sites",
                          knitr::combine_words(wrong_site_cov,
                                               before = "'", after = "'")))
     }
@@ -81,7 +81,7 @@ validate_occumbData <- function(object) {
     }
     if (sum(wrong_repl_cov))
         msg <- c(msg,
-                 sprintf("%s should be a matrix with J rows and K columns.",
+                 sprintf("%s must have a number of rows equal to the number of species and a number of columns equal to the number of sites",
                          knitr::combine_words(names(object@repl_cov)[wrong_repl_cov],
                                               before = "'", after = "'")))
 
@@ -89,23 +89,23 @@ validate_occumbData <- function(object) {
     if (!checkmate::test_vector(unlist(object@spec_cov),
                                 any.missing = FALSE,
                                 null.ok = TRUE))
-        msg <- c(msg, "'spec_cov' contains missing value(s).")
+        msg <- c(msg, "'spec_cov' contains missing value(s)")
     if (!checkmate::test_vector(unlist(object@site_cov),
                                 any.missing = FALSE,
                                 null.ok = TRUE))
-        msg <- c(msg, "'site_cov' contains missing value(s).")
+        msg <- c(msg, "'site_cov' contains missing value(s)")
     if (!checkmate::test_vector(unlist(object@repl_cov),
                                 any.missing = FALSE,
                                 null.ok = TRUE))
-        msg <- c(msg, "'repl_cov' contains missing value(s).")
+        msg <- c(msg, "'repl_cov' contains missing value(s)")
 
     ## No infinite values in covariates.
     if (checkmate::anyInfinite(unlist(object@spec_cov)))
-        msg <- c(msg, "'spec_cov' contains infinite value(s).")
+        msg <- c(msg, "'spec_cov' contains infinite value(s)")
     if (checkmate::anyInfinite(unlist(object@site_cov)))
-        msg <- c(msg, "'site_cov' contains infinite value(s).")
+        msg <- c(msg, "'site_cov' contains infinite value(s)")
     if (checkmate::anyInfinite(unlist(object@repl_cov)))
-        msg <- c(msg, "'repl_cov' contains infinite value(s).")
+        msg <- c(msg, "'repl_cov' contains infinite value(s)")
 
     ifelse(is.null(msg), TRUE, msg)
 }

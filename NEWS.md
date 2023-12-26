@@ -1,5 +1,6 @@
 # occumb (development version)
-* Refactor and improve unit tests for `occumbData()`
+* Improve error messages in `occumbData()`.
+* Refactor and improve unit tests for `occumbData()`.
 * Refactor `validate_occumbData()` and improve related tests.
 * Add `occumbData` validation for cases when covariates have infinite values.
 * Add `occumbData` validation for cases when covariates have unnamed element.
