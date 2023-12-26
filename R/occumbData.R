@@ -5,6 +5,7 @@ NULL
 validate_occumbData <- function(object) {
     msg <- NULL
 
+    ### Tests for sequence read counts
     ## y is not an array of lists.
     if (is.list(object@y)) {
         msg <- c(msg,
@@ -32,6 +33,7 @@ validate_occumbData <- function(object) {
     J <- dim(object@y)[2] # Number of sites
     K <- dim(object@y)[3] # Number of replicates
 
+    ### Tests for covariates
     ## Covariates are named list.
     if (!is.null(object@spec_cov) &
         !checkmate::test_names(names(object@spec_cov)))

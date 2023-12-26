@@ -1,4 +1,11 @@
 ### Test for validate_occumbData() ---------------------------------------------
+## Tests for sequence read counts
+
+test_that("Mode check for y works", {
+    expect_error(new("occumbData", y = array(list(), dim = rep(2, 3))),
+                 "'y' should be a 3D-array of integers, not lists.")
+})
+
 test_that("Dimension check for y works", {
     expect_error(new("occumbData", y = array(1:4, dim = rep(2, 1))),
                  "'y' should be a 3D-array.")
@@ -13,11 +20,19 @@ test_that("Check for missing values for y works", {
                  "'y' contains missing value.")
 })
 
-test_that("Integer check works", {
+test_that("Integer check for y works", {
     expect_error(new("occumbData", y = array(1:8 + 0.1, dim = rep(2, 3))),
+                 "'y' contains non-integer value.")
+    expect_error(new("occumbData", y = array(c(Inf, 1:7), dim = rep(2, 3))),
                  "'y' contains non-integer value.")
 })
 
+test_that("Check for non-negative values for y works", {
+    expect_error(new("occumbData", y = array(c(-1, 1:7), dim = rep(2, 3))),
+                 "'y' contains negative value.")
+})
+
+## Tests for covariates
 test_that("Check for covariate names works", {
     unnamed_list1 <- unnamed_list2 <- list(rep(1, 2), rep(1, 2))
     names(unnamed_list2) <- c("a", "")
@@ -55,6 +70,22 @@ test_that("Check for covariate name overlap works", {
                                    spec_cov = list(a = NULL, b = NULL),
                                    site_cov = list(a = NULL, b = NULL)),
                  "Duplicated covariate names are not allowed: 'a', 'b'")
+    expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
+                                   spec_cov = list(a = NULL, b = NULL),
+                                   repl_cov = list(a = NULL)),
+                 "Duplicated covariate names are not allowed: 'a'")
+    expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
+                                   spec_cov = list(a = NULL, b = NULL),
+                                   repl_cov = list(a = NULL, b = NULL)),
+                 "Duplicated covariate names are not allowed: 'a', 'b'")
+    expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
+                                   site_cov = list(a = NULL, b = NULL),
+                                   repl_cov = list(a = NULL)),
+                 "Duplicated covariate names are not allowed: 'a'")
+    expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
+                                   site_cov = list(a = NULL, b = NULL),
+                                   repl_cov = list(a = NULL, b = NULL)),
+                 "Duplicated covariate names are not allowed: 'a', 'b'")
 })
 
 test_that("Dimension check for covariates works", {
@@ -88,7 +119,7 @@ test_that("Dimension check for covariates works", {
         "'a' and 'b' should be a matrix with J rows and K columns.")
 })
 
-test_that("Check for covariate missing values works", {
+test_that("Check for missing covariate values works", {
     expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
                                    spec_cov = list(a = c(1, NA))),
                  "'spec_cov' contains missing value.")
@@ -100,7 +131,7 @@ test_that("Check for covariate missing values works", {
                  "'repl_cov' contains missing value.")
 })
 
-test_that("Check for covariate infinite values works", {
+test_that("Check for infinite covariate values works", {
     expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
                                    spec_cov = list(a = c(1, Inf))),
                  "'spec_cov' contains infinite value.")
