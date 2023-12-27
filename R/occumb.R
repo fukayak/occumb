@@ -960,28 +960,46 @@ check_wrong_terms <- function(formula, correct_terms,
     if (any(wrong_terms)) {
         if (type == "phi")
             stop(sprintf("Unexpected terms in formula_%s: %s
-Note that species covariates are not allowed for formula_%s.\n",
-                         type, test_terms[wrong_terms], type)) 
+Make sure they are included in either 'site_cov' or 'repl_cov'.
+
+For details on covariate specification in occumb(), see: https://fukayak.github.io/occumb/articles/model_specification.html#covariate-modeling-of-psi-theta-and-phi\n",
+                         type,
+                         knitr::combine_words(test_terms[wrong_terms], and = "")))
         if (type == "theta")
             stop(sprintf("Unexpected terms in formula_%s: %s
-Note that species covariates are not allowed for formula_%s.\n",
-                         type, test_terms[wrong_terms], type)) 
+Make sure they are included in either 'site_cov' or 'repl_cov'.
+
+For details on covariate specification in occumb(), see: https://fukayak.github.io/occumb/articles/model_specification.html#covariate-modeling-of-psi-theta-and-phi\n",
+                         type,
+                         knitr::combine_words(test_terms[wrong_terms], and = ""))) 
         if (type == "psi")
             stop(sprintf("Unexpected terms in formula_%s: %s
-Note that only site covariates are allowed for formula_%s.\n",
-                         type, test_terms[wrong_terms], type)) 
+Make sure they are included in 'site_cov'.
+
+For details on covariate specification in occumb(), see: https://fukayak.github.io/occumb/articles/model_specification.html#covariate-modeling-of-psi-theta-and-phi\n",
+                         type,
+                         knitr::combine_words(test_terms[wrong_terms], and = ""))) 
         if (type == "phi_shared")
             stop(sprintf("Unexpected terms in formula_%s: %s
-Make sure they are found in either spec_cov, site_cov, or repl_cov.\n",
-                         type, test_terms[wrong_terms])) 
+Make sure they are included in either 'spec_cov', 'site_cov', or 'repl_cov'.
+
+For details on covariate specification in occumb(), see: https://fukayak.github.io/occumb/articles/model_specification.html#covariate-modeling-of-psi-theta-and-phi\n",
+                         type,
+                         knitr::combine_words(test_terms[wrong_terms], and = ""))) 
         if (type == "theta_shared")
             stop(sprintf("Unexpected terms in formula_%s: %s
-Make sure they are found in either spec_cov, site_cov, or repl_cov.\n",
-                         type, test_terms[wrong_terms])) 
+Make sure they are included in either 'spec_cov', 'site_cov', or 'repl_cov'.
+
+For details on covariate specification in occumb(), see: https://fukayak.github.io/occumb/articles/model_specification.html#covariate-modeling-of-psi-theta-and-phi\n",
+                         type,
+                         knitr::combine_words(test_terms[wrong_terms], and = ""))) 
         if (type == "psi_shared")
             stop(sprintf("Unexpected terms in formula_%s: %s
-Note that only site covariates, species covariates, or their interactions are allowed for formula_%s.\n",
-                         type, test_terms[wrong_terms], type)) 
+Make sure they are included in either 'spec_cov' or 'site_cov'.
+
+For details on covariate specification in occumb(), see: https://fukayak.github.io/occumb/articles/model_specification.html#covariate-modeling-of-psi-theta-and-phi\n",
+                         type,
+                         knitr::combine_words(test_terms[wrong_terms], and = ""))) 
     }
 }
 

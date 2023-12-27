@@ -236,8 +236,11 @@ test_that("Procedures for phi_shared correct", {
     expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ -1, ~ 1, ~ 1, data = data),
                  "No intercept in formula_phi_shared: remove 0 or -1 from the formula")
     expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ xxx, ~ 1, ~ 1, data = data),
-                             sprintf("Unexpected terms in formula_phi_shared: %s
-Make sure they are found in either spec_cov, site_cov, or repl_cov.", "xxx"))
+                             "Unexpected terms in formula_phi_shared: xxx
+Make sure they are included in either 'spec_cov', 'site_cov', or 'repl_cov'.")
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ xxx + yyy, ~ 1, ~ 1, data = data),
+                             "Unexpected terms in formula_phi_shared: xxx, yyy
+Make sure they are included in either 'spec_cov', 'site_cov', or 'repl_cov'.")
 })
 
 ### Tests for formula_theta_shared ---------------------------------------------
@@ -462,8 +465,11 @@ test_that("Procedures for theta_shared correct", {
     expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ -1, ~ 1, data = data),
                  "No intercept in formula_theta_shared: remove 0 or -1 from the formula")
     expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ xxx, ~ 1, data = data),
-                             sprintf("Unexpected terms in formula_theta_shared: %s
-Make sure they are found in either spec_cov, site_cov, or repl_cov.", "xxx"))
+                             "Unexpected terms in formula_theta_shared: xxx
+Make sure they are included in either 'spec_cov', 'site_cov', or 'repl_cov'.")
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ xxx + yyy, ~ 1, data = data),
+                             "Unexpected terms in formula_theta_shared: xxx, yyy
+Make sure they are included in either 'spec_cov', 'site_cov', or 'repl_cov'.")
 })
 
 ### Tests for formula_psi_shared -----------------------------------------------
@@ -574,8 +580,8 @@ test_that("Procedures for psi_shared correct", {
 
     # repl_cov (not allowed)
     expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ cov5, data = data),
-                             sprintf("Unexpected terms in formula_psi_shared: %s
-Note that only site covariates, species covariates, or their interactions are allowed for formula_psi_shared.", "cov5"))
+                             "Unexpected terms in formula_psi_shared: cov5
+Make sure they are included in either 'spec_cov' or 'site_cov'.")
 
     ## Errors and Warnings
     expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ 0, data = data),
@@ -583,8 +589,11 @@ Note that only site covariates, species covariates, or their interactions are al
     expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ -1, data = data),
                  sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "psi_shared"))
     expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ xxx, data = data),
-                             sprintf("Unexpected terms in formula_psi_shared: %s
-Note that only site covariates, species covariates, or their interactions are allowed for formula_psi_shared.", "xxx"))
+                             "Unexpected terms in formula_psi_shared: xxx
+Make sure they are included in either 'spec_cov' or 'site_cov'.")
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ xxx + yyy, data = data),
+                             "Unexpected terms in formula_psi_shared: xxx, yyy
+Make sure they are included in either 'spec_cov' or 'site_cov'.")
 })
 
 ### Tests for formula_phi ------------------------------------------------------
@@ -601,9 +610,8 @@ test_that("Arguments are correct for the null model", {
 test_that("Errors are correct for the spec_cov in phi", {
     # spec_cov (not allowed)
     expect_error(set_modargs(~ cov1, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
-                 sprintf("Unexpected terms in formula_phi: %s
-Note that species covariates are not allowed for formula_phi.",
-                         "cov1"))
+                 "Unexpected terms in formula_phi: cov1
+Make sure they are included in either 'site_cov' or 'repl_cov'.")
 })
 
 test_that("Procedures for phi correct", {
@@ -734,9 +742,11 @@ test_that("Procedures for phi correct", {
     expect_error(set_modargs(~ -1, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
                  sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "phi"))
     expect_error(set_modargs(~ xxx, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
-                 sprintf("Unexpected terms in formula_phi: %s
-Note that species covariates are not allowed for formula_phi",
-                         "xxx"))
+                 "Unexpected terms in formula_phi: xxx
+Make sure they are included in either 'site_cov' or 'repl_cov'.")
+    expect_error(set_modargs(~ xxx + yyy, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
+                 "Unexpected terms in formula_phi: xxx, yyy
+Make sure they are included in either 'site_cov' or 'repl_cov'.")
 })
 
 ### Tests for formula_theta ----------------------------------------------------
@@ -751,9 +761,8 @@ test_that("Procedures for theta correct", {
 
     # spec_cov (not allowed)
     expect_error(set_modargs(~ 1, ~ cov1, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
-                 sprintf("Unexpected terms in formula_theta: %s
-Note that species covariates are not allowed for formula_theta.",
-                         "cov1"))
+                 "Unexpected terms in formula_theta: cov1
+Make sure they are included in either 'site_cov' or 'repl_cov'.")
 
     # site_cov (continuous)
     result <- set_modargs(~ 1, ~ cov3, ~ 1, ~ 1, ~ 1, ~ 1, data = data)
@@ -882,9 +891,11 @@ Note that species covariates are not allowed for formula_theta.",
     expect_error(set_modargs(~ 1, ~ -1, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
                  sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "theta"))
     expect_error(set_modargs(~ 1, ~ xxx, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
-                 sprintf("Unexpected terms in formula_theta: %s
-Note that species covariates are not allowed for formula_theta.",
-                         "xxx"))
+                 "Unexpected terms in formula_theta: xxx
+Make sure they are included in either 'site_cov' or 'repl_cov'.")
+    expect_error(set_modargs(~ 1, ~ xxx + yyy, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
+                 "Unexpected terms in formula_theta: xxx, yyy
+Make sure they are included in either 'site_cov' or 'repl_cov'.")
 })
 
 ### Tests for formula_psi ------------------------------------------------------
@@ -899,9 +910,8 @@ test_that("Procedures for psi correct", {
 
     # spec_cov (not allowed)
     expect_error(set_modargs(~ 1, ~ 1, ~ cov1, ~ 1, ~ 1, ~ 1, data = data),
-                 sprintf("Unexpected terms in formula_psi: %s
-Note that only site covariates are allowed for formula_psi.",
-                         "cov1"))
+                 "Unexpected terms in formula_psi: cov1
+Make sure they are included in 'site_cov'.")
 
     # site_cov (continuous)
     result <- set_modargs(~ 1, ~ 1, ~ cov3, ~ 1, ~ 1, ~ 1, data = data)
@@ -950,9 +960,8 @@ Note that only site covariates are allowed for formula_psi.",
 
     # repl_cov (not allowed)
     expect_error(set_modargs(~ 1, ~ 1, ~ cov5, ~ 1, ~ 1, ~ 1, data = data),
-                 sprintf("Unexpected terms in formula_psi: %s
-Note that only site covariates are allowed for formula_psi.",
-                         "cov5"))
+                 "Unexpected terms in formula_psi: cov5
+Make sure they are included in 'site_cov'.")
 
     ## Errors and Warnings
     expect_error(set_modargs(~ 1, ~ 1, ~ 0, ~ 1, ~ 1, ~ 1, data = data),
@@ -960,8 +969,10 @@ Note that only site covariates are allowed for formula_psi.",
     expect_error(set_modargs(~ 1, ~ 1, ~ -1, ~ 1, ~ 1, ~ 1, data = data),
                  sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "psi"))
     expect_error(set_modargs(~ 1, ~ 1, ~ xxx, ~ 1, ~ 1, ~ 1, data = data),
-                 sprintf("Unexpected terms in formula_psi: %s
-Note that only site covariates are allowed for formula_psi.",
-                         "xxx"))
+                 "Unexpected terms in formula_psi: xxx
+Make sure they are included in 'site_cov'.")
+    expect_error(set_modargs(~ 1, ~ 1, ~ xxx + yyy, ~ 1, ~ 1, ~ 1, data = data),
+                 "Unexpected terms in formula_psi: xxx, yyy
+Make sure they are included in 'site_cov'.")
 })
 
