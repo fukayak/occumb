@@ -1,4 +1,5 @@
 # occumb (development version)
+* Add `occumbData()` validation for cases when `y` has only zero values.
 * Fix `occumbData()` document.
 * Improve `occumbData()` validation for covariate classes.
 * Improve error messages in `occumbData()`.

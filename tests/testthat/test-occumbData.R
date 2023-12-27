@@ -32,6 +32,11 @@ test_that("Check for non-negative values for y works", {
                  "'y' contains negative value")
 })
 
+test_that("Check for non-zero values for y works", {
+    expect_error(new("occumbData", y = array(0, dim = rep(2, 3))),
+                 "'y' contains only zero values")
+})
+
 ## Tests for covariates
 test_that("Check for covariate names works", {
     unnamed_list1 <- unnamed_list2 <- list(rep(1, 2), rep(1, 2))

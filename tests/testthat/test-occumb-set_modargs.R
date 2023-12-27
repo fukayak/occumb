@@ -9,7 +9,7 @@ cov6 <- matrix(rep(factor(1:K), each = J), nrow = J)
 #cov2 <- as.character(1:I)
 #cov4 <- as.character(factor(1:J))
 #cov6 <- matrix(rep(as.character(1:K), each = J), nrow = J)
-data <- occumbData(y = array(0, dim = c(I, J, K)),
+data <- occumbData(y = array(1, dim = c(I, J, K)),
                    spec_cov = list(cov1 = cov1, cov2 = cov2),
                    site_cov = list(cov3 = cov3, cov4 = cov4),
                    repl_cov = list(cov5 = cov5, cov6 = cov6))

@@ -29,6 +29,12 @@ validate_occumbData <- function(object) {
     if (!checkmate::test_integerish(object@y, lower = 0))
         msg <- c(msg, "'y' contains negative value(s)")
 
+    ## y elements are all zero.
+    if (length(object@y) & checkmate::test_array(object@y, mode = "integerish")) {
+        if (!sum(object@y, na.rm = TRUE))
+            msg <- c(msg, "'y' contains only zero values")
+    }
+
     I <- dim(object@y)[1] # Number of species
     J <- dim(object@y)[2] # Number of sites
     K <- dim(object@y)[3] # Number of replicates
