@@ -34,6 +34,24 @@ test_that("Checks for formula work", {
                          paste(formulas, collapse = ", ")))
 })
 
+test_that("Checks for priors work", {
+    expect_error(occumb(data = occumbData(y = array(1, dim = rep(2, 3))),
+                        prior_prec = Inf),
+                 "'prior_prec' should have a finite value")
+    expect_error(occumb(data = occumbData(y = array(1, dim = rep(2, 3))),
+                        prior_prec = 0),
+                 "'prior_prec' should have a positive value")
+    expect_error(occumb(data = occumbData(y = array(1, dim = rep(2, 3))),
+                        prior_prec = -0.01),
+                 "'prior_prec' should have a positive value")
+    expect_error(occumb(data = occumbData(y = array(1, dim = rep(2, 3))),
+                        prior_ulim = 0),
+                 "'prior_ulim' should have a positive value")
+    expect_error(occumb(data = occumbData(y = array(1, dim = rep(2, 3))),
+                        prior_ulim = -0.01),
+                 "'prior_ulim' should have a positive value")
+})
+
 ### Tests for set_const() ------------------------------------------------------
 test_that("Replacement of missing y to NA works", {
     y         <- array(1:8, dim = rep(2, 3))

@@ -1,4 +1,5 @@
 # occumb (development version)
+* Add `occumb()` validation for invalid prior values.
 * Add `occumbData()` validation for cases when `y` is an empty array.
 * Add `occumbData()` validation for cases when `y` has only zero values.
 * Fix `occumbData()` document.

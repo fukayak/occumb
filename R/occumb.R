@@ -168,7 +168,8 @@ occumb <- function(formula_phi = ~ 1,
 
     # Validate arguments
     qc_occumb(data, formula_phi, formula_theta, formula_psi,
-              formula_phi_shared, formula_theta_shared, formula_psi_shared)
+              formula_phi_shared, formula_theta_shared, formula_psi_shared,
+              prior_prec, prior_ulim)
 
     # Set constants
     const <- set_const(data)
@@ -239,7 +240,9 @@ qc_occumb <- function(data,
                       formula_psi,
                       formula_phi_shared,
                       formula_theta_shared,
-                      formula_psi_shared) {
+                      formula_psi_shared,
+                      prior_prec,
+                      prior_ulim) {
     # Check data
     if (!inherits(data, "occumbData"))
         stop("An occumbData class object is expected for data\n")
@@ -261,6 +264,14 @@ qc_occumb <- function(data,
     if (any(bad_formula))
         stop(sprintf("Formula is expected for: %s\n",
                      paste(formulas[bad_formula], collapse = ", ")))
+
+    # Check priors
+    if (is.infinite(prior_prec))
+        stop("'prior_prec' should have a finite value")
+    if (!(prior_prec > 0))
+        stop("'prior_prec' should have a positive value")
+    if (!(prior_ulim > 0))
+        stop("'prior_ulim' should have a positive value")
 }
 
 # Extract constants for the model
