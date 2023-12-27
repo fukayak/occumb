@@ -16,6 +16,8 @@ validate_occumbData <- function(object) {
     ## y is a 3d-array.
     if (!checkmate::test_array(object@y, d = 3))
         msg <- c(msg, "'y' is not a 3D-array")
+    if (!length(object@y))
+        msg <- c(msg, "'y' is an empty array (length(y) = 0)")
 
     ## No missing values in y.
     if (!checkmate::test_array(object@y, any.missing = FALSE))

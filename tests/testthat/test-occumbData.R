@@ -13,6 +13,8 @@ test_that("Dimension check for y works", {
                  "'y' is not a 3D-array")
     expect_error(new("occumbData", y = array(1:16, dim = rep(2, 4))),
                  "'y' is not a 3D-array")
+    expect_error(new("occumbData", y = array(numeric(), dim = c(2, 2, 0))),
+                 "'y' is an empty array")
 })
 
 test_that("Check for missing values for y works", {
