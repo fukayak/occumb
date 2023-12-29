@@ -32,6 +32,43 @@ test_that("Checks for formula work", {
                         data = occumbData(y = array(1, dim = rep(2, 3)))),
                  sprintf("Formula is expected for: %s",
                          paste(formulas, collapse = ", ")))
+
+    expect_error(occumb(~ 1, ~ 1, ~ 1, ~ 0, ~ 1, ~ 1,
+                        data = occumbData(y = array(1, dim = rep(2, 3)))),
+                 "No intercept in formula_phi_shared: remove 0 or -1 from the formula")
+    expect_error(occumb(~ 1, ~ 1, ~ 1, ~ -1, ~ 1, ~ 1,
+                        data = occumbData(y = array(1, dim = rep(2, 3)))),
+                 "No intercept in formula_phi_shared: remove 0 or -1 from the formula")
+    expect_error(occumb(~ 1, ~ 1, ~ 1, ~ 1, ~ 0, ~ 1,
+                        data = occumbData(y = array(1, dim = rep(2, 3)))),
+                 "No intercept in formula_theta_shared: remove 0 or -1 from the formula")
+    expect_error(occumb(~ 1, ~ 1, ~ 1, ~ 1, ~ -1, ~ 1,
+                        data = occumbData(y = array(1, dim = rep(2, 3)))),
+                 "No intercept in formula_theta_shared: remove 0 or -1 from the formula")
+    expect_error(occumb(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ 0,
+                        data = occumbData(y = array(1, dim = rep(2, 3)))),
+                 sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "psi_shared"))
+    expect_error(occumb(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ -1,
+                        data = occumbData(y = array(1, dim = rep(2, 3)))),
+                 sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "psi_shared"))
+    expect_error(occumb(~ 0, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1,
+                        data = occumbData(y = array(1, dim = rep(2, 3)))),
+                 sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "phi"))
+    expect_error(occumb(~ -1, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1,
+                        data = occumbData(y = array(1, dim = rep(2, 3)))),
+                 sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "phi"))
+    expect_error(occumb(~ 1, ~ 0, ~ 1, ~ 1, ~ 1, ~ 1,
+                        data = occumbData(y = array(1, dim = rep(2, 3)))),
+                 sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "theta"))
+    expect_error(occumb(~ 1, ~ -1, ~ 1, ~ 1, ~ 1, ~ 1,
+                        data = occumbData(y = array(1, dim = rep(2, 3)))),
+                 sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "theta"))
+    expect_error(occumb(~ 1, ~ 1, ~ 0, ~ 1, ~ 1, ~ 1,
+                        data = occumbData(y = array(1, dim = rep(2, 3)))),
+                 sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "psi"))
+    expect_error(occumb(~ 1, ~ 1, ~ -1, ~ 1, ~ 1, ~ 1,
+                        data = occumbData(y = array(1, dim = rep(2, 3)))),
+                 sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "psi"))
 })
 
 test_that("Checks for priors work", {

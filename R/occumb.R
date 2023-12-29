@@ -265,6 +265,13 @@ qc_occumb <- function(data,
         stop(sprintf("Formula is expected for: %s\n",
                      paste(formulas[bad_formula], collapse = ", ")))
 
+    check_intercept(formula_phi, "phi")
+    check_intercept(formula_theta, "theta")
+    check_intercept(formula_psi, "psi")
+    check_intercept(formula_phi_shared, "phi_shared")
+    check_intercept(formula_theta_shared, "theta_shared")
+    check_intercept(formula_psi_shared, "psi_shared")
+
     # Check priors
     if (is.infinite(prior_prec))
         stop("'prior_prec' should have a finite value")
@@ -304,13 +311,6 @@ set_modargs <- function(formula_phi,
                         formula_theta_shared,
                         formula_psi_shared,
                         data) {
-
-    check_intercept(formula_phi, "phi")
-    check_intercept(formula_theta, "theta")
-    check_intercept(formula_psi, "psi")
-    check_intercept(formula_phi_shared, "phi_shared")
-    check_intercept(formula_theta_shared, "theta_shared")
-    check_intercept(formula_psi_shared, "psi_shared")
 
     check_wrong_terms(data, formula_phi, "phi")
     check_wrong_terms(data, formula_theta, "theta")
