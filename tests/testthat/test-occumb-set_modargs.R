@@ -231,10 +231,8 @@ test_that("Procedures for phi_shared correct", {
     expect_equal(result$cov_phi_shared, ans_cov)
 
     ## Errors and Warnings
-    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 0, ~ 1, ~ 1, data = data),
-                 "No intercept in formula_phi_shared: remove 0 or -1 from the formula")
-    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ -1, ~ 1, ~ 1, data = data),
-                 "No intercept in formula_phi_shared: remove 0 or -1 from the formula")
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ ., ~ 1, ~ 1, data = data),
+                 "'.' cannot be used to specify covariates \\(formula_phi_shared\\)")
     expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ xxx, ~ 1, ~ 1, data = data),
                              "Unexpected terms in formula_phi_shared: xxx
 Make sure they are included in either 'spec_cov', 'site_cov', or 'repl_cov'.")
@@ -460,10 +458,8 @@ test_that("Procedures for theta_shared correct", {
     expect_equal(result$cov_theta_shared, ans_cov)
 
     ## Errors and Warnings
-    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 0, ~ 1, data = data),
-                 "No intercept in formula_theta_shared: remove 0 or -1 from the formula")
-    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ -1, ~ 1, data = data),
-                 "No intercept in formula_theta_shared: remove 0 or -1 from the formula")
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ ., ~ 1, data = data),
+                 "'.' cannot be used to specify covariates \\(formula_theta_shared\\)")
     expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ xxx, ~ 1, data = data),
                              "Unexpected terms in formula_theta_shared: xxx
 Make sure they are included in either 'spec_cov', 'site_cov', or 'repl_cov'.")
@@ -584,10 +580,8 @@ test_that("Procedures for psi_shared correct", {
 Make sure they are included in either 'spec_cov' or 'site_cov'.")
 
     ## Errors and Warnings
-    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ 0, data = data),
-                 sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "psi_shared"))
-    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ -1, data = data),
-                 sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "psi_shared"))
+    expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ ., data = data),
+                 "'.' cannot be used to specify covariates \\(formula_psi_shared\\)")
     expect_error(set_modargs(~ 1, ~ 1, ~ 1, ~ 1, ~ 1, ~ xxx, data = data),
                              "Unexpected terms in formula_psi_shared: xxx
 Make sure they are included in either 'spec_cov' or 'site_cov'.")
@@ -737,10 +731,8 @@ test_that("Procedures for phi correct", {
     expect_equal(result$m_phi, 1:8)
 
     ## Errors and Warnings
-    expect_error(set_modargs(~ 0, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
-                 sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "phi"))
-    expect_error(set_modargs(~ -1, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
-                 sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "phi"))
+    expect_error(set_modargs(~ ., ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
+                 "'.' cannot be used to specify covariates \\(formula_phi\\)")
     expect_error(set_modargs(~ xxx, ~ 1, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
                  "Unexpected terms in formula_phi: xxx
 Make sure they are included in either 'site_cov' or 'repl_cov'.")
@@ -886,10 +878,8 @@ Make sure they are included in either 'site_cov' or 'repl_cov'.")
     expect_equal(result$m_theta, 2:9)
 
     ## Errors and Warnings
-    expect_error(set_modargs(~ 1, ~ 0, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
-                 sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "theta"))
-    expect_error(set_modargs(~ 1, ~ -1, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
-                 sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "theta"))
+    expect_error(set_modargs(~ 1, ~ ., ~ 1, ~ 1, ~ 1, ~ 1, data = data),
+                 "'.' cannot be used to specify covariates \\(formula_theta\\)")
     expect_error(set_modargs(~ 1, ~ xxx, ~ 1, ~ 1, ~ 1, ~ 1, data = data),
                  "Unexpected terms in formula_theta: xxx
 Make sure they are included in either 'site_cov' or 'repl_cov'.")
@@ -964,10 +954,8 @@ Make sure they are included in 'site_cov'.")
 Make sure they are included in 'site_cov'.")
 
     ## Errors and Warnings
-    expect_error(set_modargs(~ 1, ~ 1, ~ 0, ~ 1, ~ 1, ~ 1, data = data),
-                 sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "psi"))
-    expect_error(set_modargs(~ 1, ~ 1, ~ -1, ~ 1, ~ 1, ~ 1, data = data),
-                 sprintf("No intercept in formula_%s: remove 0 or -1 from the formula", "psi"))
+    expect_error(set_modargs(~ 1, ~ 1, ~ ., ~ 1, ~ 1, ~ 1, data = data),
+                 "'.' cannot be used to specify covariates \\(formula_psi\\)")
     expect_error(set_modargs(~ 1, ~ 1, ~ xxx, ~ 1, ~ 1, ~ 1, data = data),
                  "Unexpected terms in formula_psi: xxx
 Make sure they are included in 'site_cov'.")
