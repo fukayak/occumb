@@ -1,4 +1,5 @@
 # occumb (development version)
+* Add tests for `.` term in formula.
 * Move `check_intercept()` into `qc_occumb()`; for testing purposes, left `check_wrong_terms()` intact.
 * Refactor `set_modargs()` to better handle formula.
 * Improve error messages in `check_wrong_terms()`.
