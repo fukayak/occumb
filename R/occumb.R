@@ -305,326 +305,55 @@ set_modargs <- function(formula_phi,
                         formula_psi_shared,
                         data) {
 
+    check_intercept(formula_phi, "phi")
+    check_intercept(formula_theta, "theta")
+    check_intercept(formula_psi, "psi")
+    check_intercept(formula_phi_shared, "phi_shared")
+    check_intercept(formula_theta_shared, "theta_shared")
+    check_intercept(formula_psi_shared, "psi_shared")
+
+    check_wrong_terms(data, formula_phi, "phi")
+    check_wrong_terms(data, formula_theta, "theta")
+    check_wrong_terms(data, formula_psi, "psi")
+    check_wrong_terms(data, formula_phi_shared, "phi_shared")
+    check_wrong_terms(data, formula_theta_shared, "theta_shared")
+    check_wrong_terms(data, formula_psi_shared, "psi_shared")
+
     phi_shared   <- formula_phi_shared   != ~ 1
     theta_shared <- formula_theta_shared != ~ 1
     psi_shared   <- formula_psi_shared   != ~ 1
 
-    type_phi   <- set_phi_theta(formula_phi, formula_phi_shared, data)
-    type_theta <- set_phi_theta(formula_theta, formula_theta_shared, data)
-    type_psi   <- set_psi(formula_psi, formula_psi_shared, data)
+    # phi
+    list_covs_phi  <- set_covariates(data, formula_phi,
+                                     formula_phi_shared, "phi")
+    cov_phi        <- list_covs_phi$cov
+    M_phi          <- list_covs_phi$M
+    cov_phi_shared <- list_covs_phi$cov_shared
+    M_phi_shared   <- list_covs_phi$M_shared
+    type_phi       <- list_covs_phi$type
 
-    # phi_shared
+    # theta
+    list_covs_theta  <- set_covariates(data, formula_theta,
+                                       formula_theta_shared, "theta")
+    cov_theta        <- list_covs_theta$cov
+    M_theta          <- list_covs_theta$M
+    cov_theta_shared <- list_covs_theta$cov_shared
+    M_theta_shared   <- list_covs_theta$M_shared
+    type_theta       <- list_covs_theta$type
 
-    if (phi_shared) {
-        # Stop when formula_phi_shared does not have an intercept
-        check_intercept(formula_phi_shared, "phi_shared")
-        # Stop when formula_phi_shared includes a term other than
-        # site_cov, spec_cov, and their interaction
-        check_wrong_terms(formula_phi_shared,
-                          c(names(data@spec_cov),
-                            names(data@site_cov),
-                            names(data@repl_cov)),
-                          "phi_shared")
+    # psi
+    list_covs_psi  <- set_covariates(data, formula_psi,
+                                     formula_psi_shared, "psi")
+    cov_psi        <- list_covs_psi$cov
+    M_psi          <- list_covs_psi$M
+    cov_psi_shared <- list_covs_psi$cov_shared
+    M_psi_shared   <- list_covs_psi$M_shared
+    type_psi       <- list_covs_psi$type
 
-        phi_shared_main_effects <- main_effects(terms(formula_phi_shared))
-
-        # For phi = "ijk"
-        if (type_phi == "ijk") {
-            # Generate covariate objects
-            for (n in seq_along(phi_shared_main_effects)) {
-                if (phi_shared_main_effects[n] %in% names(data@spec_cov))
-                    eval(parse(text = sprintf("%s <- rep(rep(extract_covariate(phi_shared_main_effects[%s], data), dim(data@y)[2]), dim(data@y)[3])", phi_shared_main_effects[n], n)))
-                if (phi_shared_main_effects[n] %in% names(data@site_cov))
-                    eval(parse(text = sprintf("%s <- rep(rep(extract_covariate(phi_shared_main_effects[%s], data), each = dim(data@y)[1]), dim(data@y)[3])", phi_shared_main_effects[n], n)))
-                if (phi_shared_main_effects[n] %in% names(data@repl_cov))
-                    eval(parse(text = sprintf("%s <- rep(extract_covariate(phi_shared_main_effects[%s], data), each = dim(data@y)[1])", phi_shared_main_effects[n], n)))
-            }
-
-            # Set design matrix
-            dm <- set_design_matrix(formula_phi_shared, omit_intercept = TRUE)
-            cov_phi_shared <- array(dm, c(dim(data@y)[1], dim(data@y)[2], dim(data@y)[3], ncol(dm)))
-            dimnames(cov_phi_shared)[[4]] <- colnames(dm)
-            M_phi_shared <- dim(cov_phi_shared)[4]
-
-        # For phi = "ij"
-        } else if (type_phi == "ij") {
-            # Generate covariate objects
-            for (n in seq_along(phi_shared_main_effects)) {
-                if (phi_shared_main_effects[n] %in% names(data@spec_cov))
-                    eval(parse(text = sprintf("%s <- rep(extract_covariate(phi_shared_main_effects[%s], data), dim(data@y)[2])", phi_shared_main_effects[n], n)))
-                if (phi_shared_main_effects[n] %in% names(data@site_cov))
-                    eval(parse(text = sprintf("%s <- rep(extract_covariate(phi_shared_main_effects[%s], data), each = dim(data@y)[1])", phi_shared_main_effects[n], n)))
-            }
-
-            # Set design matrix
-            dm <- set_design_matrix(formula_phi_shared, omit_intercept = TRUE)
-            cov_phi_shared <- array(dm, c(dim(data@y)[1], dim(data@y)[2], ncol(dm)))
-            dimnames(cov_phi_shared)[[3]] <- colnames(dm)
-            M_phi_shared <- dim(cov_phi_shared)[3]
-
-        # For phi = "i"
-        } else {
-            # Generate covariate objects
-            for (n in seq_along(phi_shared_main_effects))
-                eval(parse(text = sprintf("%s <- extract_covariate(phi_shared_main_effects[%s], data)", phi_shared_main_effects[n], n)))
-
-            # Set design matrix
-            dm <- set_design_matrix(formula_phi_shared, omit_intercept = TRUE)
-            cov_phi_shared <- matrix(dm, nrow = dim(data@y)[1])
-            colnames(cov_phi_shared) <- colnames(dm)
-            M_phi_shared <- ncol(cov_phi_shared)
-        }
-    }
-
-    # theta_shared
-
-    if (theta_shared) {
-        # Stop when formula_theta_shared does not have an intercept
-        check_intercept(formula_theta_shared, "theta_shared")
-        # Stop when formula_theta_shared includes a term other than
-        # site_cov, spec_cov, and their interaction
-        check_wrong_terms(formula_theta_shared,
-                          c(names(data@spec_cov),
-                            names(data@site_cov),
-                            names(data@repl_cov)),
-                          "theta_shared")
-
-        theta_shared_main_effects <- main_effects(terms(formula_theta_shared))
-
-        # For theta = "ijk"
-        if (type_theta == "ijk") {
-            # Generate covariate objects
-            for (n in seq_along(theta_shared_main_effects)) {
-                if (theta_shared_main_effects[n] %in% names(data@spec_cov))
-                    eval(parse(text = sprintf("%s <- rep(rep(extract_covariate(theta_shared_main_effects[%s], data), dim(data@y)[2]), dim(data@y)[3])", theta_shared_main_effects[n], n)))
-                if (theta_shared_main_effects[n] %in% names(data@site_cov))
-                    eval(parse(text = sprintf("%s <- rep(rep(extract_covariate(theta_shared_main_effects[%s], data), each = dim(data@y)[1]), dim(data@y)[3])", theta_shared_main_effects[n], n)))
-                if (theta_shared_main_effects[n] %in% names(data@repl_cov))
-                    eval(parse(text = sprintf("%s <- rep(extract_covariate(theta_shared_main_effects[%s], data), each = dim(data@y)[1])", theta_shared_main_effects[n], n)))
-            }
-
-            # Set design matrix
-            dm <- set_design_matrix(formula_theta_shared, omit_intercept = TRUE)
-            cov_theta_shared <- array(dm, c(dim(data@y)[1], dim(data@y)[2], dim(data@y)[3], ncol(dm)))
-            dimnames(cov_theta_shared)[[4]] <- colnames(dm)
-            M_theta_shared <- dim(cov_theta_shared)[4]
-
-        # For theta = "ij"
-        } else if (type_theta == "ij") {
-            # Generate covariate objects
-            for (n in seq_along(theta_shared_main_effects)) {
-                if (theta_shared_main_effects[n] %in% names(data@spec_cov))
-                    eval(parse(text = sprintf("%s <- rep(extract_covariate(theta_shared_main_effects[%s], data), dim(data@y)[2])", theta_shared_main_effects[n], n)))
-                if (theta_shared_main_effects[n] %in% names(data@site_cov))
-                    eval(parse(text = sprintf("%s <- rep(extract_covariate(theta_shared_main_effects[%s], data), each = dim(data@y)[1])", theta_shared_main_effects[n], n)))
-            }
-
-            # Set design matrix
-            dm <- set_design_matrix(formula_theta_shared, omit_intercept = TRUE)
-            cov_theta_shared <- array(dm, c(dim(data@y)[1], dim(data@y)[2], ncol(dm)))
-            dimnames(cov_theta_shared)[[3]] <- colnames(dm)
-            M_theta_shared   <- dim(cov_theta_shared)[3]
-
-        # For theta = "i"
-        } else {
-            # Generate covariate objects
-            for (n in seq_along(theta_shared_main_effects))
-                eval(parse(text = sprintf("%s <- extract_covariate(theta_shared_main_effects[%s], data)", theta_shared_main_effects[n], n)))
-
-            # Set design matrix
-            dm <- set_design_matrix(formula_theta_shared, omit_intercept = TRUE)
-            cov_theta_shared <- matrix(dm, nrow = dim(data@y)[1])
-            colnames(cov_theta_shared) <- colnames(dm)
-            M_theta_shared <- ncol(cov_theta_shared)
-        }
-    }
-
-    # psi_shared
-
-    if (psi_shared) {
-        # Stop when formula_psi_shared does not have an intercept
-        check_intercept(formula_psi_shared, "psi_shared")
-        # Stop when formula_psi_shared includes a term other than
-        # site_cov, spec_cov, and their interaction
-        check_wrong_terms(formula_psi_shared,
-                          c(names(data@spec_cov), names(data@site_cov)),
-                          "psi_shared")
-
-        psi_shared_main_effects <- main_effects(terms(formula_psi_shared))
-
-        # For psi = "ij"
-        if (type_psi == "ij") {
-
-            # Generate covariate objects
-            for (n in seq_along(psi_shared_main_effects)) {
-                if (psi_shared_main_effects[n] %in% names(data@spec_cov))
-                    eval(parse(text = sprintf("%s <- rep(extract_covariate(psi_shared_main_effects[%s], data), dim(data@y)[2])", psi_shared_main_effects[n], n)))
-                if (psi_shared_main_effects[n] %in% names(data@site_cov))
-                    eval(parse(text = sprintf("%s <- rep(extract_covariate(psi_shared_main_effects[%s], data), each = dim(data@y)[1])", psi_shared_main_effects[n], n)))
-            }
-
-            # Set design matrix
-            dm <- set_design_matrix(formula_psi_shared, omit_intercept = TRUE)
-            cov_psi_shared <- array(dm, c(dim(data@y)[1], dim(data@y)[2], ncol(dm)))
-            dimnames(cov_psi_shared)[[3]] <- colnames(dm)
-            M_psi_shared   <- dim(cov_psi_shared)[3]
-
-        # For psi = "i"
-        } else {
-            # Generate covariate objects
-            for (n in seq_along(psi_shared_main_effects))
-                eval(parse(text = sprintf("%s <- extract_covariate(psi_shared_main_effects[%s], data)", psi_shared_main_effects[n], n)))
-
-            # Set design matrix
-            dm <- set_design_matrix(formula_psi_shared, omit_intercept = TRUE)
-            cov_psi_shared <- matrix(dm, nrow = dim(data@y)[1])
-            colnames(cov_psi_shared) <- colnames(dm)
-            M_psi_shared   <- ncol(cov_psi_shared)
-        }
-    }
-
-    M <- 0      # Order of species effects
-
-    ## phi
-
-    if (formula_phi == ~ 1) {
-        if (phi_shared & type_phi == "ijk") {
-            cov_phi <- array(1, dim = c(dim(data@y)[2], dim(data@y)[3], 1))
-        } else if (phi_shared & type_phi == "ij") {
-            cov_phi <- matrix(1, nrow = dim(data@y)[2], ncol = 1)
-        } else {
-            cov_phi <- 1
-        }
-        M     <- M + 1
-        m_phi <- 1
-    } else {
-        # Stop when formula_phi does not have an intercept
-        check_intercept(formula_phi, "phi")
-        # Stop when formula_phi includes a term other than site/repl covs
-        check_wrong_terms(formula_phi,
-                          c(names(data@site_cov),
-                            names(data@repl_cov)),
-                          "phi")
-
-        phi_main_effects <- main_effects(terms(formula_phi))
-
-        # For phi = "ijk"
-        if (type_phi == "ijk") {
-            # Generate covariate objects
-            for (n in seq_along(phi_main_effects)) {
-                if (phi_main_effects[n] %in% names(data@site_cov))
-                    eval(parse(text = sprintf("%s <- rep(extract_covariate(phi_main_effects[%s], data), dim(data@y)[3])", phi_main_effects[n], n)))
-                if (phi_main_effects[n] %in% names(data@repl_cov))
-                    eval(parse(text = sprintf("%s <- c(extract_covariate(phi_main_effects[%s], data))", phi_main_effects[n], n)))
-            }
-
-            # Set design matrix
-            dm <- set_design_matrix(formula_phi)
-            cov_phi <- array(dm, c(dim(data@y)[2], dim(data@y)[3], ncol(dm)))
-            dimnames(cov_phi)[[3]] <- colnames(dm)
-            M     <- M + dim(cov_phi)[3]
-            m_phi <- seq(1, dim(cov_phi)[3])
-
-        # For phi = "ij"
-        } else {
-            # Generate covariate objects
-            for (n in seq_along(phi_main_effects))
-                eval(parse(text = sprintf("%s <- extract_covariate(phi_main_effects[%s], data)", phi_main_effects[n], n)))
-
-            # Set design matrix
-            dm <- set_design_matrix(formula_phi)
-            cov_phi <- matrix(dm, nrow = dim(data@y)[2], ncol = ncol(dm))
-            colnames(cov_phi) <- colnames(dm)
-            M     <- M + ncol(cov_phi)
-            m_phi <- seq(1, ncol(cov_phi))
-        }
-    }
-
-    ## theta
-
-    if (formula_theta == ~ 1) {
-        if (theta_shared & type_theta == "ijk") {
-            cov_theta <- array(1, dim = c(dim(data@y)[2], dim(data@y)[3], 1))
-        } else if (theta_shared & type_theta == "ij") {
-            cov_theta <- matrix(1, nrow = dim(data@y)[2], ncol = 1)
-        } else {
-            cov_theta <- 1
-        }
-        M       <- M + 1
-        m_theta <- seq(m_phi[length(m_phi)] + 1, m_phi[length(m_phi)] + 1)
-    } else {
-        # Stop when formula_theta does not have an intercept
-        check_intercept(formula_theta, "theta")
-        # Stop when formula_theta includes a term other than site/repl covs
-        check_wrong_terms(formula_theta,
-                          c(names(data@site_cov),
-                            names(data@repl_cov)),
-                          "theta")
-
-        theta_main_effects <- main_effects(terms(formula_theta))
-
-        # For theta = "ijk"
-        if (type_theta == "ijk") {
-            # Generate covariate objects
-            for (n in seq_along(theta_main_effects)) {
-                if (theta_main_effects[n] %in% names(data@site_cov))
-                    eval(parse(text = sprintf("%s <- rep(extract_covariate(theta_main_effects[%s], data), dim(data@y)[3])", theta_main_effects[n], n)))
-                if (theta_main_effects[n] %in% names(data@repl_cov))
-                    eval(parse(text = sprintf("%s <- c(extract_covariate(theta_main_effects[%s], data))", theta_main_effects[n], n)))
-            }
-
-            # Set design matrix
-            dm <- set_design_matrix(formula_theta)
-            cov_theta <- array(dm, c(dim(data@y)[2], dim(data@y)[3], ncol(dm)))
-            dimnames(cov_theta)[[3]] <- colnames(dm)
-            M       <- M + dim(cov_theta)[3]
-            m_theta <- seq(m_phi[length(m_phi)] + 1,
-                           m_phi[length(m_phi)] + dim(cov_theta)[3])
-
-        # For theta = "ij"
-        } else {
-            # Generate covariate objects
-            for (n in seq_along(theta_main_effects))
-                eval(parse(text = sprintf("%s <- extract_covariate(theta_main_effects[%s], data)", theta_main_effects[n], n)))
-
-            # Set design matrix
-            dm <- set_design_matrix(formula_theta)
-            cov_theta <- matrix(dm, nrow = dim(data@y)[2], ncol = ncol(dm))
-            colnames(cov_theta) <- colnames(dm)
-            M       <- M + ncol(cov_theta)
-            m_theta <- seq(m_phi[length(m_phi)] + 1,
-                           m_phi[length(m_phi)] + ncol(cov_theta))
-        }
-    }
-
-    ## psi
-
-    if (formula_psi == ~ 1) {
-        if (psi_shared & type_psi == "ij")
-            cov_psi <- matrix(1, nrow = dim(data@y)[2], ncol = 1)
-        else
-            cov_psi <- 1
-        M     <- M + 1
-        m_psi <- seq(m_theta[length(m_theta)] + 1, m_theta[length(m_theta)] + 1)
-    } else {
-        # Stop when formula_psi does not have an intercept
-        check_intercept(formula_psi, "psi")
-        # Stop when formula_psi includes a term not in the site covariates
-        check_wrong_terms(formula_psi, names(data@site_cov), "psi")
-
-        # Generate covariate objects
-        psi_main_effects <- main_effects(terms(formula_psi))
-        for (n in seq_along(psi_main_effects))
-            eval(parse(text = sprintf("%s <- extract_covariate(psi_main_effects[%s], data)", psi_main_effects[n], n)))
-
-        # Set design matrix
-        dm <- set_design_matrix(formula_psi)
-        cov_psi <- matrix(dm, nrow = dim(data@y)[2], ncol = ncol(dm))
-        colnames(cov_psi) <- colnames(dm)
-        M     <- M + ncol(cov_psi)
-        m_psi <- seq(m_theta[length(m_theta)] + 1,
-                     m_theta[length(m_theta)] + ncol(cov_psi))
-    }
+    M <- M_phi + M_theta + M_psi    # Order of species effects
+    m_phi   <- seq(1, M_phi)
+    m_theta <- seq(m_phi[length(m_phi)] + 1, m_phi[length(m_phi)] + M_theta)
+    m_psi   <- seq(m_theta[length(m_theta)] + 1, m_theta[length(m_theta)] + M_psi)
 
     out <- list(phi          = type_phi,
                 theta        = type_theta,
@@ -901,7 +630,7 @@ write_jags_model <- function(phi, theta, psi,
 
 # Auxiliary functions for set_modargs() ----------------------------------------
 set_psi <- function(formula_psi, formula_psi_shared, data) {
-    shared_main_effects <- main_effects(terms(formula_psi_shared))
+    shared_main_effects <- all.vars(formula_psi_shared)
 
     if (formula_psi == ~ 1) {
         if (is.null(shared_main_effects)) {
@@ -919,8 +648,8 @@ set_psi <- function(formula_psi, formula_psi_shared, data) {
 }
 
 set_phi_theta <- function(formula, formula_shared, data) {
-    m_eff  <- main_effects(terms(formula))
-    sm_eff <- main_effects(terms(formula_shared))
+    m_eff  <- all.vars(formula)
+    sm_eff <- all.vars(formula_shared)
 
     if (any(c(m_eff, sm_eff) %in% names(data@repl_cov))) {
         out <- "ijk"
@@ -941,7 +670,8 @@ set_phi_theta <- function(formula, formula_shared, data) {
     out
 }
 
-check_intercept <- function(formula, type = c("psi", "psi_shared")) {
+check_intercept <- function(formula, type) {
+    if (formula == ~ .) return()
     if (!has_intercept(formula))
         stop(sprintf("No intercept in formula_%s: remove 0 or -1 from the formula\n",
                      type))
@@ -951,11 +681,28 @@ has_intercept <- function(formula) {
     as.logical(attributes(stats::terms(formula))$intercept)
 }
 
-check_wrong_terms <- function(formula, correct_terms,
-                              type = c("phi", "theta", "psi",
-                                       "phi_shared", "theta_shared", "psi_shared")) {
-    test_terms <- terms(formula)
-    wrong_terms <- main_effects(test_terms) %!in% correct_terms
+check_wrong_terms <- function(data, formula, type) {
+
+    type <- match.arg(type, c("phi", "phi_shared",
+                              "theta", "theta_shared",
+                              "psi", "psi_shared"))
+
+    vars <- all.vars(formula)
+
+    if ("." %in% vars)
+        stop(sprintf("'.' cannot be used to specify covariates (formula_%s)", type))
+
+    correct_terms <- if (type == "phi" | type == "theta") {
+        c(names(data@site_cov), names(data@repl_cov))
+    } else if (type == "psi") {
+        names(data@site_cov)
+    } else if (type == "phi_shared" | type == "theta_shared") {
+        c(names(data@spec_cov), names(data@site_cov), names(data@repl_cov))
+    } else if (type == "psi_shared") {
+        c(names(data@spec_cov), names(data@site_cov))
+    }
+
+    wrong_terms <- vars %!in% correct_terms
 
     if (any(wrong_terms)) {
         if (type == "phi")
@@ -964,75 +711,52 @@ Make sure they are included in either 'site_cov' or 'repl_cov'.
 
 For details on covariate specification in occumb(), see: https://fukayak.github.io/occumb/articles/model_specification.html#covariate-modeling-of-psi-theta-and-phi\n",
                          type,
-                         knitr::combine_words(test_terms[wrong_terms], and = "")))
+                         knitr::combine_words(vars[wrong_terms], and = "")))
         if (type == "theta")
             stop(sprintf("Unexpected terms in formula_%s: %s
 Make sure they are included in either 'site_cov' or 'repl_cov'.
 
 For details on covariate specification in occumb(), see: https://fukayak.github.io/occumb/articles/model_specification.html#covariate-modeling-of-psi-theta-and-phi\n",
                          type,
-                         knitr::combine_words(test_terms[wrong_terms], and = ""))) 
+                         knitr::combine_words(vars[wrong_terms], and = "")))
         if (type == "psi")
             stop(sprintf("Unexpected terms in formula_%s: %s
 Make sure they are included in 'site_cov'.
 
 For details on covariate specification in occumb(), see: https://fukayak.github.io/occumb/articles/model_specification.html#covariate-modeling-of-psi-theta-and-phi\n",
                          type,
-                         knitr::combine_words(test_terms[wrong_terms], and = ""))) 
+                         knitr::combine_words(vars[wrong_terms], and = "")))
         if (type == "phi_shared")
             stop(sprintf("Unexpected terms in formula_%s: %s
 Make sure they are included in either 'spec_cov', 'site_cov', or 'repl_cov'.
 
 For details on covariate specification in occumb(), see: https://fukayak.github.io/occumb/articles/model_specification.html#covariate-modeling-of-psi-theta-and-phi\n",
                          type,
-                         knitr::combine_words(test_terms[wrong_terms], and = ""))) 
+                         knitr::combine_words(vars[wrong_terms], and = "")))
         if (type == "theta_shared")
             stop(sprintf("Unexpected terms in formula_%s: %s
 Make sure they are included in either 'spec_cov', 'site_cov', or 'repl_cov'.
 
 For details on covariate specification in occumb(), see: https://fukayak.github.io/occumb/articles/model_specification.html#covariate-modeling-of-psi-theta-and-phi\n",
                          type,
-                         knitr::combine_words(test_terms[wrong_terms], and = ""))) 
+                         knitr::combine_words(vars[wrong_terms], and = "")))
         if (type == "psi_shared")
             stop(sprintf("Unexpected terms in formula_%s: %s
 Make sure they are included in either 'spec_cov' or 'site_cov'.
 
 For details on covariate specification in occumb(), see: https://fukayak.github.io/occumb/articles/model_specification.html#covariate-modeling-of-psi-theta-and-phi\n",
                          type,
-                         knitr::combine_words(test_terms[wrong_terms], and = ""))) 
+                         knitr::combine_words(vars[wrong_terms], and = "")))
     }
 }
 
-main_effects <- function(terms) {
-    if (is.null(terms)) {
-        NULL
+set_design_matrix <- function(formula, list_cov, omit_intercept = FALSE) {
+
+    if (formula == ~ 1) {
+        return(invisible())
     } else {
-        unique(unlist(strsplit(terms, split = ":")))
+        out <- stats::model.matrix(formula, data = list_cov)
     }
-}
-
-# Redefine the terms() function (!! DO NOT EXPORT !!)
-terms <- function(formula) {
-    if (is.null(formula)) {
-        NULL
-    } else {
-        attr(stats::terms(formula), which = "term.labels")
-    }
-}
-
-extract_covariate <- function(cov_name, data) {
-    if (cov_name %in% names(data@spec_cov))
-        cov_type <- "spec_cov"
-    if (cov_name %in% names(data@site_cov))
-        cov_type <- "site_cov"
-    if (cov_name %in% names(data@repl_cov))
-        cov_type <- "repl_cov"
-
-    eval(parse(text = sprintf("data@%s$%s", cov_type, cov_name)))
-}
-
-set_design_matrix <- function(formula, omit_intercept = FALSE) {
-    out <- stats::model.matrix(formula, parent.frame())
 
     if (omit_intercept) {
         if (sum(colnames(out) %!in% "(Intercept)") > 1) {
@@ -1046,6 +770,219 @@ set_design_matrix <- function(formula, omit_intercept = FALSE) {
 
     out
 }
+
+set_covariates <- function(data, formula, formula_shared, param) {
+
+    param <- match.arg(param, c("phi", "theta", "psi"))
+
+    ## phi and theta
+    if (param != "psi" & formula_shared == ~ 1) {
+        # For cases when formula_shared is not specified
+        cov_shared <- M_shared <- NULL
+
+        if (formula == ~ 1) {
+            cov <- 1; M <- 1; type <- "i"
+        } else {
+
+            type <- set_phi_theta(formula, formula_shared, data)
+
+            # type = "ij"
+            if (type == "ij") {
+                dm <- set_design_matrix(formula, get_list_cov(data, "ij"))
+                cov <- matrix(dm, nrow = dim(data@y)[2], ncol = ncol(dm))
+                colnames(cov) <- colnames(dm)
+                M <- ncol(cov)
+            }
+
+            # type = "ijk"
+            if (type == "ijk") {
+                dm <- set_design_matrix(formula, get_list_cov(data, "ijk"))
+                cov <- array(dm, c(dim(data@y)[2], dim(data@y)[3], ncol(dm)))
+                dimnames(cov)[[3]] <- colnames(dm)
+                M <- dim(cov)[3]
+            }
+        }
+    }
+    if (param != "psi" & formula_shared != ~ 1) {
+        # For cases when formula_shared is specified
+
+        type <- set_phi_theta(formula, formula_shared, data)
+
+        # type = "i"
+        if (type == "i") {
+            dm_shared <-
+                set_design_matrix(formula_shared,
+                                  get_list_cov(data, "i", shared = TRUE),
+                                  omit_intercept = TRUE)
+            cov <- 1
+            M   <- 1
+            cov_shared <- matrix(dm_shared, nrow = dim(data@y)[1])
+            colnames(cov_shared) <- colnames(dm_shared)
+            M_shared <- ncol(cov_shared)
+        }
+
+        # type = "ij"
+        if (type == "ij") {
+            dm <- set_design_matrix(formula, get_list_cov(data, "ij"))
+            dm_shared <-
+                set_design_matrix(formula_shared,
+                                  get_list_cov(data, "ij", shared = TRUE),
+                                  omit_intercept = TRUE)
+            if (formula == ~ 1) {
+                cov <- matrix(1, nrow = dim(data@y)[2], ncol = 1)
+                M   <- 1
+            } else {
+                cov <- matrix(dm, nrow = dim(data@y)[2], ncol = ncol(dm))
+                colnames(cov) <- colnames(dm)
+                M <- ncol(cov)
+            }
+            cov_shared <- array(dm_shared, c(dim(data@y)[1],
+                                             dim(data@y)[2],
+                                             ncol(dm_shared)))
+            dimnames(cov_shared)[[3]] <- colnames(dm_shared)
+            M_shared <- dim(cov_shared)[3]
+        }
+
+        # type = "ijk"
+        if (type == "ijk") {
+            dm <- set_design_matrix(formula, get_list_cov(data, "ijk"))
+            dm_shared <-
+                set_design_matrix(formula_shared,
+                                  get_list_cov(data, "ijk", shared = TRUE),
+                                  omit_intercept = TRUE)
+            if (formula == ~ 1) {
+                cov <- array(1, dim = c(dim(data@y)[2], dim(data@y)[3], 1))
+                M   <- 1
+            } else {
+                cov <- array(dm,
+                             c(dim(data@y)[2], dim(data@y)[3], ncol(dm)))
+                dimnames(cov)[[3]] <- colnames(dm)
+                M <- dim(cov)[3]
+            }
+            cov_shared <- array(dm_shared, c(dim(data@y)[1],
+                                             dim(data@y)[2],
+                                             dim(data@y)[3],
+                                             ncol(dm_shared)))
+            dimnames(cov_shared)[[4]] <- colnames(dm_shared)
+            M_shared <- dim(cov_shared)[4]
+        }
+    }
+
+    ## psi
+    if (param == "psi" & formula_shared == ~ 1) {
+        # For cases when formula_shared is not specified
+        cov_shared <- M_shared <- NULL
+
+        if (formula == ~ 1) {
+            cov <- 1; M <- 1; type <- "i"
+        } else {
+            # type = "ij"
+            dm <- set_design_matrix(formula, get_list_cov(data, "ij"))
+            cov <- matrix(dm, nrow =  dim(data@y)[2], ncol = ncol(dm))
+            colnames(cov) <- colnames(dm)
+            M <- ncol(cov)
+            type <- "ij"
+        }
+    }
+    if (param == "psi" & formula_shared != ~ 1) {
+        # For cases when formula_shared is specified
+
+        type <- set_psi(formula, formula_shared, data)
+
+        # type = "i"
+        if (type == "i") {
+            dm_shared <-
+                set_design_matrix(formula_shared,
+                                  get_list_cov(data, "i", shared = TRUE),
+                                  omit_intercept = TRUE)
+            cov <- 1
+            M   <- 1
+            cov_shared <- matrix(dm_shared, nrow = dim(data@y)[1])
+            colnames(cov_shared) <- colnames(dm_shared)
+            M_shared <- ncol(cov_shared)
+        }
+
+        # type = "ij"
+        if (type == "ij") {
+            dm <- set_design_matrix(formula, get_list_cov(data, "ij"))
+            dm_shared <-
+                set_design_matrix(formula_shared,
+                                  get_list_cov(data, "ij", shared = TRUE),
+                                  omit_intercept = TRUE)
+                if (formula == ~ 1) {
+                    cov <- matrix(1, nrow = dim(data@y)[2], ncol = 1)
+                    M   <- 1
+                } else {
+                    cov <- matrix(dm, nrow = dim(data@y)[2], ncol = ncol(dm))
+                    colnames(cov) <- colnames(dm)
+                    M <- ncol(cov)
+                }
+                cov_shared <- array(dm_shared, c(dim(data@y)[1],
+                                                 dim(data@y)[2],
+                                                 ncol(dm_shared)))
+                dimnames(cov_shared)[[3]] <- colnames(dm_shared)
+                M_shared <- dim(cov_shared)[3]
+        }
+    }
+
+    out <- list(cov        = cov,
+                M          = M,
+                cov_shared = cov_shared,
+                M_shared   = M_shared,
+                type       = type)
+    return(out)
+}
+
+get_list_cov <- function(data, type, shared = FALSE) {
+    type <- match.arg(type, c("i", "ij", "ijk"))
+    out <- list()
+
+    if (!shared & type == "ij") {
+        for (n in seq_along(names(data@site_cov)))
+            eval(parse(text = sprintf("out$%s <- data@site_cov[[%s]]",
+                                      names(data@site_cov)[n], n)))
+    }
+
+    if (!shared & type == "ijk") {
+        for (n in seq_along(names(data@site_cov)))
+            eval(parse(text = sprintf("out$%s <- rep(data@site_cov[[%s]], dim(data@y)[3])",
+                                      names(data@site_cov)[n], n)))
+        for (n in seq_along(names(data@repl_cov)))
+            eval(parse(text = sprintf("out$%s <- c(data@repl_cov[[%s]])",
+                                      names(data@repl_cov)[n], n)))
+    }
+
+    if (shared & type == "i") {
+        for (n in seq_along(names(data@spec_cov)))
+            eval(parse(text = sprintf("out$%s <- data@spec_cov[[%s]]",
+                                      names(data@spec_cov)[n], n)))
+    }
+
+    if (shared & type == "ij") {
+        for (n in seq_along(names(data@spec_cov)))
+            eval(parse(text = sprintf("out$%s <- rep(data@spec_cov[[%s]], dim(data@y)[2])",
+                                      names(data@spec_cov)[n], n)))
+        for (n in seq_along(names(data@site_cov)))
+            eval(parse(text = sprintf("out$%s <- rep(data@site_cov[[%s]], each = dim(data@y)[1])",
+                                      names(data@site_cov)[n], n)))
+    }
+
+    if (shared & type == "ijk") {
+        for (n in seq_along(names(data@spec_cov)))
+            eval(parse(text = sprintf("out$%s <- rep(rep(data@spec_cov[[%s]], dim(data@y)[2]), dim(data@y)[3])",
+                                      names(data@spec_cov)[n], n)))
+        for (n in seq_along(names(data@site_cov)))
+            eval(parse(text = sprintf("out$%s <- rep(rep(data@site_cov[[%s]], each = dim(data@y)[1]), dim(data@y)[3])",
+                                      names(data@site_cov)[n], n)))
+        for (n in seq_along(names(data@repl_cov)))
+            eval(parse(text = sprintf("out$%s <- rep(data@repl_cov[[%s]], each = dim(data@y)[1])",
+                                      names(data@repl_cov)[n], n)))
+    }
+
+    return(out)
+}
+
+
 # -----------------------------------------------------------------------------
 
 

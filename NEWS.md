@@ -1,4 +1,5 @@
 # occumb (development version)
+* Refactor `set_modargs()` to better handle formula.
 * Improve error messages in `check_wrong_terms()`.
 * Add `occumb()` validation for invalid prior values.
 * Add `occumbData()` validation for cases when `y` is an empty array.
