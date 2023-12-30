@@ -132,7 +132,7 @@ eval_util_L <- function(settings,
                         cores = 1L) {
 
     # Validate arguments
-    qc_eval_util_L(settings, fit, z, theta, phi)
+    check_args_eval_util_L(settings, fit, z, theta, phi)
 
     # Set parameter values
     if (is.null(z))
@@ -329,7 +329,7 @@ eval_util_R <- function(settings,
                         cores = 1L) {
 
     # Validate arguments
-    qc_eval_util_R(settings, fit, psi, theta, phi)
+    check_args_eval_util_R(settings, fit, psi, theta, phi)
 
     # Set parameter values
     if (is.null(psi))
@@ -574,7 +574,7 @@ list_cond_R <- function(budget, lambda1, lambda2, lambda3, J = NULL, K = NULL) {
     data.frame(out)
 }
 
-qc_eval_util_L <- function(settings, fit, z, theta, phi) {
+check_args_eval_util_L <- function(settings, fit, z, theta, phi) {
     # Assert that settings is a data frame and contains the required columns
     checkmate::assert_data_frame(settings)
     if (!checkmate::testSubset("K", names(settings)))
@@ -653,7 +653,7 @@ qc_eval_util_L <- function(settings, fit, z, theta, phi) {
     invisible(NULL)
 }
 
-qc_eval_util_R <- function(settings, fit, psi, theta, phi) {
+check_args_eval_util_R <- function(settings, fit, psi, theta, phi) {
     # Assert that settings is a data frame and contains the required columns
     checkmate::assert_data_frame(settings)
     if (!checkmate::testSubset("J", names(settings)))

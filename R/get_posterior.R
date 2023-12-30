@@ -105,7 +105,7 @@ get_post_samples <- function(
 
     # Validate arguments
     parameter <- match.arg(parameter)
-    qc_get_posterior(fit, parameter)
+    check_args_get_posterior(fit, parameter)
 
     # Extract
     out <- .get_post_samples(fit, parameter)
@@ -124,14 +124,14 @@ get_post_summary <- function(
 
     # Validate arguments
     parameter <- match.arg(parameter)
-    qc_get_posterior(fit, parameter)
+    check_args_get_posterior(fit, parameter)
 
     # Extract
     out <- .get_post_summary(fit, parameter)
     out
 }
 
-qc_get_posterior <- function(fit, parameter) {
+check_args_get_posterior <- function(fit, parameter) {
     assert_occumbFit(fit)
     if (parameter %!in% names(fit@fit$sims.list))
         stop(paste(parameter, "is not included in the fitted model\n"))

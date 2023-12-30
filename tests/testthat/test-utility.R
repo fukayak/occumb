@@ -470,368 +470,341 @@ test_that("find_maxJ/K() throws an error when the budget is too large", {
 })
 
 
-### Tests for qc_eval_util_L ---------------------------------------------------
+### Tests for check_args_eval_util_L -------------------------------------------
 I <- dim(res0@data@y)[1]
 J <- dim(res0@data@y)[2]
 df_test  <- data.frame(K = rep(1, 2), N = rep(1, 2))
 arr_test <- array(1, dim = c(1, I, J))
 
-test_that("qc_eval_util_L() blocks inappropriate settings", {
-    expect_error(qc_eval_util_L(data.frame(Kx = rep(1, 2), N = rep(1, 2)), res0,
-                                NULL, NULL, NULL),
+test_that("check_args_eval_util_L() blocks inappropriate settings", {
+    expect_error(check_args_eval_util_L(
+                    data.frame(Kx = rep(1, 2), N = rep(1, 2)), res0,
+                    NULL, NULL, NULL),
                  "The 'settings' argument does not contain column 'K'.")
-    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), Nx = rep(1, 2)), res0,
-                                NULL, NULL, NULL),
+    expect_error(check_args_eval_util_L(
+                    data.frame(K = rep(1, 2), Nx = rep(1, 2)), res0,
+                    NULL, NULL, NULL),
                  "The 'settings' argument does not contain column 'N'.")
-    expect_error(qc_eval_util_L(data.frame(K = rep(0, 2), N = rep(1, 2)), res0,
-                                NULL, NULL, NULL),
+    expect_error(check_args_eval_util_L(
+                    data.frame(K = rep(0, 2), N = rep(1, 2)), res0,
+                    NULL, NULL, NULL),
                  "'K' contains values less than one.")
-    expect_error(qc_eval_util_L(data.frame(K = rep(1, 2), N = rep(0, 2)), res0,
-                                NULL, NULL, NULL),
+    expect_error(check_args_eval_util_L(
+                    data.frame(K = rep(1, 2), N = rep(0, 2)), res0,
+                    NULL, NULL, NULL),
                  "'N' contains values less than one.")
 })
 
-test_that("qc_eval_util_L() allows sufficient arguments", {
-    expect_invisible(qc_eval_util_L(df_test,
-                                    res0, NULL, NULL, NULL))
-    expect_invisible(qc_eval_util_L(df_test,
-                                    NULL,
-                                    arr_test,
-                                    arr_test,
-                                    arr_test))
-    expect_invisible(qc_eval_util_L(df_test,
-                                    res0,
-                                    arr_test,
-                                    NULL,
-                                    NULL))
-    expect_invisible(qc_eval_util_L(df_test,
-                                    res0,
-                                    NULL,
-                                    arr_test,
-                                    NULL))
-    expect_invisible(qc_eval_util_L(df_test,
-                                    res0,
-                                    NULL,
-                                    NULL,
-                                    arr_test))
-    expect_invisible(qc_eval_util_L(df_test,
-                                    res0,
-                                    arr_test,
-                                    arr_test,
-                                    NULL))
-    expect_invisible(qc_eval_util_L(df_test,
-                                    res0,
-                                    arr_test,
-                                    NULL,
-                                    arr_test))
-    expect_invisible(qc_eval_util_L(df_test,
-                                    res0,
-                                    NULL,
-                                    arr_test,
-                                    arr_test))
-    expect_invisible(qc_eval_util_L(df_test,
-                                    res0,
-                                    arr_test,
-                                    arr_test,
-                                    arr_test))
+test_that("check_args_eval_util_L() allows sufficient arguments", {
+    expect_invisible(
+        check_args_eval_util_L(df_test, res0, NULL, NULL, NULL))
+    expect_invisible(
+        check_args_eval_util_L(df_test, NULL, arr_test, arr_test, arr_test))
+    expect_invisible(
+        check_args_eval_util_L(df_test, res0, arr_test, NULL, NULL))
+    expect_invisible(
+        check_args_eval_util_L(df_test, res0, NULL, arr_test, NULL))
+    expect_invisible(
+        check_args_eval_util_L(df_test, res0, NULL, NULL, arr_test))
+    expect_invisible(
+        check_args_eval_util_L(df_test, res0, arr_test, arr_test, NULL))
+    expect_invisible(
+        check_args_eval_util_L(df_test, res0, arr_test, NULL, arr_test))
+    expect_invisible(
+        check_args_eval_util_L(df_test, res0, NULL, arr_test, arr_test))
+    expect_invisible(
+        check_args_eval_util_L(df_test, res0, arr_test, arr_test, arr_test))
 })
 
-test_that("qc_eval_util_L() blocks insufficient arguments", {
+test_that("check_args_eval_util_L() blocks insufficient arguments", {
     error_message <- "Parameter values are not fully specified: use fit argument or otherwise use all of z, theta, phi arguments."
-    expect_error(qc_eval_util_L(df_test,
-                                NULL, NULL, NULL, NULL),
+    expect_error(check_args_eval_util_L(
+                    df_test, NULL, NULL, NULL, NULL),
                  error_message)
-    expect_error(qc_eval_util_L(df_test,
-                                NULL,
-                                arr_test,
-                                NULL,
-                                NULL),
+    expect_error(check_args_eval_util_L(
+                    df_test, NULL, arr_test, NULL, NULL),
                  error_message)
-    expect_error(qc_eval_util_L(df_test,
-                                NULL,
-                                NULL,
-                                arr_test,
-                                NULL),
+    expect_error(check_args_eval_util_L(
+                    df_test, NULL, NULL, arr_test, NULL),
                  error_message)
-    expect_error(qc_eval_util_L(df_test,
-                                NULL,
-                                NULL,
-                                NULL,
-                                arr_test),
+    expect_error(check_args_eval_util_L(
+                    df_test, NULL, NULL, NULL, arr_test),
                  error_message)
-    expect_error(qc_eval_util_L(df_test,
-                                NULL,
-                                NULL,
-                                arr_test,
-                                arr_test),
+    expect_error(check_args_eval_util_L(
+                    df_test, NULL, NULL, arr_test, arr_test),
                  error_message)
-    expect_error(qc_eval_util_L(df_test,
-                                NULL,
-                                arr_test,
-                                NULL,
-                                arr_test),
+    expect_error(check_args_eval_util_L(
+                    df_test, NULL, arr_test, NULL, arr_test),
                  error_message)
-    expect_error(qc_eval_util_L(df_test,
-                                NULL,
-                                arr_test,
-                                arr_test,
-                                NULL),
+    expect_error(check_args_eval_util_L(
+                    df_test, NULL, arr_test, arr_test, NULL),
                  error_message)
 })
 
-test_that("qc_eval_util_L() blocks models with replicate-specific parameters", {
-    expect_error(qc_eval_util_L(df_test, res7,
-                                NULL, NULL, NULL),
+test_that("check_args_eval_util_L() blocks models with replicate-specific parameters", {
+    expect_error(check_args_eval_util_L(df_test, res7, NULL, NULL, NULL),
                  "'fit' contains replicate-specific phi: specify appropriate phi values via the 'phi' argument to run.")
-    expect_error(qc_eval_util_L(df_test, res8,
-                                NULL, NULL, NULL),
+    expect_error(check_args_eval_util_L(df_test, res8, NULL, NULL, NULL),
                  "'fit' contains replicate-specific theta: specify appropriate theta values via the 'theta' argument to run.")
 })
 
-test_that("qc_eval_util_L() blocks dimension mismatch between z, theta, phi and fit", {
-    expect_error(qc_eval_util_L(df_test, res0,
-                                array(1, dim = c(1, I + 1, J)), NULL, NULL),
+test_that("check_args_eval_util_L() blocks dimension mismatch between z, theta, phi and fit", {
+    expect_error(check_args_eval_util_L(
+                    df_test, res0, array(1, dim = c(1, I + 1, J)), NULL, NULL),
                  paste0("Mismatch in species dimension: dim\\(z\\)\\[2\\] must be ", I, ".\n"))
-    expect_error(qc_eval_util_L(df_test, res0,
-                                array(1, dim = c(1, I, J + 1)), NULL, NULL),
+    expect_error(check_args_eval_util_L(
+                    df_test, res0, array(1, dim = c(1, I, J + 1)), NULL, NULL),
                  paste0("Mismatch in site dimension: dim\\(z\\)\\[3\\] must be ", J, ".\n"))
 
-    expect_error(qc_eval_util_L(df_test, res0,
-                                NULL, array(1, dim = c(1, I + 1, J)), NULL),
+    expect_error(check_args_eval_util_L(
+                    df_test, res0, NULL, array(1, dim = c(1, I + 1, J)), NULL),
                  paste0("Mismatch in species dimension: dim\\(theta\\)\\[2\\] must be ", I, ".\n"))
-    expect_error(qc_eval_util_L(df_test, res0,
-                                NULL, array(1, dim = c(1, I, J + 1)), NULL),
+    expect_error(check_args_eval_util_L(
+                    df_test, res0, NULL, array(1, dim = c(1, I, J + 1)), NULL),
                  paste0("Mismatch in site dimension: dim\\(theta\\)\\[3\\] must be ", J, ".\n"))
 
-    expect_error(qc_eval_util_L(df_test, res0,
-                                NULL, NULL, array(1, dim = c(1, I + 1, J))),
+    expect_error(check_args_eval_util_L(
+                    df_test, res0, NULL, NULL, array(1, dim = c(1, I + 1, J))),
                  paste0("Mismatch in species dimension: dim\\(phi\\)\\[2\\] must be ", I, ".\n"))
-    expect_error(qc_eval_util_L(df_test, res0,
-                                NULL, NULL, array(1, dim = c(1, I, J + 1))),
+    expect_error(check_args_eval_util_L(
+                    df_test, res0, NULL, NULL, array(1, dim = c(1, I, J + 1))),
                  paste0("Mismatch in site dimension: dim\\(phi\\)\\[3\\] must be ", J, ".\n"))
 
-    expect_error(qc_eval_util_L(df_test, NULL,
-                                arr_test,
-                                array(1, dim = c(1, I + 1, J)),
-                                arr_test),
+    expect_error(check_args_eval_util_L(df_test, NULL,
+                    arr_test,
+                    array(1, dim = c(1, I + 1, J)),
+                    arr_test),
                  "Mismatch in species dimension: dim\\(z\\)\\[2\\], dim\\(theta\\)\\[2\\], and dim\\(phi\\)\\[2\\] must be equal.")
-    expect_error(qc_eval_util_L(df_test, NULL,
-                                arr_test,
-                                arr_test,
-                                array(1, dim = c(1, I + 1, J))),
+    expect_error(check_args_eval_util_L(df_test, NULL,
+                    arr_test,
+                    arr_test,
+                    array(1, dim = c(1, I + 1, J))),
                  "Mismatch in species dimension: dim\\(z\\)\\[2\\], dim\\(theta\\)\\[2\\], and dim\\(phi\\)\\[2\\] must be equal.")
 
-    expect_error(qc_eval_util_L(df_test, NULL,
-                                arr_test,
-                                array(1, dim = c(1, I, J + 1)),
-                                arr_test),
+    expect_error(check_args_eval_util_L(df_test, NULL,
+                    arr_test,
+                    array(1, dim = c(1, I, J + 1)),
+                    arr_test),
                  "Mismatch in site dimension: dim\\(z\\)\\[3\\], dim\\(theta\\)\\[3\\], and dim\\(phi\\)\\[3\\] must be equal.")
-    expect_error(qc_eval_util_L(df_test, NULL,
-                                arr_test,
-                                arr_test,
-                                array(1, dim = c(1, I, J + 1))),
+    expect_error(check_args_eval_util_L(df_test, NULL,
+                    arr_test,
+                    arr_test,
+                    array(1, dim = c(1, I, J + 1))),
                  "Mismatch in site dimension: dim\\(z\\)\\[3\\], dim\\(theta\\)\\[3\\], and dim\\(phi\\)\\[3\\] must be equal.")
 
-    expect_error(qc_eval_util_L(df_test, NULL,
-                                arr_test,
-                                array(1, dim = c(1, I, J + 1)),
-                                array(1, dim = c(1, I))),
+    expect_error(check_args_eval_util_L(df_test, NULL,
+                    arr_test,
+                    array(1, dim = c(1, I, J + 1)),
+                    array(1, dim = c(1, I))),
                  "Mismatch in site dimension: dim\\(z\\)\\[3\\] and dim\\(theta\\)\\[3\\] must be equal.")
-    expect_error(qc_eval_util_L(df_test, NULL,
-                                arr_test,
-                                array(1, dim = c(1, I)),
-                                array(1, dim = c(1, I, J + 1))),
+    expect_error(check_args_eval_util_L(df_test, NULL,
+                    arr_test,
+                    array(1, dim = c(1, I)),
+                    array(1, dim = c(1, I, J + 1))),
                  "Mismatch in site dimension: dim\\(z\\)\\[3\\] and dim\\(phi\\)\\[3\\] must be equal.")
 })
 
 
-### Tests for qc_eval_util_R ---------------------------------------------------
+### Tests for check_args_eval_util_R ------------------------------------------
 I <- dim(res0@data@y)[1]
 J <- dim(res0@data@y)[2]
 df_test  <- data.frame(J = rep(1, 2), K = rep(1, 2), N = rep(1, 2))
 arr_test <- array(1, dim = c(1, I, J))
 
-test_that("qc_eval_util_R() blocks inappropriate settings", {
-    expect_error(qc_eval_util_R(data.frame(Jx = rep(1, 2),
-                                           K = rep(1, 2),
-                                           N = rep(1, 2)), res0),
+test_that("check_args_eval_util_R() blocks inappropriate settings", {
+    expect_error(check_args_eval_util_R(
+                    data.frame(Jx = rep(1, 2), K = rep(1, 2), N = rep(1, 2)),
+                    res0),
                  "The 'settings' argument does not contain column 'J'.")
-    expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
-                                           Kx = rep(1, 2),
-                                           N = rep(1, 2)), res0),
+    expect_error(check_args_eval_util_R(
+                    data.frame(J = rep(1, 2), Kx = rep(1, 2), N = rep(1, 2)),
+                    res0),
                  "The 'settings' argument does not contain column 'K'.")
-    expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
-                                           K = rep(1, 2),
-                                           Nx = rep(1, 2)), res0),
+    expect_error(check_args_eval_util_R(
+                    data.frame(J = rep(1, 2),
+                               K = rep(1, 2),
+                               Nx = rep(1, 2)),
+                    res0),
                  "The 'settings' argument does not contain column 'N'.")
-    expect_error(qc_eval_util_R(data.frame(J = rep(0, 2),
-                                           K = rep(1, 2),
-                                           N = rep(1, 2)), res0),
+    expect_error(check_args_eval_util_R(
+                    data.frame(J = rep(0, 2),
+                               K = rep(1, 2),
+                               N = rep(1, 2)),
+                    res0),
                  "'J' contains values less than one.")
-    expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
-                                           K = rep(0, 2),
-                                           N = rep(1, 2)), res0),
+    expect_error(check_args_eval_util_R(
+                    data.frame(J = rep(1, 2),
+                               K = rep(0, 2),
+                               N = rep(1, 2)),
+                    res0),
                  "'K' contains values less than one.")
-    expect_error(qc_eval_util_R(data.frame(J = rep(1, 2),
-                                           K = rep(1, 2),
-                                           N = rep(0, 2)), res0),
+    expect_error(check_args_eval_util_R(
+                    data.frame(J = rep(1, 2),
+                               K = rep(1, 2),
+                               N = rep(0, 2)),
+                    res0),
                  "'N' contains values less than one.")
 })
 
-test_that("qc_eval_util_R() allows sufficient arguments", {
-    expect_invisible(qc_eval_util_R(df_test,
-                                    res0, NULL, NULL, NULL))
-    expect_invisible(qc_eval_util_R(df_test,
-                                    NULL,
-                                    arr_test,
-                                    arr_test,
-                                    arr_test))
-    expect_invisible(qc_eval_util_R(df_test,
-                                    res0,
-                                    arr_test,
-                                    NULL,
-                                    NULL))
-    expect_invisible(qc_eval_util_R(df_test,
-                                    res0,
-                                    NULL,
-                                    arr_test,
-                                    NULL))
-    expect_invisible(qc_eval_util_R(df_test,
-                                    res0,
-                                    NULL,
-                                    NULL,
-                                    arr_test))
-    expect_invisible(qc_eval_util_R(df_test,
-                                    res0,
-                                    arr_test,
-                                    arr_test,
-                                    NULL))
-    expect_invisible(qc_eval_util_R(df_test,
-                                    res0,
-                                    arr_test,
-                                    NULL,
-                                    arr_test))
-    expect_invisible(qc_eval_util_R(df_test,
-                                    res0,
-                                    NULL,
-                                    arr_test,
-                                    arr_test))
-    expect_invisible(qc_eval_util_R(df_test,
-                                    res0,
-                                    arr_test,
-                                    arr_test,
-                                    arr_test))
+test_that("check_args_eval_util_R() allows sufficient arguments", {
+    expect_invisible(check_args_eval_util_R(df_test,
+                                            res0, NULL, NULL, NULL))
+    expect_invisible(check_args_eval_util_R(df_test,
+                                            NULL,
+                                            arr_test,
+                                            arr_test,
+                                            arr_test))
+    expect_invisible(check_args_eval_util_R(df_test,
+                                            res0,
+                                            arr_test,
+                                            NULL,
+                                            NULL))
+    expect_invisible(check_args_eval_util_R(df_test,
+                                            res0,
+                                            NULL,
+                                            arr_test,
+                                            NULL))
+    expect_invisible(check_args_eval_util_R(df_test,
+                                            res0,
+                                            NULL,
+                                            NULL,
+                                            arr_test))
+    expect_invisible(check_args_eval_util_R(df_test,
+                                            res0,
+                                            arr_test,
+                                            arr_test,
+                                            NULL))
+    expect_invisible(check_args_eval_util_R(df_test,
+                                            res0,
+                                            arr_test,
+                                            NULL,
+                                            arr_test))
+    expect_invisible(check_args_eval_util_R(df_test,
+                                            res0,
+                                            NULL,
+                                            arr_test,
+                                            arr_test))
+    expect_invisible(check_args_eval_util_R(df_test,
+                                            res0,
+                                            arr_test,
+                                            arr_test,
+                                            arr_test))
 })
 
-test_that("qc_eval_util_R() blocks insufficient arguments", {
+test_that("check_args_eval_util_R() blocks insufficient arguments", {
     error_message <- "Parameter values are not fully specified: use fit argument or otherwise use all of psi, theta, phi arguments."
-    expect_error(qc_eval_util_R(df_test, NULL, NULL, NULL, NULL),
+    expect_error(check_args_eval_util_R(df_test, NULL, NULL, NULL, NULL),
                  error_message)
-    expect_error(qc_eval_util_R(df_test,
-                                NULL,
-                                arr_test,
-                                NULL,
-                                NULL),
+    expect_error(check_args_eval_util_R(df_test,
+                                        NULL,
+                                        arr_test,
+                                        NULL,
+                                        NULL),
                  error_message)
-    expect_error(qc_eval_util_R(df_test,
-                                NULL,
-                                NULL,
-                                arr_test,
-                                NULL),
+    expect_error(check_args_eval_util_R(df_test,
+                                        NULL,
+                                        NULL,
+                                        arr_test,
+                                        NULL),
                  error_message)
-    expect_error(qc_eval_util_R(df_test,
-                                NULL,
-                                NULL,
-                                NULL,
-                                arr_test),
+    expect_error(check_args_eval_util_R(df_test,
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        arr_test),
                  error_message)
-    expect_error(qc_eval_util_R(df_test,
-                                NULL,
-                                NULL,
-                                arr_test,
-                                arr_test),
+    expect_error(check_args_eval_util_R(df_test,
+                                        NULL,
+                                        NULL,
+                                        arr_test,
+                                        arr_test),
                  error_message)
-    expect_error(qc_eval_util_R(df_test,
-                                NULL,
-                                arr_test,
-                                NULL,
-                                arr_test),
+    expect_error(check_args_eval_util_R(df_test,
+                                        NULL,
+                                        arr_test,
+                                        NULL,
+                                        arr_test),
                  error_message)
-    expect_error(qc_eval_util_R(df_test,
-                                NULL,
-                                arr_test,
-                                arr_test,
-                                NULL),
+    expect_error(check_args_eval_util_R(df_test,
+                                        NULL,
+                                        arr_test,
+                                        arr_test,
+                                        NULL),
                  error_message)
 })
 
-test_that("qc_eval_util_R() blocks models with replicate-specific parameters", {
-    expect_error(qc_eval_util_R(df_test, res7,
-                                NULL, NULL, NULL),
+test_that("check_args_eval_util_R() blocks models with replicate-specific parameters", {
+    expect_error(check_args_eval_util_R(df_test, res7, NULL, NULL, NULL),
                  "'fit' contains replicate-specific phi: specify appropriate phi values via the 'phi' argument to run.")
-    expect_error(qc_eval_util_R(df_test, res8,
-                                NULL, NULL, NULL),
+    expect_error(check_args_eval_util_R(df_test, res8, NULL, NULL, NULL),
                  "'fit' contains replicate-specific theta: specify appropriate theta values via the 'theta' argument to run.")
 })
 
-test_that("qc_eval_util_R() blocks species/site dimension mismatch between psi, theta, phi, and fit", {
-    expect_error(qc_eval_util_R(df_test, res0,
-                                array(1, dim = c(1, I + 1, J)), NULL, NULL),
+test_that("check_args_eval_util_R() blocks species/site dimension mismatch between psi, theta, phi, and fit", {
+    expect_error(check_args_eval_util_R(
+                    df_test, res0, array(1, dim = c(1, I + 1, J)), NULL, NULL),
                  paste0("Mismatch in species dimension: dim\\(psi\\)\\[2\\] must be ", I, ".\n"))
-    expect_error(qc_eval_util_R(df_test, res0,
-                                array(1, dim = c(1, I, J + 1)), NULL, NULL),
+    expect_error(check_args_eval_util_R(
+                    df_test, res0, array(1, dim = c(1, I, J + 1)), NULL, NULL),
                  paste0("Mismatch in site dimension: dim\\(psi\\)\\[3\\] must be ", J, ".\n"))
 
-    expect_error(qc_eval_util_R(df_test, res0,
-                                NULL, array(1, dim = c(1, I + 1, J)), NULL),
+    expect_error(check_args_eval_util_R(
+                    df_test, res0, NULL, array(1, dim = c(1, I + 1, J)), NULL),
                  paste0("Mismatch in species dimension: dim\\(theta\\)\\[2\\] must be ", I, ".\n"))
-    expect_error(qc_eval_util_R(df_test, res0,
-                                NULL, array(1, dim = c(1, I, J + 1)), NULL),
+    expect_error(check_args_eval_util_R(
+                    df_test, res0, NULL, array(1, dim = c(1, I, J + 1)), NULL),
                  paste0("Mismatch in site dimension: dim\\(theta\\)\\[3\\] must be ", J, ".\n"))
 
-    expect_error(qc_eval_util_R(df_test, res0,
-                                NULL, NULL, array(1, dim = c(1, I + 1, J))),
+    expect_error(check_args_eval_util_R(
+                    df_test, res0, NULL, NULL, array(1, dim = c(1, I + 1, J))),
                  paste0("Mismatch in species dimension: dim\\(phi\\)\\[2\\] must be ", I, ".\n"))
-    expect_error(qc_eval_util_R(df_test, res0,
-                                NULL, NULL, array(1, dim = c(1, I, J + 1))),
+    expect_error(check_args_eval_util_R(
+                    df_test, res0, NULL, NULL, array(1, dim = c(1, I, J + 1))),
                  paste0("Mismatch in site dimension: dim\\(phi\\)\\[3\\] must be ", J, ".\n"))
 
-    expect_error(qc_eval_util_R(df_test, NULL,
-                                arr_test,
-                                array(1, dim = c(1, I + 1, J)),
-                                arr_test),
+    expect_error(check_args_eval_util_R(df_test,
+                                        NULL,
+                                        arr_test,
+                                        array(1, dim = c(1, I + 1, J)),
+                                        arr_test),
                  "Mismatch in species dimension: dim\\(psi\\)\\[2\\], dim\\(theta\\)\\[2\\], and dim\\(phi\\)\\[2\\] must be equal.")
-    expect_error(qc_eval_util_R(df_test, NULL,
-                                arr_test,
-                                arr_test,
-                                array(1, dim = c(1, I + 1, J))),
+    expect_error(check_args_eval_util_R(df_test,
+                                        NULL,
+                                        arr_test,
+                                        arr_test,
+                                        array(1, dim = c(1, I + 1, J))),
                  "Mismatch in species dimension: dim\\(psi\\)\\[2\\], dim\\(theta\\)\\[2\\], and dim\\(phi\\)\\[2\\] must be equal.")
 
-    expect_error(qc_eval_util_R(df_test, NULL,
-                                arr_test,
-                                array(1, dim = c(1, I, J + 1)),
-                                arr_test),
+    expect_error(check_args_eval_util_R(df_test,
+                                        NULL,
+                                        arr_test,
+                                        array(1, dim = c(1, I, J + 1)),
+                                        arr_test),
                  "Mismatch in site dimension: dim\\(psi\\)\\[3\\], dim\\(theta\\)\\[3\\], and dim\\(phi\\)\\[3\\] must be equal.")
-    expect_error(qc_eval_util_R(df_test, NULL,
-                                arr_test,
-                                arr_test,
-                                array(1, dim = c(1, I, J + 1))),
+    expect_error(check_args_eval_util_R(df_test,
+                                        NULL,
+                                        arr_test,
+                                        arr_test,
+                                        array(1, dim = c(1, I, J + 1))),
                  "Mismatch in site dimension: dim\\(psi\\)\\[3\\], dim\\(theta\\)\\[3\\], and dim\\(phi\\)\\[3\\] must be equal.")
 
-    expect_error(qc_eval_util_R(df_test, NULL,
-                                arr_test,
-                                array(1, dim = c(1, I, J + 1)),
-                                array(1, dim = c(1, I))),
+    expect_error(check_args_eval_util_R(df_test,
+                                        NULL,
+                                        arr_test,
+                                        array(1, dim = c(1, I, J + 1)),
+                                        array(1, dim = c(1, I))),
                  "Mismatch in site dimension: dim\\(psi\\)\\[3\\] and dim\\(theta\\)\\[3\\] must be equal.")
-    expect_error(qc_eval_util_R(df_test, NULL,
-                                arr_test,
-                                array(1, dim = c(1, I)),
-                                array(1, dim = c(1, I, J + 1))),
+    expect_error(check_args_eval_util_R(df_test,
+                                        NULL,
+                                        arr_test,
+                                        array(1, dim = c(1, I)),
+                                        array(1, dim = c(1, I, J + 1))),
                  "Mismatch in site dimension: dim\\(psi\\)\\[3\\] and dim\\(phi\\)\\[3\\] must be equal.")
-    expect_error(qc_eval_util_R(df_test, NULL,
-                                array(1, dim = c(1, I)),
-                                arr_test,
-                                array(1, dim = c(1, I, J + 1))),
+    expect_error(check_args_eval_util_R(df_test,
+                                        NULL,
+                                        array(1, dim = c(1, I)),
+                                        arr_test,
+                                        array(1, dim = c(1, I, J + 1))),
                  "Mismatch in site dimension: dim\\(theta\\)\\[3\\] and dim\\(phi\\)\\[3\\] must be equal.")
 })
 

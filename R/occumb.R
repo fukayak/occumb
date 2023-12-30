@@ -167,9 +167,9 @@ occumb <- function(formula_phi = ~ 1,
                    ...) {
 
     # Validate arguments
-    qc_occumb(data, formula_phi, formula_theta, formula_psi,
-              formula_phi_shared, formula_theta_shared, formula_psi_shared,
-              prior_prec, prior_ulim)
+    check_args_occumb(data, formula_phi, formula_theta, formula_psi,
+                      formula_phi_shared, formula_theta_shared,
+                      formula_psi_shared, prior_prec, prior_ulim)
 
     # Set constants
     const <- set_const(data)
@@ -234,15 +234,15 @@ occumb <- function(formula_phi = ~ 1,
 }
 
 # Validation for the inputs
-qc_occumb <- function(data,
-                      formula_phi,
-                      formula_theta,
-                      formula_psi,
-                      formula_phi_shared,
-                      formula_theta_shared,
-                      formula_psi_shared,
-                      prior_prec,
-                      prior_ulim) {
+check_args_occumb <- function(data,
+                              formula_phi,
+                              formula_theta,
+                              formula_psi,
+                              formula_phi_shared,
+                              formula_theta_shared,
+                              formula_psi_shared,
+                              prior_prec,
+                              prior_ulim) {
     # Check data
     if (!inherits(data, "occumbData"))
         stop("An occumbData class object is expected for data\n")
