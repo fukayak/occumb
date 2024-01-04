@@ -14,7 +14,7 @@ posterior samples."><meta name="robots" content="noindex"><!-- mathjax --><scrip
     
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.2.9018</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.2.9023</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -177,7 +177,8 @@ model fitting and the supplied dataset.</p>
     <p><code>occumb()</code> allows the fitting of a range of the multispecies site
 occupancy models including covariates at different levels of the data
 generation process.
-The most general form of the model can be written as follows:</p>
+The most general form of the model can be written as follows (notation
+follows the original article: see References):</p>
 <p>Sequence read counts:
 $$(y_{1jk}, ..., y_{Ijk}) \sim \textrm{Multinomial}((\pi_{1jk}, ...,  \pi_{Ijk}), N_{jk}),$$
 $$\pi_{ijk} = \frac{u_{ijk}r_{ijk}}{\sum_m u_{mjk}r_{mjk}},$$</p>

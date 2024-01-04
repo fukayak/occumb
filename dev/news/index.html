@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.2.9018</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.2.9023</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,12 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="occumb-development-version">occumb (development version)<a class="anchor" aria-label="anchor" href="#occumb-development-version"></a></h2>
-<ul><li>Add tests for <code>.</code> term in formula.</li>
+<ul><li>Improve <code><a href="../reference/occumb.html">occumb()</a></code> and <code><a href="../reference/gof.html">gof()</a></code> documents.</li>
+<li>Fix <code>get_posterior</code> document and examples.</li>
+<li>Fix <code><a href="../reference/eval_util_L.html">eval_util_L()</a></code> and <code><a href="../reference/eval_util_R.html">eval_util_R()</a></code> examples.</li>
+<li>Fix wrong tests for <code><a href="../reference/gof.html">gof()</a></code>.</li>
+<li>Rename <code>qc_*</code> to <code>check_args_*</code> for more informative error messages.</li>
+<li>Add tests for <code>.</code> term in formula.</li>
 <li>Move <code>check_intercept()</code> into <code>qc_occumb()</code>; for testing purposes, left <code>check_wrong_terms()</code> intact.</li>
 <li>Refactor <code>set_modargs()</code> to better handle formula.</li>
 <li>Improve error messages in <code>check_wrong_terms()</code>.</li>

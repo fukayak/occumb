@@ -14,7 +14,7 @@ predictive check approach."><meta name="robots" content="noindex"><!-- mathjax -
     
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.2.9018</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.2.9023</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -114,19 +114,23 @@ predictive check approach.</p>
     <p>A discrepancy statistic of the fitted model is obtained using the procedure
 of posterior predictive checking.
 The following statistics are currently available:</p><dl><dt>Freeman-Tukey statistics (default)</dt>
-<dd><p>\(T(\boldsymbol{y}, \boldsymbol{\theta}) = \sum_{i}\sum_{j}\sum_{k}\left(\sqrt{y_{ijk}} - \sqrt{E(y_{ijk} \mid \boldsymbol{\theta})}\right)^2\)</p></dd>
+<dd><p>\(T_{\textrm{FT}} = \sum_{i,j,k}\left(\sqrt{y_{ijk}} - \sqrt{E(y_{ijk} \mid \pi_{ijk})}\right)^2\)</p></dd>
 
 <dt>Deviance statistics</dt>
-<dd><p>\(T(\boldsymbol{y}, \boldsymbol{\theta}) = -2 \log p(\boldsymbol{y} \mid \boldsymbol{\theta})\)</p></dd>
+<dd><p>\(T_{\textrm{deviance}} = -2 \sum_{j,k} \log \textrm{Multinomial}(\boldsymbol{y}_{jk} \mid \boldsymbol{\pi}_{jk})\)</p></dd>
 
 
-</dl><p>where \(\boldsymbol{y} = \{y_{ijk}\}\), \(\boldsymbol{\theta}\),
-\(E(y_{ijk} \mid \boldsymbol{\theta})\), and
-\(\log p(\boldsymbol{y} \mid \boldsymbol{\theta})\)
-are sequence read count data, parameters and latent variables of the model,
-expected value of the data conditional on \(\boldsymbol{\theta}\),
-and log-likelihood of the model, respectively.
-The Bayesian \(p\)-value is estimated as the probability that the value of
+</dl><p>where \(i\), \(j\), and \(k\) are the subscripts of species, site, and
+replicate, respectively,
+\(y_{ijk}\) is sequence read count data,
+\(\pi_{ijk}\) is multinomial cell probabilities of sequence read
+counts,
+\(E(y_{ijk} \mid \pi_{ijk})\) is expected
+value of the sequence read counts conditional on their cell probabilities,
+and \(\log \textrm{Multinomial}(\boldsymbol{y}_{jk} \mid \boldsymbol{\pi}_{jk})\)
+is the multinomial log-likelihood of the sequence read counts in replicate
+\(k\) of site \(j\) conditional on their cell probabilities.</p>
+<p>The Bayesian \(p\)-value is estimated as the probability that the value of
 the discrepancy statistics of replicated dataset is more extreme than that
 of the observed dataset.
 An extreme Bayesian \(p\)-value may indicate an inadequate model fit.
@@ -205,9 +209,9 @@ and BUGS. Volume 1: Prelude and Static Models</em>. Academic Press.
 <span class="r-in"><span><span class="va">gof_result</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Posterior predictive check for an occumbFit object:</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Statistics: Freeman-Tukey </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  p-value:    0.405 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Discrepancy statistics for observed data:   1.45 (mean), 0.75 (sd) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Discrepancy statistics for replicated data: 1.35 (mean), 1.12 (sd) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  p-value:    0.46 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Discrepancy statistics for observed data:   1.23 (mean), 0.65 (sd) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Discrepancy statistics for replicated data: 1.35 (mean), 1.13 (sd) </span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
