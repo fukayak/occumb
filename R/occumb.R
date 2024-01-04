@@ -15,7 +15,8 @@ setClass("occumbFit", slots = c(fit = "jagsUI",
 #'  \code{occumb()} allows the fitting of a range of the multispecies site
 #'  occupancy models including covariates at different levels of the data
 #'  generation process.
-#'  The most general form of the model can be written as follows:
+#'  The most general form of the model can be written as follows (notation
+#'  follows the original article: see References):
 #'
 #'  Sequence read counts:
 #'  \deqn{(y_{1jk}, ..., y_{Ijk}) \sim \textrm{Multinomial}((\pi_{1jk}, ...,  \pi_{Ijk}), N_{jk}),}{y[1:I, j, k] ~ Multinomial(pi[1:I, j, k], N[j, k]),}

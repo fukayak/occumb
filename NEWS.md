@@ -1,4 +1,5 @@
 # occumb (development version)
+* Improve `occumb()` and `gof()` documents.
 * Fix `get_posterior` document and examples.
 * Fix `eval_util_L()` and `eval_util_R()` examples.
 * Fix wrong tests for `gof()`.

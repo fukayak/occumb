@@ -36,15 +36,20 @@ A discrepancy statistic of the fitted model is obtained using the procedure
 of posterior predictive checking.
 The following statistics are currently available:
 \describe{
-\item{Freeman-Tukey statistics (default)}{\eqn{T(\boldsymbol{y}, \boldsymbol{\theta}) = \sum_{i}\sum_{j}\sum_{k}\left(\sqrt{y_{ijk}} - \sqrt{E(y_{ijk} \mid \boldsymbol{\theta})}\right)^2}{\sum_i \sum_j \sum_k (sqrt(y[i, j, k]) - sqrt(E(y[i, j, k] | theta)))^2}}
-\item{Deviance statistics}{\eqn{T(\boldsymbol{y}, \boldsymbol{\theta}) = -2 \log p(\boldsymbol{y} \mid \boldsymbol{\theta})}{T(y, theta) = -2 * log(p(y | theta))}}
+\item{Freeman-Tukey statistics (default)}{\eqn{T_{\textrm{FT}} = \sum_{i,j,k}\left(\sqrt{y_{ijk}} - \sqrt{E(y_{ijk} \mid \pi_{ijk})}\right)^2}{T_{FT} = \sum_{i, j, k} (sqrt(y[i, j, k]) - sqrt(E(y[i, j, k] | pi[i, j, k])))^2}}
+\item{Deviance statistics}{\eqn{T_{\textrm{deviance}} = -2 \sum_{j,k} \log \textrm{Multinomial}(\boldsymbol{y}_{jk} \mid \boldsymbol{\pi}_{jk})}{T_{deviance} = -2 * \sum_{j, k} log(Multinomial(y[, j, k] | pi[, j, k]))}}
 }
-where \eqn{\boldsymbol{y} = \{y_{ijk}\}}{y}, \eqn{\boldsymbol{\theta}}{theta},
-\eqn{E(y_{ijk} \mid \boldsymbol{\theta})}{E(y[i, j, k] | theta)}, and
-\eqn{\log p(\boldsymbol{y} \mid \boldsymbol{\theta})}{log(p(y | theta))}
-are sequence read count data, parameters and latent variables of the model,
-expected value of the data conditional on \eqn{\boldsymbol{\theta}}{theta},
-and log-likelihood of the model, respectively.
+where \eqn{i}, \eqn{j}, and \eqn{k} are the subscripts of species, site, and
+replicate, respectively,
+\eqn{y_{ijk}}{y} is sequence read count data,
+\eqn{\pi_{ijk}}{pi} is multinomial cell probabilities of sequence read
+counts,
+\eqn{E(y_{ijk} \mid \pi_{ijk})}{E(y[i, j, k] | pi[i, j, k])} is expected
+value of the sequence read counts conditional on their cell probabilities,
+and \eqn{\log \textrm{Multinomial}(\boldsymbol{y}_{jk} \mid \boldsymbol{\pi}_{jk})}{log(Multinomial(y[, j, k] | pi[, j, k]))}
+is the multinomial log-likelihood of the sequence read counts in replicate
+\eqn{k}{k} of site \eqn{j}{j} conditional on their cell probabilities.
+
 The Bayesian \eqn{p}-value is estimated as the probability that the value of
 the discrepancy statistics of replicated dataset is more extreme than that
 of the observed dataset.
