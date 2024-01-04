@@ -1,4 +1,5 @@
 # occumb (development version)
+* Fix `eval_util_L()` and `eval_util_R()` examples.
 * Fix wrong tests for `gof()`.
 * Rename `qc_*` to `check_args_*` for more informative error messages.
 * Add tests for `.` term in formula.

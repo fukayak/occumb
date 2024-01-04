@@ -98,29 +98,51 @@
 #' J <- 2 # Number of sites
 #' K <- 2 # Number of replicates
 #' data <- occumbData(
-#'     y = array(sample.int(I * J * K), dim = c(I, J, K)),
-#'     spec_cov = list(cov1 = rnorm(I)),
-#'     site_cov = list(cov2 = rnorm(J),
-#'                     cov3 = factor(1:J)),
-#'     repl_cov = list(cov4 = matrix(rnorm(J * K), J, K)))
+#'     y = array(sample.int(I * J * K), dim = c(I, J, K)))
 #'
 #' # Fitting a null model
 #' fit <- occumb(data = data)
 #'
-#' # Estimate expected utility
-#' util1 <- eval_util_L(expand.grid(K = 1:3, N = c(1E3, 1E4, 1E5)),
-#'                      fit) # Arbitrary K and N values
-#' util2 <- eval_util_L(list_cond_L(budget = 1E5,
-#'                                  lambda1 = 0.01,
-#'                                  lambda2 = 5000,
-#'                                  fit),
-#'                      fit) # K and N values under specified budget and cost
-#' util3 <- eval_util_L(list_cond_L(budget = 1E5,
+#' ## Estimate expected utility
+#' # Arbitrary K and N values
+#' (util1 <- eval_util_L(expand.grid(K = 1:3, N = c(1E3, 1E4, 1E5)),
+#'                       fit))
+#'
+#' # K and N values under specified budget and cost
+#' (util2 <- eval_util_L(list_cond_L(budget = 1E5,
+#'                                   lambda1 = 0.01,
+#'                                   lambda2 = 5000,
+#'                                   fit),
+#'                       fit))
+#'
+#' # K values restricted
+#' (util3 <- eval_util_L(list_cond_L(budget = 1E5,
+#'                                   lambda1 = 0.01,
+#'                                   lambda2 = 5000,
+#'                                   fit,
+#'                                   K = 1:5),
+#'                       fit))
+#'
+#' # theta and phi values supplied
+#' (util4 <- eval_util_L(list_cond_L(budget = 1E5,
 #'                                  lambda1 = 0.01,
 #'                                  lambda2 = 5000,
 #'                                  fit,
 #'                                  K = 1:5),
-#'                      fit) # K values restricted
+#'                       fit,
+#'                       theta = array(0.5, dim = c(4000, 2, 2)),
+#'                       phi = array(1, dim = c(4000, 2, 2))))
+#' 
+#' # z, theta, and phi values, but no fit object supplied
+#' (util5 <- eval_util_L(list_cond_L(budget = 1E5,
+#'                                  lambda1 = 0.01,
+#'                                  lambda2 = 5000,
+#'                                  fit,
+#'                                  K = 1:5),
+#'                       fit = NULL,
+#'                       z = array(1, dim = c(4000, 2, 2)),
+#'                       theta = array(0.5, dim = c(4000, 2, 2)),
+#'                       phi = array(1, dim = c(4000, 2, 2))))
 #' }
 #' @export
 eval_util_L <- function(settings,
@@ -289,35 +311,59 @@ eval_util_L <- function(settings,
 #' J <- 2 # Number of sites
 #' K <- 2 # Number of replicates
 #' data <- occumbData(
-#'     y = array(sample.int(I * J * K), dim = c(I, J, K)),
-#'     spec_cov = list(cov1 = rnorm(I)),
-#'     site_cov = list(cov2 = rnorm(J),
-#'                     cov3 = factor(1:J)),
-#'     repl_cov = list(cov4 = matrix(rnorm(J * K), J, K)))
+#'     y = array(sample.int(I * J * K), dim = c(I, J, K)))
 #'
 #' # Fitting a null model
 #' fit <- occumb(data = data)
 #'
-#' # Estimate expected utility
-#' util1 <- eval_util_R(expand.grid(J = 1:3, K = 1:3, N = c(1E3, 1E4, 1E5)),
-#'                      fit) # Arbitrary J, K, and N values
-#' util2 <- eval_util_R(list_cond_R(budget = 50000,
+#' ## Estimate expected utility
+#' # Arbitrary J, K, and N values
+#' (util1 <- eval_util_R(expand.grid(J = 1:3, K = 1:3, N = c(1E3, 1E4, 1E5)),
+#'                       fit))
+#'
+#' # J, K, and N values under specified budget and cost
+#' (util2 <- eval_util_R(list_cond_R(budget = 50000,
 #'                                  lambda1 = 0.01,
 #'                                  lambda2 = 5000,
 #'                                  lambda3 = 5000),
-#'                      fit) # J, K, and N values under specified budget and cost
-#' util3 <- eval_util_R(list_cond_R(budget = 50000,
+#'                       fit))
+#'
+#' # K values restricted
+#' (util3 <- eval_util_R(list_cond_R(budget = 50000,
 #'                                  lambda1 = 0.01,
 #'                                  lambda2 = 5000,
 #'                                  lambda3 = 5000,
 #'                                  K = 1:5),
-#'                      fit) # K values restricted
-#' util4 <- eval_util_R(list_cond_R(budget = 50000,
+#'                       fit))
+#'
+#' # J and K values restricted
+#' (util4 <- eval_util_R(list_cond_R(budget = 50000,
 #'                                  lambda1 = 0.01,
 #'                                  lambda2 = 5000,
 #'                                  lambda3 = 5000,
 #'                                  J = 1:3, K = 1:5),
-#'                      fit) # J and K values restricted
+#'                       fit))
+#'
+#' # theta and phi values supplied
+#' (util5 <- eval_util_R(list_cond_R(budget = 50000,
+#'                                  lambda1 = 0.01,
+#'                                  lambda2 = 5000,
+#'                                  lambda3 = 5000,
+#'                                  J = 1:3, K = 1:5),
+#'                       fit,
+#'                       theta = array(0.5, dim = c(4000, 2, 2)),
+#'                       phi = array(1, dim = c(4000, 2, 2))))
+#' 
+#' # psi, theta, and phi values, but no fit object supplied
+#' (util6 <- eval_util_R(list_cond_R(budget = 50000,
+#'                                  lambda1 = 0.01,
+#'                                  lambda2 = 5000,
+#'                                  lambda3 = 5000,
+#'                                  J = 1:3, K = 1:5),
+#'                       fit = NULL,
+#'                       psi = array(0.5, dim = c(4000, 2, 2)),
+#'                       theta = array(0.5, dim = c(4000, 2, 2)),
+#'                       phi = array(1, dim = c(4000, 2, 2))))
 #' }
 #' @export
 eval_util_R <- function(settings,
