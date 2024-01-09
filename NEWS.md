@@ -1,30 +1,6 @@
-# occumb (development version)
-* Improve `occumb()` and `gof()` documents.
-* Fix `get_posterior` document and examples.
-* Fix `eval_util_L()` and `eval_util_R()` examples.
-* Fix wrong tests for `gof()`.
-* Rename `qc_*` to `check_args_*` for more informative error messages.
-* Add tests for `.` term in formula.
-* Move `check_intercept()` into `qc_occumb()`; for testing purposes, left `check_wrong_terms()` intact.
-* Refactor `set_modargs()` to better handle formula.
-* Improve error messages in `check_wrong_terms()`.
-* Add `occumb()` validation for invalid prior values.
-* Add `occumbData()` validation for cases when `y` is an empty array.
-* Add `occumbData()` validation for cases when `y` has only zero values.
-* Fix `occumbData()` document.
-* Improve `occumbData()` validation for covariate classes.
-* Improve error messages in `occumbData()`.
-* Refactor and improve unit tests for `occumbData()`.
-* Refactor `validate_occumbData()` and improve related tests.
-* Add `occumbData()` validation for cases when covariates have infinite values.
-* Add `occumbData()` validation for cases when covariates have unnamed element.
-* Refactor validation for covariates in `occumbData()` with `checkmate` functions.
-* Fix `occumbData` message for cases when `y` has missing values.
-* Add `occumbData` validation for cases when `y` has negative values.
-* Refactor validation for `y` in `occumbData()` with `checkmate` functions.
-* Add `occumbData` validation for cases when elements of `y` are lists.
-* Rename class `optional_list` to `list_or_NULL`.
-* Minor internal changes to `gof()`.
+# occumb 1.0.3 (2024/01/04)
+* Internal changes to fix a number of known bugs and for more helpful error messages and additional tests.
+* Improved function documentation.
 
 ## occumb 1.0.2 (2023/10/19)
 * Fix license issue: occumb is licensed under GPLv3.
