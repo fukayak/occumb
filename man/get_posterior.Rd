@@ -52,28 +52,28 @@ The functions return posterior samples or summary of one of the
 following parameters in the model, stored in the model-fit object
 \code{fit}:
 \describe{
-\item{\code{"z"}}{Site occupancy status of species.}
-\item{\code{"pi"}}{Multinomial probabilities of species sequence read counts.}
-\item{\code{"phi"}}{Sequence relative dominance of species.}
-\item{\code{"theta"}}{Sequence capture probabilities of species.}
-\item{\code{"psi"}}{Site occupancy probabilities of species.}
-\item{\code{"alpha"}}{Species-specific effects on sequence relative dominance
+\item{\code{z}}{Site occupancy status of species.}
+\item{\code{pi}}{Multinomial probabilities of species sequence read counts.}
+\item{\code{phi}}{Sequence relative dominance of species.}
+\item{\code{theta}}{Sequence capture probabilities of species.}
+\item{\code{psi}}{Site occupancy probabilities of species.}
+\item{\code{alpha}}{Species-specific effects on sequence relative dominance
 (\code{phi}).}
-\item{\code{"beta"}}{Species-specific effects on sequence capture
+\item{\code{beta}}{Species-specific effects on sequence capture
 probabilities (\code{theta}).}
-\item{\code{"gamma"}}{Species-specific effects on site occupancy
+\item{\code{gamma}}{Species-specific effects on site occupancy
 probabilities (\code{psi}).}
-\item{\code{"alpha_shared"}}{Effects on sequence relative dominance
+\item{\code{alpha_shared}}{Effects on sequence relative dominance
 (\code{phi}) common across species.}
-\item{\code{"beta_shared"}}{Effects on sequence capture probabilities
+\item{\code{beta_shared}}{Effects on sequence capture probabilities
 (\code{theta}) that are common across species.}
-\item{\code{"gamma_shared"}}{Effects on site occupancy probabilities
+\item{\code{gamma_shared}}{Effects on site occupancy probabilities
 (\code{psi}) that are common across species.}
-\item{\code{"Mu"}}{Community-level averages of the species-specific effects
+\item{\code{Mu}}{Community-level averages of the species-specific effects
 (\code{alpha}, \code{beta}, \code{gamma}).}
-\item{\code{"sigma"}}{Standard deviations of the species-specific effects
+\item{\code{sigma}}{Standard deviations of the species-specific effects
 (\code{alpha}, \code{beta}, \code{gamma}).}
-\item{\code{"rho"}}{Correlation coefficients of the species-specific effects
+\item{\code{rho}}{Correlation coefficients of the species-specific effects
 (\code{alpha}, \code{beta}, \code{gamma}).}
 }
 See \href{https://fukayak.github.io/occumb/articles/model_specification.html}{the package vignette}
@@ -94,17 +94,12 @@ I <- 2 # Number of species
 J <- 2 # Number of sites
 K <- 2 # Number of replicates
 y_named <- array(sample.int(I * J * K), dim = c(I, J, K))
-dimnames(y_named) <- list(c("common species", "uncommon species"),
-                          c("good site", "bad site"), NULL)
-data_named <- occumbData(
-    y = y_named,
-    spec_cov = list(cov1 = rnorm(I)),
-    site_cov = list(cov2 = rnorm(J),
-                    cov3 = factor(1:J)),
-    repl_cov = list(cov4 = matrix(rnorm(J * K), J, K)))
+dimnames(y_named) <- list(c("species 1", "species 2"),
+                          c("site 1", "site 2"), NULL)
+data_named <- occumbData(y = y_named)
 
 # Fitting a null model
-fit <- occumb(data = data_named)
+fit <- occumb(data = data_named, n.iter = 10100)
 
 # Extract posterior samples
 (post_sample_z <- get_post_samples(fit, "z"))

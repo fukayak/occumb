@@ -2,6 +2,9 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/fukayak/occumb/workflows/R-CMD-check/badge.svg)](https://github.com/fukayak/occumb/actions)
+[![CRAN status](https://www.r-pkg.org/badges/version/occumb)](https://CRAN.R-project.org/package=occumb)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/occumb)](https://cran.r-project.org/package=occumb)
+[![](http://cranlogs.r-pkg.org/badges/last-month/occumb)](https://cran.r-project.org/package=occumb)
 <!-- badges: end -->
 
 occumb is an R package that provides functionalities to apply [the multispecies site occupancy modeling for environmental DNA (eDNA) metabarcoding](https://doi.org/10.1111/2041-210X.13732) easily.
@@ -31,5 +34,5 @@ Questions and bug reports can be emailed to Keiichi Fukaya (fukaya.keiichi@nies.
 
 ## Credits
 
-The development of occumb would not be possible without, among others, Martyn Plummer's [JAGS](https://mcmc-jags.sourceforge.io/) and Ken Kellner's [jagsUI](https://CRAN.R-project.org/package=jagsUI) R package, because the main functionality of occumb for model fitting via Markov chain Monte Carlo (MCMC) rely on these libraries. Taku Kadoya encouraged the author to develop the package. Koji Makiyama, Shinya Uryu, and Kentaro Matsuura contributed to the development of package testing. Funding was provided by Japan Society for the Promotion of Science (KAKENHI, Nos 20K06102 and 23H02240).
+The development of occumb would not be possible without, among others, Martyn Plummer's [JAGS](https://mcmc-jags.sourceforge.io/) and Ken Kellner's [jagsUI](https://CRAN.R-project.org/package=jagsUI) R package, because the main functionality of occumb for model fitting via Markov chain Monte Carlo (MCMC) rely on these libraries. Taku Kadoya encouraged the author to develop the package. Koji Makiyama, Shinya Uryu, and Kentaro Matsuura contributed to the development of package testing. Mito Ikemoto and Kentaro Uehira provided valuable feedback through a package trial and a documentation review. Funding was provided by Japan Society for the Promotion of Science (KAKENHI, Nos 20K06102 and 23H02240).
 

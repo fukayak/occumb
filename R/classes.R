@@ -1,3 +1,3 @@
-setClassUnion("optional_list", c("list", "NULL"))
+setClassUnion("list_or_NULL", c("list", "NULL"))
 setOldClass("jagsUI")
 

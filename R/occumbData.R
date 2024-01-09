@@ -5,43 +5,80 @@ NULL
 validate_occumbData <- function(object) {
     msg <- NULL
 
-    ## y is a 3D-array.
-    if (length(dim(object@y)) != 3)
+    ### Tests for sequence read counts
+    ## y is not an array of lists.
+    if (is.list(object@y)) {
         msg <- c(msg,
-                 "'y' should be a 3D-array.")
+                 "Elements of 'y' are lists but should be integers")
+        return(msg)
+    }
+
+    ## y is a 3d-array.
+    if (!checkmate::test_array(object@y, d = 3))
+        msg <- c(msg, "'y' is not a 3D-array")
+    if (!length(object@y))
+        msg <- c(msg, "'y' is an empty array (length(y) = 0)")
+
+    ## No missing values in y.
+    if (!checkmate::test_array(object@y, any.missing = FALSE))
+        msg <- c(msg, "'y' contains missing value(s)")
+
+    ## y elements are integers.
+    if (!checkmate::test_array(object@y, mode = "integerish"))
+        msg <- c(msg, "'y' contains non-integer value(s)")
+
+    ## y elements are non-negative.
+    if (!checkmate::test_integerish(object@y, lower = 0))
+        msg <- c(msg, "'y' contains negative value(s)")
+
+    ## y elements are all zero.
+    if (length(object@y) & checkmate::test_array(object@y, mode = "integerish")) {
+        if (!sum(object@y, na.rm = TRUE))
+            msg <- c(msg, "'y' contains only zero values")
+    }
 
     I <- dim(object@y)[1] # Number of species
     J <- dim(object@y)[2] # Number of sites
     K <- dim(object@y)[3] # Number of replicates
 
-    if (sum(is.na(object@y)) > 0) {
-        ## No missing values in y.
-        msg <- c(msg,
-                 "Missing values are not allowed in 'y'.")
-    } else if (sum(object@y %% 1 != 0)) {
-        ## y elements are integers.
-        msg <- c(msg,
-                 "'y' contains non-integer value(s).")
-    }
+    ### Tests for covariates
+    ## Covariates are named list.
+    if (!is.null(object@spec_cov) &
+        !checkmate::test_names(names(object@spec_cov)))
+        msg <- c(msg, "'spec_cov' contains unnamed element(s)")
+    if (!is.null(object@site_cov) &
+        !checkmate::test_names(names(object@site_cov)))
+        msg <- c(msg, "'site_cov' contains unnamed element(s)")
+    if (!is.null(object@repl_cov) &
+        !checkmate::test_names(names(object@repl_cov)))
+        msg <- c(msg, "'repl_cov' contains unnamed element(s)")
 
     ## No overlap in the covariate names.
     cov_names <- c(names(object@spec_cov),
                    names(object@site_cov),
                    names(object@repl_cov))
-    if(sum(table(cov_names) > 1))
+    if (sum(table(cov_names) > 1))
         msg <- c(msg,
-                 sprintf("Duplicated covariate names are not allowed: '%s'",
-                         names(table(cov_names))[table(cov_names) > 1]))
+                 sprintf("Duplicated covariate names are not allowed: %s",
+                         knitr::combine_words(
+                            names(table(cov_names))[table(cov_names) > 1],
+                            before = "'", after = "'", and = "")))
 
     ## Appropriate covariate dimensions.
-    if (sum(sapply(object@spec_cov, length) != I))
+    if (sum(sapply(object@spec_cov, length) != I)) {
+        wrong_spec_cov <- names(object@spec_cov)[sapply(object@spec_cov, length) != I]
         msg <- c(msg,
-                 sprintf("Length of '%s' should match the number of species.",
-                         names(object@spec_cov)[sapply(object@spec_cov, length) != I]))
-    if (sum(sapply(object@site_cov, length) != J))
+                 sprintf("%s must have a length equal to the number of species",
+                         knitr::combine_words(wrong_spec_cov,
+                                              before = "'", after = "'")))
+    }
+    if (sum(sapply(object@site_cov, length) != J)) {
+        wrong_site_cov <- names(object@site_cov)[sapply(object@site_cov, length) != J]
         msg <- c(msg,
-                 sprintf("Length of '%s' should match the number of sites.",
-                         names(object@site_cov)[sapply(object@site_cov, length) != J]))
+                 sprintf("%s must have a length equal to the number of sites",
+                         knitr::combine_words(wrong_site_cov,
+                                              before = "'", after = "'")))
+    }
     wrong_repl_cov <- vector(length = length(object@repl_cov))
     for (i in seq_along(object@repl_cov)) {
         if (is.matrix(object@repl_cov[[i]])) {
@@ -52,19 +89,44 @@ validate_occumbData <- function(object) {
     }
     if (sum(wrong_repl_cov))
         msg <- c(msg,
-                 sprintf("'%s' should be a matrix with J rows and K columns.",
-                         names(object@repl_cov)[wrong_repl_cov]))
+                 sprintf("%s must have a number of rows equal to the number of species and a number of columns equal to the number of sites",
+                         knitr::combine_words(names(object@repl_cov)[wrong_repl_cov],
+                                              before = "'", after = "'")))
+
+    ## Appropriate covariate classes.
+    valid_class <- c("logical", "numeric", "integer", "factor", "character", "NULL")
+    cov_class <- c(sapply(object@spec_cov, class),
+                   sapply(object@site_cov, class),
+                   sapply(object@repl_cov, function(x) class(c(x))))
+    if (any(cov_class %!in% valid_class))
+        msg <- c(
+            msg,
+            sprintf("%s must be logical, numeric, integer, factor, or character",
+                    knitr::combine_words(names(cov_class[cov_class %!in% valid_class]),
+                                         before = "'", after = "'"))
+        )
 
     ## No missing values in covariates.
-    if (sum(is.na(unlist(object@spec_cov))) > 0)
-        msg <- c(msg,
-                 "Missing values are not allowed in 'spec_cov'.")
-    if (sum(is.na(unlist(object@site_cov))) > 0)
-        msg <- c(msg,
-                 "Missing values are not allowed in 'site_cov'.")
-    if (sum(is.na(unlist(object@repl_cov))) > 0)
-        msg <- c(msg,
-                 "Missing values are not allowed in 'repl_cov'.")
+    if (!checkmate::test_vector(unlist(object@spec_cov),
+                                any.missing = FALSE,
+                                null.ok = TRUE))
+        msg <- c(msg, "'spec_cov' contains missing value(s)")
+    if (!checkmate::test_vector(unlist(object@site_cov),
+                                any.missing = FALSE,
+                                null.ok = TRUE))
+        msg <- c(msg, "'site_cov' contains missing value(s)")
+    if (!checkmate::test_vector(unlist(object@repl_cov),
+                                any.missing = FALSE,
+                                null.ok = TRUE))
+        msg <- c(msg, "'repl_cov' contains missing value(s)")
+
+    ## No infinite values in covariates.
+    if (checkmate::anyInfinite(unlist(object@spec_cov)))
+        msg <- c(msg, "'spec_cov' contains infinite value(s)")
+    if (checkmate::anyInfinite(unlist(object@site_cov)))
+        msg <- c(msg, "'site_cov' contains infinite value(s)")
+    if (checkmate::anyInfinite(unlist(object@repl_cov)))
+        msg <- c(msg, "'repl_cov' contains infinite value(s)")
 
     ifelse(is.null(msg), TRUE, msg)
 }
@@ -72,9 +134,9 @@ validate_occumbData <- function(object) {
 # Data format class for occumb
 setClass("occumbData",
          slots = c(y = "array",
-                   spec_cov = "optional_list",
-                   site_cov = "optional_list",
-                   repl_cov = "optional_list"),
+                   spec_cov = "list_or_NULL",
+                   site_cov = "list_or_NULL",
+                   repl_cov = "list_or_NULL"),
          validity = validate_occumbData)
 
 #' Constructor for occumbData data class.
@@ -82,32 +144,35 @@ setClass("occumbData",
 #' \code{occumbData()} creates a data list compatible with the model-fitting
 #' function \code{\link{occumb}()}.
 #' 
-#' The element names for \code{spec_cov}, \code{site_cov}, and \code{repl_cov}
-#' must all be unique.
+#' The element (i.e., covariate) names for \code{spec_cov}, \code{site_cov}, and
+#' \code{repl_cov} must all be unique.
 #' If \code{y} has a \code{dimnames} attribute, it is retained in the resulting
 #' \code{occumbData} object and can be referenced in subsequent analyses.
 #'
-#' @param y A 3-D array of sequence read counts (integer values) that may have
-#'          a \code{dimnames} attribute.
+#' @param y A 3-D array of sequence read counts (\code{integer} values) that may
+#'          have a \code{dimnames} attribute.
 #'          Dimensions are ordered by species, site, and replicate.
 #'          Data for missing replicates must be represented by zero vectors.
-#'          NAs are not allowed.
+#'          \code{NA}s are not allowed.
 #' @param spec_cov A named list of species covariates.
-#'                 Each element must be a vector of numeric, factor, or
-#'                 character whose length is equal to \code{dim(y)[1]} (i.e.,
-#'                 the number of species). Characters are automatically 
-#'                 converted to factors. NAs are not allowed.
+#'                 Each covariate can be a vector of continuous (\code{numeric}
+#'                 or \code{integer}) or discrete (\code{logical},
+#'                 \code{factor}, or \code{character}) variables whose length
+#'                 equals \code{dim(y)[1]} (i.e., the number of species).
+#'                 \code{NA}s are not allowed.
 #' @param site_cov A named list of site covariates.
-#'                 Each element must be a vector of numeric, factor, or
-#'                 character whose length is equal to \code{dim(y)[2]} (i.e.,
-#'                 the number of sites). Characters are automatically converted
-#'                 to factors. NAs are not allowed.
+#'                 Each covariate can be a vector of continuous (\code{numeric}
+#'                 or \code{integer}) or discrete (\code{logical},
+#'                 \code{factor}, or \code{character}) variables whose length
+#'                 equals \code{dim(y)[1]} (i.e., the number of sites).
+#'                 \code{NA}s are not allowed.
 #' @param repl_cov A named list of replicate covariates.
-#'                 Each element must be a matrix of numeric, factor, or
-#'                 character whose dimension is equal to \code{dim(y)[2:3]}
-#'                 (i.e., the number of sites \eqn{\times}{*} number of
-#'                 replicates). Characters are automatically converted to
-#'                 factors. NAs are not allowed.
+#'                 Each covariate can be a matrix of continuous (\code{numeric}
+#'                 or \code{integer}) or discrete (\code{logical} or 
+#'                 \code{character}) variables whose dimension equals
+#'                 \code{dim(y)[2:3]} (i.e., the number of sites \eqn{\times}{*}
+#'                 number of replicates).
+#'                 \code{NA}s are not allowed.
 #' @return  An S4 object of the \code{occumbData} class.
 #' @examples
 #' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
@@ -150,55 +215,11 @@ occumbData <- function(y,
                        site_cov = NULL,
                        repl_cov = NULL) {
 
-    # The mode of covariates is numeric, factor, or character.
-    check_covariate_mode(spec_cov, site_cov, repl_cov)
-
     out <- methods::new("occumbData",
                         y = y,
                         spec_cov = spec_cov,
                         site_cov = site_cov,
                         repl_cov = repl_cov)
     return(out)
-}
-
-# Check for the mode of each covariate
-check_covariate_mode <- function(spec_cov, site_cov, repl_cov) {
-    wrong_spec_cov_mode <- vector(length = length(spec_cov))
-    for (i in seq_along(spec_cov)) {
-        if (!(mode(spec_cov[[i]]) == "numeric" |
-              mode(spec_cov[[i]]) == "factor" | 
-              mode(spec_cov[[i]]) == "character"))
-            wrong_spec_cov_mode[i] <- TRUE
-    }
-    wrong_site_cov_mode <- vector(length = length(site_cov))
-    for (i in seq_along(site_cov)) {
-        if (!(mode(site_cov[[i]]) == "numeric" |
-              mode(site_cov[[i]]) == "factor" | 
-              mode(site_cov[[i]]) == "character"))
-            wrong_site_cov_mode[i] <- TRUE
-    }
-    wrong_repl_cov_mode <- vector(length = length(repl_cov))
-    for (i in seq_along(repl_cov)) {
-        if (!(mode(repl_cov[[i]]) == "numeric" |
-              mode(repl_cov[[i]]) == "factor" | 
-              mode(repl_cov[[i]]) == "character"))
-            wrong_repl_cov_mode[i] <- TRUE
-    }
-
-    if (sum(c(wrong_spec_cov_mode, wrong_site_cov_mode, wrong_repl_cov_mode))) {
-        var <- c(names(spec_cov)[wrong_spec_cov_mode],
-                 names(site_cov)[wrong_site_cov_mode],
-                 names(repl_cov)[wrong_repl_cov_mode])
-        mod <- NULL
-        for (i in seq_len(sum(wrong_spec_cov_mode)))
-            mod <- c(mod, mode(spec_cov[[which(wrong_spec_cov_mode)[i]]]))
-        for (i in seq_len(sum(wrong_site_cov_mode)))
-            mod <- c(mod, mode(site_cov[[which(wrong_site_cov_mode)[i]]]))
-        for (i in seq_len(sum(wrong_repl_cov_mode)))
-            mod <- c(mod, mode(repl_cov[[which(wrong_repl_cov_mode)[i]]]))
-
-        stop(message = sprintf("Unacceptable mode: the following covariates must be numeric, factor, or character. \n %s",
-                               paste(sprintf("%s: %s", var, mod), collapse = "; ")))
-    }
 }
 
