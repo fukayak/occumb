@@ -1,4 +1,7 @@
-# occumb 1.0.3 (2024/01/04)
+# occumb (development version)
+* Add `predict()` method for `occumbFit` class.
+
+## occumb 1.0.3 (2024/01/04)
 * Internal changes to fix a number of known bugs and for more helpful error messages and additional tests.
 * Improved function documentation.
 
