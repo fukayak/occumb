@@ -774,9 +774,9 @@ check_args_eval_util_R <- function(settings, fit, psi, theta, phi) {
         vJ <- vJ[has_site_dim]
         terms <- c("dim(psi)[3]", "dim(theta)[3]", "dim(phi)[3]")[has_site_dim]
 
-        if (length(unique(vI)) != 1)
+        if (length(unique(vI)) > 1)
             stop("Mismatch in species dimension: dim(psi)[2], dim(theta)[2], and dim(phi)[2] must be equal.\n")
-        if (length(unique(vJ)) != 1)
+        if (length(unique(vJ)) > 1)
             stop(paste0("Mismatch in site dimension: ",
                         knitr::combine_words(terms), " must be equal.\n"))
     }
