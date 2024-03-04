@@ -115,33 +115,61 @@ check_newdata <- function(newdata, object) {
 
     ## Stop if covariate names and their order do not match
     name_cov <- name_newcov <- list()
-    if (!identical(names(object@data@spec_cov), names(newdata@spec_cov))) {
-        eval(parse(text = "name_cov$spec_cov <- names(object@data@spec_cov)"))
-        eval(parse(text = "name_newcov$spec_cov <- names(newdata@spec_cov)"))
-    }
-    if (!identical(names(object@data@site_cov), names(newdata@site_cov))) {
-        eval(parse(text = "name_cov$site_cov <- names(object@data@site_cov)"))
-        eval(parse(text = "name_newcov$site_cov <- names(newdata@site_cov)"))
-    }
-    if (!identical(names(object@data@repl_cov), names(newdata@repl_cov))) {
-        eval(parse(text = "name_cov$repl_cov <- names(object@data@repl_cov)"))
-        eval(parse(text = "name_newcov$repl_cov <- names(newdata@repl_cov)"))
-    }
-    if (length(name_cov) > 0)
+    name_cov$spec_cov <-
+        if (is.null(names(object@data@spec_cov))) {
+            "(None)"
+        } else {
+            names(object@data@spec_cov)
+        }
+    name_newcov$spec_cov <-
+        if (is.null(names(newdata@spec_cov))) {
+            "(None)"
+        } else {
+            names(newdata@spec_cov)
+        }
+    name_cov$site_cov <-
+        if (is.null(names(object@data@site_cov))) {
+            "(None)"
+        } else {
+            names(object@data@site_cov)
+        }
+    name_newcov$site_cov <-
+        if (is.null(names(newdata@site_cov))) {
+            "(None)"
+        } else {
+            names(newdata@site_cov)
+        }
+    name_cov$repl_cov <-
+        if (is.null(names(object@data@repl_cov))) {
+            "(None)"
+        } else {
+            names(object@data@repl_cov)
+        }
+    name_newcov$repl_cov <-
+        if (is.null(names(newdata@repl_cov))) {
+            "(None)"
+        } else {
+            names(newdata@repl_cov)
+        }
+    name_mismatch <-
+        c(!identical(name_cov$spec_cov, name_newcov$spec_cov),
+          !identical(name_cov$site_cov, name_newcov$site_cov),
+          !identical(name_cov$repl_cov, name_newcov$repl_cov))
+    if (any(name_mismatch))
         stop(paste(c("The names of the covariates in 'newdata' and their order must match those in the fitted data.",
                      sprintf("\n  %s: %s (newdata); %s (fitted data)",
-                             names(name_cov),
-                             sapply(name_newcov, paste, collapse = ", "),
-                             sapply(name_cov, paste, collapse = ", "))
+                             c("spec_cov", "site_cov", "repl_cov")[name_mismatch],
+                             sapply(name_newcov, paste, collapse = ", ")[name_mismatch],
+                             sapply(name_cov, paste, collapse = ", ")[name_mismatch])
                      ), collapse = ""))
 
     ## Stop if covariate classes do not match
-    class_cov <- c(sapply(object@data@spec_cov, class),
-                   sapply(object@data@site_cov, class),
-                   sapply(object@data@repl_cov, function(x) class(c(x))))
-    class_newcov <- c(sapply(newdata@spec_cov, class),
-                      sapply(newdata@site_cov, class),
-                      sapply(newdata@repl_cov, function(x) class(c(x))))
+    class_cov <- unlist(c(sapply(object@data@spec_cov, class),
+                          sapply(object@data@site_cov, class),
+                          sapply(object@data@repl_cov, function(x) class(c(x)))))
+    class_newcov <- unlist(c(sapply(newdata@spec_cov, class),
+                             sapply(newdata@site_cov, class),
+                             sapply(newdata@repl_cov, function(x) class(c(x)))))
     class_mismatch <- (class_cov != class_newcov)
     if (any(class_mismatch))
         stop(paste(c("The covariate classes in 'newdata' must match those in the fitted data.",

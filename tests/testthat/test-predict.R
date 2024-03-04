@@ -159,6 +159,508 @@ test_that("check_newdata() works correctly", {
                                    cov11 = matrix(rep(c(TRUE, FALSE), J * K / 2), J, K)))
     expect_warning(check_newdata(newdata, fit),
                  "The list of species names in 'newdata' does not match that in the fitted data; the list of species names in the fitted data will be added to the 'label' attribute of the returned object.")
+
+
+    ### Additional tests for check for covariate names and their order
+    ## Without spec_cov
+    data_no_spec_cov <-
+        occumbData(y = y,
+                   spec_cov = NULL,
+                   site_cov = list(cov5 = rnorm(J),
+                                   cov6 = letters[1:J],
+                                   cov7 = factor(1:J),
+                                   cov8 = c(TRUE, FALSE, TRUE)),
+                   repl_cov = list(cov9 = matrix(rnorm(J * K), J, K),
+                                   cov10 = matrix(letters[1:(J * K)], J, K),
+                                   cov11 = matrix(rep(c(TRUE, FALSE), J * K / 2), J, K)))
+
+    fit_no_spec_cov <-
+        occumb(data = data_no_spec_cov,
+               n.chains = 1, n.burnin = 10, n.thin = 1, n.iter = 20,
+               verbose = FALSE)
+
+    expect_no_error(check_newdata(data_no_spec_cov, fit_no_spec_cov))
+
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = NULL,
+                   site_cov = list(cov5x = rnorm(J),
+                                   cov6x = letters[1:J],
+                                   cov7x = factor(1:J),
+                                   cov8x = c(TRUE, FALSE, TRUE)),
+                   repl_cov = list(cov9x = matrix(rnorm(J * K), J, K),
+                                   cov10x = matrix(letters[1:(J * K)], J, K),
+                                   cov11x = matrix(rep(c(TRUE, FALSE), J * K / 2), J, K)))
+    expect_error(check_newdata(newdata, fit_no_spec_cov),
+                 "The names of the covariates in 'newdata' and their order must match those in the fitted data.
+  site_cov: cov5x, cov6x, cov7x, cov8x \\(newdata\\); cov5, cov6, cov7, cov8 \\(fitted data\\)
+  repl_cov: cov9x, cov10x, cov11x \\(newdata\\); cov9, cov10, cov11 \\(fitted data\\)")
+
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = NULL,
+                   site_cov = list(cov6 = rnorm(J),
+                                   cov5 = letters[1:J],
+                                   cov7 = factor(1:J),
+                                   cov8 = c(TRUE, FALSE, TRUE)),
+                   repl_cov = list(cov9 = matrix(rnorm(J * K), J, K),
+                                   cov10 = matrix(letters[1:(J * K)], J, K),
+                                   cov11 = matrix(rep(c(TRUE, FALSE), J * K / 2), J, K)))
+    expect_error(check_newdata(newdata, fit_no_spec_cov),
+                 "The names of the covariates in 'newdata' and their order must match those in the fitted data.
+  site_cov: cov6, cov5, cov7, cov8 \\(newdata\\); cov5, cov6, cov7, cov8 \\(fitted data\\)")
+
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = list(cov1 = rnorm(I)),
+                   site_cov = list(cov5x = rnorm(J),
+                                   cov6x = letters[1:J],
+                                   cov7x = factor(1:J),
+                                   cov8x = c(TRUE, FALSE, TRUE)),
+                   repl_cov = list(cov9x = matrix(rnorm(J * K), J, K),
+                                   cov10x = matrix(letters[1:(J * K)], J, K),
+                                   cov11x = matrix(rep(c(TRUE, FALSE), J * K / 2), J, K)))
+    expect_error(check_newdata(newdata, fit_no_spec_cov),
+                 "The names of the covariates in 'newdata' and their order must match those in the fitted data.
+  spec_cov: cov1 \\(newdata\\); \\(None\\) \\(fitted data\\)
+  site_cov: cov5x, cov6x, cov7x, cov8x \\(newdata\\); cov5, cov6, cov7, cov8 \\(fitted data\\)
+  repl_cov: cov9x, cov10x, cov11x \\(newdata\\); cov9, cov10, cov11 \\(fitted data\\)")
+
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = list(cov1 = rnorm(I)),
+                   site_cov = list(cov6 = rnorm(J),
+                                   cov5 = letters[1:J],
+                                   cov7 = factor(1:J),
+                                   cov8 = c(TRUE, FALSE, TRUE)),
+                   repl_cov = list(cov9 = matrix(rnorm(J * K), J, K),
+                                   cov10 = matrix(letters[1:(J * K)], J, K),
+                                   cov11 = matrix(rep(c(TRUE, FALSE), J * K / 2), J, K)))
+    expect_error(check_newdata(newdata, fit_no_spec_cov),
+                 "The names of the covariates in 'newdata' and their order must match those in the fitted data.
+  spec_cov: cov1 \\(newdata\\); \\(None\\) \\(fitted data\\)
+  site_cov: cov6, cov5, cov7, cov8 \\(newdata\\); cov5, cov6, cov7, cov8 \\(fitted data\\)")
+
+    # Check for covariate classes
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = NULL,
+                   site_cov = list(cov5 = rnorm(J),
+                                   cov6 = letters[1:J],
+                                   cov7 = c(TRUE, FALSE, TRUE),
+                                   cov8 = factor(1:J)),
+                   repl_cov = list(cov9 = matrix(rep(c(TRUE, FALSE), J * K / 2), J, K),
+                                   cov10 = matrix(rnorm(J * K), J, K),
+                                   cov11 = matrix(letters[1:(J * K)], J, K)))
+    expect_error(check_newdata(newdata, fit_no_spec_cov),
+                 "The covariate classes in 'newdata' must match those in the fitted data.
+  cov7: logical \\(newdata\\), factor \\(fitted data\\)
+  cov8: factor \\(newdata\\), logical \\(fitted data\\)
+  cov9: logical \\(newdata\\), numeric \\(fitted data\\)
+  cov10: numeric \\(newdata\\), character \\(fitted data\\)
+  cov11: character \\(newdata\\), logical \\(fitted data\\)")
+
+    # Check for new levels in discrete covariates
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = NULL,
+                   site_cov = list(cov5 = rnorm(J),
+                                   cov6 = letters[1:J + 1],
+                                   cov7 = factor(1:J + 1),
+                                   cov8 = c(TRUE, FALSE, TRUE)),
+                   repl_cov = list(cov9 = matrix(rnorm(J * K), J, K),
+                                   cov10 = matrix(letters[1:(J * K) + 1], J, K),
+                                   cov11 = matrix(rep(c(TRUE, FALSE), J * K / 2), J, K)))
+    expect_error(check_newdata(newdata, fit_no_spec_cov),
+                 "The levels of discrete covariates in 'newdata' must match those in the fitted data.
+  cov6: b, c, d \\(newdata\\); a, b, c \\(fitted data\\)
+  cov7: 2, 3, 4 \\(newdata\\); 1, 2, 3 \\(fitted data\\)
+  cov10: b, c, d, e, f, g, h, i, j, k, l, m \\(newdata\\); a, b, c, d, e, f, g, h, i, j, k, l \\(fitted data\\)")
+
+    # Check for orders of factor levels
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = NULL,
+                   site_cov = list(cov5 = rnorm(J),
+                                   cov6 = letters[1:J],
+                                   cov7 = factor(1:J, levels = J:1),
+                                   cov8 = c(TRUE, FALSE, TRUE)),
+                   repl_cov = list(cov9 = matrix(rnorm(J * K), J, K),
+                                   cov10 = matrix(letters[1:(J * K)], J, K),
+                                   cov11 = matrix(rep(c(TRUE, FALSE), J * K / 2), J, K)))
+    expect_error(check_newdata(newdata, fit_no_spec_cov),
+                 "The levels of discrete covariates in 'newdata' must match those in the fitted data.
+  cov7: 1, 2, 3 \\(newdata\\); 1, 2, 3 \\(fitted data\\)")
+
+    ## Without site_cov
+    data_no_site_cov <-
+        occumbData(y = y,
+                   spec_cov = list(cov1 = rnorm(I),
+                                   cov2 = letters[1:I],
+                                   cov3 = factor(1:I),
+                                   cov4 = c(TRUE, FALSE)),
+                   site_cov = NULL,
+                   repl_cov = list(cov9 = matrix(rnorm(J * K), J, K),
+                                   cov10 = matrix(letters[1:(J * K)], J, K),
+                                   cov11 = matrix(rep(c(TRUE, FALSE), J * K / 2), J, K)))
+
+    fit_no_site_cov <-
+        occumb(data = data_no_site_cov,
+               n.chains = 1, n.burnin = 10, n.thin = 1, n.iter = 20,
+               verbose = FALSE)
+
+    expect_no_error(check_newdata(data_no_site_cov, fit_no_site_cov))
+
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = list(cov1x = rnorm(I),
+                                   cov2x = letters[1:I],
+                                   cov3x = factor(1:I),
+                                   cov4x = c(TRUE, FALSE)),
+                   site_cov = NULL,
+                   repl_cov = list(cov9x = matrix(rnorm(J * K), J, K),
+                                   cov10x = matrix(letters[1:(J * K)], J, K),
+                                   cov11x = matrix(rep(c(TRUE, FALSE), J * K / 2), J, K)))
+    expect_error(check_newdata(newdata, fit_no_site_cov),
+                 "The names of the covariates in 'newdata' and their order must match those in the fitted data.
+  spec_cov: cov1x, cov2x, cov3x, cov4x \\(newdata\\); cov1, cov2, cov3, cov4 \\(fitted data\\)
+  repl_cov: cov9x, cov10x, cov11x \\(newdata\\); cov9, cov10, cov11 \\(fitted data\\)")
+
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = list(cov2 = rnorm(I),
+                                   cov1 = letters[1:I],
+                                   cov3 = factor(1:I),
+                                   cov4 = c(TRUE, FALSE)),
+                   site_cov = NULL,
+                   repl_cov = list(cov9 = matrix(rnorm(J * K), J, K),
+                                   cov10 = matrix(letters[1:(J * K)], J, K),
+                                   cov11 = matrix(rep(c(TRUE, FALSE), J * K / 2), J, K)))
+    expect_error(check_newdata(newdata, fit_no_site_cov),
+                 "The names of the covariates in 'newdata' and their order must match those in the fitted data.
+  spec_cov: cov2, cov1, cov3, cov4 \\(newdata\\); cov1, cov2, cov3, cov4 \\(fitted data\\)")
+
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = list(cov1x = rnorm(I),
+                                   cov2x = letters[1:I],
+                                   cov3x = factor(1:I),
+                                   cov4x = c(TRUE, FALSE)),
+                   site_cov = list(cov5 = rnorm(J)),
+                   repl_cov = list(cov9x = matrix(rnorm(J * K), J, K),
+                                   cov10x = matrix(letters[1:(J * K)], J, K),
+                                   cov11x = matrix(rep(c(TRUE, FALSE), J * K / 2), J, K)))
+    expect_error(check_newdata(newdata, fit_no_site_cov),
+                 "The names of the covariates in 'newdata' and their order must match those in the fitted data.
+  spec_cov: cov1x, cov2x, cov3x, cov4x \\(newdata\\); cov1, cov2, cov3, cov4 \\(fitted data\\)
+  site_cov: cov5 \\(newdata\\); \\(None\\) \\(fitted data\\)
+  repl_cov: cov9x, cov10x, cov11x \\(newdata\\); cov9, cov10, cov11 \\(fitted data\\)")
+
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = list(cov2 = rnorm(I),
+                                   cov1 = letters[1:I],
+                                   cov3 = factor(1:I),
+                                   cov4 = c(TRUE, FALSE)),
+                   site_cov = list(cov5 = rnorm(J)),
+                   repl_cov = list(cov9 = matrix(rnorm(J * K), J, K),
+                                   cov10 = matrix(letters[1:(J * K)], J, K),
+                                   cov11 = matrix(rep(c(TRUE, FALSE), J * K / 2), J, K)))
+    expect_error(check_newdata(newdata, fit_no_site_cov),
+                 "The names of the covariates in 'newdata' and their order must match those in the fitted data.
+  spec_cov: cov2, cov1, cov3, cov4 \\(newdata\\); cov1, cov2, cov3, cov4 \\(fitted data\\)
+  site_cov: cov5 \\(newdata\\); \\(None\\) \\(fitted data\\)")
+
+    # Check for covariate classes
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = list(cov1 = letters[1:I],
+                                   cov2 = rnorm(I),
+                                   cov3 = factor(1:I),
+                                   cov4 = c(TRUE, FALSE)),
+                   site_cov = NULL,
+                   repl_cov = list(cov9 = matrix(rep(c(TRUE, FALSE), J * K / 2), J, K),
+                                   cov10 = matrix(rnorm(J * K), J, K),
+                                   cov11 = matrix(letters[1:(J * K)], J, K)))
+    expect_error(check_newdata(newdata, fit_no_site_cov),
+                 "The covariate classes in 'newdata' must match those in the fitted data.
+  cov1: character \\(newdata\\), numeric \\(fitted data\\)
+  cov2: numeric \\(newdata\\), character \\(fitted data\\)
+  cov9: logical \\(newdata\\), numeric \\(fitted data\\)
+  cov10: numeric \\(newdata\\), character \\(fitted data\\)
+  cov11: character \\(newdata\\), logical \\(fitted data\\)")
+
+    # Check for new levels in discrete covariates
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = list(cov1 = rnorm(I),
+                                   cov2 = letters[1:I + 1],
+                                   cov3 = factor(1:I + 1),
+                                   cov4 = c(TRUE, FALSE)),
+                   site_cov = NULL,
+                   repl_cov = list(cov9 = matrix(rnorm(J * K), J, K),
+                                   cov10 = matrix(letters[1:(J * K) + 1], J, K),
+                                   cov11 = matrix(rep(c(TRUE, FALSE), J * K / 2), J, K)))
+    expect_error(check_newdata(newdata, fit_no_site_cov),
+                 "The levels of discrete covariates in 'newdata' must match those in the fitted data.
+  cov2: b, c \\(newdata\\); a, b \\(fitted data\\)
+  cov3: 2, 3 \\(newdata\\); 1, 2 \\(fitted data\\)
+  cov10: b, c, d, e, f, g, h, i, j, k, l, m \\(newdata\\); a, b, c, d, e, f, g, h, i, j, k, l \\(fitted data\\)")
+
+    # Check for orders of factor levels
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = list(cov1 = rnorm(I),
+                                   cov2 = letters[1:I],
+                                   cov3 = factor(1:I, levels = I:1),
+                                   cov4 = c(TRUE, FALSE)),
+                   site_cov = NULL,
+                   repl_cov = list(cov9 = matrix(rnorm(J * K), J, K),
+                                   cov10 = matrix(letters[1:(J * K)], J, K),
+                                   cov11 = matrix(rep(c(TRUE, FALSE), J * K / 2), J, K)))
+    expect_error(check_newdata(newdata, fit_no_site_cov),
+                 "The levels of discrete covariates in 'newdata' must match those in the fitted data.
+  cov3: 1, 2 \\(newdata\\); 1, 2 \\(fitted data\\)")
+
+    ## Without repl_cov
+    data_no_repl_cov <-
+        occumbData(y = y,
+                   spec_cov = list(cov1 = rnorm(I),
+                                   cov2 = letters[1:I],
+                                   cov3 = factor(1:I),
+                                   cov4 = c(TRUE, FALSE)),
+                   site_cov = list(cov5 = rnorm(J),
+                                   cov6 = letters[1:J],
+                                   cov7 = factor(1:J),
+                                   cov8 = c(TRUE, FALSE, TRUE)),
+                   repl_cov = NULL)
+
+    fit_no_repl_cov <-
+        occumb(data = data_no_repl_cov,
+               n.chains = 1, n.burnin = 10, n.thin = 1, n.iter = 20,
+               verbose = FALSE)
+
+    expect_no_error(check_newdata(data_no_repl_cov, fit_no_repl_cov))
+
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = list(cov1x = rnorm(I),
+                                   cov2x = letters[1:I],
+                                   cov3x = factor(1:I),
+                                   cov4x = c(TRUE, FALSE)),
+                   site_cov = list(cov5x = rnorm(J),
+                                   cov6x = letters[1:J],
+                                   cov7x = factor(1:J),
+                                   cov8x = c(TRUE, FALSE, TRUE)),
+                   repl_cov = NULL)
+    expect_error(check_newdata(newdata, fit_no_repl_cov),
+                 "The names of the covariates in 'newdata' and their order must match those in the fitted data.
+  spec_cov: cov1x, cov2x, cov3x, cov4x \\(newdata\\); cov1, cov2, cov3, cov4 \\(fitted data\\)
+  site_cov: cov5x, cov6x, cov7x, cov8x \\(newdata\\); cov5, cov6, cov7, cov8 \\(fitted data\\)")
+
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = list(cov2 = rnorm(I),
+                                   cov1 = letters[1:I],
+                                   cov3 = factor(1:I),
+                                   cov4 = c(TRUE, FALSE)),
+                   site_cov = list(cov6 = rnorm(J),
+                                   cov5 = letters[1:J],
+                                   cov7 = factor(1:J),
+                                   cov8 = c(TRUE, FALSE, TRUE)),
+                   repl_cov = NULL)
+    expect_error(check_newdata(newdata, fit_no_repl_cov),
+                 "The names of the covariates in 'newdata' and their order must match those in the fitted data.
+  spec_cov: cov2, cov1, cov3, cov4 \\(newdata\\); cov1, cov2, cov3, cov4 \\(fitted data\\)
+  site_cov: cov6, cov5, cov7, cov8 \\(newdata\\); cov5, cov6, cov7, cov8 \\(fitted data\\)")
+
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = list(cov1x = rnorm(I),
+                                   cov2x = letters[1:I],
+                                   cov3x = factor(1:I),
+                                   cov4x = c(TRUE, FALSE)),
+                   site_cov = list(cov5x = rnorm(J),
+                                   cov6x = letters[1:J],
+                                   cov7x = factor(1:J),
+                                   cov8x = c(TRUE, FALSE, TRUE)),
+                   repl_cov = list(cov9 = matrix(rnorm(J * K), J, K)))
+    expect_error(check_newdata(newdata, fit_no_repl_cov),
+                 "The names of the covariates in 'newdata' and their order must match those in the fitted data.
+  spec_cov: cov1x, cov2x, cov3x, cov4x \\(newdata\\); cov1, cov2, cov3, cov4 \\(fitted data\\)
+  site_cov: cov5x, cov6x, cov7x, cov8x \\(newdata\\); cov5, cov6, cov7, cov8 \\(fitted data\\)
+  repl_cov: cov9 \\(newdata\\); \\(None\\) \\(fitted data\\)")
+
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = list(cov2 = rnorm(I),
+                                   cov1 = letters[1:I],
+                                   cov3 = factor(1:I),
+                                   cov4 = c(TRUE, FALSE)),
+                   site_cov = list(cov6 = rnorm(J),
+                                   cov5 = letters[1:J],
+                                   cov7 = factor(1:J),
+                                   cov8 = c(TRUE, FALSE, TRUE)),
+                   repl_cov = list(cov9 = matrix(rnorm(J * K), J, K)))
+    expect_error(check_newdata(newdata, fit_no_repl_cov),
+                 "The names of the covariates in 'newdata' and their order must match those in the fitted data.
+  spec_cov: cov2, cov1, cov3, cov4 \\(newdata\\); cov1, cov2, cov3, cov4 \\(fitted data\\)
+  site_cov: cov6, cov5, cov7, cov8 \\(newdata\\); cov5, cov6, cov7, cov8 \\(fitted data\\)
+  repl_cov: cov9 \\(newdata\\); \\(None\\) \\(fitted data\\)")
+
+    # Check for covariate classes
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = list(cov1 = letters[1:I],
+                                   cov2 = rnorm(I),
+                                   cov3 = factor(1:I),
+                                   cov4 = c(TRUE, FALSE)),
+                   site_cov = list(cov5 = rnorm(J),
+                                   cov6 = letters[1:J],
+                                   cov7 = c(TRUE, FALSE, TRUE),
+                                   cov8 = factor(1:J)),
+                   repl_cov = NULL)
+    expect_error(check_newdata(newdata, fit_no_repl_cov),
+                 "The covariate classes in 'newdata' must match those in the fitted data.
+  cov1: character \\(newdata\\), numeric \\(fitted data\\)
+  cov2: numeric \\(newdata\\), character \\(fitted data\\)
+  cov7: logical \\(newdata\\), factor \\(fitted data\\)
+  cov8: factor \\(newdata\\), logical \\(fitted data\\)")
+
+    # Check for new levels in discrete covariates
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = list(cov1 = rnorm(I),
+                                   cov2 = letters[1:I + 1],
+                                   cov3 = factor(1:I + 1),
+                                   cov4 = c(TRUE, FALSE)),
+                   site_cov = list(cov5 = rnorm(J),
+                                   cov6 = letters[1:J + 1],
+                                   cov7 = factor(1:J + 1),
+                                   cov8 = c(TRUE, FALSE, TRUE)),
+                   repl_cov = NULL)
+    expect_error(check_newdata(newdata, fit_no_repl_cov),
+                 "The levels of discrete covariates in 'newdata' must match those in the fitted data.
+  cov2: b, c \\(newdata\\); a, b \\(fitted data\\)
+  cov3: 2, 3 \\(newdata\\); 1, 2 \\(fitted data\\)
+  cov6: b, c, d \\(newdata\\); a, b, c \\(fitted data\\)
+  cov7: 2, 3, 4 \\(newdata\\); 1, 2, 3 \\(fitted data\\)")
+
+    # Check for orders of factor levels
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = list(cov1 = rnorm(I),
+                                   cov2 = letters[1:I],
+                                   cov3 = factor(1:I, levels = I:1),
+                                   cov4 = c(TRUE, FALSE)),
+                   site_cov = list(cov5 = rnorm(J),
+                                   cov6 = letters[1:J],
+                                   cov7 = factor(1:J, levels = J:1),
+                                   cov8 = c(TRUE, FALSE, TRUE)),
+                   repl_cov = NULL)
+    expect_error(check_newdata(newdata, fit_no_repl_cov),
+                 "The levels of discrete covariates in 'newdata' must match those in the fitted data.
+  cov3: 1, 2 \\(newdata\\); 1, 2 \\(fitted data\\)
+  cov7: 1, 2, 3 \\(newdata\\); 1, 2, 3 \\(fitted data\\)")
+
+    ## Extra covariates in newdata
+    data_no_cov <- occumbData(y = y,
+                              spec_cov = NULL,
+                              site_cov = NULL,
+                              repl_cov = NULL)
+
+    fit_no_cov <-
+        occumb(data = data_no_cov,
+               n.chains = 1, n.burnin = 10, n.thin = 1, n.iter = 20,
+               verbose = FALSE)
+
+    expect_no_error(check_newdata(data_no_cov, fit_no_cov))
+
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = list(cov1 = rnorm(I),
+                                   cov2 = letters[1:I],
+                                   cov3 = factor(1:I),
+                                   cov4 = c(TRUE, FALSE)),
+                   site_cov = NULL,
+                   repl_cov = NULL)
+    expect_error(check_newdata(newdata, fit_no_cov),
+                 "The names of the covariates in 'newdata' and their order must match those in the fitted data.
+  spec_cov: cov1, cov2, cov3, cov4 \\(newdata\\); \\(None\\) \\(fitted data\\)")
+
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = NULL,
+                   site_cov = list(cov5 = rnorm(J),
+                                   cov6 = letters[1:J],
+                                   cov7 = factor(1:J),
+                                   cov8 = c(TRUE, FALSE, TRUE)),
+                   repl_cov = NULL)
+    expect_error(check_newdata(newdata, fit_no_cov),
+                 "The names of the covariates in 'newdata' and their order must match those in the fitted data.
+  site_cov: cov5, cov6, cov7, cov8 \\(newdata\\); \\(None\\) \\(fitted data\\)")
+
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = NULL,
+                   site_cov = NULL,
+                   repl_cov = list(cov9 = matrix(rnorm(J * K), J, K),
+                                   cov10 = matrix(letters[1:(J * K)], J, K),
+                                   cov11 = matrix(rep(c(TRUE, FALSE), J * K / 2), J, K)))
+
+    expect_error(check_newdata(newdata, fit_no_cov),
+                 "The names of the covariates in 'newdata' and their order must match those in the fitted data.
+  repl_cov: cov9, cov10, cov11 \\(newdata\\); \\(None\\) \\(fitted data\\)")
+
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = list(cov1 = rnorm(I),
+                                   cov2 = letters[1:I],
+                                   cov3 = factor(1:I),
+                                   cov4 = c(TRUE, FALSE)),
+                   site_cov = list(cov5 = rnorm(J),
+                                   cov6 = letters[1:J],
+                                   cov7 = factor(1:J),
+                                   cov8 = c(TRUE, FALSE, TRUE)),
+                   repl_cov = NULL)
+    expect_error(check_newdata(newdata, fit_no_cov),
+                 "The names of the covariates in 'newdata' and their order must match those in the fitted data.
+  spec_cov: cov1, cov2, cov3, cov4 \\(newdata\\); \\(None\\) \\(fitted data\\)
+  site_cov: cov5, cov6, cov7, cov8 \\(newdata\\); \\(None\\) \\(fitted data\\)")
+
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = list(cov1 = rnorm(I),
+                                   cov2 = letters[1:I],
+                                   cov3 = factor(1:I),
+                                   cov4 = c(TRUE, FALSE)),
+                   site_cov = NULL,
+                   repl_cov = list(cov9 = matrix(rnorm(J * K), J, K),
+                                   cov10 = matrix(letters[1:(J * K)], J, K),
+                                   cov11 = matrix(rep(c(TRUE, FALSE), J * K / 2), J, K)))
+    expect_error(check_newdata(newdata, fit_no_cov),
+                 "The names of the covariates in 'newdata' and their order must match those in the fitted data.
+  spec_cov: cov1, cov2, cov3, cov4 \\(newdata\\); \\(None\\) \\(fitted data\\)
+  repl_cov: cov9, cov10, cov11 \\(newdata\\); \\(None\\) \\(fitted data\\)")
+
+    newdata <-
+        occumbData(y = array(sample.int(I * J * K), dim = c(I, J, K)),
+                   spec_cov = list(cov1 = rnorm(I),
+                                   cov2 = letters[1:I],
+                                   cov3 = factor(1:I),
+                                   cov4 = c(TRUE, FALSE)),
+                   site_cov = list(cov5 = rnorm(J),
+                                   cov6 = letters[1:J],
+                                   cov7 = factor(1:J),
+                                   cov8 = c(TRUE, FALSE, TRUE)),
+                   repl_cov = list(cov9 = matrix(rnorm(J * K), J, K),
+                                   cov10 = matrix(letters[1:(J * K)], J, K),
+                                   cov11 = matrix(rep(c(TRUE, FALSE), J * K / 2), J, K)))
+    expect_error(check_newdata(newdata, fit_no_cov),
+                 "The names of the covariates in 'newdata' and their order must match those in the fitted data.
+  spec_cov: cov1, cov2, cov3, cov4 \\(newdata\\); \\(None\\) \\(fitted data\\)
+  site_cov: cov5, cov6, cov7, cov8 \\(newdata\\); \\(None\\) \\(fitted data\\)
+  repl_cov: cov9, cov10, cov11 \\(newdata\\); \\(None\\) \\(fitted data\\)")
 })
 
 test_that("Species labels are copied correctly", {
