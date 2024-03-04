@@ -33,6 +33,7 @@ reference:
   contents:
     - plot,occumbFit-method
     - plot,occumbGof-method
+    - predict,occumbFit-method
     - summary,occumbData-method
     - summary,occumbFit-method
 - title: "Dataset"
