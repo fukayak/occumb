@@ -1,6 +1,7 @@
 # occumb (development version)
 * Add `predict()` method for `occumbFit` class.
 * Fix `predict()` to handle cases where some covariate type is missing.
+* Fix `check_args_eval_util_L/R()` to handle replicate-specific parameter cases properly.
 
 ## occumb 1.0.3 (2024/01/04)
 * Internal changes to fix a number of known bugs and for more helpful error messages and additional tests.

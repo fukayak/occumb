@@ -641,9 +641,9 @@ check_args_eval_util_L <- function(settings, fit, z, theta, phi) {
         assert_occumbFit(fit)
 
         # Stop when modeled parameters are replicate-specific
-        if (length(dim(get_post_samples(fit, "theta"))) == 4)
+        if (length(dim(get_post_samples(fit, "theta"))) == 4 & is.null(theta))
             stop("'fit' contains replicate-specific theta: specify appropriate theta values via the 'theta' argument to run.\n")
-        if (length(dim(get_post_samples(fit, "phi"))) == 4)
+        if (length(dim(get_post_samples(fit, "phi"))) == 4 & is.null(phi))
             stop("'fit' contains replicate-specific phi: specify appropriate phi values via the 'phi' argument to run.\n")
     }
 
@@ -724,9 +724,9 @@ check_args_eval_util_R <- function(settings, fit, psi, theta, phi) {
         assert_occumbFit(fit)
 
         # Stop when modeled parameters are replicate-specific
-        if (length(dim(get_post_samples(fit, "theta"))) == 4)
+        if (length(dim(get_post_samples(fit, "theta"))) == 4 & is.null(theta))
             stop("'fit' contains replicate-specific theta: specify appropriate theta values via the 'theta' argument to run.\n")
-        if (length(dim(get_post_samples(fit, "phi"))) == 4)
+        if (length(dim(get_post_samples(fit, "phi"))) == 4 & is.null(phi))
             stop("'fit' contains replicate-specific phi: specify appropriate phi values via the 'phi' argument to run.\n")
     }
 

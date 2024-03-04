@@ -475,6 +475,7 @@ I <- dim(res0@data@y)[1]
 J <- dim(res0@data@y)[2]
 df_test  <- data.frame(K = rep(1, 2), N = rep(1, 2))
 arr_test <- array(1, dim = c(1, I, J))
+mat_test <- array(1, dim = c(1, I))
 
 test_that("check_args_eval_util_L() blocks inappropriate settings", {
     expect_error(check_args_eval_util_L(
@@ -542,10 +543,27 @@ test_that("check_args_eval_util_L() blocks insufficient arguments", {
 })
 
 test_that("check_args_eval_util_L() blocks models with replicate-specific parameters", {
+    # Replicate-specific model is supplied, but not phi/theta
     expect_error(check_args_eval_util_L(df_test, res7, NULL, NULL, NULL),
                  "'fit' contains replicate-specific phi: specify appropriate phi values via the 'phi' argument to run.")
     expect_error(check_args_eval_util_L(df_test, res8, NULL, NULL, NULL),
                  "'fit' contains replicate-specific theta: specify appropriate theta values via the 'theta' argument to run.")
+
+    # Both replicate-specific phi model and phi samples are supplied
+    I <- dim(res7@data@y)[1]
+    J <- dim(res7@data@y)[2]
+    mat_test <- array(1, dim = c(1, I))
+    arr_test <- array(1, dim = c(1, I, J))
+    expect_no_error(check_args_eval_util_L(df_test, res7, NULL, NULL, mat_test))
+    expect_no_error(check_args_eval_util_L(df_test, res7, NULL, NULL, arr_test))
+
+    # Both replicate-specific theta model and theta samples are supplied
+    I <- dim(res8@data@y)[1]
+    J <- dim(res8@data@y)[2]
+    mat_test <- array(1, dim = c(1, I))
+    arr_test <- array(1, dim = c(1, I, J))
+    expect_no_error(check_args_eval_util_L(df_test, res8, NULL, mat_test, NULL))
+    expect_no_error(check_args_eval_util_L(df_test, res8, NULL, arr_test, NULL))
 })
 
 test_that("check_args_eval_util_L() blocks dimension mismatch between z, theta, phi and fit", {
@@ -734,10 +752,27 @@ test_that("check_args_eval_util_R() blocks insufficient arguments", {
 })
 
 test_that("check_args_eval_util_R() blocks models with replicate-specific parameters", {
+    # Replicate-specific model is supplied, but not phi/theta
     expect_error(check_args_eval_util_R(df_test, res7, NULL, NULL, NULL),
                  "'fit' contains replicate-specific phi: specify appropriate phi values via the 'phi' argument to run.")
     expect_error(check_args_eval_util_R(df_test, res8, NULL, NULL, NULL),
                  "'fit' contains replicate-specific theta: specify appropriate theta values via the 'theta' argument to run.")
+
+    # Both replicate-specific phi model and phi samples are supplied
+    I <- dim(res7@data@y)[1]
+    J <- dim(res7@data@y)[2]
+    mat_test <- array(1, dim = c(1, I))
+    arr_test <- array(1, dim = c(1, I, J))
+    expect_no_error(check_args_eval_util_R(df_test, res7, NULL, NULL, mat_test))
+    expect_no_error(check_args_eval_util_R(df_test, res7, NULL, NULL, arr_test))
+
+    # Both replicate-specific theta model and theta samples are supplied
+    I <- dim(res8@data@y)[1]
+    J <- dim(res8@data@y)[2]
+    mat_test <- array(1, dim = c(1, I))
+    arr_test <- array(1, dim = c(1, I, J))
+    expect_no_error(check_args_eval_util_R(df_test, res8, NULL, mat_test, NULL))
+    expect_no_error(check_args_eval_util_R(df_test, res8, NULL, arr_test, NULL))
 })
 
 test_that("check_args_eval_util_R() blocks species/site dimension mismatch between psi, theta, phi, and fit", {
