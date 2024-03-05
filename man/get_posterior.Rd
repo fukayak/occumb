@@ -26,19 +26,19 @@ and corresponding parameters.}
 }
 \value{
 \code{get_post_samples()} returns a vector, matrix, or array of posterior
-samples of the selected parameter.
+samples for a selected parameter.
 
-\code{get_post_summary()} returns a table (matrix) of posterior summary
-of the selected parameter. The elements of the posterior summary are the
+\code{get_post_summary()} returns a table (matrix) of the posterior summary
+of the selected parameters. The elements of the posterior summary are the
 same as those obtained with the \code{\link[jagsUI]{jags}()} function in the
-\code{jagsUI} package: they include mean, standard deviation, percentiles
+\code{jagsUI} package: they include the mean, standard deviation, percentiles
 of posterior samples; the \code{Rhat} statistic; the effective sample size,
-\code{n.eff}; \code{overlap0} that checks if 0 falls in the parameter's 95\%
+\code{n.eff}; \code{overlap0}, which checks if 0 falls in the parameter's 95\%
 credible interval; and the proportion of the posterior with the same sign
 as the mean, \code{f}.
 
 The \code{dimension} and \code{label} attributes of the output object
-give information about the dimension of the parameter.
+provide information regarding the dimensions of the parameter.
 }
 \description{
 \code{get_post_samples()} extracts posterior samples of the specified
@@ -48,7 +48,7 @@ parameters from a model-fit object.
 parameters from a model-fit object.
 }
 \details{
-The functions return posterior samples or summary of one of the
+The functions return posterior samples or a summary of one of the
 following parameters in the model, stored in the model-fit object
 \code{fit}:
 \describe{
@@ -69,9 +69,9 @@ probabilities (\code{psi}).}
 (\code{theta}) that are common across species.}
 \item{\code{gamma_shared}}{Effects on site occupancy probabilities
 (\code{psi}) that are common across species.}
-\item{\code{Mu}}{Community-level averages of the species-specific effects
+\item{\code{Mu}}{Community-level averages of species-specific effects
 (\code{alpha}, \code{beta}, \code{gamma}).}
-\item{\code{sigma}}{Standard deviations of the species-specific effects
+\item{\code{sigma}}{Standard deviations of species-specific effects
 (\code{alpha}, \code{beta}, \code{gamma}).}
 \item{\code{rho}}{Correlation coefficients of the species-specific effects
 (\code{alpha}, \code{beta}, \code{gamma}).}
@@ -80,11 +80,11 @@ See \href{https://fukayak.github.io/occumb/articles/model_specification.html}{th
 for details of these parameters.
 
 The parameter may have dimensions corresponding to species, sites,
-replicates, and effects (covariates): the \code{dimension} and \code{label}
+replicates, and effects (covariates) and the \code{dimension} and \code{label}
 attributes are added to the output object to inform these dimensions.
-If the sequence read count data \code{y} has species, site, or replicate
+If the sequence read count data \code{y} have species, site, or replicate
 names appended as the \code{dimnames} attribute (see Details in
-\code{\link{occumbData}()}), they will be copied into the \code{label}
+\code{\link{occumbData}()}), they are copied into the \code{label}
 attribute of the returned object.
 }
 \examples{

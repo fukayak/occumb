@@ -5,19 +5,17 @@
 \alias{fish}
 \title{Fish eDNA metabarcoding dataset}
 \format{
-An occumbData class object containing sequence read count \code{y},
-\code{mismatch} as a species covariate, and \code{riverbank} as a site
-covariate.
+An occumbData class object containing the sequence read count \code{y},
+a species covariate \code{mismatch}, and a site covariate \code{riverbank}.
 \code{mismatch} represents the total number of mismatched bases in the
 priming region of the forward and reverse primers for each species.
-\code{riverbank} indicates whether the riverbank of each site lacks aquatic
+\code{riverbank} indicates whether the riverbank at each site lacks aquatic
 and riparian vegetation.
-The sequence reads were obtained from three replicates (collected from the
-center of the river and near the left and right riverbanks, respectively)
-from 50 sites across the watershed, of which read counts from 6 samples are
+Sequence reads were obtained from three replicates (collected from the
+center of the river and near the left and right riverbanks)
+from 50 sites across the watershed, of which read counts from six samples were
 missing.
-The resulting sequence counts of the 50 freshwater fish taxa detected are
-recorded.
+The resulting sequence counts of 50 freshwater fish taxa were recorded.
 }
 \source{
 K. Fukaya, N. I. Kondo, S. S. Matsuzaki, T. Kadoya (2021) Data from: Multispecies site occupancy modeling and study design for spatially replicated environmental DNA metabarcoding. Dryad Digital Repository. \doi{10.5061/dryad.3bk3j9kkm}

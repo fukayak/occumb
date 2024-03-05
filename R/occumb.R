@@ -12,11 +12,11 @@ setClass("occumbFit", slots = c(fit = "jagsUI",
 #'  metabarcoding (Fukaya et al. 2022) and returns a model-fit object containing
 #'  posterior samples.
 #' @details
-#'  \code{occumb()} allows the fitting of a range of the multispecies site
-#'  occupancy models including covariates at different levels of the data
+#'  \code{occumb()} allows the fitting of a range of multispecies site
+#'  occupancy models, including covariates at different levels of the data
 #'  generation process.
-#'  The most general form of the model can be written as follows (notation
-#'  follows the original article: see References):
+#'  The most general form of the model can be written as follows (the notation
+#'  follows that of the original article; see References).
 #'
 #'  Sequence read counts:
 #'  \deqn{(y_{1jk}, ..., y_{Ijk}) \sim \textrm{Multinomial}((\pi_{1jk}, ...,  \pi_{Ijk}), N_{jk}),}{y[1:I, j, k] ~ Multinomial(pi[1:I, j, k], N[j, k]),}
@@ -38,40 +38,40 @@ setClass("occumbFit", slots = c(fit = "jagsUI",
 #'  
 #'  Each parameter may have species-specific effects and effects that are common
 #'  across species, where the former is specified by \code{formula_phi},
-#'  \code{formula_theta}, and \code{formula_psi}, while
+#'  \code{formula_theta}, and \code{formula_psi}, whereas
 #'  \code{formula_phi_shared}, \code{formula_theta_shared}, and
 #'  \code{formula_psi_shared} specify the latter.
-#'  Because species-specific intercepts are specified by default, the intercept
-#'  term in the \code{formula_phi_shared}, \code{formula_theta_shared}, and
+#'  As species-specific intercepts are specified by default, the intercept
+#'  terms in \code{formula_phi_shared}, \code{formula_theta_shared}, and
 #'  \code{formula_psi_shared} are always ignored.
-#'  The covariate terms must be found in the names of the list elements stored
-#'  in \code{spec_cov}, \code{site_cov}, or \code{repl_cov} slots in the dataset
+#'  Covariate terms must be found in the names of the list elements stored
+#'  in the \code{spec_cov}, \code{site_cov}, or \code{repl_cov} slots in the dataset
 #'  object provided with the \code{data} argument.
 #'  Covariates are modeled using the log link function for \eqn{\phi}{phi}
 #'  and logit link function for \eqn{\theta}{theta} and \eqn{\psi.}{psi.}
 #'
 #'  The two arguments, \code{prior_prec} and \code{prior_ulim}, control the
 #'  prior distribution of parameters. For the community-level average of
-#'  species-specific effects and for effects common across species, a normal
-#'  prior distribution with mean 0 and precision (i.e., the inverse of the
+#'  species-specific effects and effects common across species, a normal
+#'  prior distribution with a mean of 0 and precision (i.e., the inverse of the
 #'  variance) \code{prior_prec} is specified. For the standard deviation of
 #'  species-specific effects, a uniform prior distribution with a lower limit of
-#'  0 and an upper limit of \code{prior_ulim} is specified. For the correlation
+#'  zero and an upper limit of \code{prior_ulim} is specified. For the correlation
 #'  coefficient of species-specific effects, a uniform prior distribution in the
 #'  range of \eqn{-}1 to 1 is specified by default.
 #'
-#'  Also see \href{https://fukayak.github.io/occumb/articles/model_specification.html}{the package vignette}
-#'  for details on model specification in \code{occumb()}.
+#'  See \href{https://fukayak.github.io/occumb/articles/model_specification.html}{the package vignette}
+#'  for details on the model specifications in \code{occumb()}.
 #'
-#'  The \code{data} argument requires a dataset object generated using
-#'  \code{ocumbData()}: see the document of \code{\link{occumbData}()}.
+#'  The \code{data} argument requires a dataset object to be generated using
+#'  \code{ocumbData()}; see the document of \code{\link{occumbData}()}.
 #'
-#'  The model is fit via the \code{\link[jagsUI]{jags}()} function of the
+#'  The model is fit using the \code{\link[jagsUI]{jags}()} function of the
 #'  \href{https://cran.r-project.org/package=jagsUI}{jagsUI} package, where
 #'  Markov chain Monte Carlo methods are used to
-#'  obtain posterior samples of parameters and latent variables.
+#'  obtain posterior samples of the parameters and latent variables.
 #'  Arguments \code{n.chains}, \code{n.adapt}, \code{n.burnin}, \code{n.thin},
-#'  \code{n.iter}, and \code{parallel} are passed on to the argument of the
+#'  \code{n.iter}, and \code{parallel} are passed on to arguments of the
 #'  same name in the \code{\link[jagsUI]{jags}()} function.
 #'  See the document of \href{https://cran.r-project.org/package=jagsUI}{jagsUI}'s
 #'  \code{\link[jagsUI]{jags}()} function for details.
@@ -91,10 +91,10 @@ setClass("occumbFit", slots = c(fit = "jagsUI",
 #' @param formula_psi_shared A right-hand side formula describing effects of
 #'        occupancy probability (\eqn{\psi}) that are common across species.
 #'        The intercept term is ignored (see Details).
-#' @param prior_prec Precision of the normal prior distribution for the
+#' @param prior_prec Precision of normal prior distribution for the
 #'        community-level average of species-specific parameters and effects
 #'        common across species.
-#' @param prior_ulim Upper limit of the uniform prior distribution for the
+#' @param prior_ulim Upper limit of uniform prior distribution for the
 #'        standard deviation of species-specific parameters.
 #' @param data A dataset supplied as an \code{\link{occumbData}} class object.
 #' @param n.chains Number of Markov chains to run.
@@ -105,7 +105,7 @@ setClass("occumbFit", slots = c(fit = "jagsUI",
 #' @param parallel If TRUE, run MCMC chains in parallel on multiple CPU cores.
 #' @param ... Additional arguments passed to \code{\link[jagsUI]{jags}()} function.
 #' @return  An S4 object of the \code{occumbFit} class containing the results of
-#'          model fitting and the supplied dataset.
+#'          the model fitting and the supplied dataset.
 #' @section References:
 #'      K. Fukaya, N. I. Kondo, S. S. Matsuzaki and T. Kadoya (2022)
 #'      Multispecies site occupancy modelling and study design for spatially
