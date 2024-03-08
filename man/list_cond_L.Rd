@@ -7,15 +7,16 @@
 list_cond_L(budget, lambda1, lambda2, fit, K = NULL)
 }
 \arguments{
-\item{budget}{A numeric specifying budget amount. Use the currency
-unit consistent with that of \code{lambda1} and \code{lambda2}.}
+\item{budget}{A numeric specifying budget amount. The currency unit
+is arbitrary but must be consistent with that of \code{lambda1} and \code{lambda2}.}
 
 \item{lambda1}{A numeric specifying the cost per sequence read for
-high-throughput sequencing. Use the currency unit consistent with
-that of \code{budget} and \code{lambda2}.}
+high-throughput sequencing. The currency unit is arbitrary but must be
+consistent with that of \code{budget} and \code{lambda2}.}
 
 \item{lambda2}{A numeric specifying the cost per replicate for library
-preparation. Use the currency unit consistent with that of \code{budget} and \code{lambda1}.}
+preparation. The currency unit is arbitrary but must be consistent with that
+of \code{budget} and \code{lambda1}.}
 
 \item{fit}{An \code{occumbFit} object.}
 

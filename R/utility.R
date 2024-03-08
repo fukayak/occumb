@@ -459,13 +459,14 @@ eval_util_R <- function(settings,
 #'  value can be obtained. To obtain a list for only a subset of the
 #'  possible `K` values under a given budget and cost value, the `K`
 #'  argument is used to provide a vector of the desired `K` values.
-#' @param budget A numeric specifying budget amount. Use the currency
-#'  unit consistent with that of `lambda1` and `lambda2`.
+#' @param budget A numeric specifying budget amount. The currency unit
+#'  is arbitrary but must be consistent with that of `lambda1` and `lambda2`.
 #' @param lambda1 A numeric specifying the cost per sequence read for
-#'  high-throughput sequencing. Use the currency unit consistent with
-#'  that of `budget` and `lambda2`.
+#'  high-throughput sequencing. The currency unit is arbitrary but must be
+#'  consistent with that of `budget` and `lambda2`.
 #' @param lambda2 A numeric specifying the cost per replicate for library
-#'  preparation. Use the currency unit consistent with that of `budget` and `lambda1`.
+#'  preparation. The currency unit is arbitrary but must be consistent with that
+#'  of `budget` and `lambda1`.
 #' @param fit An `occumbFit` object.
 #' @param K An optional vector for manually specifying the number of replicates.
 #' @return A data frame containing columns named `budget`, `lambda1`, `lambda2`,
@@ -540,16 +541,17 @@ list_cond_L <- function(budget, lambda1, lambda2, fit, K = NULL) {
 #'  given combination of `J` and `K` values is not feasible under the specified
 #'  budget and cost values, the combination will be ignored and excluded from
 #'  the output.
-#' @param budget A numeric specifying budget amount. Use the currency
-#'  unit consistent with that of `lambda1`, `lambda2`, and `lambda3`.
+#' @param budget A numeric specifying budget amount. The currency unit is
+#'  arbitrary but must be consistent with that of `lambda1`, `lambda2`, and `lambda3`.
 #' @param lambda1 A numeric specifying the cost per sequence read for
-#'  high-throughput sequencing. Use the currency unit consistent with that of
-#'  `budget`, `lambda2`, and `lambda3`.
+#'  high-throughput sequencing. The currency unit is arbitrary but must be
+#'  consistent with that of `budget`, `lambda2`, and `lambda3`.
 #' @param lambda2 A numeric specifying the cost per replicate for library
-#'  preparation. Use the currency unit consistent with that of `budget`,
-#'  `lambda1`, and `lambda3`.
-#' @param lambda3 A numeric specifying the visiting cost per site. Use the
-#'  currency unit consistent with that of `budget`, `lambda1`, and `lambda2`.
+#'  preparation. The currency unit is arbitrary but must be consistent with that
+#'  of `budget`, `lambda1`, and `lambda3`.
+#' @param lambda3 A numeric specifying the visiting cost per site. The currency
+#'  unit is arbitrary but must be consistent with that of `budget`, `lambda1`,
+#'  and `lambda2`.
 #' @param J An optional vector for manually specifying the number of sites
 #' @param K An optional vector used to specify the number of replicates manually.
 #'  For computational convenience, the `K` values must be in ascending order.

@@ -7,19 +7,20 @@
 list_cond_R(budget, lambda1, lambda2, lambda3, J = NULL, K = NULL)
 }
 \arguments{
-\item{budget}{A numeric specifying budget amount. Use the currency
-unit consistent with that of \code{lambda1}, \code{lambda2}, and \code{lambda3}.}
+\item{budget}{A numeric specifying budget amount. The currency unit is
+arbitrary but must be consistent with that of \code{lambda1}, \code{lambda2}, and \code{lambda3}.}
 
 \item{lambda1}{A numeric specifying the cost per sequence read for
-high-throughput sequencing. Use the currency unit consistent with that of
-\code{budget}, \code{lambda2}, and \code{lambda3}.}
+high-throughput sequencing. The currency unit is arbitrary but must be
+consistent with that of \code{budget}, \code{lambda2}, and \code{lambda3}.}
 
 \item{lambda2}{A numeric specifying the cost per replicate for library
-preparation. Use the currency unit consistent with that of \code{budget},
-\code{lambda1}, and \code{lambda3}.}
+preparation. The currency unit is arbitrary but must be consistent with that
+of \code{budget}, \code{lambda1}, and \code{lambda3}.}
 
-\item{lambda3}{A numeric specifying the visiting cost per site. Use the
-currency unit consistent with that of \code{budget}, \code{lambda1}, and \code{lambda2}.}
+\item{lambda3}{A numeric specifying the visiting cost per site. The currency
+unit is arbitrary but must be consistent with that of \code{budget}, \code{lambda1},
+and \code{lambda2}.}
 
 \item{J}{An optional vector for manually specifying the number of sites}
 
