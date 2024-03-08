@@ -222,11 +222,6 @@ summary(fit1)
 #>  deviance: 
 #>   Rhat:  1.001 
 #>   n.eff: 1332 
-#> 
-#> **WARNING** Rhat values indicate convergence failure (Rhat > 1.1). 
-#> 
-#> DIC info: (pD = var(deviance)/2)
-#>  pD = 2131.5 and DIC = 19973.82 
 ```
 
 Convergence of the MCMC algorithm is determined based on the `Rhat` value, which becomes 1 when the chains are converged. Customarily, `Rhat` values of less than 1.1 will be required for the parameters of interest. Overall, the `fit1` model is not very far from convergent, but the convergence of `phi` and `alpha`, the parameters related to the relative dominance of species sequence reads, is not good (i.e., high values of `Rhat`); hence, longer MCMC runs will be required for a formal inference.
