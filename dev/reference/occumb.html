@@ -14,7 +14,7 @@ posterior samples."><meta name="robots" content="noindex"><!-- mathjax --><scrip
     
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.3.9003</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.3.9006</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -123,13 +123,13 @@ The intercept term is ignored (see Details).</p></dd>
 
 
 <dt>prior_prec</dt>
-<dd><p>Precision of the normal prior distribution for the
+<dd><p>Precision of normal prior distribution for the
 community-level average of species-specific parameters and effects
 common across species.</p></dd>
 
 
 <dt>prior_ulim</dt>
-<dd><p>Upper limit of the uniform prior distribution for the
+<dd><p>Upper limit of uniform prior distribution for the
 standard deviation of species-specific parameters.</p></dd>
 
 
@@ -170,15 +170,15 @@ standard deviation of species-specific parameters.</p></dd>
     
 
 <p>An S4 object of the <code>occumbFit</code> class containing the results of
-model fitting and the supplied dataset.</p>
+the model fitting and the supplied dataset.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p><code>occumb()</code> allows the fitting of a range of the multispecies site
-occupancy models including covariates at different levels of the data
+    <p><code>occumb()</code> allows the fitting of a range of multispecies site
+occupancy models, including covariates at different levels of the data
 generation process.
-The most general form of the model can be written as follows (notation
-follows the original article: see References):</p>
+The most general form of the model can be written as follows (the notation
+follows that of the original article; see References).</p>
 <p>Sequence read counts:
 $$(y_{1jk}, ..., y_{Ijk}) \sim \textrm{Multinomial}((\pi_{1jk}, ...,  \pi_{Ijk}), N_{jk}),$$
 $$\pi_{ijk} = \frac{u_{ijk}r_{ijk}}{\sum_m u_{mjk}r_{mjk}},$$</p>
@@ -195,36 +195,36 @@ where the variations of \(\phi\), \(\theta\), and
 <code>formula_psi_shared.</code></p>
 <p>Each parameter may have species-specific effects and effects that are common
 across species, where the former is specified by <code>formula_phi</code>,
-<code>formula_theta</code>, and <code>formula_psi</code>, while
+<code>formula_theta</code>, and <code>formula_psi</code>, whereas
 <code>formula_phi_shared</code>, <code>formula_theta_shared</code>, and
 <code>formula_psi_shared</code> specify the latter.
-Because species-specific intercepts are specified by default, the intercept
-term in the <code>formula_phi_shared</code>, <code>formula_theta_shared</code>, and
+As species-specific intercepts are specified by default, the intercept
+terms in <code>formula_phi_shared</code>, <code>formula_theta_shared</code>, and
 <code>formula_psi_shared</code> are always ignored.
-The covariate terms must be found in the names of the list elements stored
-in <code>spec_cov</code>, <code>site_cov</code>, or <code>repl_cov</code> slots in the dataset
+Covariate terms must be found in the names of the list elements stored
+in the <code>spec_cov</code>, <code>site_cov</code>, or <code>repl_cov</code> slots in the dataset
 object provided with the <code>data</code> argument.
 Covariates are modeled using the log link function for \(\phi\)
 and logit link function for \(\theta\) and \(\psi.\)</p>
 <p>The two arguments, <code>prior_prec</code> and <code>prior_ulim</code>, control the
 prior distribution of parameters. For the community-level average of
-species-specific effects and for effects common across species, a normal
-prior distribution with mean 0 and precision (i.e., the inverse of the
+species-specific effects and effects common across species, a normal
+prior distribution with a mean of 0 and precision (i.e., the inverse of the
 variance) <code>prior_prec</code> is specified. For the standard deviation of
 species-specific effects, a uniform prior distribution with a lower limit of
-0 and an upper limit of <code>prior_ulim</code> is specified. For the correlation
+zero and an upper limit of <code>prior_ulim</code> is specified. For the correlation
 coefficient of species-specific effects, a uniform prior distribution in the
 range of \(-\)1 to 1 is specified by default.</p>
-<p>Also see <a href="https://fukayak.github.io/occumb/articles/model_specification.html">the package vignette</a>
-for details on model specification in <code>occumb()</code>.</p>
-<p>The <code>data</code> argument requires a dataset object generated using
-<code>ocumbData()</code>: see the document of <code><a href="occumbData.html">occumbData</a>()</code>.</p>
-<p>The model is fit via the <code><a href="https://kenkellner.com/jagsUI/reference/jags.html" class="external-link">jags</a>()</code> function of the
+<p>See <a href="https://fukayak.github.io/occumb/articles/model_specification.html">the package vignette</a>
+for details on the model specifications in <code>occumb()</code>.</p>
+<p>The <code>data</code> argument requires a dataset object to be generated using
+<code>ocumbData()</code>; see the document of <code><a href="occumbData.html">occumbData</a>()</code>.</p>
+<p>The model is fit using the <code><a href="https://kenkellner.com/jagsUI/reference/jags.html" class="external-link">jags</a>()</code> function of the
 <a href="https://cran.r-project.org/package=jagsUI" class="external-link">jagsUI</a> package, where
 Markov chain Monte Carlo methods are used to
-obtain posterior samples of parameters and latent variables.
+obtain posterior samples of the parameters and latent variables.
 Arguments <code>n.chains</code>, <code>n.adapt</code>, <code>n.burnin</code>, <code>n.thin</code>,
-<code>n.iter</code>, and <code>parallel</code> are passed on to the argument of the
+<code>n.iter</code>, and <code>parallel</code> are passed on to arguments of the
 same name in the <code><a href="https://kenkellner.com/jagsUI/reference/jags.html" class="external-link">jags</a>()</code> function.
 See the document of <a href="https://cran.r-project.org/package=jagsUI" class="external-link">jagsUI</a>'s
 <code><a href="https://kenkellner.com/jagsUI/reference/jags.html" class="external-link">jags</a>()</code> function for details.</p>

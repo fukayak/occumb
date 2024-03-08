@@ -16,7 +16,7 @@ parameters from a model-fit object."><meta name="robots" content="noindex"><!-- 
     
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.3.9003</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.3.9006</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -98,25 +98,25 @@ and corresponding parameters.</p></dd>
     
 
 <p><code>get_post_samples()</code> returns a vector, matrix, or array of posterior
-samples of the selected parameter.</p>
+samples for a selected parameter.</p>
 
 
-<p><code>get_post_summary()</code> returns a table (matrix) of posterior summary
-of the selected parameter. The elements of the posterior summary are the
+<p><code>get_post_summary()</code> returns a table (matrix) of the posterior summary
+of the selected parameters. The elements of the posterior summary are the
 same as those obtained with the <code><a href="https://kenkellner.com/jagsUI/reference/jags.html" class="external-link">jags</a>()</code> function in the
-<code>jagsUI</code> package: they include mean, standard deviation, percentiles
+<code>jagsUI</code> package: they include the mean, standard deviation, percentiles
 of posterior samples; the <code>Rhat</code> statistic; the effective sample size,
-<code>n.eff</code>; <code>overlap0</code> that checks if 0 falls in the parameter's 95%
+<code>n.eff</code>; <code>overlap0</code>, which checks if 0 falls in the parameter's 95%
 credible interval; and the proportion of the posterior with the same sign
 as the mean, <code>f</code>.</p>
 
 
 <p>The <code>dimension</code> and <code>label</code> attributes of the output object
-give information about the dimension of the parameter.</p>
+provide information regarding the dimensions of the parameter.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The functions return posterior samples or summary of one of the
+    <p>The functions return posterior samples or a summary of one of the
 following parameters in the model, stored in the model-fit object
 <code>fit</code>:</p><dl><dt><code>z</code></dt>
 <dd><p>Site occupancy status of species.</p></dd>
@@ -158,11 +158,11 @@ probabilities (<code>psi</code>).</p></dd>
 (<code>psi</code>) that are common across species.</p></dd>
 
 <dt><code>Mu</code></dt>
-<dd><p>Community-level averages of the species-specific effects
+<dd><p>Community-level averages of species-specific effects
 (<code>alpha</code>, <code>beta</code>, <code>gamma</code>).</p></dd>
 
 <dt><code>sigma</code></dt>
-<dd><p>Standard deviations of the species-specific effects
+<dd><p>Standard deviations of species-specific effects
 (<code>alpha</code>, <code>beta</code>, <code>gamma</code>).</p></dd>
 
 <dt><code>rho</code></dt>
@@ -173,11 +173,11 @@ probabilities (<code>psi</code>).</p></dd>
 </dl><p>See <a href="https://fukayak.github.io/occumb/articles/model_specification.html">the package vignette</a>
 for details of these parameters.</p>
 <p>The parameter may have dimensions corresponding to species, sites,
-replicates, and effects (covariates): the <code>dimension</code> and <code>label</code>
+replicates, and effects (covariates) and the <code>dimension</code> and <code>label</code>
 attributes are added to the output object to inform these dimensions.
-If the sequence read count data <code>y</code> has species, site, or replicate
+If the sequence read count data <code>y</code> have species, site, or replicate
 names appended as the <code>dimnames</code> attribute (see Details in
-<code><a href="occumbData.html">occumbData</a>()</code>), they will be copied into the <code>label</code>
+<code><a href="occumbData.html">occumbData</a>()</code>), they are copied into the <code>label</code>
 attribute of the returned object.</p>
     </div>
 
