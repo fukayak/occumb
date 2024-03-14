@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   model_specification: model_specification.html
   occumb: occumb.html
-last_built: 2024-03-08T06:47Z
+last_built: 2024-03-14T07:57Z
 urls:
   reference: https://fukayak.github.io/occumb/reference
   article: https://fukayak.github.io/occumb/articles

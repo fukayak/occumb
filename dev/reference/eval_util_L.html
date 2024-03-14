@@ -12,7 +12,7 @@ species diversity assessment by using Monte Carlo integration."><meta name="robo
     
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.3.9006</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.3.9009</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -256,16 +256,7 @@ and Evolution</em> <strong>13</strong>:183--193.
 <span class="r-in"><span>                                  lambda2 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
 <span class="r-in"><span>                                  <span class="va">fit</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                      <span class="va">fit</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   budget lambda1 lambda2 K          N  Utility</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1e+05    0.01    5000 1 4500000.00 1.997375</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  1e+05    0.01    5000 2 2000000.00 1.999625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  1e+05    0.01    5000 3 1166666.67 1.999875</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  1e+05    0.01    5000 4  750000.00 1.999875</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  1e+05    0.01    5000 5  500000.00 2.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1e+05    0.01    5000 6  333333.33 2.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  1e+05    0.01    5000 7  214285.71 2.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  1e+05    0.01    5000 8  125000.00 2.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1e+05    0.01    5000 9   55555.56 2.000000</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in sample_u(z * theta):</span> Failed to generate valid 'u' values under the given parameter set. Providing 'theta' containing higher theta values may fix the issue.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># K values restricted</span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">util3</span> <span class="op">&lt;-</span> <span class="fu">eval_util_L</span><span class="op">(</span><span class="fu"><a href="list_cond_L.html">list_cond_L</a></span><span class="op">(</span>budget <span class="op">=</span> <span class="fl">1E5</span>,</span></span>
@@ -275,9 +266,9 @@ and Evolution</em> <strong>13</strong>:183--193.
 <span class="r-in"><span>                                  K <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                      <span class="va">fit</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   budget lambda1 lambda2 K       N  Utility</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1e+05    0.01    5000 1 4500000 1.998750</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  1e+05    0.01    5000 2 2000000 1.999375</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  1e+05    0.01    5000 3 1166667 1.999750</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1e+05    0.01    5000 1 4500000 1.997875</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  1e+05    0.01    5000 2 2000000 1.999875</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  1e+05    0.01    5000 3 1166667 1.999875</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4  1e+05    0.01    5000 4  750000 2.000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5  1e+05    0.01    5000 5  500000 2.000000</span>
 <span class="r-in"><span></span></span>
@@ -290,12 +281,7 @@ and Evolution</em> <strong>13</strong>:183--193.
 <span class="r-in"><span>                      <span class="va">fit</span>,</span></span>
 <span class="r-in"><span>                      theta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0.5</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                      phi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   budget lambda1 lambda2 K       N  Utility</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1e+05    0.01    5000 1 4500000 1.330500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  1e+05    0.01    5000 2 2000000 1.777500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  1e+05    0.01    5000 3 1166667 1.926625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  1e+05    0.01    5000 4  750000 1.976750</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  1e+05    0.01    5000 5  500000 1.991875</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in sample_u(z * theta):</span> Failed to generate valid 'u' values under the given parameter set. Providing 'theta' containing higher theta values may fix the issue.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># z, theta, and phi values, but no fit object supplied</span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">util5</span> <span class="op">&lt;-</span> <span class="fu">eval_util_L</span><span class="op">(</span><span class="fu"><a href="list_cond_L.html">list_cond_L</a></span><span class="op">(</span>budget <span class="op">=</span> <span class="fl">1E5</span>,</span></span>
@@ -307,12 +293,7 @@ and Evolution</em> <strong>13</strong>:183--193.
 <span class="r-in"><span>                      z <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                      theta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0.5</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                      phi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   budget lambda1 lambda2 K       N  Utility</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1e+05    0.01    5000 1 4500000 1.342750</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  1e+05    0.01    5000 2 2000000 1.778375</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  1e+05    0.01    5000 3 1166667 1.929000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  1e+05    0.01    5000 4  750000 1.974875</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  1e+05    0.01    5000 5  500000 1.992250</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in sample_u(z * theta):</span> Failed to generate valid 'u' values under the given parameter set. Providing 'theta' containing higher theta values may fix the issue.</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
