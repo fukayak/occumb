@@ -613,6 +613,12 @@ test_that("check_args_eval_util_L() blocks models with replicate-specific parame
     expect_no_error(check_args_eval_util_L(df_test, res8, NULL, arr_test, NULL))
 })
 
+test_that("check_args_eval_util_L() blocks z with sites occupied by no species", {
+    expect_error(check_args_eval_util_L(
+                    df_test, res0, array(0, dim = c(1, I, J)), NULL, NULL),
+                 "The given 'z' array contains case\\(s\\) where no species occupy a site; see, for example, that z\\[1, , 1\\] is a zero vector")
+})
+
 test_that("check_args_eval_util_L() blocks dimension mismatch between z, theta, phi and fit", {
     expect_error(check_args_eval_util_L(
                     df_test, res0, array(1, dim = c(1, I + 1, J)), NULL, NULL),

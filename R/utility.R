@@ -659,6 +659,15 @@ check_args_eval_util_L <- function(settings, fit, z, theta, phi) {
                               any.missing = FALSE, null.ok = TRUE)
     checkmate::assert_numeric(phi, lower = 0, any.missing = FALSE, null.ok = TRUE)
 
+    # Assert that z does not have sites occupied by no species
+    if (!is.null(z)) {
+        z_allzero <- apply(z, c(1, 3), function (x) sum(x) == 0)
+        if (any(z_allzero))
+            stop(sprintf("The given 'z' array contains case(s) where no species occupy a site; see, for example, that z[%s, , %s] is a zero vector",
+                         which(z_allzero, arr.ind = T)[1, 1],
+                         which(z_allzero, arr.ind = T)[1, 2]))
+    }
+
     # Assert equality in species/site dimensions of z, theta, phi, and fit
     if (!is.null(fit)) {
         I <- dim(fit@data@y)[1]
