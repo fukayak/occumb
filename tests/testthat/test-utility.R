@@ -1280,6 +1280,18 @@ test_that("eutil() runs in parallel", {
     )
 })
 
+test_that("eutil() warns when utility when some util_rep values could not be calculated", {
+    phi   <- array(1E-10, dim = c(M, I, J))
+    expect_warning(
+        eutil(z, theta, phi, K, N, scale = "local", N_rep = 1, cores = 1),
+        "Case\\(s\\) arose in the replicated simulation where 'Utility' could not be calculated and were ignored. This result may sometimes occur stochastically; try repeat running to see if the same warning occurs. If the same result occurs frequently, the given 'theta' or 'phi' values might need to be higher."
+    )
+    expect_warning(
+        eutil(z, theta, phi, K, N, scale = "regional", N_rep = 1, cores = 1),
+        "Case\\(s\\) arose in the replicated simulation where 'Utility' could not be calculated and were ignored. This result may sometimes occur stochastically; try repeat running to see if the same warning occurs. If the same result occurs frequently, the given 'theta' or 'phi' values might need to be higher."
+    )
+})
+
 ### Tests for cutil ------------------------------------------------------------
 
 I <- 20; J <- 5; K <- 4; N <- 100

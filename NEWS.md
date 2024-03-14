@@ -6,6 +6,7 @@
 * Fix documents according to English proofreading.
 * Revise package documentation according to review comments.
 * Fix `summary()` method for `occumbFit`: no longer outputs comments on convergence and DIC.
+* Fix `eutil()` to warn when some `util_rep` values could not be calculated.
 
 ## occumb 1.0.3 (2024/01/04)
 * Internal changes to fix a number of known bugs and for more helpful error messages and additional tests.

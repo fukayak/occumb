@@ -848,7 +848,9 @@ eutil <- function(z, theta, phi, K, N, scale = c("local", "regional"),
         }
     }
 
-    mean(util_rep)
+    if (any(is.nan(util_rep)))
+        warning("Case(s) arose in the replicated simulation where 'Utility' could not be calculated and were ignored. This result may sometimes occur stochastically; try repeat running to see if the same warning occurs. If the same result occurs frequently, the given 'theta' or 'phi' values might need to be higher.")
+    mean(util_rep, na.rm = TRUE)
 }
 
 # @title Conditional utility function for local species diversity assessments.
