@@ -1,5 +1,5 @@
 ### Tests for eval_util_L/R ----------------------------------------------------
-I <- 2 # Number of species
+I <- 20 # Number of species
 J <- 2 # Number of sites
 K <- 2 # Number of replicates
 data <- occumbData(
@@ -1286,6 +1286,20 @@ test_that("eutil() runs in parallel", {
     )
 })
 
+test_that("eutil() outputs errors when executed in parallel", {
+    theta <- array(1E-10, dim = c(M, I, J))
+    suppressWarnings({
+    expect_error(
+        eutil(z, theta, phi, K, N, scale = "local", N_rep = 1, cores = 2)
+    )
+    })
+    suppressWarnings({
+    expect_error(
+        eutil(z, theta, phi, K, N, scale = "regional", N_rep = 1, cores = 2)
+    )
+    })
+})
+
 test_that("eutil() warns when utility when some util_rep values could not be calculated", {
     phi   <- array(1E-10, dim = c(M, I, J))
     expect_warning(
@@ -1348,5 +1362,17 @@ test_that("predict_detect_probs_regional() works as expected", {
     ans <- vector(length = I)
     for (i in seq_len(I)) ans[i] <- 1 - prod((1 - pi[i, , ])^N)
     expect_equal(predict_detect_probs_regional(pi, N), ans)
+})
+
+### Tests for sample_z ---------------------------------------------------------
+test_that("sample_z() stops when z sampling fails repeatedly", {
+    expect_error(sample_z(rep(1E-10, 2)),
+                 "Failed to generate valid 'z' values under the given parameter set. Providing 'psi' containing higher psi values may fix the issue.")
+})
+
+### Tests for sample_u ---------------------------------------------------------
+test_that("sample_u() stops when u sampling fails repeatedly", {
+    expect_error(sample_u(matrix(rep(1E-10, 2), 2, 1)),
+                 "Failed to generate valid 'u' values under the given parameter set. Providing 'theta' containing higher theta values may fix the issue.")
 })
 

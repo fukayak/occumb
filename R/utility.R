@@ -844,7 +844,7 @@ eutil <- function(z, theta, phi, K, N, scale = c("local", "regional"),
             )
         } else {
             # On Mac or Linux use mclapply() for multiple cores
-            util_rep <- unlist(
+            result <-
                 parallel::mclapply(mc.cores = cores,
                                    X = rep(seq_len(M), each = N_rep),
                                    FUN = fun,
@@ -853,7 +853,12 @@ eutil <- function(z, theta, phi, K, N, scale = c("local", "regional"),
                                                phi = phi,
                                                K = K,
                                                N = N))
-            )
+            is_error <- sapply(result, inherits, "try-error")
+            if (any(is_error)) {
+                stop(result[is_error][1])
+            } else {
+                util_rep <- unlist(result)
+            }
         }
     }
 
@@ -1035,9 +1040,11 @@ sample_z <- function(psi) {
     if (sum(z)) {
         return(z)
     } else {
-        while(sum(z) == 0)
+        for (i in seq_len(10000)) {
             z <- stats::rbinom(length(psi), 1, psi)
-        return(z)
+            if (sum(z)) return(z)
+        }
+        stop("Failed to generate valid 'z' values under the given parameter set. Providing 'psi' containing higher psi values may fix the issue.")
     }
 }
 
@@ -1050,11 +1057,17 @@ sample_u <- function(z_theta) {
     allzero <- which(colSums(u) == 0)
     if (length(allzero)) {
         for (n in seq_along(allzero)) {
-            while(sum(u[, allzero[n]]) == 0)
+            for (i in seq_len(10000)) {
                 u[, allzero[n]] <-
                     stats::rbinom(nrow(z_theta), 1, z_theta[, allzero[n]])
+                if (sum(u[, allzero[n]]) == 0) break
+            }
         }
-        return(u)
+        if (any(colSums(u) == 0)) {
+            stop("Failed to generate valid 'u' values under the given parameter set. Providing 'theta' containing higher theta values may fix the issue.")
+        } else {
+            return(u)
+        }
     } else {
         return(u)
     }
