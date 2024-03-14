@@ -12,7 +12,7 @@ species diversity assessment using Monte Carlo integration."><meta name="robots"
     
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.3.9009</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.3.9010</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -205,10 +205,12 @@ and Evolution</em> <strong>13</strong>:183--193.
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="co"># Generate the smallest random dataset (2 species * 2 sites * 2 reps)</span></span></span>
-<span class="r-in"><span><span class="va">I</span> <span class="op">&lt;-</span> <span class="fl">2</span> <span class="co"># Number of species</span></span></span>
-<span class="r-in"><span><span class="va">J</span> <span class="op">&lt;-</span> <span class="fl">2</span> <span class="co"># Number of sites</span></span></span>
-<span class="r-in"><span><span class="va">K</span> <span class="op">&lt;-</span> <span class="fl">2</span> <span class="co"># Number of replicates</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Generate a random dataset (20 species * 2 sites * 2 reps)</span></span></span>
+<span class="r-in"><span><span class="va">I</span> <span class="op">&lt;-</span> <span class="fl">20</span> <span class="co"># Number of species</span></span></span>
+<span class="r-in"><span><span class="va">J</span> <span class="op">&lt;-</span> <span class="fl">2</span>  <span class="co"># Number of sites</span></span></span>
+<span class="r-in"><span><span class="va">K</span> <span class="op">&lt;-</span> <span class="fl">2</span>  <span class="co"># Number of replicates</span></span></span>
 <span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="occumbData.html">occumbData</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample.int</a></span><span class="op">(</span><span class="va">I</span> <span class="op">*</span> <span class="va">J</span> <span class="op">*</span> <span class="va">K</span><span class="op">)</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">I</span>, <span class="va">J</span>, <span class="va">K</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -224,8 +226,8 @@ and Evolution</em> <strong>13</strong>:183--193.
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Allocating nodes</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Graph information:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Observed stochastic nodes: 4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Unobserved stochastic nodes: 31</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Total graph size: 133</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Unobserved stochastic nodes: 229</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Total graph size: 673</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Initializing model</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -248,117 +250,137 @@ and Evolution</em> <strong>13</strong>:183--193.
 <span class="r-in"><span><span class="op">(</span><span class="va">util1</span> <span class="op">&lt;-</span> <span class="fu">eval_util_R</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>J <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, K <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, N <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1E3</span>, <span class="fl">1E4</span>, <span class="fl">1E5</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                      <span class="va">fit</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    J K     N  Utility</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1 1 1e+03 1.992909</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  2 1 1e+03 1.998740</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  3 1 1e+03 1.999500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  1 2 1e+03 1.995526</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  2 2 1e+03 1.999000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  3 2 1e+03 1.999750</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  1 3 1e+03 1.998026</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  2 3 1e+03 1.998000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  3 3 1e+03 2.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 1 1 1e+04 1.992977</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 2 1 1e+04 1.998760</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 3 1 1e+04 1.999500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 1 2 1e+04 1.996060</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 2 2 1e+04 1.998250</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15 3 2 1e+04 1.999500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16 1 3 1e+04 1.996500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17 2 3 1e+04 1.999250</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18 3 3 1e+04 1.999750</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19 1 1 1e+05 1.993930</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20 2 1 1e+05 1.997836</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21 3 1 1e+05 1.999500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22 1 2 1e+05 1.996750</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23 2 2 1e+05 1.999000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24 3 2 1e+05 1.999500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25 1 3 1e+05 1.996500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26 2 3 1e+05 1.999000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27 3 3 1e+05 1.999250</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1 1 1e+03 19.80640</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  2 1 1e+03 19.97425</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  3 1 1e+03 19.99291</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  1 2 1e+03 19.88613</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  2 2 1e+03 19.97950</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  3 2 1e+03 19.99450</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  1 3 1e+03 19.88699</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  2 3 1e+03 19.98400</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  3 3 1e+03 19.99450</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 1 1 1e+04 19.84006</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 2 1 1e+04 19.97569</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 3 1 1e+04 19.99100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 1 2 1e+04 19.89600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 2 2 1e+04 19.97875</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 3 2 1e+04 19.99200</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16 1 3 1e+04 19.89425</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 2 3 1e+04 19.98425</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18 3 3 1e+04 19.99150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 1 1 1e+05 19.84624</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20 2 1 1e+05 19.97525</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21 3 1 1e+05 19.99075</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22 1 2 1e+05 19.88575</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23 2 2 1e+05 19.97850</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24 3 2 1e+05 19.99250</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25 1 3 1e+05 19.88675</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26 2 3 1e+05 19.97975</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27 3 3 1e+05 19.99325</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># J, K, and N values under specified budget and cost</span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">util2</span> <span class="op">&lt;-</span> <span class="fu">eval_util_R</span><span class="op">(</span><span class="fu"><a href="list_cond_R.html">list_cond_R</a></span><span class="op">(</span>budget <span class="op">=</span> <span class="fl">50000</span>,</span></span>
-<span class="r-in"><span>                                 lambda1 <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
-<span class="r-in"><span>                                 lambda2 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
-<span class="r-in"><span>                                 lambda3 <span class="op">=</span> <span class="fl">5000</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                  lambda1 <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
+<span class="r-in"><span>                                  lambda2 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
+<span class="r-in"><span>                                  lambda3 <span class="op">=</span> <span class="fl">5000</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                      <span class="va">fit</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    budget lambda1 lambda2 lambda3 J K          N  Utility</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   50000    0.01    5000    5000 1 1 4000000.00 1.995001</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   50000    0.01    5000    5000 2 1 1500000.00 1.999000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   50000    0.01    5000    5000 3 1  666666.67 1.999500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   50000    0.01    5000    5000 4 1  250000.00 1.999250</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   50000    0.01    5000    5000 1 2 1750000.00 1.996000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   50000    0.01    5000    5000 2 2  500000.00 1.999000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   50000    0.01    5000    5000 3 2   83333.33 1.999250</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   50000    0.01    5000    5000 1 3 1000000.00 1.996500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   50000    0.01    5000    5000 2 3  166666.67 1.999750</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  50000    0.01    5000    5000 1 4  625000.00 1.997250</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11  50000    0.01    5000    5000 1 5  400000.00 1.997500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12  50000    0.01    5000    5000 1 6  250000.00 1.997500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13  50000    0.01    5000    5000 1 7  142857.14 1.996000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14  50000    0.01    5000    5000 1 8   62500.00 1.996500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   50000    0.01    5000    5000 1 1 4000000.00 19.83575</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   50000    0.01    5000    5000 2 1 1500000.00 19.97650</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   50000    0.01    5000    5000 3 1  666666.67 19.99425</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   50000    0.01    5000    5000 4 1  250000.00 19.99675</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   50000    0.01    5000    5000 1 2 1750000.00 19.89075</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   50000    0.01    5000    5000 2 2  500000.00 19.98075</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   50000    0.01    5000    5000 3 2   83333.33 19.99250</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   50000    0.01    5000    5000 1 3 1000000.00 19.89250</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   50000    0.01    5000    5000 2 3  166666.67 19.98100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  50000    0.01    5000    5000 1 4  625000.00 19.89600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11  50000    0.01    5000    5000 1 5  400000.00 19.88925</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12  50000    0.01    5000    5000 1 6  250000.00 19.90025</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13  50000    0.01    5000    5000 1 7  142857.14 19.89300</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14  50000    0.01    5000    5000 1 8   62500.00 19.88900</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># K values restricted</span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">util3</span> <span class="op">&lt;-</span> <span class="fu">eval_util_R</span><span class="op">(</span><span class="fu"><a href="list_cond_R.html">list_cond_R</a></span><span class="op">(</span>budget <span class="op">=</span> <span class="fl">50000</span>,</span></span>
-<span class="r-in"><span>                                 lambda1 <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
-<span class="r-in"><span>                                 lambda2 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
-<span class="r-in"><span>                                 lambda3 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
-<span class="r-in"><span>                                 K <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                  lambda1 <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
+<span class="r-in"><span>                                  lambda2 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
+<span class="r-in"><span>                                  lambda3 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
+<span class="r-in"><span>                                  K <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                      <span class="va">fit</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    budget lambda1 lambda2 lambda3 J K          N  Utility</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   50000    0.01    5000    5000 1 1 4000000.00 1.995247</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   50000    0.01    5000    5000 2 1 1500000.00 1.998000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   50000    0.01    5000    5000 3 1  666666.67 1.999000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   50000    0.01    5000    5000 4 1  250000.00 1.999750</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   50000    0.01    5000    5000 1 2 1750000.00 1.997000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   50000    0.01    5000    5000 2 2  500000.00 1.998500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   50000    0.01    5000    5000 3 2   83333.33 1.999750</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   50000    0.01    5000    5000 1 3 1000000.00 1.995500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   50000    0.01    5000    5000 2 3  166666.67 1.999000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  50000    0.01    5000    5000 1 4  625000.00 1.996750</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11  50000    0.01    5000    5000 1 5  400000.00 1.999000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   50000    0.01    5000    5000 1 1 4000000.00 19.85850</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   50000    0.01    5000    5000 2 1 1500000.00 19.97550</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   50000    0.01    5000    5000 3 1  666666.67 19.99100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   50000    0.01    5000    5000 4 1  250000.00 19.99500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   50000    0.01    5000    5000 1 2 1750000.00 19.90200</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   50000    0.01    5000    5000 2 2  500000.00 19.97850</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   50000    0.01    5000    5000 3 2   83333.33 19.99400</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   50000    0.01    5000    5000 1 3 1000000.00 19.88375</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   50000    0.01    5000    5000 2 3  166666.67 19.98100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  50000    0.01    5000    5000 1 4  625000.00 19.89225</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11  50000    0.01    5000    5000 1 5  400000.00 19.89425</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># J and K values restricted</span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">util4</span> <span class="op">&lt;-</span> <span class="fu">eval_util_R</span><span class="op">(</span><span class="fu"><a href="list_cond_R.html">list_cond_R</a></span><span class="op">(</span>budget <span class="op">=</span> <span class="fl">50000</span>,</span></span>
-<span class="r-in"><span>                                 lambda1 <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
-<span class="r-in"><span>                                 lambda2 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
-<span class="r-in"><span>                                 lambda3 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
-<span class="r-in"><span>                                 J <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, K <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                  lambda1 <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
+<span class="r-in"><span>                                  lambda2 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
+<span class="r-in"><span>                                  lambda3 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
+<span class="r-in"><span>                                  J <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, K <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                      <span class="va">fit</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    budget lambda1 lambda2 lambda3 J K          N  Utility</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   50000    0.01    5000    5000 1 1 4000000.00 1.995590</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   50000    0.01    5000    5000 2 1 1500000.00 1.998724</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   50000    0.01    5000    5000 3 1  666666.67 2.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   50000    0.01    5000    5000 1 2 1750000.00 1.998000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   50000    0.01    5000    5000 2 2  500000.00 1.999000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   50000    0.01    5000    5000 3 2   83333.33 1.999250</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   50000    0.01    5000    5000 1 3 1000000.00 1.996750</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   50000    0.01    5000    5000 2 3  166666.67 1.999250</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   50000    0.01    5000    5000 1 4  625000.00 1.996250</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  50000    0.01    5000    5000 1 5  400000.00 1.998250</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   50000    0.01    5000    5000 1 1 4000000.00 19.84800</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   50000    0.01    5000    5000 2 1 1500000.00 19.97450</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   50000    0.01    5000    5000 3 1  666666.67 19.99100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   50000    0.01    5000    5000 1 2 1750000.00 19.88450</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   50000    0.01    5000    5000 2 2  500000.00 19.97850</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   50000    0.01    5000    5000 3 2   83333.33 19.99150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   50000    0.01    5000    5000 1 3 1000000.00 19.89500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   50000    0.01    5000    5000 2 3  166666.67 19.97900</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   50000    0.01    5000    5000 1 4  625000.00 19.89375</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  50000    0.01    5000    5000 1 5  400000.00 19.89575</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># theta and phi values supplied</span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">util5</span> <span class="op">&lt;-</span> <span class="fu">eval_util_R</span><span class="op">(</span><span class="fu"><a href="list_cond_R.html">list_cond_R</a></span><span class="op">(</span>budget <span class="op">=</span> <span class="fl">50000</span>,</span></span>
-<span class="r-in"><span>                                 lambda1 <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
-<span class="r-in"><span>                                 lambda2 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
-<span class="r-in"><span>                                 lambda3 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
-<span class="r-in"><span>                                 J <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, K <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                  lambda1 <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
+<span class="r-in"><span>                                  lambda2 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
+<span class="r-in"><span>                                  lambda3 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
+<span class="r-in"><span>                                  J <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, K <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                      <span class="va">fit</span>,</span></span>
-<span class="r-in"><span>                      theta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0.5</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                      phi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in sample_u(z * theta):</span> Failed to generate valid 'u' values under the given parameter set. Providing 'theta' containing higher theta values may fix the issue.</span>
+<span class="r-in"><span>                      theta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0.5</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="va">I</span>, <span class="va">J</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                      phi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="va">I</span>, <span class="va">J</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    budget lambda1 lambda2 lambda3 J K          N  Utility</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   50000    0.01    5000    5000 1 1 4000000.00  9.97825</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   50000    0.01    5000    5000 2 1 1500000.00 14.90850</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   50000    0.01    5000    5000 3 1  666666.67 17.42767</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   50000    0.01    5000    5000 1 2 1750000.00 14.88425</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   50000    0.01    5000    5000 2 2  500000.00 18.71124</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   50000    0.01    5000    5000 3 2   83333.33 19.66727</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   50000    0.01    5000    5000 1 3 1000000.00 17.42300</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   50000    0.01    5000    5000 2 3  166666.67 19.65025</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   50000    0.01    5000    5000 1 4  625000.00 18.66550</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  50000    0.01    5000    5000 1 5  400000.00 19.25875</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># psi, theta, and phi values, but no fit object supplied</span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">util6</span> <span class="op">&lt;-</span> <span class="fu">eval_util_R</span><span class="op">(</span><span class="fu"><a href="list_cond_R.html">list_cond_R</a></span><span class="op">(</span>budget <span class="op">=</span> <span class="fl">50000</span>,</span></span>
-<span class="r-in"><span>                                 lambda1 <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
-<span class="r-in"><span>                                 lambda2 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
-<span class="r-in"><span>                                 lambda3 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
-<span class="r-in"><span>                                 J <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, K <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                  lambda1 <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
+<span class="r-in"><span>                                  lambda2 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
+<span class="r-in"><span>                                  lambda3 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
+<span class="r-in"><span>                                  J <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, K <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                      fit <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
-<span class="r-in"><span>                      psi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0.5</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                      theta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0.5</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                      phi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in sample_u(z * theta):</span> Failed to generate valid 'u' values under the given parameter set. Providing 'theta' containing higher theta values may fix the issue.</span>
+<span class="r-in"><span>                      psi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0.9</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="va">I</span>, <span class="va">J</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                      theta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0.9</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="va">I</span>, <span class="va">J</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                      phi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="va">I</span>, <span class="va">J</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    budget lambda1 lambda2 lambda3 J K          N  Utility</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   50000    0.01    5000    5000 1 1 4000000.00 16.18223</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   50000    0.01    5000    5000 2 1 1500000.00 19.28467</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   50000    0.01    5000    5000 3 1  666666.67 19.86450</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   50000    0.01    5000    5000 1 2 1750000.00 17.79325</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   50000    0.01    5000    5000 2 2  500000.00 19.76721</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   50000    0.01    5000    5000 3 2   83333.33 19.97950</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   50000    0.01    5000    5000 1 3 1000000.00 17.99450</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   50000    0.01    5000    5000 2 3  166666.67 19.80000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   50000    0.01    5000    5000 1 4  625000.00 17.97675</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  50000    0.01    5000    5000 1 5  400000.00 17.98575</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

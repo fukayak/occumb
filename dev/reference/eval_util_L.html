@@ -12,7 +12,7 @@ species diversity assessment by using Monte Carlo integration."><meta name="robo
     
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.3.9009</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.3.9010</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -197,10 +197,12 @@ and Evolution</em> <strong>13</strong>:183--193.
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="co"># Generate the smallest random dataset (2 species * 2 sites * 2 reps)</span></span></span>
-<span class="r-in"><span><span class="va">I</span> <span class="op">&lt;-</span> <span class="fl">2</span> <span class="co"># Number of species</span></span></span>
-<span class="r-in"><span><span class="va">J</span> <span class="op">&lt;-</span> <span class="fl">2</span> <span class="co"># Number of sites</span></span></span>
-<span class="r-in"><span><span class="va">K</span> <span class="op">&lt;-</span> <span class="fl">2</span> <span class="co"># Number of replicates</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Generate a random dataset (20 species * 2 sites * 2 reps)</span></span></span>
+<span class="r-in"><span><span class="va">I</span> <span class="op">&lt;-</span> <span class="fl">20</span> <span class="co"># Number of species</span></span></span>
+<span class="r-in"><span><span class="va">J</span> <span class="op">&lt;-</span> <span class="fl">2</span>  <span class="co"># Number of sites</span></span></span>
+<span class="r-in"><span><span class="va">K</span> <span class="op">&lt;-</span> <span class="fl">2</span>  <span class="co"># Number of replicates</span></span></span>
 <span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="occumbData.html">occumbData</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample.int</a></span><span class="op">(</span><span class="va">I</span> <span class="op">*</span> <span class="va">J</span> <span class="op">*</span> <span class="va">K</span><span class="op">)</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">I</span>, <span class="va">J</span>, <span class="va">K</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -216,8 +218,8 @@ and Evolution</em> <strong>13</strong>:183--193.
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Allocating nodes</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Graph information:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Observed stochastic nodes: 4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Unobserved stochastic nodes: 31</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Total graph size: 133</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Unobserved stochastic nodes: 229</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Total graph size: 673</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Initializing model</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -240,15 +242,15 @@ and Evolution</em> <strong>13</strong>:183--193.
 <span class="r-in"><span><span class="op">(</span><span class="va">util1</span> <span class="op">&lt;-</span> <span class="fu">eval_util_L</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>K <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, N <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1E3</span>, <span class="fl">1E4</span>, <span class="fl">1E5</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                      <span class="va">fit</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   K     N  Utility</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 1 1e+03 1.997374</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2 1e+03 2.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 3 1e+03 1.999875</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 1 1e+04 1.997094</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2 1e+04 1.999625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 3 1e+04 2.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7 1 1e+05 1.998705</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8 2 1e+05 1.999737</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9 3 1e+05 1.999875</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 1 1e+03 19.92034</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2 1e+03 19.99545</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 3 1e+03 19.99875</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 1 1e+04 19.95207</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2 1e+04 19.99525</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 3 1e+04 19.99888</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 1 1e+05 19.95416</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 2 1e+05 19.99475</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 3 1e+05 19.99875</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># K and N values under specified budget and cost</span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">util2</span> <span class="op">&lt;-</span> <span class="fu">eval_util_L</span><span class="op">(</span><span class="fu"><a href="list_cond_L.html">list_cond_L</a></span><span class="op">(</span>budget <span class="op">=</span> <span class="fl">1E5</span>,</span></span>
@@ -256,7 +258,16 @@ and Evolution</em> <strong>13</strong>:183--193.
 <span class="r-in"><span>                                  lambda2 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
 <span class="r-in"><span>                                  <span class="va">fit</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                      <span class="va">fit</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in sample_u(z * theta):</span> Failed to generate valid 'u' values under the given parameter set. Providing 'theta' containing higher theta values may fix the issue.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   budget lambda1 lambda2 K          N  Utility</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1e+05    0.01    5000 1 4500000.00 19.95200</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  1e+05    0.01    5000 2 2000000.00 19.99588</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  1e+05    0.01    5000 3 1166666.67 19.99912</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  1e+05    0.01    5000 4  750000.00 19.99975</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  1e+05    0.01    5000 5  500000.00 19.99963</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1e+05    0.01    5000 6  333333.33 20.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  1e+05    0.01    5000 7  214285.71 20.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  1e+05    0.01    5000 8  125000.00 20.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1e+05    0.01    5000 9   55555.56 20.00000</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># K values restricted</span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">util3</span> <span class="op">&lt;-</span> <span class="fu">eval_util_L</span><span class="op">(</span><span class="fu"><a href="list_cond_L.html">list_cond_L</a></span><span class="op">(</span>budget <span class="op">=</span> <span class="fl">1E5</span>,</span></span>
@@ -266,34 +277,44 @@ and Evolution</em> <strong>13</strong>:183--193.
 <span class="r-in"><span>                                  K <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                      <span class="va">fit</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   budget lambda1 lambda2 K       N  Utility</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1e+05    0.01    5000 1 4500000 1.997875</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  1e+05    0.01    5000 2 2000000 1.999875</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  1e+05    0.01    5000 3 1166667 1.999875</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  1e+05    0.01    5000 4  750000 2.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  1e+05    0.01    5000 5  500000 2.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1e+05    0.01    5000 1 4500000 19.95175</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  1e+05    0.01    5000 2 2000000 19.99600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  1e+05    0.01    5000 3 1166667 19.99850</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  1e+05    0.01    5000 4  750000 19.99963</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  1e+05    0.01    5000 5  500000 19.99963</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># theta and phi values supplied</span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">util4</span> <span class="op">&lt;-</span> <span class="fu">eval_util_L</span><span class="op">(</span><span class="fu"><a href="list_cond_L.html">list_cond_L</a></span><span class="op">(</span>budget <span class="op">=</span> <span class="fl">1E5</span>,</span></span>
-<span class="r-in"><span>                                 lambda1 <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
-<span class="r-in"><span>                                 lambda2 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
-<span class="r-in"><span>                                 <span class="va">fit</span>,</span></span>
-<span class="r-in"><span>                                 K <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                  lambda1 <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
+<span class="r-in"><span>                                  lambda2 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
+<span class="r-in"><span>                                  <span class="va">fit</span>,</span></span>
+<span class="r-in"><span>                                  K <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                      <span class="va">fit</span>,</span></span>
-<span class="r-in"><span>                      theta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0.5</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                      phi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in sample_u(z * theta):</span> Failed to generate valid 'u' values under the given parameter set. Providing 'theta' containing higher theta values may fix the issue.</span>
+<span class="r-in"><span>                      theta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0.5</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="va">I</span>, <span class="va">J</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                      phi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="va">I</span>, <span class="va">J</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   budget lambda1 lambda2 K       N  Utility</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1e+05    0.01    5000 1 4500000  9.96600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  1e+05    0.01    5000 2 2000000 15.00973</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  1e+05    0.01    5000 3 1166667 17.49592</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  1e+05    0.01    5000 4  750000 18.73355</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  1e+05    0.01    5000 5  500000 19.36387</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># z, theta, and phi values, but no fit object supplied</span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">util5</span> <span class="op">&lt;-</span> <span class="fu">eval_util_L</span><span class="op">(</span><span class="fu"><a href="list_cond_L.html">list_cond_L</a></span><span class="op">(</span>budget <span class="op">=</span> <span class="fl">1E5</span>,</span></span>
-<span class="r-in"><span>                                 lambda1 <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
-<span class="r-in"><span>                                 lambda2 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
-<span class="r-in"><span>                                 <span class="va">fit</span>,</span></span>
-<span class="r-in"><span>                                 K <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                  lambda1 <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
+<span class="r-in"><span>                                  lambda2 <span class="op">=</span> <span class="fl">5000</span>,</span></span>
+<span class="r-in"><span>                                  <span class="va">fit</span>,</span></span>
+<span class="r-in"><span>                                  K <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                      fit <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
-<span class="r-in"><span>                      z <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                      theta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0.5</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                      phi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in sample_u(z * theta):</span> Failed to generate valid 'u' values under the given parameter set. Providing 'theta' containing higher theta values may fix the issue.</span>
+<span class="r-in"><span>                      z <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="va">I</span>, <span class="va">J</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                      theta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0.5</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="va">I</span>, <span class="va">J</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                      phi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="va">I</span>, <span class="va">J</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   budget lambda1 lambda2 K       N   Utility</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1e+05    0.01    5000 1 4500000  9.990594</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  1e+05    0.01    5000 2 2000000 14.971293</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  1e+05    0.01    5000 3 1166667 17.508238</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  1e+05    0.01    5000 4  750000 18.746519</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  1e+05    0.01    5000 5  500000 19.383884</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
