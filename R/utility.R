@@ -93,10 +93,12 @@
 #'      \doi{10.1111/2041-210X.13732}
 #' @examples
 #' \donttest{
-#' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
-#' I <- 2 # Number of species
-#' J <- 2 # Number of sites
-#' K <- 2 # Number of replicates
+#' set.seed(1)
+#'
+#' # Generate a random dataset (20 species * 2 sites * 2 reps)
+#' I <- 20 # Number of species
+#' J <- 2  # Number of sites
+#' K <- 2  # Number of replicates
 #' data <- occumbData(
 #'     y = array(sample.int(I * J * K), dim = c(I, J, K)))
 #'
@@ -125,24 +127,24 @@
 #'
 #' # theta and phi values supplied
 #' (util4 <- eval_util_L(list_cond_L(budget = 1E5,
-#'                                  lambda1 = 0.01,
-#'                                  lambda2 = 5000,
-#'                                  fit,
-#'                                  K = 1:5),
+#'                                   lambda1 = 0.01,
+#'                                   lambda2 = 5000,
+#'                                   fit,
+#'                                   K = 1:5),
 #'                       fit,
-#'                       theta = array(0.5, dim = c(4000, 2, 2)),
-#'                       phi = array(1, dim = c(4000, 2, 2))))
+#'                       theta = array(0.5, dim = c(4000, I, J)),
+#'                       phi = array(1, dim = c(4000, I, J))))
 #' 
 #' # z, theta, and phi values, but no fit object supplied
 #' (util5 <- eval_util_L(list_cond_L(budget = 1E5,
-#'                                  lambda1 = 0.01,
-#'                                  lambda2 = 5000,
-#'                                  fit,
-#'                                  K = 1:5),
+#'                                   lambda1 = 0.01,
+#'                                   lambda2 = 5000,
+#'                                   fit,
+#'                                   K = 1:5),
 #'                       fit = NULL,
-#'                       z = array(1, dim = c(4000, 2, 2)),
-#'                       theta = array(0.5, dim = c(4000, 2, 2)),
-#'                       phi = array(1, dim = c(4000, 2, 2))))
+#'                       z = array(1, dim = c(4000, I, J)),
+#'                       theta = array(0.5, dim = c(4000, I, J)),
+#'                       phi = array(1, dim = c(4000, I, J))))
 #' }
 #' @export
 eval_util_L <- function(settings,
@@ -306,10 +308,12 @@ eval_util_L <- function(settings,
 #'      \doi{10.1111/2041-210X.13732}
 #' @examples
 #' \donttest{
-#' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
-#' I <- 2 # Number of species
-#' J <- 2 # Number of sites
-#' K <- 2 # Number of replicates
+#' set.seed(1)
+#'
+#' # Generate a random dataset (20 species * 2 sites * 2 reps)
+#' I <- 20 # Number of species
+#' J <- 2  # Number of sites
+#' K <- 2  # Number of replicates
 #' data <- occumbData(
 #'     y = array(sample.int(I * J * K), dim = c(I, J, K)))
 #'
@@ -323,47 +327,47 @@ eval_util_L <- function(settings,
 #'
 #' # J, K, and N values under specified budget and cost
 #' (util2 <- eval_util_R(list_cond_R(budget = 50000,
-#'                                  lambda1 = 0.01,
-#'                                  lambda2 = 5000,
-#'                                  lambda3 = 5000),
+#'                                   lambda1 = 0.01,
+#'                                   lambda2 = 5000,
+#'                                   lambda3 = 5000),
 #'                       fit))
 #'
 #' # K values restricted
 #' (util3 <- eval_util_R(list_cond_R(budget = 50000,
-#'                                  lambda1 = 0.01,
-#'                                  lambda2 = 5000,
-#'                                  lambda3 = 5000,
-#'                                  K = 1:5),
+#'                                   lambda1 = 0.01,
+#'                                   lambda2 = 5000,
+#'                                   lambda3 = 5000,
+#'                                   K = 1:5),
 #'                       fit))
 #'
 #' # J and K values restricted
 #' (util4 <- eval_util_R(list_cond_R(budget = 50000,
-#'                                  lambda1 = 0.01,
-#'                                  lambda2 = 5000,
-#'                                  lambda3 = 5000,
-#'                                  J = 1:3, K = 1:5),
+#'                                   lambda1 = 0.01,
+#'                                   lambda2 = 5000,
+#'                                   lambda3 = 5000,
+#'                                   J = 1:3, K = 1:5),
 #'                       fit))
 #'
 #' # theta and phi values supplied
 #' (util5 <- eval_util_R(list_cond_R(budget = 50000,
-#'                                  lambda1 = 0.01,
-#'                                  lambda2 = 5000,
-#'                                  lambda3 = 5000,
-#'                                  J = 1:3, K = 1:5),
+#'                                   lambda1 = 0.01,
+#'                                   lambda2 = 5000,
+#'                                   lambda3 = 5000,
+#'                                   J = 1:3, K = 1:5),
 #'                       fit,
-#'                       theta = array(0.5, dim = c(4000, 2, 2)),
-#'                       phi = array(1, dim = c(4000, 2, 2))))
+#'                       theta = array(0.5, dim = c(4000, I, J)),
+#'                       phi = array(1, dim = c(4000, I, J))))
 #' 
 #' # psi, theta, and phi values, but no fit object supplied
 #' (util6 <- eval_util_R(list_cond_R(budget = 50000,
-#'                                  lambda1 = 0.01,
-#'                                  lambda2 = 5000,
-#'                                  lambda3 = 5000,
-#'                                  J = 1:3, K = 1:5),
+#'                                   lambda1 = 0.01,
+#'                                   lambda2 = 5000,
+#'                                   lambda3 = 5000,
+#'                                   J = 1:3, K = 1:5),
 #'                       fit = NULL,
-#'                       psi = array(0.5, dim = c(4000, 2, 2)),
-#'                       theta = array(0.5, dim = c(4000, 2, 2)),
-#'                       phi = array(1, dim = c(4000, 2, 2))))
+#'                       psi = array(0.9, dim = c(4000, I, J)),
+#'                       theta = array(0.9, dim = c(4000, I, J)),
+#'                       phi = array(1, dim = c(4000, I, J))))
 #' }
 #' @export
 eval_util_R <- function(settings,
@@ -1064,7 +1068,7 @@ sample_u <- function(z_theta) {
             }
         }
         if (any(colSums(u) == 0)) {
-            stop("Failed to generate valid 'u' values under the given parameter set. Providing 'theta' containing higher theta values may fix the issue.")
+            stop("Failed to generate valid 'u' values under the given parameter set. Providing 'theta' or 'psi' containing higher probability values may fix the issue.")
         } else {
             return(u)
         }

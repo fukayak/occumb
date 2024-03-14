@@ -123,10 +123,12 @@ and Evolution} \strong{13}:183--193.
 
 \examples{
 \donttest{
-# Generate the smallest random dataset (2 species * 2 sites * 2 reps)
-I <- 2 # Number of species
-J <- 2 # Number of sites
-K <- 2 # Number of replicates
+set.seed(1)
+
+# Generate a random dataset (20 species * 2 sites * 2 reps)
+I <- 20 # Number of species
+J <- 2  # Number of sites
+K <- 2  # Number of replicates
 data <- occumbData(
     y = array(sample.int(I * J * K), dim = c(I, J, K)))
 
@@ -155,23 +157,23 @@ fit <- occumb(data = data)
 
 # theta and phi values supplied
 (util4 <- eval_util_L(list_cond_L(budget = 1E5,
-                                 lambda1 = 0.01,
-                                 lambda2 = 5000,
-                                 fit,
-                                 K = 1:5),
+                                  lambda1 = 0.01,
+                                  lambda2 = 5000,
+                                  fit,
+                                  K = 1:5),
                       fit,
-                      theta = array(0.5, dim = c(4000, 2, 2)),
-                      phi = array(1, dim = c(4000, 2, 2))))
+                      theta = array(0.5, dim = c(4000, I, J)),
+                      phi = array(1, dim = c(4000, I, J))))
 
 # z, theta, and phi values, but no fit object supplied
 (util5 <- eval_util_L(list_cond_L(budget = 1E5,
-                                 lambda1 = 0.01,
-                                 lambda2 = 5000,
-                                 fit,
-                                 K = 1:5),
+                                  lambda1 = 0.01,
+                                  lambda2 = 5000,
+                                  fit,
+                                  K = 1:5),
                       fit = NULL,
-                      z = array(1, dim = c(4000, 2, 2)),
-                      theta = array(0.5, dim = c(4000, 2, 2)),
-                      phi = array(1, dim = c(4000, 2, 2))))
+                      z = array(1, dim = c(4000, I, J)),
+                      theta = array(0.5, dim = c(4000, I, J)),
+                      phi = array(1, dim = c(4000, I, J))))
 }
 }

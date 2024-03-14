@@ -1,4 +1,5 @@
 ### Tests for eval_util_L/R ----------------------------------------------------
+set.seed(1)
 I <- 20 # Number of species
 J <- 2 # Number of sites
 K <- 2 # Number of replicates
@@ -1373,6 +1374,6 @@ test_that("sample_z() stops when z sampling fails repeatedly", {
 ### Tests for sample_u ---------------------------------------------------------
 test_that("sample_u() stops when u sampling fails repeatedly", {
     expect_error(sample_u(matrix(rep(1E-10, 2), 2, 1)),
-                 "Failed to generate valid 'u' values under the given parameter set. Providing 'theta' containing higher theta values may fix the issue.")
+                 "Failed to generate valid 'u' values under the given parameter set. Providing 'theta' or 'psi' containing higher probability values may fix the issue.")
 })
 

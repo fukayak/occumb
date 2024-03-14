@@ -9,6 +9,7 @@
 * Fix `eutil()` to warn when some `util_rep` values could not be calculated.
 * Fix `check_args_eval_util_L()` to block `z` with sites occupied by no species.
 * Fix `sample_z()` and `sample_u()` to avoid infinite loop; also fix `eutil()` to output errors when executed in parallel.
+* Fix `eval_util_L/R()` examples and tests to avoid errors; also fix the `sample_u()` error message.
 
 ## occumb 1.0.3 (2024/01/04)
 * Internal changes to fix a number of known bugs and for more helpful error messages and additional tests.
