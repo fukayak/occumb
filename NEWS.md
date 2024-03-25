@@ -12,6 +12,7 @@
 * Fix `eval_util_L/R()` examples and tests to avoid errors; also fix the `sample_u()` error message.
 * Minor fix to improve readability of `predict()` tests.
 * Add `parameter` and `scale` attributes to `predict()` output.
+* Add vignette section demonstrating `predict()`.
 
 ## occumb 1.0.3 (2024/01/04)
 * Internal changes to fix a number of known bugs and for more helpful error messages and additional tests.
