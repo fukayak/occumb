@@ -15,7 +15,7 @@ data <- occumbData(y = y,
                                    cov10 = matrix(letters[1:(J * K)], J, K),
                                    cov11 = matrix(rep(c(TRUE, FALSE), J * K / 2), J, K)))
 
-### Tests for errors and warnings ----------------------------------------------
+### Tests for check_newdata() --------------------------------------------------
 test_that("check_newdata() works correctly", {
     fit <- occumb(data = data,
                   n.chains = 1, n.burnin = 10, n.thin = 1, n.iter = 20,
@@ -663,6 +663,7 @@ test_that("check_newdata() works correctly", {
   repl_cov: cov9, cov10, cov11 \\(newdata\\); \\(None\\) \\(fitted data\\)")
 })
 
+### Tests for newdata labels ---------------------------------------------------
 test_that("Species labels are copied correctly", {
     fit <- occumb(data = data,
                   n.chains = 1, n.burnin = 10, n.thin = 1, n.iter = 20,
@@ -687,7 +688,6 @@ test_that("Species labels are copied correctly", {
 })
 
 ### Tests for the function output ----------------------------------------------
-
 test_that("Prediction and addition of attributes for phi works correctly", {
     N <- 10
 
