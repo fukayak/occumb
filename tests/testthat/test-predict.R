@@ -716,6 +716,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
 
     ans  <- apply(pred_link, 2:length(dim(pred_link)),
                   quantile, probs = c(0.5, 0.025, 0.975))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -729,6 +730,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- exp(ans)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -742,6 +744,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -755,6 +758,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- array(apply(exp(pred_link), 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -768,6 +772,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- pred_link
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -781,6 +786,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- exp(pred_link)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -814,6 +820,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
 
     ans  <- apply(pred_link, 2:length(dim(pred_link)),
                   quantile, probs = c(0.5, 0.025, 0.975))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -828,6 +835,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
 
     ans  <- exp(ans)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -843,6 +851,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
 
     ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean),
                   c(1, dim(pred_link)[-1]))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -858,6 +867,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
 
     ans  <- array(apply(exp(pred_link), 2:length(dim(pred_link)), mean),
                   c(1, dim(pred_link)[-1]))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -872,6 +882,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
 
     ans  <- pred_link
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -886,6 +897,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
 
     ans  <- exp(pred_link)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -923,6 +935,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
 
     ans  <- apply(pred_link, 2:length(dim(pred_link)),
                   quantile, probs = c(0.5, 0.025, 0.975))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -939,6 +952,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
 
     ans  <- exp(ans)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -956,6 +970,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
 
     ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean),
                   c(1, dim(pred_link)[-1]))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -973,6 +988,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
 
     ans  <- array(apply(exp(pred_link), 2:length(dim(pred_link)), mean),
                   c(1, dim(pred_link)[-1]))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -989,6 +1005,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
 
     ans  <- pred_link
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1005,6 +1022,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
 
     ans  <- exp(pred_link)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1038,6 +1056,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
 
     ans  <- apply(pred_link, 2:length(dim(pred_link)),
                   quantile, probs = c(0.5, 0.025, 0.975))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1051,6 +1070,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- exp(ans)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1064,6 +1084,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1077,6 +1098,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- array(apply(exp(pred_link), 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1090,6 +1112,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- pred_link
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1103,6 +1126,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- exp(pred_link)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1135,6 +1159,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
 
     ans  <- apply(pred_link, 2:length(dim(pred_link)),
                   quantile, probs = c(0.5, 0.025, 0.975))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1148,6 +1173,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- exp(ans)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1161,6 +1187,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1174,6 +1201,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- array(apply(exp(pred_link), 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1187,6 +1215,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- pred_link
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1200,6 +1229,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- exp(pred_link)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1236,6 +1266,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
 
     ans  <- apply(pred_link, 2:length(dim(pred_link)),
                   quantile, probs = c(0.5, 0.025, 0.975))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1250,6 +1281,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
 
     ans  <- exp(ans)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1265,6 +1297,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
 
     ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean),
                   c(1, dim(pred_link)[-1]))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1280,6 +1313,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
 
     ans  <- array(apply(exp(pred_link), 2:length(dim(pred_link)), mean),
                   c(1, dim(pred_link)[-1]))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1294,6 +1328,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
 
     ans  <- pred_link
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1308,6 +1343,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
 
     ans  <- exp(pred_link)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1348,6 +1384,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
 
     ans  <- apply(pred_link, 2:length(dim(pred_link)),
                   quantile, probs = c(0.5, 0.025, 0.975))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1364,6 +1401,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
 
     ans  <- exp(ans)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1381,6 +1419,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
 
     ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean),
                   c(1, dim(pred_link)[-1]))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1398,6 +1437,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
 
     ans  <- array(apply(exp(pred_link), 2:length(dim(pred_link)), mean),
                   c(1, dim(pred_link)[-1]))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1414,6 +1454,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
 
     ans  <- pred_link
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1430,6 +1471,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
     expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
 
     ans  <- exp(pred_link)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1463,6 +1505,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
 
     ans  <- apply(pred_link, 2:length(dim(pred_link)),
                   quantile, probs = c(0.5, 0.025, 0.975))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1476,6 +1519,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- plogis(ans)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1489,6 +1533,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1502,6 +1547,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- array(apply(plogis(pred_link), 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1515,6 +1561,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- pred_link
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1528,6 +1575,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- plogis(pred_link)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1561,6 +1609,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
 
     ans  <- apply(pred_link, 2:length(dim(pred_link)),
                   quantile, probs = c(0.5, 0.025, 0.975))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1575,6 +1624,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
 
     ans  <- plogis(ans)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1590,6 +1640,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
 
     ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean),
                   c(1, dim(pred_link)[-1]))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1605,6 +1656,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
 
     ans  <- array(apply(plogis(pred_link), 2:length(dim(pred_link)), mean),
                   c(1, dim(pred_link)[-1]))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1619,6 +1671,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
 
     ans  <- pred_link
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1633,6 +1686,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
 
     ans  <- plogis(pred_link)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1670,6 +1724,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
 
     ans  <- apply(pred_link, 2:length(dim(pred_link)),
                   quantile, probs = c(0.5, 0.025, 0.975))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1686,6 +1741,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
 
     ans  <- plogis(ans)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1703,6 +1759,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
 
     ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean),
                   c(1, dim(pred_link)[-1]))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1720,6 +1777,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
 
     ans  <- array(apply(plogis(pred_link), 2:length(dim(pred_link)), mean),
                   c(1, dim(pred_link)[-1]))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1736,6 +1794,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
 
     ans  <- pred_link
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1752,6 +1811,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
 
     ans  <- plogis(pred_link)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1785,6 +1845,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
 
     ans  <- apply(pred_link, 2:length(dim(pred_link)),
                   quantile, probs = c(0.5, 0.025, 0.975))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1798,6 +1859,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- plogis(ans)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1811,6 +1873,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1824,6 +1887,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- array(apply(plogis(pred_link), 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1837,6 +1901,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- pred_link
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1850,6 +1915,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- plogis(pred_link)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1882,6 +1948,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
 
     ans  <- apply(pred_link, 2:length(dim(pred_link)),
                   quantile, probs = c(0.5, 0.025, 0.975))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1895,6 +1962,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- plogis(ans)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1908,6 +1976,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1921,6 +1990,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- array(apply(plogis(pred_link), 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1934,6 +2004,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- pred_link
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1947,6 +2018,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- plogis(pred_link)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1983,6 +2055,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
 
     ans  <- apply(pred_link, 2:length(dim(pred_link)),
                   quantile, probs = c(0.5, 0.025, 0.975))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -1997,6 +2070,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
 
     ans  <- plogis(ans)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2012,6 +2086,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
 
     ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean),
                   c(1, dim(pred_link)[-1]))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2027,6 +2102,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
 
     ans  <- array(apply(plogis(pred_link), 2:length(dim(pred_link)), mean),
                   c(1, dim(pred_link)[-1]))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2041,6 +2117,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
 
     ans  <- pred_link
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2055,6 +2132,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
 
     ans  <- plogis(pred_link)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2095,6 +2173,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
 
     ans  <- apply(pred_link, 2:length(dim(pred_link)),
                   quantile, probs = c(0.5, 0.025, 0.975))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2111,6 +2190,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
 
     ans  <- plogis(ans)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2128,6 +2208,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
 
     ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean),
                   c(1, dim(pred_link)[-1]))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2145,6 +2226,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
 
     ans  <- array(apply(plogis(pred_link), 2:length(dim(pred_link)), mean),
                   c(1, dim(pred_link)[-1]))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2161,6 +2243,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
 
     ans  <- pred_link
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2177,6 +2260,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
     expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
 
     ans  <- plogis(pred_link)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2210,6 +2294,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
 
     ans  <- apply(pred_link, 2:length(dim(pred_link)),
                   quantile, probs = c(0.5, 0.025, 0.975))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2223,6 +2308,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- plogis(ans)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2236,6 +2322,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2249,6 +2336,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- array(apply(plogis(pred_link), 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2262,6 +2350,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- pred_link
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2275,6 +2364,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- plogis(pred_link)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2308,6 +2398,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
 
     ans  <- apply(pred_link, 2:length(dim(pred_link)),
                   quantile, probs = c(0.5, 0.025, 0.975))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2322,6 +2413,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
     expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
 
     ans  <- plogis(ans)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2337,6 +2429,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
 
     ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean),
                   c(1, dim(pred_link)[-1]))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2352,6 +2445,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
 
     ans  <- array(apply(plogis(pred_link), 2:length(dim(pred_link)), mean),
                   c(1, dim(pred_link)[-1]))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2366,6 +2460,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
     expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
 
     ans  <- pred_link
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2380,6 +2475,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
     expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
 
     ans  <- plogis(pred_link)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2413,6 +2509,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
 
     ans  <- apply(pred_link, 2:length(dim(pred_link)),
                   quantile, probs = c(0.5, 0.025, 0.975))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2426,6 +2523,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- plogis(ans)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2439,6 +2537,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2452,6 +2551,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- array(apply(plogis(pred_link), 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2465,6 +2565,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- pred_link
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2478,6 +2579,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- plogis(pred_link)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2510,6 +2612,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
 
     ans  <- apply(pred_link, 2:length(dim(pred_link)),
                   quantile, probs = c(0.5, 0.025, 0.975))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2523,6 +2626,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- plogis(ans)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2536,6 +2640,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2549,6 +2654,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- array(apply(plogis(pred_link), 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2562,6 +2668,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- pred_link
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2575,6 +2682,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
     expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
 
     ans  <- plogis(pred_link)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2611,6 +2719,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
 
     ans  <- apply(pred_link, 2:length(dim(pred_link)),
                   quantile, probs = c(0.5, 0.025, 0.975))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2625,6 +2734,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
     expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
 
     ans  <- plogis(ans)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2640,6 +2750,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
 
     ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean),
                   c(1, dim(pred_link)[-1]))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2655,6 +2766,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
 
     ans  <- array(apply(plogis(pred_link), 2:length(dim(pred_link)), mean),
                   c(1, dim(pred_link)[-1]))
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2669,6 +2781,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
     expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
 
     ans  <- pred_link
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)
@@ -2683,6 +2796,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
     expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
 
     ans  <- plogis(pred_link)
+    attr(pred, "parameter") <- attr(pred, "scale") <- 
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
     expect_equal(pred, ans)

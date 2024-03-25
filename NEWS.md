@@ -11,6 +11,7 @@
 * Fix `sample_z()` and `sample_u()` to avoid infinite loop; also fix `eutil()` to output errors when executed in parallel.
 * Fix `eval_util_L/R()` examples and tests to avoid errors; also fix the `sample_u()` error message.
 * Minor fix to improve readability of `predict()` tests.
+* Add `parameter` and `scale` attributes to `predict()` output.
 
 ## occumb 1.0.3 (2024/01/04)
 * Internal changes to fix a number of known bugs and for more helpful error messages and additional tests.

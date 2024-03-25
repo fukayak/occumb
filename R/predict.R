@@ -102,7 +102,7 @@ setMethod("predict", signature(object = "occumbFit"),
 
         }
 
-        return(add_attributes_predict(out, type, data))
+        return(add_attributes_predict(out, parameter, scale, type, data))
     }
 )
 
@@ -361,7 +361,7 @@ get_post_pred_link <- function(object, data, parameter) {
 }
 
 
-add_attributes_predict <- function(x, type, data) {
+add_attributes_predict <- function(x, parameter, scale, type, data) {
 
     label_pred <- function(x, data) {
 
@@ -386,6 +386,9 @@ add_attributes_predict <- function(x, type, data) {
 
         return(out)
     }
+
+    attr(x, "parameter") <- parameter
+    attr(x, "scale")     <- scale
 
     dim_pred <- 
         if (length(dim(x)) == 2) {
