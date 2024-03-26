@@ -1,3 +1,44 @@
+# occumb (version 1.1.0)
+
+## Test environments
+
+- local: Linux Mint 20.2 R 4.3.3
+- win-builder (release, devel)
+- mac-builder (release)
+
+## R CMD check results
+
+### local
+
+0 errors | 1 warning | 0 notes
+
+* checking data for ASCII and uncompressed saves ...
+WARNING
+‘qpdf’ is needed for checks on size reduction of PDFs
+
+This warning appears locally but not in win-builder and mac-builder.
+
+### win-builder (release)
+
+0 errors | 0 warnings | 0 note
+
+### win-builder (devel)
+
+0 errors | 0 warnings | 1 note
+
+* checking CRAN incoming feasibility ... [12s] NOTE
+Maintainer: 'Keiichi Fukaya <fukayak99@gmail.com>'
+
+### mac-builder
+
+0 errors | 1 warnings | 0 note
+
+* checking whether package ‘occumb’ can be installed ... [1s/1s] WARNING
+Found the following significant warnings:
+  Warning: package ‘jagsUI’ was built under R version 4.3.1
+
+
+
 # occumb (version 1.0.3)
 
 ## Test environments

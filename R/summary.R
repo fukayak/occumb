@@ -78,22 +78,10 @@ setMethod("summary", signature(object = "occumbFit"),
         for (i in seq_along(object@fit$parameters)) {
             print_Rhat_neff(object@fit$parameters[i], object)
         }
-        cat('\n')
 
-        if (object@fit$mcmc.info$n.chains > 1) {
-            if (max(unlist(object@fit$Rhat), na.rm = TRUE) > 1.1) {
-                cat('**WARNING** Rhat values indicate convergence failure (Rhat > 1.1).','\n')
-            } else {
-                cat('Successful convergence based on Rhat values (all < 1.1).','\n')
-            }
-        } else {
+        if (object@fit$mcmc.info$n.chains == 1) {
+            cat('\n')
             cat('**WARNING** Set n.chains > 1 to monitor Rhat and n.eff values.','\n')
-        }
-
-        if (object@fit$calc.DIC) {
-            cat(crayon::bold('\nDIC info: (pD = var(deviance)/2)\n'),
-                'pD =', round(object@fit$pD, 1),
-                'and DIC =', round(object@fit$DIC, 3),'\n')
         }
     }
 )

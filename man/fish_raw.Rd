@@ -5,16 +5,16 @@
 \alias{fish_raw}
 \title{Fish eDNA metabarcoding dataset}
 \format{
-A list containing an array of sequence read count \code{y},
+A list containing an array of sequence read count, \code{y},
 a vector of the total number of mismatched bases in the priming region of
-the forward and reverse primers for each species \code{mismatch},
-and a factor indicating whether the riverbank of each site lacks aquatic
-and riparian vegetation \code{riverbank}.
-The sequence reads were obtained from three replicates (collected from the
-center of the river and near the left and right riverbanks, respectively)
-from 50 sites across the watershed, of which read counts from 6 samples are
+the forward and reverse primers for each species, \code{mismatch},
+and a factor indicating whether the riverbank at each site lacked aquatic
+and riparian vegetation, \code{riverbank}.
+Sequence reads were obtained from three replicates (collected from the
+center of the river and near the left and right riverbanks)
+from 50 sites across the watershed, of which read counts from six samples were
 missing.
-The resulting sequence counts of the 50 freshwater fish taxa detected are
+The resulting sequence counts of 50 freshwater fish taxa detected were
 recorded.
 }
 \source{

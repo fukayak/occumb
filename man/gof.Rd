@@ -27,13 +27,13 @@ A list with the following named elements:
 }
 }
 \description{
-\code{gof()} calculates some omnibus discrepancy measures and
+\code{gof()} calculates omnibus discrepancy measures and
 their Bayesian \eqn{p}-values for the fitted model using the posterior
 predictive check approach.
 }
 \details{
-A discrepancy statistic of the fitted model is obtained using the procedure
-of posterior predictive checking.
+A discrepancy statistic for the fitted model is obtained using a
+posterior predictive checking procedure.
 The following statistics are currently available:
 \describe{
 \item{Freeman-Tukey statistics (default)}{\eqn{T_{\textrm{FT}} = \sum_{i,j,k}\left(\sqrt{y_{ijk}} - \sqrt{E(y_{ijk} \mid \pi_{ijk})}\right)^2}{T_{FT} = \sum_{i, j, k} (sqrt(y[i, j, k]) - sqrt(E(y[i, j, k] | pi[i, j, k])))^2}}
@@ -51,11 +51,11 @@ is the multinomial log-likelihood of the sequence read counts in replicate
 \eqn{k}{k} of site \eqn{j}{j} conditional on their cell probabilities.
 
 The Bayesian \eqn{p}-value is estimated as the probability that the value of
-the discrepancy statistics of replicated dataset is more extreme than that
+the discrepancy statistics of the replicated dataset is more extreme than that
 of the observed dataset.
-An extreme Bayesian \eqn{p}-value may indicate an inadequate model fit.
-See, e.g., Gelman et al. (2014), Kéry and Royle (2016), and
-Conn et al. (2018) for more details on the procedures for posterior
+An extreme Bayesian \eqn{p}-value may indicate inadequate model fit.
+See Gelman et al. (2014), Kéry and Royle (2016), and
+Conn et al. (2018) for further details on the procedures used for posterior
 predictive checking.
 
 Computations can be run in parallel on multiple CPU cores where the \code{cores}

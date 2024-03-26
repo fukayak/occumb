@@ -141,36 +141,36 @@ setClass("occumbData",
 
 #' Constructor for occumbData data class.
 #' 
-#' \code{occumbData()} creates a data list compatible with the model-fitting
+#' \code{occumbData()} creates a data list compatible with the model fitting
 #' function \code{\link{occumb}()}.
 #' 
 #' The element (i.e., covariate) names for \code{spec_cov}, \code{site_cov}, and
 #' \code{repl_cov} must all be unique.
 #' If \code{y} has a \code{dimnames} attribute, it is retained in the resulting
-#' \code{occumbData} object and can be referenced in subsequent analyses.
+#' \code{occumbData} object, and can be referenced in subsequent analyses.
 #'
 #' @param y A 3-D array of sequence read counts (\code{integer} values) that may
 #'          have a \code{dimnames} attribute.
-#'          Dimensions are ordered by species, site, and replicate.
-#'          Data for missing replicates must be represented by zero vectors.
+#'          The dimensions are ordered by species, site, and replicate.
+#'          The data for missing replicates are represented by zero vectors.
 #'          \code{NA}s are not allowed.
 #' @param spec_cov A named list of species covariates.
 #'                 Each covariate can be a vector of continuous (\code{numeric}
 #'                 or \code{integer}) or discrete (\code{logical},
 #'                 \code{factor}, or \code{character}) variables whose length
-#'                 equals \code{dim(y)[1]} (i.e., the number of species).
+#'                 is \code{dim(y)[1]} (i.e., the number of species).
 #'                 \code{NA}s are not allowed.
 #' @param site_cov A named list of site covariates.
 #'                 Each covariate can be a vector of continuous (\code{numeric}
 #'                 or \code{integer}) or discrete (\code{logical},
 #'                 \code{factor}, or \code{character}) variables whose length
-#'                 equals \code{dim(y)[1]} (i.e., the number of sites).
+#'                 is \code{dim(y)[1]} (i.e., the number of sites).
 #'                 \code{NA}s are not allowed.
 #' @param repl_cov A named list of replicate covariates.
 #'                 Each covariate can be a matrix of continuous (\code{numeric}
 #'                 or \code{integer}) or discrete (\code{logical} or 
-#'                 \code{character}) variables whose dimension equals
-#'                 \code{dim(y)[2:3]} (i.e., the number of sites \eqn{\times}{*}
+#'                 \code{character}) variables with dimensions equal to
+#'                 \code{dim(y)[2:3]} (i.e., number of sites \eqn{\times}{*}
 #'                 number of replicates).
 #'                 \code{NA}s are not allowed.
 #' @return  An S4 object of the \code{occumbData} class.

@@ -1,10 +1,10 @@
 #' @title Expected utility for local species diversity assessments.
 #'
-#' @description `eval_util_L()` evaluates the expected utility for the local
-#'  species diversity assessment using Monte Carlo integration.
+#' @description `eval_util_L()` evaluates the expected utility of a local
+#'  species diversity assessment by using Monte Carlo integration.
 #' @details
-#' The utility of the local species diversity assessment can be defined, for a
-#'  given set of sites, as the expected number of detected species per site
+#' The utility of local species diversity assessment for a given set of sites
+#'  can be defined as the expected number of detected species per site
 #'  (Fukaya et al. 2022). `eval_util_L()` evaluates this utility for arbitrary
 #'  sets of sites that can potentially have different values for site occupancy
 #'  status of species, \eqn{z}{z}, sequence capture probabilities of species,
@@ -12,30 +12,30 @@
 #'  \eqn{\phi}{phi}, for the combination of `K` and `N` values specified in the
 #'  `conditions` argument.
 #'  Such evaluations can be used to balance `K` and `N` to maximize the utility
-#'  under a constant budget (possible combinations of `K` and `N` under
+#'  under a constant budget (possible combinations of `K` and `N` under a
 #'  specified budget and cost values are easily obtained using `list_cond_L()`;
 #'  see the example below).
 #'  It is also possible to examine how the utility varies with different `K`
-#'  and `N` values without setting a budget level, which may be useful to know
-#'  the satisfactory level of `K` and `N` from a purely technical point of view.
+#'  and `N` values without setting a budget level, which may be useful for determining
+#'  a satisfactory level of `K` and `N` from a purely technical point of view.
 #' 
 #' The expected utility is defined as the expected value of the conditional
-#'  utility of the form:
+#'  utility in the form:
 #'  \deqn{U(K, N \mid \boldsymbol{r}, \boldsymbol{u}) = \frac{1}{J}\sum_{j = 1}^{J}\sum_{i = 1}^{I}\left\{1 - \prod_{k = 1}^{K}\left(1 - \frac{u_{ijk}r_{ijk}}{\sum_{m = 1}^{I}u_{mjk}r_{mjk}} \right)^N \right\}}{U(K, N | r, u) = (1 / J) * sum_{j, i}((1 - \prod_{k}(1 - (u[i, j, k] * r[i, j, k])/sum(u[, j, k] * r[, j, k])))^N)}
 #'  where \eqn{u_{ijk}}{u[i, j, k]} is a latent indicator variable representing
 #'  the inclusion of the sequence of species \eqn{i}{i} in replicate \eqn{k}{k}
-#'  at site \eqn{j}{j} and \eqn{r_{ijk}}{r[i, j, k]} is a latent variable that
+#'  at site \eqn{j}{j}, and \eqn{r_{ijk}}{r[i, j, k]} is a latent variable that
 #'  is proportional to the relative frequency of the sequence of species
 #'  \eqn{i}{i}, conditional on its presence in replicate \eqn{k}{k} at site
 #'  \eqn{j}{j} (Fukaya et al. 2022).
-#' Expectations are taken with respect to posterior (or, possibly prior)
+#' Expectations are taken with respect to the posterior (or possibly prior)
 #'  predictive distributions of \eqn{\boldsymbol{r} = \{r_{ijk}\}}{r} and
-#'  \eqn{\boldsymbol{u} = \{u_{ijk}\}}{u}, which are evaluated numerically by
+#'  \eqn{\boldsymbol{u} = \{u_{ijk}\}}{u}, which are evaluated numerically using
 #'  Monte Carlo integration. The predictive distributions of
 #'  \eqn{\boldsymbol{r}}{r} and \eqn{\boldsymbol{u}}{u} depend on the model
 #'  parameters \eqn{z}{z}, \eqn{\theta}{theta}, and \eqn{\phi}{phi} values.
 #'  Their posterior (or prior) distribution is specified by supplying an
-#'  `occumbFit` object containing their posterior samples via the `fit` argument
+#'  `occumbFit` object containing their posterior samples via the `fit` argument,
 #'  or by supplying a matrix or array of posterior (or prior) samples of
 #'  parameter values via the `z`, `theta`, and `phi` arguments. Higher
 #'  approximation accuracy can be obtained by increasing the value of `N_rep`.
@@ -45,10 +45,10 @@
 #'  three `z`, `theta`, and `phi` arguments without the `fit` argument, or by
 #'  supplying the `fit` argument and any or all of the `z`, `theta`, and `phi`
 #'  arguments. If `z`, `theta`, or `phi` arguments are specified in addition
-#'  to `fit`, the parameter values given in these arguments are used
-#'  preferentially to evaluate expected utility. If sample sizes differ among
+#'  to the `fit`, the parameter values given in these arguments are used
+#'  preferentially to evaluate the expected utility. If the sample sizes differ among
 #'  parameters, parameters with smaller sample sizes are resampled with
-#'  replacement to align sample sizes across parameters.
+#'  replacements to align the sample sizes across parameters.
 #'
 #' The expected utility is evaluated assuming homogeneity of replicates, in the
 #'  sense that \eqn{\theta}{theta} and \eqn{\phi}{phi}, the model parameters
@@ -56,33 +56,33 @@
 #'  replicates within a site. For this reason, `eval_util_L()` does not accept
 #'  replicate-specific \eqn{\theta}{theta} and \eqn{\phi}{phi}. If the
 #'  `occumbFit` object supplied in the `fit` argument has a replicate-specific
-#'  parameter, parameter samples to be used in the utility evaluation must be
-#'  provided explicitly via `theta` or `phi` argument.
+#'  parameter, the parameter samples to be used in the utility evaluation must be
+#'  provided explicitly via the `theta` or `phi` arguments.
 #'
-#' Monte Carlo integration is executed in parallel on multiple CPU cores where
+#' The Monte Carlo integration is executed in parallel on multiple CPU cores, where
 #'  the `cores` argument controls the degree of parallelization.
 #' @param settings A data frame that specifies a set of conditions under which
-#'  the utility is evaluated. It must include a column named `K` and `N`, which
-#'  specifies the number of replicates per site and the sequencing depth per
+#'  utility is evaluated. It must include columns named `K` and `N`, which
+#'  specify the number of replicates per site and the sequencing depth per
 #'  replicate, respectively.
 #'  `K` and `N` must be numeric vectors greater than 0. When `K` contains a
-#'  decimal, the decimal part is discarded and treated as an integer.
-#'  Additional columns are ignored but may be included.
+#'  decimal value, it is discarded and treated as an integer.
+#'  Additional columns are ignored, but may be included.
 #' @param fit An `occumbFit` object.
 #' @param z Sample values of site occupancy status of species stored in an array
-#'  with sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.
+#'  with sample \eqn{\times}{*} species \eqn{\times}{*} site dimensions.
 #' @param theta Sample values of sequence capture probabilities of species
-#'  stored in a matrix with sample \eqn{\times}{*} species dimension or an array
-#'  with sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.
+#'  stored in a matrix with sample \eqn{\times}{*} species dimensions or an array
+#'  with sample \eqn{\times}{*} species \eqn{\times}{*} site dimensions.
 #' @param phi Sample values of sequence relative dominance of species stored in
-#'  a matrix with sample \eqn{\times}{*} species dimension or an array with
-#'  sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.
-#' @param N_rep Controls the sample size for Monte Carlo integration.
-#'  The integral is evaluated using a total of `N_sample * N_rep` random samples,
+#'  a matrix with sample \eqn{\times}{*} species dimensions or an array with
+#'  sample \eqn{\times}{*} species \eqn{\times}{*} site dimensions.
+#' @param N_rep Controls the sample size for the Monte Carlo integration.
+#'  The integral is evaluated using `N_sample * N_rep` random samples,
 #'  where `N_sample` is the maximum size of the MCMC sample in the `fit`
 #'  argument and the parameter sample in the `z`, `theta`, and `phi` arguments.
 #' @param cores The number of cores to use for parallelization.
-#' @return A data frame with a column named `Utility` in which the estimates of
+#' @return A data frame with a column named `Utility` in which the estimates of the
 #'  expected utility are stored. This is obtained by adding the `Utility` column
 #'  to the data frame provided in the `settings` argument.
 #' @section References:
@@ -93,10 +93,12 @@
 #'      \doi{10.1111/2041-210X.13732}
 #' @examples
 #' \donttest{
-#' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
-#' I <- 2 # Number of species
-#' J <- 2 # Number of sites
-#' K <- 2 # Number of replicates
+#' set.seed(1)
+#'
+#' # Generate a random dataset (20 species * 2 sites * 2 reps)
+#' I <- 20 # Number of species
+#' J <- 2  # Number of sites
+#' K <- 2  # Number of replicates
 #' data <- occumbData(
 #'     y = array(sample.int(I * J * K), dim = c(I, J, K)))
 #'
@@ -125,24 +127,24 @@
 #'
 #' # theta and phi values supplied
 #' (util4 <- eval_util_L(list_cond_L(budget = 1E5,
-#'                                  lambda1 = 0.01,
-#'                                  lambda2 = 5000,
-#'                                  fit,
-#'                                  K = 1:5),
+#'                                   lambda1 = 0.01,
+#'                                   lambda2 = 5000,
+#'                                   fit,
+#'                                   K = 1:5),
 #'                       fit,
-#'                       theta = array(0.5, dim = c(4000, 2, 2)),
-#'                       phi = array(1, dim = c(4000, 2, 2))))
+#'                       theta = array(0.5, dim = c(4000, I, J)),
+#'                       phi = array(1, dim = c(4000, I, J))))
 #' 
 #' # z, theta, and phi values, but no fit object supplied
 #' (util5 <- eval_util_L(list_cond_L(budget = 1E5,
-#'                                  lambda1 = 0.01,
-#'                                  lambda2 = 5000,
-#'                                  fit,
-#'                                  K = 1:5),
+#'                                   lambda1 = 0.01,
+#'                                   lambda2 = 5000,
+#'                                   fit,
+#'                                   K = 1:5),
 #'                       fit = NULL,
-#'                       z = array(1, dim = c(4000, 2, 2)),
-#'                       theta = array(0.5, dim = c(4000, 2, 2)),
-#'                       phi = array(1, dim = c(4000, 2, 2))))
+#'                       z = array(1, dim = c(4000, I, J)),
+#'                       theta = array(0.5, dim = c(4000, I, J)),
+#'                       phi = array(1, dim = c(4000, I, J))))
 #' }
 #' @export
 eval_util_L <- function(settings,
@@ -204,40 +206,40 @@ eval_util_L <- function(settings,
 
 #' @title Expected utility for regional species diversity assessments.
 #'
-#' @description `eval_util_R()` evaluates the expected utility for the regional
+#' @description `eval_util_R()` evaluates the expected utility of a regional
 #'  species diversity assessment using Monte Carlo integration.
 #' @details
-#' The utility of the regional species diversity assessment can be defined as
-#'  the number of species in the region of interest expected to be detected
+#' The utility of a regional species diversity assessment can be defined as
+#'  the number of species expected to be detected in the region of interest
 #'  (Fukaya et al. 2022). `eval_util_R()` evaluates this utility for the region
 #'  modeled in the `occumbFit` object for the combination of `J`, `K`, and `N`
 #'  values specified in the `conditions` argument.
 #'  Such evaluations can be used to balance `J`, `K`, and `N` to maximize the
 #'  utility under a constant budget (possible combinations of `J`, `K`, and `N`
-#'  under specified budget and cost values are easily obtained using
+#'  under a specified budget and cost values are easily obtained using
 #'  `list_cond_R()`; see the example below).
 #'  It is also possible to examine how the utility varies with different `J`,
-#'  `K`, and `N` values without setting a budget level, which may be useful to know
-#'  the satisfactory level of `J`, `K`, and `N` from a purely technical point of
+#'  `K`, and `N` values without setting a budget level, which may be useful in determining
+#'  the satisfactory levels of `J`, `K`, and `N` from a purely technical point of
 #'  view.
 #' 
 #' The expected utility is defined as the expected value of the conditional
-#'  utility of the form:
+#'  utility in the form:
 #'  \deqn{U(J, K, N \mid \boldsymbol{r}, \boldsymbol{u}) = \sum_{i = 1}^{I}\left\{1 - \prod_{j = 1}^{J}\prod_{k = 1}^{K}\left(1 - \frac{u_{ijk}r_{ijk}}{\sum_{m = 1}^{I}u_{mjk}r_{mjk}} \right)^N \right\}}{U(J, K, N | r, u) = sum_{i}((1 - \prod_{j}\prod_{k}(1 - (u[i, j, k] * r[i, j, k])/sum(u[, j, k] * r[, j, k])))^N)}
 #'  where \eqn{u_{ijk}}{u[i, j, k]} is a latent indicator variable representing
 #'  the inclusion of the sequence of species \eqn{i}{i} in replicate \eqn{k}{k}
-#'  at site \eqn{j}{j} and \eqn{r_{ijk}}{r[i, j, k]} is a latent variable that
+#'  at site \eqn{j}{j}, and \eqn{r_{ijk}}{r[i, j, k]} is a latent variable that
 #'  is proportional to the relative frequency of the sequence of species
 #'  \eqn{i}{i}, conditional on its presence in replicate \eqn{k}{k} at site
 #'  \eqn{j}{j} (Fukaya et al. 2022).
-#' Expectations are taken with respect to the posterior (or, possibly prior)
+#' Expectations are taken with respect to the posterior (or possibly prior)
 #'  predictive distributions of \eqn{\boldsymbol{r} = \{r_{ijk}\}}{r} and
-#'  \eqn{\boldsymbol{u} = \{u_{ijk}\}}{u}, which are evaluated numerically by
+#'  \eqn{\boldsymbol{u} = \{u_{ijk}\}}{u}, which are evaluated numerically using
 #'  Monte Carlo integration. The predictive distributions of
 #'  \eqn{\boldsymbol{r}}{r} and \eqn{\boldsymbol{u}}{u} depend on the model
 #'  parameters \eqn{\psi}{psi}, \eqn{\theta}{theta}, and \eqn{\phi}{phi} values.
 #'  Their posterior (or prior) distribution is specified by supplying an
-#'  `occumbFit` object containing their posterior samples via the `fit` argument
+#'  `occumbFit` object containing their posterior samples via the `fit` argument,
 #'  or by supplying a matrix or array of posterior (or prior) samples of
 #'  parameter values via the `psi`, `theta`, and `phi` arguments. Higher
 #'  approximation accuracy can be obtained by increasing the value of `N_rep`.
@@ -246,11 +248,11 @@ eval_util_L <- function(settings,
 #'  without specifying the `psi`, `theta`, and `phi` arguments, by supplying the
 #'  three `psi`, `theta`, and `phi` arguments without the `fit` argument, or by
 #'  supplying the `fit` argument and any or all of the `psi`, `theta`, and `phi`
-#'  arguments. If `psi`, `theta`, or `phi` arguments are specified in addition
-#'  to `fit`, the parameter values given in these arguments are used
-#'  preferentially to evaluate expected utility. If sample sizes differ among
+#'  arguments. If the `psi`, `theta`, or `phi` arguments are specified in addition
+#'  to the `fit`, the parameter values given in these arguments are preferentially
+#'  used to evaluate the expected utility. If the sample sizes differed among
 #'  parameters, parameters with smaller sample sizes are resampled with
-#'  replacement to align sample sizes across parameters.
+#'  replacements to align the sample sizes across parameters.
 #'
 #' The expected utility is evaluated assuming homogeneity of replicates, in the
 #'  sense that \eqn{\theta}{theta} and \eqn{\phi}{phi}, the model parameters
@@ -258,45 +260,45 @@ eval_util_L <- function(settings,
 #'  replicates within a site. For this reason, `eval_util_R()` does not accept
 #'  replicate-specific \eqn{\theta}{theta} and \eqn{\phi}{phi}. If the
 #'  `occumbFit` object supplied in the `fit` argument has a replicate-specific
-#'  parameter, parameter samples to be used in the utility evaluation must be
-#'  provided explicitly via `theta` or `phi` argument.
+#'  parameter, the parameter samples to be used in the utility evaluation must be
+#'  provided explicitly via the `theta` or `phi` arguments.
 #'
 #' If the parameters are modeled as a function of site covariates in the `fit`
-#'  object, or if the `psi`, `theta`, and/or `phi` arguments have site dimension,
+#'  object, or if the `psi`, `theta`, and/or `phi` arguments have site dimensions,
 #'  the expected utility is evaluated to account for the site heterogeneity of
-#'  the parameters. Specifically, to incorporate site heterogeneity, the
+#'  the parameters. To incorporate site heterogeneity, the
 #'  parameter values for each `J` site are determined by selecting site-specific
-#'  parameter values in the `fit` or that supplied in `psi`, `theta`, and `phi`
-#'  via random sampling with replacement. Thus, the expected utility is
-#'  evaluated by assuming the set of supplied parameter values as a statistical
+#'  parameter values in the `fit`, or those supplied in `psi`, `theta`, and `phi`
+#'  via random sampling with replacement. Thus, expected utility is
+#'  evaluated by assuming a set of supplied parameter values as a statistical
 #'  population of site-specific parameters.
 #'
-#' Monte Carlo integration is executed in parallel on multiple CPU cores where
+#' The Monte Carlo integration is executed in parallel on multiple CPU cores, where
 #'  the `cores` argument controls the degree of parallelization.
 #' @param settings A data frame that specifies a set of conditions under which
-#'  the utility is evaluated. It must include a column named `J`, `K`, and `N`,
-#'  which specifies the number of sites, the number of replicates per site, and
-#'  the sequencing depth per replicate, respectively.
+#'  utility is evaluated. It must include columns named `J`, `K`, and `N`,
+#'  which specify the number of sites, number of replicates per site, and
+#'  sequencing depth per replicate, respectively.
 #'  `J`, `K`, and `N` must be numeric vectors greater than 0. When `J` and `K`
-#'  contains a decimal, the decimal part is discarded and treated as an integer.
-#'  Additional columns are ignored but may be included.
+#'  contain decimal values, they are discarded and treated as integers.
+#'  Additional columns are ignored, but may be included.
 #' @param fit An `occumbFit` object.
-#' @param psi Sample values of site occupancy probabilities of species
-#'  stored in a matrix with sample \eqn{\times}{*} species dimension or an array
-#'  with sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.
+#' @param psi Sample values of the site occupancy probabilities of species
+#'  stored in a matrix with sample \eqn{\times}{*} species dimensions or an array
+#'  with sample \eqn{\times}{*} species \eqn{\times}{*} site dimensions.
 #' @param theta Sample values of sequence capture probabilities of species
-#'  stored in a matrix with sample \eqn{\times}{*} species dimension or an array
-#'  with sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.
+#'  stored in a matrix with sample \eqn{\times}{*} species dimensions or an array
+#'  with sample \eqn{\times}{*} species \eqn{\times}{*} site dimensions.
 #' @param phi Sample values of sequence relative dominance of species stored in
-#'  a matrix with sample \eqn{\times}{*} species dimension or an array with
-#'  sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.
-#' @param N_rep Controls the sample size for Monte Carlo integration.
+#'  a matrix with sample \eqn{\times}{*} species dimensions or an array with
+#'  sample \eqn{\times}{*} species \eqn{\times}{*} site dimensions.
+#' @param N_rep Controls the sample size for the Monte Carlo integration.
 #'  The integral is evaluated using a total of `N_sample * N_rep` random samples,
 #'  where `N_sample` is the maximum size of the MCMC sample in the `fit`
 #'  argument and the parameter sample in the `psi`, `theta`, and `phi` arguments.
 #' @param cores The number of cores to use for parallelization.
 #' @return A data frame with a column named `Utility` in which the estimates of
-#'  expected utility are stored. This is obtained by adding the `Utility` column
+#'  the expected utility are stored. This is obtained by adding the `Utility` column
 #'  to the data frame provided in the `settings` argument.
 #' @section References:
 #'      K. Fukaya, N. I. Kondo, S. S. Matsuzaki and T. Kadoya (2022)
@@ -306,10 +308,12 @@ eval_util_L <- function(settings,
 #'      \doi{10.1111/2041-210X.13732}
 #' @examples
 #' \donttest{
-#' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
-#' I <- 2 # Number of species
-#' J <- 2 # Number of sites
-#' K <- 2 # Number of replicates
+#' set.seed(1)
+#'
+#' # Generate a random dataset (20 species * 2 sites * 2 reps)
+#' I <- 20 # Number of species
+#' J <- 2  # Number of sites
+#' K <- 2  # Number of replicates
 #' data <- occumbData(
 #'     y = array(sample.int(I * J * K), dim = c(I, J, K)))
 #'
@@ -323,47 +327,47 @@ eval_util_L <- function(settings,
 #'
 #' # J, K, and N values under specified budget and cost
 #' (util2 <- eval_util_R(list_cond_R(budget = 50000,
-#'                                  lambda1 = 0.01,
-#'                                  lambda2 = 5000,
-#'                                  lambda3 = 5000),
+#'                                   lambda1 = 0.01,
+#'                                   lambda2 = 5000,
+#'                                   lambda3 = 5000),
 #'                       fit))
 #'
 #' # K values restricted
 #' (util3 <- eval_util_R(list_cond_R(budget = 50000,
-#'                                  lambda1 = 0.01,
-#'                                  lambda2 = 5000,
-#'                                  lambda3 = 5000,
-#'                                  K = 1:5),
+#'                                   lambda1 = 0.01,
+#'                                   lambda2 = 5000,
+#'                                   lambda3 = 5000,
+#'                                   K = 1:5),
 #'                       fit))
 #'
 #' # J and K values restricted
 #' (util4 <- eval_util_R(list_cond_R(budget = 50000,
-#'                                  lambda1 = 0.01,
-#'                                  lambda2 = 5000,
-#'                                  lambda3 = 5000,
-#'                                  J = 1:3, K = 1:5),
+#'                                   lambda1 = 0.01,
+#'                                   lambda2 = 5000,
+#'                                   lambda3 = 5000,
+#'                                   J = 1:3, K = 1:5),
 #'                       fit))
 #'
 #' # theta and phi values supplied
 #' (util5 <- eval_util_R(list_cond_R(budget = 50000,
-#'                                  lambda1 = 0.01,
-#'                                  lambda2 = 5000,
-#'                                  lambda3 = 5000,
-#'                                  J = 1:3, K = 1:5),
+#'                                   lambda1 = 0.01,
+#'                                   lambda2 = 5000,
+#'                                   lambda3 = 5000,
+#'                                   J = 1:3, K = 1:5),
 #'                       fit,
-#'                       theta = array(0.5, dim = c(4000, 2, 2)),
-#'                       phi = array(1, dim = c(4000, 2, 2))))
+#'                       theta = array(0.5, dim = c(4000, I, J)),
+#'                       phi = array(1, dim = c(4000, I, J))))
 #' 
 #' # psi, theta, and phi values, but no fit object supplied
 #' (util6 <- eval_util_R(list_cond_R(budget = 50000,
-#'                                  lambda1 = 0.01,
-#'                                  lambda2 = 5000,
-#'                                  lambda3 = 5000,
-#'                                  J = 1:3, K = 1:5),
+#'                                   lambda1 = 0.01,
+#'                                   lambda2 = 5000,
+#'                                   lambda3 = 5000,
+#'                                   J = 1:3, K = 1:5),
 #'                       fit = NULL,
-#'                       psi = array(0.5, dim = c(4000, 2, 2)),
-#'                       theta = array(0.5, dim = c(4000, 2, 2)),
-#'                       phi = array(1, dim = c(4000, 2, 2))))
+#'                       psi = array(0.9, dim = c(4000, I, J)),
+#'                       theta = array(0.9, dim = c(4000, I, J)),
+#'                       phi = array(1, dim = c(4000, I, J))))
 #' }
 #' @export
 eval_util_R <- function(settings,
@@ -447,25 +451,26 @@ eval_util_R <- function(settings,
 
 #' @title Conditions for local assessment under certain budget and cost values.
 #' @description `list_cond_L()` constructs a list of possible local species
-#'  diversity assessment conditions under specified budget and cost values.
+#'  diversity assessment conditions under the specified budget and cost values.
 #' @details
 #'   This function can generate a data frame object to be given to the
 #'  `settings` argument of `eval_util_L()`; see Examples of `eval_util_L()`.
 #'  By default, it outputs a list of all feasible combinations of values for the
 #'  number of replicates per site `K` and the sequencing depth per replicate
-#'  `N`, based on the given budget and cost values and the number of sites
-#'  (identified by reference to the `fit` object). The resulting `N` can be
-#'  non-integer because it is calculated simply by assuming that we can obtain
-#'  its maximum value. If you want to obtain a list for only a subset of the
-#'  possible `K` values under a given budget and cost values, use the `K`
-#'  argument to provide a vector of the desired `K` values.
-#' @param budget A numeric specifying the amount of budget. Use the currency
-#'  unit consistent with `lambda1` and `lambda2`.
+#'  `N` based on the given budget, cost values, and number of sites
+#'  (identified by reference to the `fit` object). The resulting `N` can be a
+#'  non-integer because it is calculated simply by assuming that the maximum
+#'  value can be obtained. To obtain a list for only a subset of the
+#'  possible `K` values under a given budget and cost value, the `K`
+#'  argument is used to provide a vector of the desired `K` values.
+#' @param budget A numeric specifying budget amount. The currency unit
+#'  is arbitrary but must be consistent with that of `lambda1` and `lambda2`.
 #' @param lambda1 A numeric specifying the cost per sequence read for
-#'  high-throughput sequencing. Use the currency unit consistent with `budget`
-#'  and `lambda2`.
+#'  high-throughput sequencing. The currency unit is arbitrary but must be
+#'  consistent with that of `budget` and `lambda2`.
 #' @param lambda2 A numeric specifying the cost per replicate for library
-#'  preparation. Use the currency unit consistent with `budget` and `lambda1`.
+#'  preparation. The currency unit is arbitrary but must be consistent with that
+#'  of `budget` and `lambda1`.
 #' @param fit An `occumbFit` object.
 #' @param K An optional vector for manually specifying the number of replicates.
 #' @return A data frame containing columns named `budget`, `lambda1`, `lambda2`,
@@ -522,39 +527,40 @@ list_cond_L <- function(budget, lambda1, lambda2, fit, K = NULL) {
 
 #' @title Conditions for regional assessment under certain budget and cost values.
 #' @description `list_cond_R()` constructs a list of possible regional species
-#'  diversity assessment conditions under specified budget and cost values.
+#'  diversity assessment conditions under the specified budget and cost values.
 #' @details
 #'   This function can generate a data frame object to be given to the
 #'  `settings` argument of `eval_util_R()`; see Examples of `eval_util_R()`.
 #'  By default, it outputs a list of all feasible combinations of values for the
-#'  number of sites `J`, number of replicates per site `K`, and the sequencing
-#'  depth per replicate `N`, based on the given budget and cost values.
-#'  The resulting `N` can be non-integer because it is calculated simply by
-#'  assuming that we can obtain its maximum value.
-#'  If you want to obtain a list for only a subset of the possible values of `J`
-#'  and `K` under a given budget and cost values, use the `J` and/or `K`
+#'  number of sites `J`, number of replicates per site `K`, and sequencing
+#'  depth per replicate `N` based on the given budget and cost values.
+#'  The resulting `N` can be a non-integer because it is calculated simply by
+#'  assuming that the maximum value can be obtained.
+#'  If one wants to obtain a list for only a subset of the possible values of `J`
+#'  and `K` under a given budget and cost value, use the `J` and/or `K`
 #'  arguments (in fact, it is recommended that a relatively small number of `K`
 #'  values be specified using the `K` argument because the list of all
-#'  conditions achievable under moderate budget and cost values can be huge, and
+#'  conditions achievable under moderate budget and cost values can be large, and
 #'  it is rarely practical to have a vast number of replicates per site). If a
 #'  given combination of `J` and `K` values is not feasible under the specified
-#'  budget and cost values, that combination will be ignored and excluded from
+#'  budget and cost values, the combination will be ignored and excluded from
 #'  the output.
-#' @param budget A numeric specifying the amount of budget. Use the currency
-#'  unit consistent with `lambda1`, `lambda2`, and `lambda3`.
+#' @param budget A numeric specifying budget amount. The currency unit is
+#'  arbitrary but must be consistent with that of `lambda1`, `lambda2`, and `lambda3`.
 #' @param lambda1 A numeric specifying the cost per sequence read for
-#'  high-throughput sequencing. Use the currency unit consistent with `budget`,
-#'  `lambda2`, and `lambda3`.
+#'  high-throughput sequencing. The currency unit is arbitrary but must be
+#'  consistent with that of `budget`, `lambda2`, and `lambda3`.
 #' @param lambda2 A numeric specifying the cost per replicate for library
-#'  preparation. Use the currency unit consistent with `budget`, `lambda1`, and
-#'  `lambda3`.
-#' @param lambda3 A numeric specifying the visiting cost per site. Use the
-#'  currency unit consistent with `budget`, `lambda1`, and `lambda2`.
+#'  preparation. The currency unit is arbitrary but must be consistent with that
+#'  of `budget`, `lambda1`, and `lambda3`.
+#' @param lambda3 A numeric specifying the visiting cost per site. The currency
+#'  unit is arbitrary but must be consistent with that of `budget`, `lambda1`,
+#'  and `lambda2`.
 #' @param J An optional vector for manually specifying the number of sites
-#' @param K An optional vector for manually specifying the number of replicates.
-#'  For computational convenience, `K` values must be in ascending order.
+#' @param K An optional vector used to specify the number of replicates manually.
+#'  For computational convenience, the `K` values must be in ascending order.
 #' @return A data frame containing columns named `budget`, `lambda1`, `lambda2`,
-#'  , `lambda3`, `J`, `K`, and `N`.
+#'  `lambda3`, `J`, `K`, and `N`.
 #' @export
 list_cond_R <- function(budget, lambda1, lambda2, lambda3, J = NULL, K = NULL) {
 
@@ -641,9 +647,9 @@ check_args_eval_util_L <- function(settings, fit, z, theta, phi) {
         assert_occumbFit(fit)
 
         # Stop when modeled parameters are replicate-specific
-        if (length(dim(get_post_samples(fit, "theta"))) == 4)
+        if (length(dim(get_post_samples(fit, "theta"))) == 4 & is.null(theta))
             stop("'fit' contains replicate-specific theta: specify appropriate theta values via the 'theta' argument to run.\n")
-        if (length(dim(get_post_samples(fit, "phi"))) == 4)
+        if (length(dim(get_post_samples(fit, "phi"))) == 4 & is.null(phi))
             stop("'fit' contains replicate-specific phi: specify appropriate phi values via the 'phi' argument to run.\n")
     }
 
@@ -656,6 +662,15 @@ check_args_eval_util_L <- function(settings, fit, z, theta, phi) {
     checkmate::assert_numeric(theta, lower = 0, upper = 1,
                               any.missing = FALSE, null.ok = TRUE)
     checkmate::assert_numeric(phi, lower = 0, any.missing = FALSE, null.ok = TRUE)
+
+    # Assert that z does not have sites occupied by no species
+    if (!is.null(z)) {
+        z_allzero <- apply(z, c(1, 3), function (x) sum(x) == 0)
+        if (any(z_allzero))
+            stop(sprintf("The given 'z' array contains case(s) where no species occupy a site; see, for example, that z[%s, , %s] is a zero vector",
+                         which(z_allzero, arr.ind = T)[1, 1],
+                         which(z_allzero, arr.ind = T)[1, 2]))
+    }
 
     # Assert equality in species/site dimensions of z, theta, phi, and fit
     if (!is.null(fit)) {
@@ -724,9 +739,9 @@ check_args_eval_util_R <- function(settings, fit, psi, theta, phi) {
         assert_occumbFit(fit)
 
         # Stop when modeled parameters are replicate-specific
-        if (length(dim(get_post_samples(fit, "theta"))) == 4)
+        if (length(dim(get_post_samples(fit, "theta"))) == 4 & is.null(theta))
             stop("'fit' contains replicate-specific theta: specify appropriate theta values via the 'theta' argument to run.\n")
-        if (length(dim(get_post_samples(fit, "phi"))) == 4)
+        if (length(dim(get_post_samples(fit, "phi"))) == 4 & is.null(phi))
             stop("'fit' contains replicate-specific phi: specify appropriate phi values via the 'phi' argument to run.\n")
     }
 
@@ -774,9 +789,9 @@ check_args_eval_util_R <- function(settings, fit, psi, theta, phi) {
         vJ <- vJ[has_site_dim]
         terms <- c("dim(psi)[3]", "dim(theta)[3]", "dim(phi)[3]")[has_site_dim]
 
-        if (length(unique(vI)) != 1)
+        if (length(unique(vI)) > 1)
             stop("Mismatch in species dimension: dim(psi)[2], dim(theta)[2], and dim(phi)[2] must be equal.\n")
-        if (length(unique(vJ)) != 1)
+        if (length(unique(vJ)) > 1)
             stop(paste0("Mismatch in site dimension: ",
                         knitr::combine_words(terms), " must be equal.\n"))
     }
@@ -833,7 +848,7 @@ eutil <- function(z, theta, phi, K, N, scale = c("local", "regional"),
             )
         } else {
             # On Mac or Linux use mclapply() for multiple cores
-            util_rep <- unlist(
+            result <-
                 parallel::mclapply(mc.cores = cores,
                                    X = rep(seq_len(M), each = N_rep),
                                    FUN = fun,
@@ -842,11 +857,18 @@ eutil <- function(z, theta, phi, K, N, scale = c("local", "regional"),
                                                phi = phi,
                                                K = K,
                                                N = N))
-            )
+            is_error <- sapply(result, inherits, "try-error")
+            if (any(is_error)) {
+                stop(result[is_error][1])
+            } else {
+                util_rep <- unlist(result)
+            }
         }
     }
 
-    mean(util_rep)
+    if (any(is.nan(util_rep)))
+        warning("Case(s) arose in the replicated simulation where 'Utility' could not be calculated and were ignored. This result may sometimes occur stochastically; try repeat running to see if the same warning occurs. If the same result occurs frequently, the given 'theta' or 'phi' values might need to be higher.")
+    mean(util_rep, na.rm = TRUE)
 }
 
 # @title Conditional utility function for local species diversity assessments.
@@ -1022,9 +1044,11 @@ sample_z <- function(psi) {
     if (sum(z)) {
         return(z)
     } else {
-        while(sum(z) == 0)
+        for (i in seq_len(10000)) {
             z <- stats::rbinom(length(psi), 1, psi)
-        return(z)
+            if (sum(z)) return(z)
+        }
+        stop("Failed to generate valid 'z' values under the given parameter set. Providing 'psi' containing higher psi values may fix the issue.")
     }
 }
 
@@ -1037,11 +1061,17 @@ sample_u <- function(z_theta) {
     allzero <- which(colSums(u) == 0)
     if (length(allzero)) {
         for (n in seq_along(allzero)) {
-            while(sum(u[, allzero[n]]) == 0)
+            for (i in seq_len(10000)) {
                 u[, allzero[n]] <-
                     stats::rbinom(nrow(z_theta), 1, z_theta[, allzero[n]])
+                if (sum(u[, allzero[n]]) == 0) break
+            }
         }
-        return(u)
+        if (any(colSums(u) == 0)) {
+            stop("Failed to generate valid 'u' values under the given parameter set. Providing 'theta' or 'psi' containing higher probability values may fix the issue.")
+        } else {
+            return(u)
+        }
     } else {
         return(u)
     }

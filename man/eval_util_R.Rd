@@ -16,28 +16,28 @@ eval_util_R(
 }
 \arguments{
 \item{settings}{A data frame that specifies a set of conditions under which
-the utility is evaluated. It must include a column named \code{J}, \code{K}, and \code{N},
-which specifies the number of sites, the number of replicates per site, and
-the sequencing depth per replicate, respectively.
+utility is evaluated. It must include columns named \code{J}, \code{K}, and \code{N},
+which specify the number of sites, number of replicates per site, and
+sequencing depth per replicate, respectively.
 \code{J}, \code{K}, and \code{N} must be numeric vectors greater than 0. When \code{J} and \code{K}
-contains a decimal, the decimal part is discarded and treated as an integer.
-Additional columns are ignored but may be included.}
+contain decimal values, they are discarded and treated as integers.
+Additional columns are ignored, but may be included.}
 
 \item{fit}{An \code{occumbFit} object.}
 
-\item{psi}{Sample values of site occupancy probabilities of species
-stored in a matrix with sample \eqn{\times}{*} species dimension or an array
-with sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.}
+\item{psi}{Sample values of the site occupancy probabilities of species
+stored in a matrix with sample \eqn{\times}{*} species dimensions or an array
+with sample \eqn{\times}{*} species \eqn{\times}{*} site dimensions.}
 
 \item{theta}{Sample values of sequence capture probabilities of species
-stored in a matrix with sample \eqn{\times}{*} species dimension or an array
-with sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.}
+stored in a matrix with sample \eqn{\times}{*} species dimensions or an array
+with sample \eqn{\times}{*} species \eqn{\times}{*} site dimensions.}
 
 \item{phi}{Sample values of sequence relative dominance of species stored in
-a matrix with sample \eqn{\times}{*} species dimension or an array with
-sample \eqn{\times}{*} species \eqn{\times}{*} site dimension.}
+a matrix with sample \eqn{\times}{*} species dimensions or an array with
+sample \eqn{\times}{*} species \eqn{\times}{*} site dimensions.}
 
-\item{N_rep}{Controls the sample size for Monte Carlo integration.
+\item{N_rep}{Controls the sample size for the Monte Carlo integration.
 The integral is evaluated using a total of \code{N_sample * N_rep} random samples,
 where \code{N_sample} is the maximum size of the MCMC sample in the \code{fit}
 argument and the parameter sample in the \code{psi}, \code{theta}, and \code{phi} arguments.}
@@ -46,45 +46,45 @@ argument and the parameter sample in the \code{psi}, \code{theta}, and \code{phi
 }
 \value{
 A data frame with a column named \code{Utility} in which the estimates of
-expected utility are stored. This is obtained by adding the \code{Utility} column
+the expected utility are stored. This is obtained by adding the \code{Utility} column
 to the data frame provided in the \code{settings} argument.
 }
 \description{
-\code{eval_util_R()} evaluates the expected utility for the regional
+\code{eval_util_R()} evaluates the expected utility of a regional
 species diversity assessment using Monte Carlo integration.
 }
 \details{
-The utility of the regional species diversity assessment can be defined as
-the number of species in the region of interest expected to be detected
+The utility of a regional species diversity assessment can be defined as
+the number of species expected to be detected in the region of interest
 (Fukaya et al. 2022). \code{eval_util_R()} evaluates this utility for the region
 modeled in the \code{occumbFit} object for the combination of \code{J}, \code{K}, and \code{N}
 values specified in the \code{conditions} argument.
 Such evaluations can be used to balance \code{J}, \code{K}, and \code{N} to maximize the
 utility under a constant budget (possible combinations of \code{J}, \code{K}, and \code{N}
-under specified budget and cost values are easily obtained using
+under a specified budget and cost values are easily obtained using
 \code{list_cond_R()}; see the example below).
 It is also possible to examine how the utility varies with different \code{J},
-\code{K}, and \code{N} values without setting a budget level, which may be useful to know
-the satisfactory level of \code{J}, \code{K}, and \code{N} from a purely technical point of
+\code{K}, and \code{N} values without setting a budget level, which may be useful in determining
+the satisfactory levels of \code{J}, \code{K}, and \code{N} from a purely technical point of
 view.
 
 The expected utility is defined as the expected value of the conditional
-utility of the form:
+utility in the form:
 \deqn{U(J, K, N \mid \boldsymbol{r}, \boldsymbol{u}) = \sum_{i = 1}^{I}\left\{1 - \prod_{j = 1}^{J}\prod_{k = 1}^{K}\left(1 - \frac{u_{ijk}r_{ijk}}{\sum_{m = 1}^{I}u_{mjk}r_{mjk}} \right)^N \right\}}{U(J, K, N | r, u) = sum_{i}((1 - \prod_{j}\prod_{k}(1 - (u[i, j, k] * r[i, j, k])/sum(u[, j, k] * r[, j, k])))^N)}
 where \eqn{u_{ijk}}{u[i, j, k]} is a latent indicator variable representing
 the inclusion of the sequence of species \eqn{i}{i} in replicate \eqn{k}{k}
-at site \eqn{j}{j} and \eqn{r_{ijk}}{r[i, j, k]} is a latent variable that
+at site \eqn{j}{j}, and \eqn{r_{ijk}}{r[i, j, k]} is a latent variable that
 is proportional to the relative frequency of the sequence of species
 \eqn{i}{i}, conditional on its presence in replicate \eqn{k}{k} at site
 \eqn{j}{j} (Fukaya et al. 2022).
-Expectations are taken with respect to the posterior (or, possibly prior)
+Expectations are taken with respect to the posterior (or possibly prior)
 predictive distributions of \eqn{\boldsymbol{r} = \{r_{ijk}\}}{r} and
-\eqn{\boldsymbol{u} = \{u_{ijk}\}}{u}, which are evaluated numerically by
+\eqn{\boldsymbol{u} = \{u_{ijk}\}}{u}, which are evaluated numerically using
 Monte Carlo integration. The predictive distributions of
 \eqn{\boldsymbol{r}}{r} and \eqn{\boldsymbol{u}}{u} depend on the model
 parameters \eqn{\psi}{psi}, \eqn{\theta}{theta}, and \eqn{\phi}{phi} values.
 Their posterior (or prior) distribution is specified by supplying an
-\code{occumbFit} object containing their posterior samples via the \code{fit} argument
+\code{occumbFit} object containing their posterior samples via the \code{fit} argument,
 or by supplying a matrix or array of posterior (or prior) samples of
 parameter values via the \code{psi}, \code{theta}, and \code{phi} arguments. Higher
 approximation accuracy can be obtained by increasing the value of \code{N_rep}.
@@ -93,11 +93,11 @@ The \code{eval_util_R()} function can be executed by supplying the \code{fit} ar
 without specifying the \code{psi}, \code{theta}, and \code{phi} arguments, by supplying the
 three \code{psi}, \code{theta}, and \code{phi} arguments without the \code{fit} argument, or by
 supplying the \code{fit} argument and any or all of the \code{psi}, \code{theta}, and \code{phi}
-arguments. If \code{psi}, \code{theta}, or \code{phi} arguments are specified in addition
-to \code{fit}, the parameter values given in these arguments are used
-preferentially to evaluate expected utility. If sample sizes differ among
+arguments. If the \code{psi}, \code{theta}, or \code{phi} arguments are specified in addition
+to the \code{fit}, the parameter values given in these arguments are preferentially
+used to evaluate the expected utility. If the sample sizes differed among
 parameters, parameters with smaller sample sizes are resampled with
-replacement to align sample sizes across parameters.
+replacements to align the sample sizes across parameters.
 
 The expected utility is evaluated assuming homogeneity of replicates, in the
 sense that \eqn{\theta}{theta} and \eqn{\phi}{phi}, the model parameters
@@ -105,20 +105,20 @@ associated with the species detection process, are constant across
 replicates within a site. For this reason, \code{eval_util_R()} does not accept
 replicate-specific \eqn{\theta}{theta} and \eqn{\phi}{phi}. If the
 \code{occumbFit} object supplied in the \code{fit} argument has a replicate-specific
-parameter, parameter samples to be used in the utility evaluation must be
-provided explicitly via \code{theta} or \code{phi} argument.
+parameter, the parameter samples to be used in the utility evaluation must be
+provided explicitly via the \code{theta} or \code{phi} arguments.
 
 If the parameters are modeled as a function of site covariates in the \code{fit}
-object, or if the \code{psi}, \code{theta}, and/or \code{phi} arguments have site dimension,
+object, or if the \code{psi}, \code{theta}, and/or \code{phi} arguments have site dimensions,
 the expected utility is evaluated to account for the site heterogeneity of
-the parameters. Specifically, to incorporate site heterogeneity, the
+the parameters. To incorporate site heterogeneity, the
 parameter values for each \code{J} site are determined by selecting site-specific
-parameter values in the \code{fit} or that supplied in \code{psi}, \code{theta}, and \code{phi}
-via random sampling with replacement. Thus, the expected utility is
-evaluated by assuming the set of supplied parameter values as a statistical
+parameter values in the \code{fit}, or those supplied in \code{psi}, \code{theta}, and \code{phi}
+via random sampling with replacement. Thus, expected utility is
+evaluated by assuming a set of supplied parameter values as a statistical
 population of site-specific parameters.
 
-Monte Carlo integration is executed in parallel on multiple CPU cores where
+The Monte Carlo integration is executed in parallel on multiple CPU cores, where
 the \code{cores} argument controls the degree of parallelization.
 }
 \section{References}{
@@ -132,10 +132,12 @@ and Evolution} \strong{13}:183--193.
 
 \examples{
 \donttest{
-# Generate the smallest random dataset (2 species * 2 sites * 2 reps)
-I <- 2 # Number of species
-J <- 2 # Number of sites
-K <- 2 # Number of replicates
+set.seed(1)
+
+# Generate a random dataset (20 species * 2 sites * 2 reps)
+I <- 20 # Number of species
+J <- 2  # Number of sites
+K <- 2  # Number of replicates
 data <- occumbData(
     y = array(sample.int(I * J * K), dim = c(I, J, K)))
 
@@ -149,46 +151,46 @@ fit <- occumb(data = data)
 
 # J, K, and N values under specified budget and cost
 (util2 <- eval_util_R(list_cond_R(budget = 50000,
-                                 lambda1 = 0.01,
-                                 lambda2 = 5000,
-                                 lambda3 = 5000),
+                                  lambda1 = 0.01,
+                                  lambda2 = 5000,
+                                  lambda3 = 5000),
                       fit))
 
 # K values restricted
 (util3 <- eval_util_R(list_cond_R(budget = 50000,
-                                 lambda1 = 0.01,
-                                 lambda2 = 5000,
-                                 lambda3 = 5000,
-                                 K = 1:5),
+                                  lambda1 = 0.01,
+                                  lambda2 = 5000,
+                                  lambda3 = 5000,
+                                  K = 1:5),
                       fit))
 
 # J and K values restricted
 (util4 <- eval_util_R(list_cond_R(budget = 50000,
-                                 lambda1 = 0.01,
-                                 lambda2 = 5000,
-                                 lambda3 = 5000,
-                                 J = 1:3, K = 1:5),
+                                  lambda1 = 0.01,
+                                  lambda2 = 5000,
+                                  lambda3 = 5000,
+                                  J = 1:3, K = 1:5),
                       fit))
 
 # theta and phi values supplied
 (util5 <- eval_util_R(list_cond_R(budget = 50000,
-                                 lambda1 = 0.01,
-                                 lambda2 = 5000,
-                                 lambda3 = 5000,
-                                 J = 1:3, K = 1:5),
+                                  lambda1 = 0.01,
+                                  lambda2 = 5000,
+                                  lambda3 = 5000,
+                                  J = 1:3, K = 1:5),
                       fit,
-                      theta = array(0.5, dim = c(4000, 2, 2)),
-                      phi = array(1, dim = c(4000, 2, 2))))
+                      theta = array(0.5, dim = c(4000, I, J)),
+                      phi = array(1, dim = c(4000, I, J))))
 
 # psi, theta, and phi values, but no fit object supplied
 (util6 <- eval_util_R(list_cond_R(budget = 50000,
-                                 lambda1 = 0.01,
-                                 lambda2 = 5000,
-                                 lambda3 = 5000,
-                                 J = 1:3, K = 1:5),
+                                  lambda1 = 0.01,
+                                  lambda2 = 5000,
+                                  lambda3 = 5000,
+                                  J = 1:3, K = 1:5),
                       fit = NULL,
-                      psi = array(0.5, dim = c(4000, 2, 2)),
-                      theta = array(0.5, dim = c(4000, 2, 2)),
-                      phi = array(1, dim = c(4000, 2, 2))))
+                      psi = array(0.9, dim = c(4000, I, J)),
+                      theta = array(0.9, dim = c(4000, I, J)),
+                      phi = array(1, dim = c(4000, I, J))))
 }
 }
