@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,126 +84,126 @@
     
     
 <p>The <code><a href="../reference/occumb.html">occumb()</a></code> function implements a hierarchical model
-that represents sequence read count data obtained from spatially
-replicated environmental DNA metabarcoding as a consequence of
-sequential stochastic processes (i.e., ecological and observational
-processes). The model allows us to account for false-negative species
-detection errors that occur at different stages of the metabarcoding
-workflow under several assumptions, including that there are no false
-positive errors. To identify model parameters replicates at different
-levels are required; i.e., you should have multiple sites and multiple
-within-site replicates. However, it is not necessary to have a balanced
-design with the same number of replicates at all sites. A quick and less
-formal description of this model is provided in the following. Readers
-are encouraged to refer to the <a href="https://doi.org/10.1111/2041-210X.13732" class="external-link">original paper</a> for a
-more formal and complete explanation.</p>
+that represents the sequence read count data obtained from spatially
+replicated eDNA metabarcoding as a consequence of sequential stochastic
+processes (i.e., ecological and observational processes). This model
+allows us to account for false-negative species detection errors that
+occur at different stages of the metabarcoding workflow. To identify the
+model parameters, replicates at different levels are required; that is,
+one should have multiple sites and multiple within-site replicates.
+However, it is not necessary to have a balanced design with the same
+number of replicates at all sites. A brief and less formal description
+of this model is provided below. Readers are encouraged to refer to the
+<a href="https://doi.org/10.1111/2041-210X.13732" class="external-link">original paper</a> for
+a more formal and complete explanation.</p>
 <div class="section level2">
 <h2 id="modeling-the-sequential-sampling-process-of-edna-metabarcoding">Modeling the sequential sampling process of eDNA metabarcoding<a class="anchor" aria-label="anchor" href="#modeling-the-sequential-sampling-process-of-edna-metabarcoding"></a>
 </h2>
-<p>We assume that the occurrence of <code>I</code> focal species was
-monitored at <code>J</code> sites sampled from an area of interest. At
+<p>We assumed that there were <code>I</code> focal species to be
+monitored and <code>J</code> sites sampled from an area of interest. At
 site <code>j</code>, <code>K[j]</code> replicates of environmental
-samples are collected. For each replicate, a library for DNA sequencing
-is prepared to obtain separate sequence reads for each replicate. We
-denote the resulting sequence read counts of species <code>i</code> for
-replicate <code>k</code> at site <code>j</code>, obtained using
-high-throughput sequencing and subsequent bioinformatic processing, as
-<code>y[i, j, k]</code>.</p>
-<div class="figure">
-<img src="images/model.png" alt=""><p class="caption">Adapted from Figure 1 in Fukaya et al. 2022 (CC BY
-4.0)</p>
+samples were collected. For each replicate, a library was prepared for
+DNA sequencing to obtain separate sequence reads. We denote the
+resulting sequence read count of species <code>i</code> for replicate
+<code>k</code> at site <code>j</code> obtained using high-throughput
+sequencing and subsequent bioinformatics processing as
+<code>y[i, j, k]</code> (<code>i = 1, 2, ..., I</code>;
+<code>j = 1, 2, ..., J</code>; <code>k = 1, 2, ..., K[j]</code>).</p>
+<div class="float">
+<img src="images/model.png" alt="Adapted from Figure 1 in Fukaya et al. 2022 (CC BY 4.0)"><div class="figcaption">Adapted from Figure 1 in Fukaya et al. 2022 (CC
+BY 4.0)</div>
 </div>
 <p>The figure above shows a diagram of the minimal model that can be
-fitted by <code><a href="../reference/occumb.html">occumb()</a></code> with default settings. The process of
+fitted using <code><a href="../reference/occumb.html">occumb()</a></code> with default settings. The process of
 generating <code>y</code> is represented by a series of latent variables
-<code>z</code>, <code>u</code>, and <code>r</code>, and parameters
+<code>z</code>, <code>u</code>, and <code>r</code>, and the parameters
 <code>psi</code>, <code>theta</code>, and <code>phi</code> that govern
 the variation of the latent variables. Although <code>psi</code>,
-<code>theta</code>, and <code>phi</code> are assumed here to have
+<code>theta</code>, and <code>phi</code> are assumed to have
 species-specific values, modeling these parameters as functions of
-covariates allows for further variation in them (see the following
-section).</p>
-<p>First, look at the right-pointing arrow on the left, representing the
-ecological process of species distribution. For the DNA sequence of
-species to be detected at a site, the site must be occupied by the
-species (i.e., the species’ environmental DNA must be present at the
-site). In the model, the site occupancy of species is indicated by the
-latent variable <code>z[i, j]</code>. If site <code>j</code> is occupied
-by species <code>i</code>, then <code>z[i, j] = 1</code>; otherwise,
-<code>z[i, j] = 0</code>. <code>psi[i]</code> represents the probability
-that species <code>i</code> occupies a site selected from the region of
-interest. Thus, species with high <code>psi[i]</code> values should
-occur at many sites in the region, while species with low
-<code>psi[i]</code> values should occur at a limited number of
-sites.</p>
-<p>Next, focus on the second right-pointing arrow from the left, which
-represents one of the two observation processes, the capture of species
-DNA sequence. For the DNA sequence of species to be detected, the
-environmental sample collected at an occupied site (i.e.,
-<code>z[i, j] = 1</code>) must contain species eDNA and the amplicon
-derived from it must be present in the prepared sequencing library. In
-the model, the inclusion of the DNA sequence of species in a sequencing
-library is indicated by the latent variable <code>u[i, j, k]</code>. If
-the library of replicate <code>k</code> at site <code>j</code> contains
-the DNA sequence of species <code>i</code>, then
-<code>u[i, j, k] = 1</code>; otherwise, <code>u[i, j, k] = 0</code>.
-<code>theta[i]</code> represents the probability that the DNA sequence
-of species <code>i</code> is captured per replicate collected at a site
-occupied by the species. DNA sequences of species with high
-<code>theta[i]</code> values are more reliably captured at occupied
-sites, while DNA sequences of species with low <code>theta[i]</code>
-values are more difficult to capture. Note that <code>u[i, j, k]</code>
-always takes zero for sites not occupied by species (i.e.,
-<code>z[i, j] = 0</code>), assuming that false positives are not to
-occur.</p>
-<p>Finally, look at the right-pointing arrow on the right side. This
-model part represents another observation process, the allocation of
-species sequence reads in high-throughput sequencing. Here, the sequence
-read count vector <code>y[1:I, j, k]</code> is assumed to follow a
-multinomial distribution with the total number of sequence reads in
-replicate <code>k</code> of site <code>j</code> as the number of trials.
-Its multinomial cell probability, <code>pi[1:I, j, k]</code> (not shown
-in the figure), is modeled as a function of latent variables
-<code>u[1:I, j, k]</code> described above and <code>r[1:I, j, k]</code>
-that is proportional to the relative frequency of species sequence
-reads. The variation of <code>r[i, j, k]</code> is governed by the
-parameter <code>phi[i]</code>, which represents the relative dominance
-of species sequence. Species with higher <code>phi[i]</code> values tend
-to have relatively more reads when the species sequence is included in
-the library (i.e. <code>u[i, j, k] = 1</code>), while species with lower
-<code>phi[i]</code> values tend to have relatively fewer reads. No false
-positives are assumed to occur at this stage, too; that is,
+covariates allows for further variation (see the following section).</p>
+<p>The right-pointing arrow on the left-hand side of the figure
+represents the ecological process of species distribution. For the DNA
+sequence of a species to be detected at a site, the site must be
+occupied by that species (i.e., the eDNA of the species must be present
+at the site). In this model, the site occupancy of a species is
+indicated by the latent variable <code>z[i, j]</code>. If site
+<code>j</code> is occupied by species <code>i</code>,
+<code>z[i, j] = 1</code>; otherwise, <code>z[i, j] = 0</code>.
+<code>psi[i]</code> represents the probability that species
+<code>i</code> occupies a site selected from the region of interest.
+Therefore, species with high <code>psi[i]</code> values should occur at
+many sites in the region, whereas those with low <code>psi[i]</code>
+values should occur at only a limited number of sites.</p>
+<p>Next, we focus on the second right-pointing arrow from the left,
+which represents one of the two observation processes: the capture of
+the species DNA sequence. For the DNA sequence of a species to be
+detected, the environmental sample from an occupied site and sequencing
+library derived from it must contain the species DNA sequence. In this
+model, the inclusion of the DNA sequence of a species in a sequencing
+library is indicated by latent variable <code>u[i, j, k]</code>. If the
+library of replicate <code>k</code> at site <code>j</code> contains the
+DNA sequence of species <code>i</code>, <code>u[i, j, k] = 1</code>;
+otherwise, <code>u[i, j, k] = 0</code>. <code>theta[i]</code> represents
+the per-replicate probability that the DNA sequence of species
+<code>i</code> is captured at a site occupied by the species. The DNA
+sequences of species with high <code>theta[i]</code> values are more
+reliably captured at occupied sites, whereas those of species with low
+<code>theta[i]</code> values are more difficult to capture. Note that
+<code>u[i, j, k]</code> is always zero for sites not occupied by a
+species (i.e., <code>z[i, j] = 0</code>), assuming that false positives
+do not occur.</p>
+<p>Finally, we examine the right-pointing arrow on the right-hand side
+of the figure. This model part represents another observation process,
+that is, the allocation of species sequence reads in high-throughput
+sequencing. The sequence read count vector <code>y[1:I, j, k]</code> is
+assumed to follow a multinomial distribution, with the total number of
+sequence reads in replicate <code>k</code> of site <code>j</code> as the
+number of trials. Its multinomial cell probability,
+<code>pi[1:I, j, k]</code> (not shown in the figure), is modeled as a
+function of the latent variables <code>u[1:I, j, k]</code> described
+above and <code>r[1:I, j, k]</code>, which is proportional to the
+relative frequency of the species sequence reads. The variation in
+<code>r[i, j, k]</code> is governed by parameter <code>phi[i]</code>,
+which represents the relative dominance of a species sequence. Species
+with higher <code>phi[i]</code> values tend to have more reads when the
+species sequence was included in the library
+(<code>u[i, j, k] = 1</code>), whereas species with lower
+<code>phi[i]</code> values tend to have fewer reads. Again, no false
+positives are assumed to occur at this stage; that is,
 <code>pi[i, j, k]</code> always takes zero for replicates that do not
 include the species DNA sequence (i.e.,
 <code>u[i, j, k] = 0</code>).</p>
 <p>In the figure, the arrows directed at <code>psi[i]</code>,
 <code>theta[i]</code>, and <code>phi[i]</code> indicate that the
-variation of these parameters is governed by a community-level
-multivariate normal prior distribution with mean <code>Mu</code> and
-covariance matrix <code>Sigma</code>. Details are discussed below.</p>
+variation in these parameters is governed by a community-level
+multivariate normal prior distribution with a mean vector
+<code>Mu</code> and covariance matrix <code>Sigma</code>. The two
+components of <code>Sigma</code> are the standard deviation
+<code>sigma</code> and the correlation coefficient <code>rho</code> (not
+shown in the figure).</p>
 </div>
 <div class="section level2">
 <h2 id="covariate-modeling-of-psi-theta-and-phi">Covariate modeling of <code>psi</code>, <code>theta</code>, and
 <code>phi</code><a class="anchor" aria-label="anchor" href="#covariate-modeling-of-psi-theta-and-phi"></a>
 </h2>
-<p>Variation in <code>psi</code>, <code>theta</code>, and
-<code>phi</code> can be modeled as a function of covariates in a manner
-similar to generalized linear models (GLMs) and generalized linear mixed
-models (GLMMs). That is, the covariates are incorporated into linear
-predictors on the appropriate link scales for the parameters (logit for
-<code>psi</code> and <code>theta</code> and log for <code>phi</code>).
-The <code><a href="../reference/occumb.html">occumb()</a></code> function allows for covariate modeling using
-standard R formula syntax.</p>
+<p>Variations in <code>psi</code>, <code>theta</code>, and
+<code>phi</code> can be modeled as functions of covariates in a manner
+similar to generalized linear models (GLMs). That is, the covariates are
+incorporated into linear predictors on the appropriate link scales for
+the parameters (logit for <code>psi</code> and <code>theta</code>, and
+log for <code>phi</code>). The <code><a href="../reference/occumb.html">occumb()</a></code> function allows
+covariate modeling using the standard R formula syntax.</p>
 <p>There are three types of related covariates: <strong>species
 covariates</strong> that can take on different values for each species
 (e.g., traits), <strong>site covariates</strong> that can take on
-different values for each site (e.g., environment), and
+different values for each site (e.g., habitat characteristics), and
 <strong>replicate covariates</strong> that can take on different values
-for each combination of site and replicate (e.g., the amount of water
-filtered). These covariates can be included in the data object via the
-<code>spec_cov</code>, <code>site_cov</code>, and <code>repl_cov</code>
-arguments of the <code><a href="../reference/occumbData.html">occumbData()</a></code> function and used to specify
-models in the <code><a href="../reference/occumb.html">occumb()</a></code> function.</p>
+for each replicate (e.g., amount of water filtered). These covariates
+can be included in the data object via the <code>spec_cov</code>,
+<code>site_cov</code>, and <code>repl_cov</code> arguments of the
+<code><a href="../reference/occumbData.html">occumbData()</a></code> function and used to specify the models in the
+<code><a href="../reference/occumb.html">occumb()</a></code> function.</p>
 <p>The <code><a href="../reference/occumb.html">occumb()</a></code> function specifies covariates for each
 parameter using the <code>formula_&lt;parameter name&gt;</code> and
 <code>formula_&lt;parameter name&gt;_shared</code> arguments. The
@@ -212,11 +212,11 @@ parameter using the <code>formula_&lt;parameter name&gt;</code> and
 specify species-specific effects and effects shared by all species,
 respectively. The following table shows examples of modeling
 <code>psi</code> using the <code>formula_psi</code> and
-<code>formula_psi_shared</code> arguments where <code>i</code> is the
+<code>formula_psi_shared</code> arguments, where <code>i</code> is the
 species index, <code>j</code> is the site index, <code>speccov1</code>
 is a continuous species covariate, and <code>sitecov1</code> and
 <code>sitecov2</code> are continuous site covariates. <code>psi</code>
-can be modeled as a function of species and site covariates.</p>
+can be modeled as a function of the species and site covariates.</p>
 <table class="table">
 <colgroup>
 <col width="33%">
@@ -262,21 +262,21 @@ can be modeled as a function of species and site covariates.</p>
 </tbody>
 </table>
 <p>In <code><a href="../reference/occumb.html">occumb()</a></code>, species-specific effects on
-<code>psi</code> are denoted as <code>gamma</code>, and shared effects
-on <code>psi</code> are denoted as <code>gamma_shared</code>. The first
-case specifies a default, intercept-only model.
-<code>logit(psi[i])</code> is therefore determined only by the intercept
-term <code>gamma[i, 1]</code>. Note that <code><a href="../reference/occumb.html">occumb()</a></code> always
-estimates the species-specific intercept <code>gamma[i, 1]</code>, as in
-this simplest case. In the second case, species-specific effects
-<code>gamma[i, 2]</code> of the site covariate <code>sitecov1</code> are
-incorporated. Note here that the site subscript <code>j</code> is added
-to <code>psi</code> on the left-hand side of the equation because the
-value of <code>psi</code> now varies from site to site depending on the
-value of <code>sitecov1[j]</code>. In the third and fourth cases,
-another site covariate, <code>sitecov2</code>, is specified in addition
-to <code>sitecov1</code>. As shown in the fourth case, interaction terms
-can be specified using the <code>*</code> operator.</p>
+<code>psi</code> are denoted by <code>gamma</code>, and the shared
+effects on <code>psi</code> are denoted by <code>gamma_shared</code>.
+The first row of the table specifies a default intercept-only model
+where <code>logit(psi[i])</code> is determined only by the intercept
+term <code>gamma[i, 1]</code>. As in this most straightforward case,
+<code><a href="../reference/occumb.html">occumb()</a></code> always estimates the species-specific intercept
+<code>gamma[i, 1]</code>. In the second case, the species-specific
+effect <code>gamma[i, 2]</code> of the site covariate
+<code>sitecov1</code> are incorporated. Note that the site subscript
+<code>j</code> is added to <code>psi</code> on the left-hand side of the
+equation because the value of <code>psi</code> now varies from site to
+site depending on the value of <code>sitecov1[j]</code>. In the third
+and fourth cases, another site covariate, <code>sitecov2</code>, is
+specified in addition to <code>sitecov1</code>. In the fourth case,
+interaction is specified using the <code>*</code> operator.</p>
 <p>In the fifth case, the <code>formula_psi_shared</code> argument
 specifies the shared effect of the species covariate
 <code>speccov1</code>. Note that the effect <code>gamma_shared[1]</code>
@@ -286,23 +286,22 @@ estimated for species covariates, <code><a href="../reference/occumb.html">occum
 covariates and their interactions only in its
 <code>formula_&lt;parameter name&gt;_shared</code> argument. Introducing
 species covariates does not change the dimension of <code>psi</code>
-(note that it has only the subscript <code>i</code>) but may help reveal
-variations in site occupancy probability associated with species
+(note that it has only the subscript <code>i</code>), but may help
+reveal variations in site occupancy probability associated with species
 characteristics.</p>
 <p>In the sixth case, the site covariate <code>sitecov1</code> is
-specified in the <code>formula_psi_shared</code> argument. In contrast
-to the second case, <code>sitecov1[j]</code> has a shared effect
-<code>gamma_shared[1]</code> in the linear predictor. Since species are
-often expected to respond differently to site characteristics, site
-covariates are likely to be introduced using the
-<code>formula_psi</code> argument. Nevertheless, the
-<code>formula_psi_shared</code> argument can be used when assuming
-consistent covariate effects across species is reasonable or when the
-data support doing so.</p>
+specified in the <code>formula_psi_shared</code> argument. Note that, in
+contrast to the second case, <code>sitecov1[j]</code> has a shared
+effect <code>gamma_shared[1]</code>. Because species are often expected
+to respond differently to site characteristics, site covariates are
+likely to be introduced using the <code>formula_psi</code> argument.
+Nevertheless, the <code>formula_psi_shared</code> argument can be used
+when consistent covariate effects across species are expected or when
+the data support doing so.</p>
 <p>A similar approach can be applied to <code>theta</code> and
-<code>phi</code>, which can be modeled as a function of species, site,
-and replicate covariates. The following table shows examples of modeling
-for <code>theta</code> where <code>i</code> is the species index,
+<code>phi</code>, which can be modeled as functions of species, site,
+and replicate covariates. The following table shows examples of
+<code>theta</code> modeling, where <code>i</code> is the species index,
 <code>j</code> is the site index, <code>k</code> is the replicate index,
 <code>speccov1</code> is a continuous species covariate,
 <code>sitecov1</code> is a continuous site covariate, and
@@ -352,22 +351,22 @@ for <code>theta</code> where <code>i</code> is the species index,
 </tbody>
 </table>
 <p>In <code><a href="../reference/occumb.html">occumb()</a></code>, species-specific effects on
-<code>theta</code> are denoted as <code>beta</code>, and shared effects
+<code>theta</code> are denoted as <code>beta</code> and shared effects
 on <code>theta</code> are denoted as <code>beta_shared</code>. The first
-case specifies an intercept-only model. As in the case of
-<code>psi</code>, <code><a href="../reference/occumb.html">occumb()</a></code> always estimates the
+row of the above table specifies an intercept-only model. As in the case
+of <code>psi</code>, <code><a href="../reference/occumb.html">occumb()</a></code> always estimates the
 species-specific intercept <code>beta[i, 1]</code>. The second and third
 cases can be contrasted with the second case of the <code>psi</code>
 example with a single covariate specified in the
-<code>formula_psi</code> argument, and the remaining other cases with
-the fifth and sixth cases of the <code>psi</code> example with a single
+<code>formula_psi</code> argument, and the remaining cases with the
+fifth and sixth cases of the <code>psi</code> example with a single
 covariate specified in the <code>formula_psi_shared</code> argument.
-Because replicate covariate <code>replcov1</code> have both the site
+Because the replicate covariate <code>replcov1</code> has both site
 index <code>j</code> and replicate index <code>k</code>, specifying it
-adds these two indexes to <code>theta</code>.</p>
-<p>The same rule applies to <code>phi</code>. Here is an example of more
-complex cases involving interactions between different types of
-covariates.</p>
+adds these two indices to <code>theta</code>.</p>
+<p>The same rule applies to the <code>phi</code> modeling. The following
+is an example of a more complex case involving interactions between
+different types of covariates.</p>
 <table class="table">
 <colgroup>
 <col width="33%">
@@ -398,8 +397,8 @@ covariates.</p>
 </tbody>
 </table>
 <p>In <code><a href="../reference/occumb.html">occumb()</a></code>, species-specific effects on
-<code>phi</code> are denoted as <code>alpha</code>, and shared effects
-on <code>phi</code> are denoted as <code>alpha_shared</code>. As with
+<code>phi</code> are denoted as <code>alpha</code> and shared effects on
+<code>phi</code> are denoted as <code>alpha_shared</code>. Similar to
 the other two parameters, <code><a href="../reference/occumb.html">occumb()</a></code> always estimates the
 species-specific intercept <code>alpha[i, 1]</code>.</p>
 <p>The following table summarizes the covariate types accepted by each
@@ -459,25 +458,28 @@ species-specific effects <code>alpha</code>, <code>beta</code>, and
 <code>gamma</code>. Specifically, the vector of these effects is assumed
 to follow a multivariate normal distribution, and a prior distribution
 is specified for the elements of its mean vector <code>Mu</code> and
-covariance matrix <code>Sigma</code> whose values are estimated from the
-data. Because these hyperparameters summarize the variation in
-species-specific effects at the community level, their estimates may be
-of interest.</p>
-<p>A normal prior distribution with mean 0 and precision
-<code>prior_prec</code> is specified for each element of
-<code>Mu</code>. The <code>prior_prec</code> value is determined by the
-<code>prior_prec</code> argument of the <code><a href="../reference/occumb.html">occumb()</a></code> function,
-which by default is set to a small value <code>1e-4</code> to specify
-vague priors. Note that precision is the inverse of variance.</p>
-<p><code>Sigma</code> is decomposed into elements of standard deviation
-<code>sigma</code> and correlation coefficient <code>rho</code>, each
-specified with a different vague prior. Specifically, a uniform prior
-distribution with a lower limit of 0 and an upper limit of
-<code>prior_ulim</code> is specified for <code>sigma</code>, and a
-uniform prior with a lower limit of −1 and an upper limit of 1 is set
-for <code>rho</code>. The value of <code>prior_ulim</code> is determined
-by the <code>prior_ulim</code> argument of the <code><a href="../reference/occumb.html">occumb()</a></code>
-function and is set to <code>1e4</code> by default.</p>
+covariance matrix <code>Sigma</code>. The element values of
+<code>Mu</code> and <code>Sigma</code> are estimated from the data; as
+these hyperparameters summarize the variation in species-specific
+effects at the community level, their estimates may be of interest in
+assessing e.g., whether covariates have a consistent effect on a wide
+range of species.</p>
+<p>For each element of <code>Mu</code>, a normal prior distribution with
+a mean of 0 and precision (i.e., the inverse of the variance)
+<code>prior_prec</code> is specified. The <code>prior_prec</code> value
+is determined by the <code>prior_prec</code> argument of the
+<code><a href="../reference/occumb.html">occumb()</a></code> function, which by default is set to a small value
+of <code>1e-4</code> to specify vague priors.</p>
+<p><code>Sigma</code> is decomposed into the elements of standard
+deviation <code>sigma</code> and correlation coefficient
+<code>rho</code>, each of which is specified by a different vague prior.
+Specifically, a uniform prior distribution with a lower limit of 0 and
+an upper limit of <code>prior_ulim</code> is specified for
+<code>sigma</code>, and a uniform prior with a lower limit of −1 and an
+upper limit of 1 is set for <code>rho</code>. The value of
+<code>prior_ulim</code> is determined by the <code>prior_ulim</code>
+argument of the <code><a href="../reference/occumb.html">occumb()</a></code> function and is set to
+<code>1e4</code> by default.</p>
 <p>For each of the shared effects <code>alpha_shared</code>,
 <code>beta_shared</code>, and <code>gamma_shared</code>, a normal prior
 distribution with mean 0 and precision <code>prior_prec</code> is
@@ -487,10 +489,10 @@ specified.</p>
 <h2 id="after-all-which-are-the-relevant-parameters">After all, which are the relevant parameters?<a class="anchor" aria-label="anchor" href="#after-all-which-are-the-relevant-parameters"></a>
 </h2>
 <p>The latent variables and parameters of the model to be estimated and
-saved using the <code><a href="../reference/occumb.html">occumb()</a></code> function is as follows (note that
+saved using the <code><a href="../reference/occumb.html">occumb()</a></code> function are as follows. Note that
 <code><a href="../reference/occumb.html">occumb()</a></code> will not save <code>u</code> and <code>r</code>,
-but their function <code>pi</code>). Posterior samples of these latent
-variables and parameters can be accessed using
+but their function <code>pi</code>. The posterior samples of these
+latent variables and parameters can be accessed using
 <code><a href="../reference/get_posterior.html">get_post_samples()</a></code> or <code><a href="../reference/get_posterior.html">get_post_summary()</a></code>
 functions.</p>
 <dl>
@@ -570,14 +572,14 @@ common across species.
 <code>Mu</code>
 </dt>
 <dd>
-Community-level averages of the species-specific effects
+Community-level averages of species-specific effects
 (<code>alpha</code>, <code>beta</code>, <code>gamma</code>).
 </dd>
 <dt>
 <code>sigma</code>
 </dt>
 <dd>
-Standard deviations of the species-specific effects (<code>alpha</code>,
+Standard deviations of species-specific effects (<code>alpha</code>,
 <code>beta</code>, <code>gamma</code>).
 </dd>
 <dt>
