@@ -1,72 +1,26 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://fukayak.github.io/occumb/dev/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://fukayak.github.io/occumb/dev/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://fukayak.github.io/occumb/dev/articles/model_specification.html</loc>
-  </url>
-  <url>
-    <loc>https://fukayak.github.io/occumb/dev/articles/occumb.html</loc>
-  </url>
-  <url>
-    <loc>https://fukayak.github.io/occumb/dev/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://fukayak.github.io/occumb/dev/index.html</loc>
-  </url>
-  <url>
-    <loc>https://fukayak.github.io/occumb/dev/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://fukayak.github.io/occumb/dev/reference/eval_util_L.html</loc>
-  </url>
-  <url>
-    <loc>https://fukayak.github.io/occumb/dev/reference/eval_util_R.html</loc>
-  </url>
-  <url>
-    <loc>https://fukayak.github.io/occumb/dev/reference/fish.html</loc>
-  </url>
-  <url>
-    <loc>https://fukayak.github.io/occumb/dev/reference/fish_raw.html</loc>
-  </url>
-  <url>
-    <loc>https://fukayak.github.io/occumb/dev/reference/get_posterior.html</loc>
-  </url>
-  <url>
-    <loc>https://fukayak.github.io/occumb/dev/reference/gof.html</loc>
-  </url>
-  <url>
-    <loc>https://fukayak.github.io/occumb/dev/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://fukayak.github.io/occumb/dev/reference/list_cond_L.html</loc>
-  </url>
-  <url>
-    <loc>https://fukayak.github.io/occumb/dev/reference/list_cond_R.html</loc>
-  </url>
-  <url>
-    <loc>https://fukayak.github.io/occumb/dev/reference/occumb.html</loc>
-  </url>
-  <url>
-    <loc>https://fukayak.github.io/occumb/dev/reference/occumbData.html</loc>
-  </url>
-  <url>
-    <loc>https://fukayak.github.io/occumb/dev/reference/plot-occumbFit-method.html</loc>
-  </url>
-  <url>
-    <loc>https://fukayak.github.io/occumb/dev/reference/plot-occumbGof-method.html</loc>
-  </url>
-  <url>
-    <loc>https://fukayak.github.io/occumb/dev/reference/predict-occumbFit-method.html</loc>
-  </url>
-  <url>
-    <loc>https://fukayak.github.io/occumb/dev/reference/summary-occumbData-method.html</loc>
-  </url>
-  <url>
-    <loc>https://fukayak.github.io/occumb/dev/reference/summary-occumbFit-method.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://fukayak.github.io/occumb/dev/LICENSE.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/dev/articles/index.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/dev/articles/model_specification.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/dev/articles/occumb.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/dev/authors.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/dev/index.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/dev/news/index.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/dev/reference/eval_util_L.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/dev/reference/eval_util_R.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/dev/reference/fish.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/dev/reference/fish_raw.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/dev/reference/get_posterior.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/dev/reference/gof.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/dev/reference/index.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/dev/reference/list_cond_L.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/dev/reference/list_cond_R.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/dev/reference/occumb.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/dev/reference/occumbData.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/dev/reference/plot-occumbFit-method.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/dev/reference/plot-occumbGof-method.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/dev/reference/predict-occumbFit-method.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/dev/reference/summary-occumbData-method.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/dev/reference/summary-occumbFit-method.html</loc></url>
 </urlset>
+
