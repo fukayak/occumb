@@ -1,6 +1,6 @@
 Package: occumb
 Title: Site Occupancy Modeling for Environmental DNA Metabarcoding
-Version: 1.1.0
+Version: 1.1.0.9000
 Authors@R: c(
     person("Keiichi", "Fukaya", , "fukayak99@gmail.com", role = c("aut", "cre")),
     person("Ken", "Kellner", role = "cph",
@@ -15,7 +15,7 @@ License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 Suggests: 
     rmarkdown,
     spelling,

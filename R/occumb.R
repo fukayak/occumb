@@ -188,7 +188,7 @@ occumb <- function(formula_phi = ~ 1,
     dat <- set_data(const, margs, prior_prec, prior_ulim)
 
     # Set initial values
-    inits <- set_inits(const, margs)
+    inits <- set_inits(const, margs, dat)
 
     # Set parameters monitored
     params <- set_params_monitored(margs$phi_shared,
@@ -417,12 +417,12 @@ set_data <- function(const, margs, prior_prec, prior_ulim) {
 }
 
 # Auto-generate the initial value function
-set_inits <- function(const, margs) {
-    eval(parse(text = inits_code(const, margs)))
+set_inits <- function(const, margs, dat) {
+    eval(parse(text = inits_code(const, margs, dat)))
 }
 
 # Auto-generate codes for the initial value function
-inits_code <- function(const, margs) {
+inits_code <- function(const, margs, dat) {
     out <- c(
         "function() {",
         "    list(z = matrix(1, const$I, const$J),",
@@ -441,9 +441,18 @@ inits_code <- function(const, margs) {
     out <- c(out,
         "         spec_eff = matrix(stats::rnorm(const$I * margs$M, sd = 0.1),",
         "                           const$I, margs$M),",
-        "         Mu       = stats::rnorm(margs$M, sd = 0.1),",
-        "         sigma    = stats::rnorm(margs$M, mean = 1, sd = 0.1))",
-        "}")
+        "         Mu       = stats::rnorm(margs$M, sd = 0.1),")
+
+    if (dat$prior_ulim > 10) {
+        out <- c(out,
+            "         sigma    = stats::rnorm(margs$M, mean = 1, sd = 0.1))")
+    } else {
+        out <- c(out,
+            sprintf("         sigma    = stats::runif(margs$M, min = 0, max = %s))",
+                    dat$prior_ulim))
+    }
+
+    out <- c(out, "}")
 
     out
 }

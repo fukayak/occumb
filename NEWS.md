@@ -1,3 +1,6 @@
+## occumb (development version)
+* Fix an issue with `sigma`'s default value.
+
 ## occumb 1.1.0 (2024/3/26)
 * Add `predict()` method for `occumbFit` class.
 * Fix `summary()` method for `occumbFit`: no longer outputs comments on convergence and DIC.
