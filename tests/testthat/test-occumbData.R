@@ -25,8 +25,11 @@ test_that("Check for missing values for y works", {
 test_that("Integer check for y works", {
     expect_error(new("occumbData", y = array(1:8 + 0.1, dim = rep(2, 3))),
                  "'y' contains non-integer value")
-    expect_error(new("occumbData", y = array(c(Inf, 1:7), dim = rep(2, 3))),
+    expect_error(new("occumbData", y = array(c("1", 1:7), dim = rep(2, 3))),
                  "'y' contains non-integer value")
+    expect_error(new("occumbData", y = array(c(Inf, 1:7), dim = rep(2, 3))),
+                 "'y' contains value(s) exceeding maximum integer size",
+                 fixed = TRUE)
 })
 
 test_that("Check for non-negative values for y works", {

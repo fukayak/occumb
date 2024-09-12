@@ -24,8 +24,13 @@ validate_occumbData <- function(object) {
         msg <- c(msg, "'y' contains missing value(s)")
 
     ## y elements are integers.
-    if (!checkmate::test_array(object@y, mode = "integerish"))
+    if (!checkmate::test_array(object@y, mode = "integerish")) {
+      if (is.numeric(object@y) & !checkmate::test_numeric(object@y, upper = .Machine$integer.max)) {
+        msg <- c(msg, "'y' contains value(s) exceeding maximum integer size")
+      } else {
         msg <- c(msg, "'y' contains non-integer value(s)")
+      }
+    }
 
     ## y elements are non-negative.
     if (!checkmate::test_integerish(object@y, lower = 0))
