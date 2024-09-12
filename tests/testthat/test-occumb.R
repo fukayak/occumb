@@ -183,8 +183,7 @@ test_that("Code for initial value function is correct for 144 available models",
                   K = sample.int(1E3, 1),
                   N = sample.int(1E3, 1),
                   y = sample.int(1E3, 1))
-    prior_prec <- rnorm(1)
-    prior_ulim <- rnorm(1)
+    dat <- list()
 
     for (i in 1:nrow(cases)) {
         margs <- list(cov_phi          = rnorm(1),
@@ -203,6 +202,9 @@ test_that("Code for initial value function is correct for 144 available models",
                       phi_shared       = cases$phi_shared[i],
                       theta_shared     = cases$theta_shared[i],
                       psi_shared       = cases$psi_shared[i])
+
+        # Tests for prior_ulim > 10 cases
+        dat$prior_ulim <- runif(1, min = 10, max = 1000)
 
         ans <- c(
             "function() {",
@@ -226,7 +228,39 @@ test_that("Code for initial value function is correct for 144 available models",
             "         sigma    = stats::rnorm(margs$M, mean = 1, sd = 0.1))",
             "}")
 
-        res <- inits_code(const, margs)
+        res <- inits_code(const, margs, dat)
+        expect_equal(res, ans)
+
+        # Tests for prior_ulim < 10 cases
+        dat$prior_ulim <- runif(1, min = 0, max = 10)
+
+        ans <- c(
+            "function() {",
+            "    list(z = matrix(1, const$I, const$J),",
+            "         u = array(1, dim = c(const$I, const$J, const$K)),",
+            "         r = array(stats::rnorm(const$I * const$J * const$K,",
+            "                                mean = 1, sd = 0.1),",
+            "                   dim = c(const$I, const$J, const$K)),")
+
+        if (cases$phi_shared[i])
+            ans <- c(ans, "         alpha_shared = stats::rnorm(margs$M_phi_shared, sd = 0.1),")
+        if (cases$theta_shared[i])
+            ans <- c(ans, "         beta_shared  = stats::rnorm(margs$M_theta_shared, sd = 0.1),")
+        if (cases$psi_shared[i])
+            ans <- c(ans, "         gamma_shared = stats::rnorm(margs$M_psi_shared, sd = 0.1),")
+
+        ans <- c(ans,
+            "         spec_eff = matrix(stats::rnorm(const$I * margs$M, sd = 0.1),",
+            "                           const$I, margs$M),",
+            "         Mu       = stats::rnorm(margs$M, sd = 0.1),")
+
+        ans <- c(ans,
+            sprintf("         sigma    = stats::runif(margs$M, min = 0, max = %s))",
+                    dat$prior_ulim))
+
+        ans <- c(ans, "}")
+
+        res <- inits_code(const, margs, dat)
         expect_equal(res, ans)
 
     }
