@@ -1,4 +1,8 @@
 ## occumb (development version)
+* Change error message for validate_occumbData 
+* Add a test to throw an error when integer is too large
+
+## occumb (development version)
 * Fix an issue with `sigma`'s default value.
 
 ## occumb 1.1.0 (2024/3/26)
