@@ -1,6 +1,7 @@
-## occumb (development version)
+# occumb (development version)
 * Change error message for validate_occumbData 
 * Add a test to throw an error when integer is too large
+* Add tests for `gof` under unbalanced designs
 
 ## occumb (development version)
 * Fix an issue with `sigma`'s default value.
