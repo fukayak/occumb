@@ -39,3 +39,45 @@ test_that("Calculation of Bayes p-value is correct", {
     expect_identical(Bayesian_p_value(x, y), sum(x < y) / length(x))
 })
 
+### Tests for unbalanced designs ----------------------------------------------
+data_unbalanced <- data
+j_miss <- 1; k_miss <- 2
+data_unbalanced@y[, j_miss, k_miss] <- 0
+fit_unbalanced <- occumb(data = data_unbalanced,
+                         n.chains = 1, n.burnin = 10, n.thin = 1, n.iter = 20,
+                         verbose = FALSE)
+
+test_that("Fit statistic is zero for missing observation", {
+    y_ans  <- get_data(fit_unbalanced, "y")
+    N_temp <- apply(y_ans, c(2, 3), sum)
+    pi_temp <- get_post_samples(fit_unbalanced, "pi")
+
+    test_Freeman_Tukey <- Freeman_Tukey(y_ans[, j_miss, k_miss],
+                                        N_temp[j_miss, k_miss],
+                                        pi_temp[1, , j_miss, k_miss])
+    expect_identical(test_Freeman_Tukey, 0)
+    test_deviance <- -2 * llmulti(y_ans[, j_miss, k_miss],
+                                  N_temp[j_miss, k_miss],
+                                  pi_temp[1, , j_miss, k_miss])
+    expect_identical(test_deviance, 0)
+})
+
+test_that("get_y_rep() works with unbalanced data", {
+    y_ans  <- get_data(fit_unbalanced, "y")
+    I_temp <- dim(y_ans)[1]
+    J_temp <- dim(y_ans)[2]
+    K_temp <- dim(y_ans)[3]
+    N_temp <- apply(y_ans, c(2, 3), sum)
+    pi_temp <- get_post_samples(fit_unbalanced, "pi")
+    M_temp  <- dim(pi_temp)[1]
+
+    expect_no_error(get_y_rep(1, y_ans, N_temp, pi_temp))
+
+    y_test <- get_y_rep(1, y_ans, N_temp, pi_temp)
+    expect_identical(y_test[, j_miss, k_miss], y_ans[, j_miss, k_miss])
+})
+
+test_that("gof() works with unbalanced data", {
+    expect_no_error(gof(fit_unbalanced, plot = FALSE))
+})
+
