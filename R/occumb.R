@@ -681,7 +681,7 @@ set_phi_theta <- function(formula, formula_shared, data) {
 }
 
 check_intercept <- function(formula, type) {
-    if (formula == ~ .) return()
+    if ("." %in% all.vars(formula)) return()
     if (!has_intercept(formula))
         stop(sprintf("No intercept in formula_%s: remove 0 or -1 from the formula\n",
                      type))
