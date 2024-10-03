@@ -203,6 +203,9 @@ gof <- function(fit,
 Freeman_Tukey <- function(y, N, pi) {
     sum((sqrt(y) - sqrt(N * pi))^2)
 }
+chi_squared <- function(y, N, pi) {
+    sum((y - N * pi)^2 / (N * pi))
+}
 # -----------------------------------------------------------------------------
 
 # Generate replicate data
