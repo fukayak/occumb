@@ -87,7 +87,7 @@ setClass("occumbGof",
 #' }
 #' @export
 gof <- function(fit,
-                stats = c("Freeman_Tukey", "deviance"),
+                stats = c("Freeman_Tukey", "deviance", "chi_squared"),
                 cores = 1L,
                 plot = TRUE, ...) {
 
@@ -240,6 +240,9 @@ get_stats <- function(m, stats, y, N, pi) {
             if (stats == "deviance") {
                 stats_m[j, k] <- -2 * llmulti(y[, j, k], N[j, k], pi[m, , j, k])
             }
+            if (stats == "chi_squared") {
+                stats_m[j, k]  <- chi_squared(y[, j, k], N[j, k], pi[m, , j, k])
+            }
         }
     }
     sum(stats_m)
@@ -251,7 +254,13 @@ Bayesian_p_value <- function(stat_obs, stat_rep) mean(stat_obs < stat_rep)
 # Plot function
 plot_gof <- function(stat_obs, stat_rep, statistics, ...) {
     pval <- Bayesian_p_value(stat_obs, stat_rep)
-    stats_print <- ifelse(statistics == "Freeman_Tukey", "Freeman-Tukey", statistics)
+    stats_print <- if (statistics == "Freeman_Tukey") {
+        "Freeman-Tukey"
+    } else if (statistics == "deviance") {
+        "Deviance"
+    } else if (statistics == "chi_squared") {
+        "chi-squared"
+    }
     plot(stat_rep ~ stat_obs,
          xlim = range(c(stat_obs, stat_rep)),
          ylim = range(c(stat_obs, stat_rep)),
