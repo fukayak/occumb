@@ -765,7 +765,11 @@ set_design_matrix <- function(formula, list_cov, omit_intercept = FALSE) {
     if (formula == ~ 1) {
         return(invisible())
     } else {
-        out <- stats::model.matrix(formula, data = list_cov)
+        out <- tryCatch({
+          stats::model.matrix(formula, data = list_cov)
+        }, warning = function(w) {
+          stop("A warning occurred:", conditionMessage(w), "\n")
+        })
     }
 
     if (omit_intercept) {
