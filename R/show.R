@@ -9,10 +9,15 @@ setMethod("show", "occumbFit",
 
 setMethod("show", "occumbGof",
     function(object) {
+        statistics <- if (object@stats == "Freeman_Tukey") {
+            "Freeman-Tukey"
+        } else if (object@stats == "deviance") {
+            "deviance"
+        } else if (object@stats == "chi_squared") {
+            "chi-squared"
+        }
         cat(crayon::bold('Posterior predictive check for an occumbFit object:\n'))
-        cat(' Statistics:',
-            ifelse(object@stats == "Freeman_Tukey", "Freeman-Tukey", object@stats),
-            '\n')
+        cat(' Statistics:', statistics, '\n')
         cat(' p-value:   ', round(object@p_value, 5), '\n')
         cat(' Discrepancy statistics for observed data:  ',
             round(mean(object@stats_obs), 2), '(mean),',

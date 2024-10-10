@@ -17,6 +17,7 @@ setClass("occumbGof",
 #'      \describe{
 #'          \item{Freeman-Tukey statistics (default)}{\eqn{T_{\textrm{FT}} = \sum_{i,j,k}\left(\sqrt{y_{ijk}} - \sqrt{E(y_{ijk} \mid \pi_{ijk})}\right)^2}{T_{FT} = \sum_{i, j, k} (sqrt(y[i, j, k]) - sqrt(E(y[i, j, k] | pi[i, j, k])))^2}}
 #'          \item{Deviance statistics}{\eqn{T_{\textrm{deviance}} = -2 \sum_{j,k} \log \textrm{Multinomial}(\boldsymbol{y}_{jk} \mid \boldsymbol{\pi}_{jk})}{T_{deviance} = -2 * \sum_{j, k} log(Multinomial(y[, j, k] | pi[, j, k]))}}
+#'          \item{Chi-squared statistics}{\eqn{T_{\chi^2} = \sum_{i,j,k}\frac{\left(y_{ijk} - E(y_{ijk} \mid \pi_{ijk})\right)^2}{E(y_{ijk} \mid \pi_{ijk})}}{T_{chi_squared} = \sum_{i, j, k} (y[i, j, k] - E(y[i, j, k] | pi[i, j, k]))^2 / E(y[i, j, k] | pi[i, j, k])}}
 #'      }
 #'  where \eqn{i}, \eqn{j}, and \eqn{k} are the subscripts of species, site, and
 #'  replicate, respectively,
@@ -87,7 +88,7 @@ setClass("occumbGof",
 #' }
 #' @export
 gof <- function(fit,
-                stats = c("Freeman_Tukey", "deviance"),
+                stats = c("Freeman_Tukey", "deviance", "chi_squared"),
                 cores = 1L,
                 plot = TRUE, ...) {
 
@@ -203,6 +204,10 @@ gof <- function(fit,
 Freeman_Tukey <- function(y, N, pi) {
     sum((sqrt(y) - sqrt(N * pi))^2)
 }
+chi_squared <- function(y, N, pi) {
+    x <- (y - N * pi)^2 / (N * pi)
+    sum(x[!is.nan(x)])
+}
 # -----------------------------------------------------------------------------
 
 # Generate replicate data
@@ -237,6 +242,9 @@ get_stats <- function(m, stats, y, N, pi) {
             if (stats == "deviance") {
                 stats_m[j, k] <- -2 * llmulti(y[, j, k], N[j, k], pi[m, , j, k])
             }
+            if (stats == "chi_squared") {
+                stats_m[j, k]  <- chi_squared(y[, j, k], N[j, k], pi[m, , j, k])
+            }
         }
     }
     sum(stats_m)
@@ -248,7 +256,13 @@ Bayesian_p_value <- function(stat_obs, stat_rep) mean(stat_obs < stat_rep)
 # Plot function
 plot_gof <- function(stat_obs, stat_rep, statistics, ...) {
     pval <- Bayesian_p_value(stat_obs, stat_rep)
-    stats_print <- ifelse(statistics == "Freeman_Tukey", "Freeman-Tukey", statistics)
+    stats_print <- if (statistics == "Freeman_Tukey") {
+        "Freeman-Tukey"
+    } else if (statistics == "deviance") {
+        "deviance"
+    } else if (statistics == "chi_squared") {
+        "chi-squared"
+    }
     plot(stat_rep ~ stat_obs,
          xlim = range(c(stat_obs, stat_rep)),
          ylim = range(c(stat_obs, stat_rep)),

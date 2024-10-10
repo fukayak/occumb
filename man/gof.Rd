@@ -4,7 +4,13 @@
 \alias{gof}
 \title{Goodness-of-fit assessment of the fitted model.}
 \usage{
-gof(fit, stats = c("Freeman_Tukey", "deviance"), cores = 1L, plot = TRUE, ...)
+gof(
+  fit,
+  stats = c("Freeman_Tukey", "deviance", "chi_squared"),
+  cores = 1L,
+  plot = TRUE,
+  ...
+)
 }
 \arguments{
 \item{fit}{An \code{occumbFit} object.}
@@ -38,6 +44,7 @@ The following statistics are currently available:
 \describe{
 \item{Freeman-Tukey statistics (default)}{\eqn{T_{\textrm{FT}} = \sum_{i,j,k}\left(\sqrt{y_{ijk}} - \sqrt{E(y_{ijk} \mid \pi_{ijk})}\right)^2}{T_{FT} = \sum_{i, j, k} (sqrt(y[i, j, k]) - sqrt(E(y[i, j, k] | pi[i, j, k])))^2}}
 \item{Deviance statistics}{\eqn{T_{\textrm{deviance}} = -2 \sum_{j,k} \log \textrm{Multinomial}(\boldsymbol{y}_{jk} \mid \boldsymbol{\pi}_{jk})}{T_{deviance} = -2 * \sum_{j, k} log(Multinomial(y[, j, k] | pi[, j, k]))}}
+\item{Chi-squared statistics}{\eqn{T_{\chi^2} = \sum_{i,j,k}\frac{\left(y_{ijk} - E(y_{ijk} \mid \pi_{ijk})\right)^2}{E(y_{ijk} \mid \pi_{ijk})}}{T_{chi_squared} = \sum_{i, j, k} (y[i, j, k] - E(y[i, j, k] | pi[i, j, k]))^2 / E(y[i, j, k] | pi[i, j, k])}}
 }
 where \eqn{i}, \eqn{j}, and \eqn{k} are the subscripts of species, site, and
 replicate, respectively,
