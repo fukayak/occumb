@@ -771,7 +771,7 @@ set_design_matrix <- function(formula, list_cov, omit_intercept = FALSE) {
           if (typeof(unlist(list_cov)) == "character") {
             stop("character argument to numeric evaluation\n", call. = FALSE)
           } else {
-            stop(w, "\n")
+            stop(w, "\n", call. = FALSE)
           }
         })
     }
