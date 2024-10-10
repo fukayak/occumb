@@ -12,7 +12,7 @@ setMethod("show", "occumbGof",
         statistics <- if (object@stats == "Freeman_Tukey") {
             "Freeman-Tukey"
         } else if (object@stats == "deviance") {
-            "Deviance"
+            "deviance"
         } else if (object@stats == "chi_squared") {
             "chi-squared"
         }
