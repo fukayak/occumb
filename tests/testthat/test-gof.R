@@ -18,6 +18,11 @@ test_that("Dimensions of the output are as expected", {
     expect_equal(length(out@stats_obs), fit@fit$mcmc.info$n.samples)
     expect_equal(length(out@stats_rep), fit@fit$mcmc.info$n.samples)
     expect_false(any(c(out@p_value < 0, 1 < out@p_value)))
+    out <- gof(fit, stats = "chi_squared", plot = FALSE, cores = 2)
+    expect_identical(out@stats, "chi_squared")
+    expect_equal(length(out@stats_obs), fit@fit$mcmc.info$n.samples)
+    expect_equal(length(out@stats_rep), fit@fit$mcmc.info$n.samples)
+    expect_false(any(c(out@p_value < 0, 1 < out@p_value)))
 })
 
 ### Tests for quality controls -------------------------------------------------
@@ -63,6 +68,10 @@ test_that("Fit statistic is zero for missing observation", {
                                   N_temp[j_miss, k_miss],
                                   pi_temp[1, , j_miss, k_miss])
     expect_identical(test_deviance, 0)
+    test_chi_squared <- chi_squared(y_ans[, j_miss, k_miss],
+                                    N_temp[j_miss, k_miss],
+                                    pi_temp[1, , j_miss, k_miss])
+    expect_identical(test_chi_squared, 0)
 })
 
 test_that("get_y_rep() works with unbalanced data", {

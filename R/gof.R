@@ -204,7 +204,8 @@ Freeman_Tukey <- function(y, N, pi) {
     sum((sqrt(y) - sqrt(N * pi))^2)
 }
 chi_squared <- function(y, N, pi) {
-    sum((y - N * pi)^2 / (N * pi))
+    x <- (y - N * pi)^2 / (N * pi)
+    sum(x[!is.nan(x)])
 }
 # -----------------------------------------------------------------------------
 
@@ -257,7 +258,7 @@ plot_gof <- function(stat_obs, stat_rep, statistics, ...) {
     stats_print <- if (statistics == "Freeman_Tukey") {
         "Freeman-Tukey"
     } else if (statistics == "deviance") {
-        "Deviance"
+        "deviance"
     } else if (statistics == "chi_squared") {
         "chi-squared"
     }
