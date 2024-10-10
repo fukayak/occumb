@@ -681,7 +681,7 @@ set_phi_theta <- function(formula, formula_shared, data) {
 }
 
 check_intercept <- function(formula, type) {
-    if (formula == ~ .) return()
+    if ("." %in% all.vars(formula)) return()
     if (!has_intercept(formula))
         stop(sprintf("No intercept in formula_%s: remove 0 or -1 from the formula\n",
                      type))
@@ -765,7 +765,11 @@ set_design_matrix <- function(formula, list_cov, omit_intercept = FALSE) {
     if (formula == ~ 1) {
         return(invisible())
     } else {
-        out <- stats::model.matrix(formula, data = list_cov)
+        out <- tryCatch({
+          stats::model.matrix(formula, data = list_cov)
+        }, warning = function(w) {
+          stop(conditionMessage(w), "\n")
+        })
     }
 
     if (omit_intercept) {

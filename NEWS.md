@@ -1,4 +1,8 @@
-# occumb (development version)
+## occumb (development version)
+* Fix an issue with having `.` with other covariates in formula
+* Fix an issue with throwing a warning message instead of an error
+
+## occumb (development version)
 * Change error message for validate_occumbData 
 * Add a test to throw an error when integer is too large
 * Add tests for `gof` under unbalanced designs
