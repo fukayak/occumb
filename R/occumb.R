@@ -769,7 +769,9 @@ set_design_matrix <- function(formula, list_cov, omit_intercept = FALSE) {
           stats::model.matrix(formula, data = list_cov)
         }, warning = function(w) {
           if (typeof(unlist(list_cov)) == "character") {
-            stop("character argument to numeric evaluation\n", call. = FALSE)
+            vars <- all.vars(formula, functions = TRUE)
+            fun <- intersect(vars, ls("package:stats"))
+            stop(sprintf("Numerical operations on character covariates: make sure to avoid using operations like `%s` on characters\n", as.list(fun)), call. = FALSE)
           } else {
             stop(w, "\n", call. = FALSE)
           }
