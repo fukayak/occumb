@@ -771,7 +771,7 @@ set_design_matrix <- function(formula, list_cov, omit_intercept = FALSE) {
           atr <- attr(terms(formula), "variable")
           stats_list <- lapply(ls("package:stats"), as.name)
           invalid <- sapply(atr, 
-                            \(x) inherits(x, "call") && any(x[[1]] == stats_list) && is.character(all.vars(x[[1]]))) 
+                            \(x) inherits(x, "call") && any(x[[1]] == stats_list) && is.character(do.call(paste, list(as.name(all.vars(x[[1]]))))))
 
           if(any(invalid)) {
             stop(sprintf("Numerical operations on character covariates in following: `%s`, make sure to avoid using operations like `%s` on characters\n", 
