@@ -1,4 +1,5 @@
 # occumb (development version)
+* Fix an issue with an error message by character covariates.
 * Add `stats = chi_squared` option to `gof()`
 * Fix an issue with having `.` with other covariates in formula
 * Fix an issue with throwing a warning message instead of an error
