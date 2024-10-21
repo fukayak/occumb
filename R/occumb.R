@@ -768,14 +768,24 @@ set_design_matrix <- function(formula, list_cov, omit_intercept = FALSE) {
         out <- tryCatch({
           stats::model.matrix(formula, data = list_cov)
         }, warning = function(w) {
-          invalid <- formula |>
-                      terms() |>
-                      attr("variable") |>
-                      sapply(\(x) inherits(x, "call") && x[[1]] == as.name("poly") && is.character(do.call(paste, list(as.name(all.vars(x[[1]]))))))
+          formula_terms <- formula |>
+            terms() |>
+            attr("variable")
 
-          if(any(invalid)) {
-            stop("Numerical operations on character covariates: make sure to avoid using operations like `poly` on characters\n", 
-                 call. = FALSE)
+          invalid <- formula_terms |>
+            sapply(\(x)
+            inherits(x, "call") &&
+              x[[1]] == "poly" &&
+              eval(parse(text = sprintf("is.character(list_cov$%s)", all.vars(x)))))
+
+          if (any(invalid)) {
+            stop(
+              sprintf(
+                "Numerical operations on character covariates '%s': make sure to avoid using operations like `poly` on characters\n",
+                sapply(formula_terms, all.vars)[invalid]
+              ),
+              call. = FALSE
+            )
           } else {
             stop(w, "\n", call. = FALSE)
           }
