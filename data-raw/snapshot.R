@@ -24,4 +24,6 @@ internal_fit <- occumb(
   verbose = FALSE
 )
 
-usethis::use_data(internal_fit, internal = TRUE)
+gof_ft <- gof(internal_fit, core = 2, plot = FALSE)
+
+usethis::use_data(internal_fit, gof_ft, internal = TRUE, overwrite = TRUE)
