@@ -16,14 +16,14 @@ data <- occumbData(
 
 
 ### Test for occumbData summary() ----------------------------------------------
-test_that("summary() works for occumbData as expected", {
+test_that("summary() has known output for occumbData", {
   expect_snapshot(
     summary(data)
   )
 })
 
 ### Test for occumbFit summary() -----------------------------------------------
-test_that("summary() works for occumbFit as expected", {
+test_that("summary() has known output for occumbFit", {
   expect_snapshot(
     summary(occumb:::internal_fit)
   )
