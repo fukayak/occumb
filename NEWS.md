@@ -1,4 +1,5 @@
 # occumb (development version)
+* Add test coverage Github Actions
 * Fix an issue with an error message by character covariates.
 * Add `stats = chi_squared` option to `gof()`
 * Fix an issue with having `.` with other covariates in formula
