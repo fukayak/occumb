@@ -5,6 +5,7 @@
 [![CRAN status](https://www.r-pkg.org/badges/version/occumb)](https://CRAN.R-project.org/package=occumb)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/occumb)](https://cran.r-project.org/package=occumb)
 [![](http://cranlogs.r-pkg.org/badges/last-month/occumb)](https://cran.r-project.org/package=occumb)
+[![Codecov test coverage](https://codecov.io/gh/fukayak/occumb/graph/badge.svg)](https://app.codecov.io/gh/fukayak/occumb)
 <!-- badges: end -->
 
 occumb is an R package that provides functionalities for the application of [multispecies site occupancy modeling for environmental DNA (eDNA) metabarcoding](https://doi.org/10.1111/2041-210X.13732).
