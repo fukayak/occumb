@@ -58,3 +58,6 @@ po/*~
 
 docs
 inst/doc
+
+# Snapshots
+tests/testthat/_snaps/
