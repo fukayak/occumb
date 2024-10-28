@@ -1,4 +1,5 @@
 # occumb (development version)
+* Add test-coverage workflow
 * Add snapshot tests for `plot()` and `summary()`
 * Fix an issue with an error message by character covariates.
 * Add `stats = chi_squared` option to `gof()`
