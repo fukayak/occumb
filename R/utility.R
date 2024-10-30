@@ -18,7 +18,6 @@
 #'  It is also possible to examine how the utility varies with different `K`
 #'  and `N` values without setting a budget level, which may be useful for determining
 #'  a satisfactory level of `K` and `N` from a purely technical point of view.
-#' 
 #' The expected utility is defined as the expected value of the conditional
 #'  utility in the form:
 #'  \deqn{U(K, N \mid \boldsymbol{r}, \boldsymbol{u}) = \frac{1}{J}\sum_{j = 1}^{J}\sum_{i = 1}^{I}\left\{1 - \prod_{k = 1}^{K}\left(1 - \frac{u_{ijk}r_{ijk}}{\sum_{m = 1}^{I}u_{mjk}r_{mjk}} \right)^N \right\}}{U(K, N | r, u) = (1 / J) * sum_{j, i}((1 - \prod_{k}(1 - (u[i, j, k] * r[i, j, k])/sum(u[, j, k] * r[, j, k])))^N)}
@@ -155,53 +154,61 @@ eval_util_L <- function(settings,
                         N_rep = 1,
                         cores = 1L) {
 
-    # Validate arguments
-    check_args_eval_util_L(settings, fit, z, theta, phi)
+  # Validate arguments
+  check_args_eval_util_L(settings, fit, z, theta, phi)
 
-    # Set parameter values
-    if (is.null(z))
-        z <- get_post_samples(fit, "z")
+  # Set parameter values
+  if (is.null(z)) {
+    z <- get_post_samples(fit, "z")
+  }
 
-    if (is.null(theta))
-        theta <- get_post_samples(fit, "theta")
+  if (is.null(theta)) {
+    theta <- get_post_samples(fit, "theta")
+  }
 
-    if (is.null(phi))
-        phi <- get_post_samples(fit, "phi")
+  if (is.null(phi)) {
+    phi <- get_post_samples(fit, "phi")
+  }
 
-    # Determine site dimension
-    has_site_dim <- c(TRUE,
-                      length(dim(theta)) == 3,
-                      length(dim(phi))   == 3)
+  # Determine site dimension
+  has_site_dim <- c(TRUE,
+                    length(dim(theta)) == 3,
+                    length(dim(phi))   == 3)
 
-    # Resampling to match sample size
-    n_samples <- c(dim(z)[1], dim(theta)[1], dim(phi)[1])
+  # Resampling to match sample size
+  n_samples <- c(dim(z)[1], dim(theta)[1], dim(phi)[1])
 
-    if (n_samples[1] < max(n_samples))
-        z <- resample_z_psi_theta_phi(z, has_site_dim[1], max(n_samples))
-    if (n_samples[2] < max(n_samples))
-        theta <- resample_z_psi_theta_phi(theta, has_site_dim[2], max(n_samples))
-    if (n_samples[3] < max(n_samples))
-        phi <- resample_z_psi_theta_phi(phi, has_site_dim[3], max(n_samples))
+  if (n_samples[1] < max(n_samples)) {
+    z <- resample_z_psi_theta_phi(z, has_site_dim[1], max(n_samples))
+  }
+  if (n_samples[2] < max(n_samples)) {
+    theta <- resample_z_psi_theta_phi(theta, has_site_dim[2], max(n_samples))
+  }
+  if (n_samples[3] < max(n_samples)) {
+    phi <- resample_z_psi_theta_phi(phi, has_site_dim[3], max(n_samples))
+  }
 
-    # Adapt theta/phi when they are species-specific
-    if (!has_site_dim[2])
-        theta <- outer(theta, rep(1, dim(z)[3]))
-    if (!has_site_dim[3])
-        phi <- outer(phi, rep(1, dim(z)[3]))
+  # Adapt theta/phi when they are species-specific
+  if (!has_site_dim[2]) {
+    theta <- outer(theta, rep(1, dim(z)[3]))
+  }
+  if (!has_site_dim[3]) {
+    phi <- outer(phi, rep(1, dim(z)[3]))
+  }
 
-    # Calculate expected utility
-    result <- rep(NA, nrow(settings))
-    for (i in seq_len(nrow(settings))) {
-        result[i] <- eutil(z = z, theta = theta, phi = phi,
-                           K = settings[i, "K"], N = settings[i, "N"],
-                           scale = "local",
-                           N_rep = N_rep, cores = cores)
-    }
+  # Calculate expected utility
+  result <- rep(NA, nrow(settings))
+  for (i in seq_len(nrow(settings))) {
+    result[i] <- eutil(z = z, theta = theta, phi = phi,
+                       K = settings[i, "K"], N = settings[i, "N"],
+                       scale = "local",
+                       N_rep = N_rep, cores = cores)
+  }
 
-    # Output
-    out <- cbind(settings, result)
-    colnames(out)[ncol(out)] <- "Utility"
-    out
+  # Output
+  out <- cbind(settings, result)
+  colnames(out)[ncol(out)] <- "Utility"
+  out
 }
 
 #' @title Expected utility for regional species diversity assessments.
@@ -378,75 +385,82 @@ eval_util_R <- function(settings,
                         N_rep = 1,
                         cores = 1L) {
 
-    # Validate arguments
-    check_args_eval_util_R(settings, fit, psi, theta, phi)
+  # Validate arguments
+  check_args_eval_util_R(settings, fit, psi, theta, phi)
 
-    # Set parameter values
-    if (is.null(psi))
-        psi <- get_post_samples(fit, "psi")
+  # Set parameter values
+  if (is.null(psi)) {
+    psi <- get_post_samples(fit, "psi")
+  }
 
-    if (is.null(theta))
-        theta <- get_post_samples(fit, "theta")
+  if (is.null(theta)) {
+    theta <- get_post_samples(fit, "theta")
+  }
 
-    if (is.null(phi))
-        phi <- get_post_samples(fit, "phi")
+  if (is.null(phi)) {
+    phi <- get_post_samples(fit, "phi")
+  }
 
-    # Determine site dimension
-    has_site_dim <- c(length(dim(psi))   == 3,
-                      length(dim(theta)) == 3,
-                      length(dim(phi))   == 3)
-    N_site <-
-        if (has_site_dim[1]) {
-            dim(psi)[3]
-        } else if (has_site_dim[2]) {
-            dim(theta)[3]
-        } else if (has_site_dim[3]) {
-            dim(phi)[3]
-        }
-
-    # Resampling to match sample size
-    n_samples <- c(dim(psi)[1], dim(theta)[1], dim(phi)[1])
-
-    if (n_samples[1] < max(n_samples))
-        psi <- resample_z_psi_theta_phi(psi, has_site_dim[1], max(n_samples))
-    if (n_samples[2] < max(n_samples))
-        theta <- resample_z_psi_theta_phi(theta, has_site_dim[2], max(n_samples))
-    if (n_samples[3] < max(n_samples))
-        phi <- resample_z_psi_theta_phi(phi, has_site_dim[3], max(n_samples))
-
-    # Make N_rep copies of psi, theta, and phi
-    if (N_rep > 1) {
-        psi   <- copy_psi_theta_phi(psi, has_site_dim[1], N_rep)
-        theta <- copy_psi_theta_phi(theta, has_site_dim[2], N_rep)
-        phi   <- copy_psi_theta_phi(phi, has_site_dim[3], N_rep)
+  # Determine site dimension
+  has_site_dim <- c(length(dim(psi))   == 3,
+                    length(dim(theta)) == 3,
+                    length(dim(phi))   == 3)
+  N_site <-
+    if (has_site_dim[1]) {
+      dim(psi)[3]
+    } else if (has_site_dim[2]) {
+      dim(theta)[3]
+    } else if (has_site_dim[3]) {
+      dim(phi)[3]
     }
 
-    # Calculate expected utility
-    result <- rep(NA, nrow(settings))
-    for (i in seq_len(nrow(settings))) {
-        # Random sampling of sites
-        J <- settings[i, "J"]
-        site_use <- matrix(nrow = dim(psi)[1], ncol = J)
-        if (any(has_site_dim)) {
-            for (n in seq_len(nrow(site_use)))
-                site_use[n, ] <- sample.int(N_site, J, replace = TRUE)
-        }
+  # Resampling to match sample size
+  n_samples <- c(dim(psi)[1], dim(theta)[1], dim(phi)[1])
 
-        # Prepare z, theta, and phi (dim = N_sample * N_species * N_site)
-        z_i     <- get_z_i(psi, has_site_dim[1], site_use)
-        theta_i <- get_theta_phi_i(theta, has_site_dim[2], site_use)
-        phi_i   <- get_theta_phi_i(phi, has_site_dim[3], site_use)
+  if (n_samples[1] < max(n_samples)) {
+    psi <- resample_z_psi_theta_phi(psi, has_site_dim[1], max(n_samples))
+  }
+  if (n_samples[2] < max(n_samples)) {
+    theta <- resample_z_psi_theta_phi(theta, has_site_dim[2], max(n_samples))
+  }
+  if (n_samples[3] < max(n_samples)) {
+    phi <- resample_z_psi_theta_phi(phi, has_site_dim[3], max(n_samples))
+  }
 
-        result[i] <- eutil(z = z_i, theta = theta_i, phi = phi_i,
-                           K = settings[i, "K"], N = settings[i, "N"],
-                           scale = "regional",
-                           N_rep = 1, cores = cores)
+  # Make N_rep copies of psi, theta, and phi
+  if (N_rep > 1) {
+    psi   <- copy_psi_theta_phi(psi, has_site_dim[1], N_rep)
+    theta <- copy_psi_theta_phi(theta, has_site_dim[2], N_rep)
+    phi   <- copy_psi_theta_phi(phi, has_site_dim[3], N_rep)
+  }
+
+  # Calculate expected utility
+  result <- rep(NA, nrow(settings))
+  for (i in seq_len(nrow(settings))) {
+    # Random sampling of sites
+    J <- settings[i, "J"]
+    site_use <- matrix(nrow = dim(psi)[1], ncol = J)
+    if (any(has_site_dim)) {
+      for (n in seq_len(nrow(site_use))) {
+        site_use[n, ] <- sample.int(N_site, J, replace = TRUE)
+      }
     }
 
-    # Output
-    out <- cbind(settings, result)
-    colnames(out)[ncol(out)] <- "Utility"
-    out
+    # Prepare z, theta, and phi (dim = N_sample * N_species * N_site)
+    z_i     <- get_z_i(psi, has_site_dim[1], site_use)
+    theta_i <- get_theta_phi_i(theta, has_site_dim[2], site_use)
+    phi_i   <- get_theta_phi_i(phi, has_site_dim[3], site_use)
+
+    result[i] <- eutil(z = z_i, theta = theta_i, phi = phi_i,
+                       K = settings[i, "K"], N = settings[i, "N"],
+                       scale = "regional",
+                       N_rep = 1, cores = cores)
+  }
+
+  # Output
+  out <- cbind(settings, result)
+  colnames(out)[ncol(out)] <- "Utility"
+  out
 }
 
 #' @title Conditions for local assessment under certain budget and cost values.
@@ -478,51 +492,57 @@ eval_util_R <- function(settings,
 #' @export
 list_cond_L <- function(budget, lambda1, lambda2, fit, K = NULL) {
 
-    ## Validate arguments
-    # Assert that budget and cost values are positive.
-    if (!checkmate::test_numeric(budget, lower = 0))
-        stop("Negative 'budget' value.\n")
-    if (!checkmate::test_numeric(lambda1, lower = 0))
-        stop("Negative 'lambda1' value.\n")
-    if (!checkmate::test_numeric(lambda2, lower = 0))
-        stop("Negative 'lambda2' value.\n")
+  ## Validate arguments
+  # Assert that budget and cost values are positive.
+  if (!checkmate::test_numeric(budget, lower = 0)) {
+    stop("Negative 'budget' value.\n")
+  }
+  if (!checkmate::test_numeric(lambda1, lower = 0)) {
+    stop("Negative 'lambda1' value.\n")
+  }
+  if (!checkmate::test_numeric(lambda2, lower = 0)) {
+    stop("Negative 'lambda2' value.\n")
+  }
 
-    # Assert that fit is an occumbFit object
-    assert_occumbFit(fit)
+  # Assert that fit is an occumbFit object
+  assert_occumbFit(fit)
 
-    # Determine the number of sites
-    J <- dim(get_post_samples(fit, "z"))[3]
+  # Determine the number of sites
+  J <- dim(get_post_samples(fit, "z"))[3]
 
-    # Determine max_K under given budget, cost, and the number of sites
-    max_K <- floor(budget / (lambda2 * J))
+  # Determine max_K under given budget, cost, and the number of sites
+  max_K <- floor(budget / (lambda2 * J))
 
-    # Assert that given settings ensure at least one replicate per site
-    if (!checkmate::test_numeric(max_K, lower = 1))
-        stop("Impossible to have > 0 replicates per site under the given budget, cost, and the number of sites.\n")
+  # Assert that given settings ensure at least one replicate per site
+  if (!checkmate::test_numeric(max_K, lower = 1)) {
+    stop("Impossible to have > 0 replicates per site under the given budget, cost, and the number of sites.\n")
+  }
 
-    if (is.null(K)) {
-        # Determine K values
-        K <- seq_len(max_K)[budget - lambda2 * J * seq_len(max_K) > 0]
-    } else {
-        # Assert that K >= 1
-        if (!checkmate::test_numeric(K, lower = 1))
-            stop("'K' contains values less than one.\n")
-
-        # Assert that the all given K are feasible
-        if (any(!budget - lambda2 * J * K > 0))
-            stop(paste("A value of 'K' greater than",
-                       max_K,
-                       "is not feasible under the given budget, cost, and the number of sites.\n"))
+  if (is.null(K)) {
+    # Determine K values
+    K <- seq_len(max_K)[budget - lambda2 * J * seq_len(max_K) > 0]
+  } else {
+    # Assert that K >= 1
+    if (!checkmate::test_numeric(K, lower = 1)) {
+      stop("'K' contains values less than one.\n")
     }
 
-    ## Output a table of conditions
-    out <- cbind(rep(budget, length(K)),
-                 rep(lambda1, length(K)),
-                 rep(lambda2, length(K)),
-                 K,
-                 (budget - lambda2 * J * K) / (lambda1 * J * K))
-    colnames(out) <- c("budget", "lambda1", "lambda2", "K", "N")
-    data.frame(out)
+    # Assert that the all given K are feasible
+    if (any(!budget - lambda2 * J * K > 0)) {
+      stop(paste("A value of 'K' greater than",
+                 max_K,
+                 "is not feasible under the given budget, cost, and the number of sites.\n"))
+    }
+  }
+
+  ## Output a table of conditions
+  out <- cbind(rep(budget, length(K)),
+               rep(lambda1, length(K)),
+               rep(lambda2, length(K)),
+               K,
+               (budget - lambda2 * J * K) / (lambda1 * J * K))
+  colnames(out) <- c("budget", "lambda1", "lambda2", "K", "N")
+  data.frame(out)
 }
 
 #' @title Conditions for regional assessment under certain budget and cost values.
@@ -564,239 +584,282 @@ list_cond_L <- function(budget, lambda1, lambda2, fit, K = NULL) {
 #' @export
 list_cond_R <- function(budget, lambda1, lambda2, lambda3, J = NULL, K = NULL) {
 
-    ## Validate arguments
-    # Assert that budget and cost values are positive.
-    if (!checkmate::test_numeric(budget, lower = 0))
-        stop("Negative 'budget' value.\n")
-    if (!checkmate::test_numeric(lambda1, lower = 0))
-        stop("Negative 'lambda1' value.\n")
-    if (!checkmate::test_numeric(lambda2, lower = 0))
-        stop("Negative 'lambda2' value.\n")
-    if (!checkmate::test_numeric(lambda3, lower = 0))
-        stop("Negative 'lambda3' value.\n")
+  ## Validate arguments
+  # Assert that budget and cost values are positive.
+  if (!checkmate::test_numeric(budget, lower = 0)) {
+    stop("Negative 'budget' value.\n")
+  }
+  if (!checkmate::test_numeric(lambda1, lower = 0)) {
+    stop("Negative 'lambda1' value.\n")
+  }
+  if (!checkmate::test_numeric(lambda2, lower = 0)) {
+    stop("Negative 'lambda2' value.\n")
+  }
+  if (!checkmate::test_numeric(lambda3, lower = 0)) {
+    stop("Negative 'lambda3' value.\n")
+  }
 
-    # Assert that J, K >= 1
-    if (!is.null(J) & !checkmate::test_numeric(J, lower = 1))
-        stop("'J' contains values less than one.\n")
-    if (!is.null(K) & !checkmate::test_numeric(K, lower = 1))
-        stop("'K' contains values less than one.\n")
+  # Assert that J, K >= 1
+  if (!is.null(J) && !checkmate::test_numeric(J, lower = 1)) {
+    stop("'J' contains values less than one.\n")
+  }
+  if (!is.null(K) && !checkmate::test_numeric(K, lower = 1)) {
+    stop("'K' contains values less than one.\n")
+  }
 
-    # Assert that K is in ascending order
-    if (!is.null(K) & !identical(K, sort(K)))
-        stop("'K' must be in ascending order.\n")
+  # Assert that K is in ascending order
+  if (!is.null(K) && !identical(K, sort(K))) {
+    stop("'K' must be in ascending order.\n")
+  }
 
-    # Determine the combination of J and K to be used
-    if (is.null(J)) {
-        max_J <- find_maxJ(budget, lambda2, lambda3)
-        if (!max_J)
-            stop("No valid combination of 'J' and 'K' under the given budget and cost.\n")
-        J <- seq_len(max_J)
+  # Determine the combination of J and K to be used
+  if (is.null(J)) {
+    max_J <- find_maxJ(budget, lambda2, lambda3)
+    if (!max_J) {
+      stop("No valid combination of 'J' and 'K' under the given budget and cost.\n")
     }
-    if (is.null(K)) {
-        max_K <- find_maxK(budget, lambda2, lambda3)
-        if (!max_K)
-            stop("No valid combination of 'J' and 'K' under the given budget and cost.\n")
-        K <- seq_len(max_K)
+    J <- seq_len(max_J)
+  }
+  if (is.null(K)) {
+    max_K <- find_maxK(budget, lambda2, lambda3)
+    if (!max_K) {
+      stop("No valid combination of 'J' and 'K' under the given budget and cost.\n")
     }
+    K <- seq_len(max_K)
+  }
 
-    J_valid <- K_valid <- vector()
-    for (k in K) {
-        J_valid_k <- J[budget - lambda2 * J * k - lambda3 * J > 0]
-        if (length(J_valid_k) > 0) {
-            J_valid <- c(J_valid, J_valid_k)
-            K_valid <- c(K_valid, rep(k, length(J_valid_k)))
-        } else {
-            break
-        }
+  J_valid <- K_valid <- vector()
+  for (k in K) {
+    J_valid_k <- J[budget - lambda2 * J * k - lambda3 * J > 0]
+    if (length(J_valid_k) > 0) {
+      J_valid <- c(J_valid, J_valid_k)
+      K_valid <- c(K_valid, rep(k, length(J_valid_k)))
+    } else {
+      break
     }
+  }
 
-    # Assert that given settings ensure at least one valid combination of J and K
-    if (!length(J_valid) > 0)
-        stop("No valid combination of 'J' and 'K' under the given budget and cost.\n")
+  # Assert that given settings ensure at least one valid combination of J and K
+  if (!length(J_valid) > 0) {
+    stop("No valid combination of 'J' and 'K' under the given budget and cost.\n")
+  }
 
-    ## Output a table of conditions
-    out <- cbind(rep(budget, length(J_valid)),
-                 rep(lambda1, length(J_valid)),
-                 rep(lambda2, length(J_valid)),
-                 rep(lambda3, length(J_valid)),
-                 J_valid,
-                 K_valid,
-                 (budget - lambda2 * J_valid * K_valid - lambda3 * J_valid) / (lambda1 * J_valid * K_valid))
-    colnames(out) <- c("budget", "lambda1", "lambda2", "lambda3", "J", "K", "N")
-    data.frame(out)
+  ## Output a table of conditions
+  out <- cbind(rep(budget, length(J_valid)),
+               rep(lambda1, length(J_valid)),
+               rep(lambda2, length(J_valid)),
+               rep(lambda3, length(J_valid)),
+               J_valid,
+               K_valid,
+               (budget - lambda2 * J_valid * K_valid - lambda3 * J_valid) / (lambda1 * J_valid * K_valid))
+  colnames(out) <- c("budget", "lambda1", "lambda2", "lambda3", "J", "K", "N")
+  data.frame(out)
 }
 
 check_args_eval_util_L <- function(settings, fit, z, theta, phi) {
-    # Assert that settings is a data frame and contains the required columns
-    checkmate::assert_data_frame(settings)
-    if (!checkmate::testSubset("K", names(settings)))
-        stop("The 'settings' argument does not contain column 'K'.\n")
-    if (!checkmate::testSubset("N", names(settings)))
-        stop("The 'settings' argument does not contain column 'N'.\n")
-    if (!checkmate::test_numeric(settings[, "K"], lower = 1))
-        stop("'K' contains values less than one.\n")
-    if (!checkmate::test_numeric(settings[, "N"], lower = 1))
-        stop("'N' contains values less than one.\n")
+  # Assert that settings is a data frame and contains the required columns
+  checkmate::assert_data_frame(settings)
+  if (!checkmate::testSubset("K", names(settings))) {
+    stop("The 'settings' argument does not contain column 'K'.\n")
+  }
+  if (!checkmate::testSubset("N", names(settings))) {
+    stop("The 'settings' argument does not contain column 'N'.\n")
+  }
+  if (!checkmate::test_numeric(settings[, "K"], lower = 1)) {
+    stop("'K' contains values less than one.\n")
+  }
+  if (!checkmate::test_numeric(settings[, "N"], lower = 1)) {
+    stop("'N' contains values less than one.\n")
+  }
 
-    # Assert that either fit or (z, theta, phi) is provided
-    if (is.null(fit) & !(!is.null(z) & !is.null(theta) & !is.null(phi)))
-        stop("Parameter values are not fully specified: use fit argument or otherwise use all of z, theta, phi arguments.\n")
+  # Assert that either fit or (z, theta, phi) is provided
+  if (is.null(fit) && !(!is.null(z) && !is.null(theta) && !is.null(phi))) {
+    stop("Parameter values are not fully specified: use fit argument or otherwise use all of z, theta, phi arguments.\n")
+  }
 
-    if (!is.null(fit)) {
-        # Assert that fit is an occumbFit object
-        assert_occumbFit(fit)
+  if (!is.null(fit)) {
+    # Assert that fit is an occumbFit object
+    assert_occumbFit(fit)
 
-        # Stop when modeled parameters are replicate-specific
-        if (length(dim(get_post_samples(fit, "theta"))) == 4 & is.null(theta))
-            stop("'fit' contains replicate-specific theta: specify appropriate theta values via the 'theta' argument to run.\n")
-        if (length(dim(get_post_samples(fit, "phi"))) == 4 & is.null(phi))
-            stop("'fit' contains replicate-specific phi: specify appropriate phi values via the 'phi' argument to run.\n")
+    # Stop when modeled parameters are replicate-specific
+    if (length(dim(get_post_samples(fit, "theta"))) == 4 && is.null(theta)) {
+      stop("'fit' contains replicate-specific theta: specify appropriate theta values via the 'theta' argument to run.\n")
     }
+    if (length(dim(get_post_samples(fit, "phi"))) == 4 && is.null(phi)) {
+      stop("'fit' contains replicate-specific phi: specify appropriate phi values via the 'phi' argument to run.\n")
+    }
+  }
 
-    # Assert that z, theta, and phi have an appropriate dimension and elements
-    checkmate::assert_array(z, d = 3, null.ok = TRUE)
-    checkmate::assert_array(theta, min.d = 2, max.d = 3, null.ok = TRUE)
-    checkmate::assert_array(phi, min.d = 2, max.d = 3, null.ok = TRUE)
-    checkmate::assert_integerish(z, lower = 0, upper = 1,
-                                 any.missing = FALSE, null.ok = TRUE)
-    checkmate::assert_numeric(theta, lower = 0, upper = 1,
-                              any.missing = FALSE, null.ok = TRUE)
-    checkmate::assert_numeric(phi, lower = 0, any.missing = FALSE, null.ok = TRUE)
+  # Assert that z, theta, and phi have an appropriate dimension and elements
+  checkmate::assert_array(z, d = 3, null.ok = TRUE)
+  checkmate::assert_array(theta, min.d = 2, max.d = 3, null.ok = TRUE)
+  checkmate::assert_array(phi, min.d = 2, max.d = 3, null.ok = TRUE)
+  checkmate::assert_integerish(z, lower = 0, upper = 1,
+                               any.missing = FALSE, null.ok = TRUE)
+  checkmate::assert_numeric(theta, lower = 0, upper = 1,
+                            any.missing = FALSE, null.ok = TRUE)
+  checkmate::assert_numeric(phi, lower = 0, any.missing = FALSE, null.ok = TRUE)
 
-    # Assert that z does not have sites occupied by no species
+  # Assert that z does not have sites occupied by no species
+  if (!is.null(z)) {
+    z_allzero <- apply(z, c(1, 3), function(x) sum(x) == 0)
+    if (any(z_allzero)) {
+      stop(sprintf("The given 'z' array contains case(s) where no species occupy a site; see, for example, that z[%s, , %s] is a zero vector",
+                   which(z_allzero, arr.ind = TRUE)[1, 1],
+                   which(z_allzero, arr.ind = TRUE)[1, 2]))
+    }
+  }
+
+  # Assert equality in species/site dimensions of z, theta, phi, and fit
+  if (!is.null(fit)) {
+    I <- dim(fit@data@y)[1]
+    J <- dim(fit@data@y)[2]
+
     if (!is.null(z)) {
-        z_allzero <- apply(z, c(1, 3), function (x) sum(x) == 0)
-        if (any(z_allzero))
-            stop(sprintf("The given 'z' array contains case(s) where no species occupy a site; see, for example, that z[%s, , %s] is a zero vector",
-                         which(z_allzero, arr.ind = T)[1, 1],
-                         which(z_allzero, arr.ind = T)[1, 2]))
+      if (dim(z)[2] != I) {
+        stop(paste0("Mismatch in species dimension: dim(z)[2] must be ", I, ".\n"))
+      }
+      if (dim(z)[3] != J) {
+        stop(paste0("Mismatch in site dimension: dim(z)[3] must be ", J, ".\n"))
+      }
     }
-
-    # Assert equality in species/site dimensions of z, theta, phi, and fit
-    if (!is.null(fit)) {
-        I <- dim(fit@data@y)[1]
-        J <- dim(fit@data@y)[2]
-
-        if (!is.null(z)) {
-            if (dim(z)[2] != I)
-                stop(paste0("Mismatch in species dimension: dim(z)[2] must be ", I, ".\n"))
-            if (dim(z)[3] != J)
-                stop(paste0("Mismatch in site dimension: dim(z)[3] must be ", J, ".\n"))
-        }
-        if (!is.null(theta)) {
-            if (dim(theta)[2] != I)
-                stop(paste0("Mismatch in species dimension: dim(theta)[2] must be ", I, ".\n"))
-            if (length(dim(theta)) == 3 & dim(theta)[3] != J)
-                stop(paste0("Mismatch in site dimension: dim(theta)[3] must be ", J, ".\n"))
-        }
-        if (!is.null(phi)) {
-            if (dim(phi)[2] != I)
-                stop(paste0("Mismatch in species dimension: dim(phi)[2] must be ", I, ".\n"))
-            if (length(dim(phi)) == 3 & dim(phi)[3] != J)
-                stop(paste0("Mismatch in site dimension: dim(phi)[3] must be ", J, ".\n"))
-        }
-    } else {
-        has_site_dim <- c(TRUE, length(dim(theta)) == 3, length(dim(phi)) == 3)
-        vI <- c(dim(z)[2], dim(theta)[2], dim(phi)[2])
-        vJ <- c(dim(z)[3],
-                ifelse(has_site_dim[2], dim(theta)[3], NA),
-                ifelse(has_site_dim[3], dim(phi)[3], NA))
-        vJ <- vJ[has_site_dim]
-        terms <- c("dim(z)[3]", "dim(theta)[3]", "dim(phi)[3]")[has_site_dim]
-
-        if (length(unique(vI)) != 1)
-            stop("Mismatch in species dimension: dim(z)[2], dim(theta)[2], and dim(phi)[2] must be equal.\n")
-        if (length(unique(vJ)) != 1)
-            stop(paste0("Mismatch in site dimension: ",
-                        knitr::combine_words(terms), " must be equal.\n"))
+    if (!is.null(theta)) {
+      if (dim(theta)[2] != I) {
+        stop(paste0("Mismatch in species dimension: dim(theta)[2] must be ", I, ".\n"))
+      }
+      if (length(dim(theta)) == 3 && dim(theta)[3] != J) {
+        stop(paste0("Mismatch in site dimension: dim(theta)[3] must be ", J, ".\n"))
+      }
     }
+    if (!is.null(phi)) {
+      if (dim(phi)[2] != I) {
+        stop(paste0("Mismatch in species dimension: dim(phi)[2] must be ", I, ".\n"))
+      }
+      if (length(dim(phi)) == 3 && dim(phi)[3] != J) {
+        stop(paste0("Mismatch in site dimension: dim(phi)[3] must be ", J, ".\n"))
+      }
+    }
+  } else {
+    has_site_dim <- c(TRUE, length(dim(theta)) == 3, length(dim(phi)) == 3)
+    vI <- c(dim(z)[2], dim(theta)[2], dim(phi)[2])
+    vJ <- c(dim(z)[3],
+            ifelse(has_site_dim[2], dim(theta)[3], NA),
+            ifelse(has_site_dim[3], dim(phi)[3], NA))
+    vJ <- vJ[has_site_dim]
+    terms <- c("dim(z)[3]", "dim(theta)[3]", "dim(phi)[3]")[has_site_dim]
 
-    invisible(NULL)
+    if (length(unique(vI)) != 1) {
+      stop("Mismatch in species dimension: dim(z)[2], dim(theta)[2], and dim(phi)[2] must be equal.\n")
+    }
+    if (length(unique(vJ)) != 1) {
+      stop(paste0("Mismatch in site dimension: ",
+                  knitr::combine_words(terms), " must be equal.\n"))
+    }
+  }
+
+  invisible(NULL)
 }
 
 check_args_eval_util_R <- function(settings, fit, psi, theta, phi) {
-    # Assert that settings is a data frame and contains the required columns
-    checkmate::assert_data_frame(settings)
-    if (!checkmate::testSubset("J", names(settings)))
-        stop("The 'settings' argument does not contain column 'J'.\n")
-    if (!checkmate::testSubset("K", names(settings)))
-        stop("The 'settings' argument does not contain column 'K'.\n")
-    if (!checkmate::testSubset("N", names(settings)))
-        stop("The 'settings' argument does not contain column 'N'.\n")
-    if (!checkmate::test_numeric(settings[, "J"], lower = 1))
-        stop("'J' contains values less than one.\n")
-    if (!checkmate::test_numeric(settings[, "K"], lower = 1))
-        stop("'K' contains values less than one.\n")
-    if (!checkmate::test_numeric(settings[, "N"], lower = 1))
-        stop("'N' contains values less than one.\n")
+  # Assert that settings is a data frame and contains the required columns
+  checkmate::assert_data_frame(settings)
+  if (!checkmate::testSubset("J", names(settings))) {
+    stop("The 'settings' argument does not contain column 'J'.\n")
+  }
+  if (!checkmate::testSubset("K", names(settings))) {
+    stop("The 'settings' argument does not contain column 'K'.\n")
+  }
+  if (!checkmate::testSubset("N", names(settings))) {
+    stop("The 'settings' argument does not contain column 'N'.\n")
+  }
+  if (!checkmate::test_numeric(settings[, "J"], lower = 1)) {
+    stop("'J' contains values less than one.\n")
+  }
+  if (!checkmate::test_numeric(settings[, "K"], lower = 1)) {
+    stop("'K' contains values less than one.\n")
+  }
+  if (!checkmate::test_numeric(settings[, "N"], lower = 1)) {
+    stop("'N' contains values less than one.\n")
+  }
 
-    # Assert that either fit or (psi, theta, phi) is provided
-    if (is.null(fit) & !(!is.null(psi) & !is.null(theta) & !is.null(phi)))
-        stop("Parameter values are not fully specified: use fit argument or otherwise use all of psi, theta, phi arguments.\n")
+  # Assert that either fit or (psi, theta, phi) is provided
+  if (is.null(fit) && !(!is.null(psi) && !is.null(theta) && !is.null(phi))) {
+    stop("Parameter values are not fully specified: use fit argument or otherwise use all of psi, theta, phi arguments.\n")
+  }
 
-    if (!is.null(fit)) {
-        # Assert that fit is an occumbFit object
-        assert_occumbFit(fit)
+  if (!is.null(fit)) {
+    # Assert that fit is an occumbFit object
+    assert_occumbFit(fit)
 
-        # Stop when modeled parameters are replicate-specific
-        if (length(dim(get_post_samples(fit, "theta"))) == 4 & is.null(theta))
-            stop("'fit' contains replicate-specific theta: specify appropriate theta values via the 'theta' argument to run.\n")
-        if (length(dim(get_post_samples(fit, "phi"))) == 4 & is.null(phi))
-            stop("'fit' contains replicate-specific phi: specify appropriate phi values via the 'phi' argument to run.\n")
+    # Stop when modeled parameters are replicate-specific
+    if (length(dim(get_post_samples(fit, "theta"))) == 4 && is.null(theta)) {
+      stop("'fit' contains replicate-specific theta: specify appropriate theta values via the 'theta' argument to run.\n")
     }
-
-    # Assert that psi, theta, and phi have an appropriate dimension and elements
-    checkmate::assert_array(psi, min.d = 2, max.d = 3, null.ok = TRUE)
-    checkmate::assert_array(theta, min.d = 2, max.d = 3, null.ok = TRUE)
-    checkmate::assert_array(phi, min.d = 2, max.d = 3, null.ok = TRUE)
-    checkmate::assert_numeric(psi, lower = 0, upper = 1,
-                              any.missing = FALSE, null.ok = TRUE)
-    checkmate::assert_numeric(theta, lower = 0, upper = 1,
-                              any.missing = FALSE, null.ok = TRUE)
-    checkmate::assert_numeric(phi, lower = 0, any.missing = FALSE, null.ok = TRUE)
-
-    # Assert equality in species/site dimensions of psi, theta, phi, and fit
-    if (!is.null(fit)) {
-        I <- dim(fit@data@y)[1]
-        J <- dim(fit@data@y)[2]
-
-        if (!is.null(psi)) {
-            if (dim(psi)[2] != I)
-                stop(paste0("Mismatch in species dimension: dim(psi)[2] must be ", I, ".\n"))
-            if (length(dim(psi)) == 3 & dim(psi)[3] != J)
-                stop(paste0("Mismatch in site dimension: dim(psi)[3] must be ", J, ".\n"))
-        }
-        if (!is.null(theta)) {
-            if (dim(theta)[2] != I)
-                stop(paste0("Mismatch in species dimension: dim(theta)[2] must be ", I, ".\n"))
-            if (length(dim(theta)) == 3 & dim(theta)[3] != J)
-                stop(paste0("Mismatch in site dimension: dim(theta)[3] must be ", J, ".\n"))
-        }
-        if (!is.null(phi)) {
-            if (dim(phi)[2] != I)
-                stop(paste0("Mismatch in species dimension: dim(phi)[2] must be ", I, ".\n"))
-            if (length(dim(phi)) == 3 & dim(phi)[3] != J)
-                stop(paste0("Mismatch in site dimension: dim(phi)[3] must be ", J, ".\n"))
-        }
-    } else {
-        has_site_dim <- c(length(dim(psi)) == 3,
-                          length(dim(theta)) == 3,
-                          length(dim(phi)) == 3)
-        vI <- c(dim(psi)[2], dim(theta)[2], dim(phi)[2])
-        vJ <- c(dim(psi)[3],
-                ifelse(has_site_dim[2], dim(theta)[3], NA),
-                ifelse(has_site_dim[3], dim(phi)[3], NA))
-        vJ <- vJ[has_site_dim]
-        terms <- c("dim(psi)[3]", "dim(theta)[3]", "dim(phi)[3]")[has_site_dim]
-
-        if (length(unique(vI)) > 1)
-            stop("Mismatch in species dimension: dim(psi)[2], dim(theta)[2], and dim(phi)[2] must be equal.\n")
-        if (length(unique(vJ)) > 1)
-            stop(paste0("Mismatch in site dimension: ",
-                        knitr::combine_words(terms), " must be equal.\n"))
+    if (length(dim(get_post_samples(fit, "phi"))) == 4 && is.null(phi)) {
+      stop("'fit' contains replicate-specific phi: specify appropriate phi values via the 'phi' argument to run.\n")
     }
+  }
 
-    invisible(NULL)
+  # Assert that psi, theta, and phi have an appropriate dimension and elements
+  checkmate::assert_array(psi, min.d = 2, max.d = 3, null.ok = TRUE)
+  checkmate::assert_array(theta, min.d = 2, max.d = 3, null.ok = TRUE)
+  checkmate::assert_array(phi, min.d = 2, max.d = 3, null.ok = TRUE)
+  checkmate::assert_numeric(psi, lower = 0, upper = 1,
+                            any.missing = FALSE, null.ok = TRUE)
+  checkmate::assert_numeric(theta, lower = 0, upper = 1,
+                            any.missing = FALSE, null.ok = TRUE)
+  checkmate::assert_numeric(phi, lower = 0, any.missing = FALSE, null.ok = TRUE)
+
+  # Assert equality in species/site dimensions of psi, theta, phi, and fit
+  if (!is.null(fit)) {
+    I <- dim(fit@data@y)[1]
+    J <- dim(fit@data@y)[2]
+
+    if (!is.null(psi)) {
+      if (dim(psi)[2] != I) {
+        stop(paste0("Mismatch in species dimension: dim(psi)[2] must be ", I, ".\n"))
+      }
+      if (length(dim(psi)) == 3 && dim(psi)[3] != J) {
+        stop(paste0("Mismatch in site dimension: dim(psi)[3] must be ", J, ".\n"))
+      }
+    }
+    if (!is.null(theta)) {
+      if (dim(theta)[2] != I) {
+        stop(paste0("Mismatch in species dimension: dim(theta)[2] must be ", I, ".\n"))
+      }
+      if (length(dim(theta)) == 3 && dim(theta)[3] != J) {
+        stop(paste0("Mismatch in site dimension: dim(theta)[3] must be ", J, ".\n"))
+      }
+    }
+    if (!is.null(phi)) {
+      if (dim(phi)[2] != I) {
+        stop(paste0("Mismatch in species dimension: dim(phi)[2] must be ", I, ".\n"))
+      }
+      if (length(dim(phi)) == 3 && dim(phi)[3] != J) {
+        stop(paste0("Mismatch in site dimension: dim(phi)[3] must be ", J, ".\n"))
+      }
+    }
+  } else {
+    has_site_dim <- c(length(dim(psi)) == 3,
+                      length(dim(theta)) == 3,
+                      length(dim(phi)) == 3)
+    vI <- c(dim(psi)[2], dim(theta)[2], dim(phi)[2])
+    vJ <- c(dim(psi)[3],
+            ifelse(has_site_dim[2], dim(theta)[3], NA),
+            ifelse(has_site_dim[3], dim(phi)[3], NA))
+    vJ <- vJ[has_site_dim]
+    terms <- c("dim(psi)[3]", "dim(theta)[3]", "dim(phi)[3]")[has_site_dim]
+
+    if (length(unique(vI)) > 1) {
+      stop("Mismatch in species dimension: dim(psi)[2], dim(theta)[2], and dim(phi)[2] must be equal.\n")
+    }
+    if (length(unique(vJ)) > 1) {
+      stop(paste0("Mismatch in site dimension: ",
+                  knitr::combine_words(terms), " must be equal.\n"))
+    }
+  }
+
+  invisible(NULL)
 }
 
 # @title Monte-Carlo integration to obtain expected utility.
@@ -816,59 +879,60 @@ check_args_eval_util_R <- function(settings, fit, psi, theta, phi) {
 eutil <- function(z, theta, phi, K, N, scale = c("local", "regional"),
                   N_rep = N_rep, cores = cores) {
 
-    M <- dim(z)[1]
+  M <- dim(z)[1]
 
-    if (match.arg(scale) == "local") {
-        fun <- .cutil_local
-    } else if (match.arg(scale) == "regional") {
-        fun <- .cutil_regional
-    }
+  if (match.arg(scale) == "local") {
+    fun <- .cutil_local
+  } else if (match.arg(scale) == "regional") {
+    fun <- .cutil_regional
+  }
 
-    if (cores == 1) {
-        util_rep <- unlist(
-            lapply(X = rep(seq_len(M), each = N_rep),
-                   FUN = fun,
-                   args = list(z = z, theta = theta, phi = phi, K = K, N = N))
-        )
+  if (cores == 1) {
+    util_rep <- unlist(
+      lapply(X = rep(seq_len(M), each = N_rep),
+             FUN = fun,
+             args = list(z = z, theta = theta, phi = phi, K = K, N = N))
+    )
+  } else {
+    if (.Platform$OS.type == "windows") {
+      # On Windows use makePSOCKcluster() and parLapply() for multiple cores
+      cl <- parallel::makePSOCKcluster(cores)
+      parallel::clusterEvalQ(cl, library(occumb))
+      on.exit(parallel::stopCluster(cl))
+      util_rep <- unlist(
+        parallel::parLapply(cl = cl,
+                            X = rep(seq_len(M), each = N_rep),
+                            fun = fun,
+                            args = list(z = z,
+                                        theta = theta,
+                                        phi = phi,
+                                        K = K,
+                                        N = N))
+      )
     } else {
-        if (.Platform$OS.type == "windows") {
-            # On Windows use makePSOCKcluster() and parLapply() for multiple cores
-            cl <- parallel::makePSOCKcluster(cores)
-            parallel::clusterEvalQ(cl, library(occumb))
-            on.exit(parallel::stopCluster(cl))
-            util_rep <- unlist(
-                parallel::parLapply(cl = cl,
-                                    X = rep(seq_len(M), each = N_rep),
-                                    fun = fun,
-                                    args = list(z = z,
-                                                theta = theta,
-                                                phi = phi,
-                                                K = K,
-                                                N = N))
-            )
-        } else {
-            # On Mac or Linux use mclapply() for multiple cores
-            result <-
-                parallel::mclapply(mc.cores = cores,
-                                   X = rep(seq_len(M), each = N_rep),
-                                   FUN = fun,
-                                   args = list(z = z,
-                                               theta = theta,
-                                               phi = phi,
-                                               K = K,
-                                               N = N))
-            is_error <- sapply(result, inherits, "try-error")
-            if (any(is_error)) {
-                stop(result[is_error][1])
-            } else {
-                util_rep <- unlist(result)
-            }
-        }
+      # On Mac or Linux use mclapply() for multiple cores
+      result <-
+        parallel::mclapply(mc.cores = cores,
+                           X = rep(seq_len(M), each = N_rep),
+                           FUN = fun,
+                           args = list(z = z,
+                                       theta = theta,
+                                       phi = phi,
+                                       K = K,
+                                       N = N))
+      is_error <- sapply(result, inherits, "try-error")
+      if (any(is_error)) {
+        stop(result[is_error][1])
+      } else {
+        util_rep <- unlist(result)
+      }
     }
+  }
 
-    if (any(is.nan(util_rep)))
-        warning("Case(s) arose in the replicated simulation where 'Utility' could not be calculated and were ignored. This result may sometimes occur stochastically; try repeat running to see if the same warning occurs. If the same result occurs frequently, the given 'theta' or 'phi' values might need to be higher.")
-    mean(util_rep, na.rm = TRUE)
+  if (any(is.nan(util_rep))) {
+    warning("Case(s) arose in the replicated simulation where 'Utility' could not be calculated and were ignored. This result may sometimes occur stochastically; try repeat running to see if the same warning occurs. If the same result occurs frequently, the given 'theta' or 'phi' values might need to be higher.")
+  }
+  mean(util_rep, na.rm = TRUE)
 }
 
 # @title Conditional utility function for local species diversity assessments.
@@ -879,9 +943,9 @@ eutil <- function(z, theta, phi, K, N, scale = c("local", "regional"),
 # @param N Sequence depth (numeric).
 # @return The expected number of detected species per site.
 cutil_local <- function(z, theta, phi, K, N) {
-    pi <- predict_pi(z, theta, phi, K)
-    detect_probs <- predict_detect_probs_local(pi, N)
-    return(sum(detect_probs) / ncol(z))
+  pi <- predict_pi(z, theta, phi, K)
+  detect_probs <- predict_detect_probs_local(pi, N)
+  return(sum(detect_probs) / ncol(z))
 }
 
 # @title Conditional utility function for regional species diversity assessments.
@@ -892,239 +956,243 @@ cutil_local <- function(z, theta, phi, K, N) {
 # @param N Sequence depth (numeric).
 # @return The expected total number of species detected over the all sites.
 cutil_regional <- function(z, theta, phi, K, N) {
-    pi <- predict_pi(z, theta, phi, K)
-    detect_probs <- predict_detect_probs_regional(pi, N)
-    return(sum(detect_probs))
+  pi <- predict_pi(z, theta, phi, K)
+  detect_probs <- predict_detect_probs_regional(pi, N)
+  return(sum(detect_probs))
 }
 
 # Auxiliary functions adapting cutil to lapply
 .cutil_local <- function(n, args) {
-    if (dim(args$z)[2] == 1) {          # When I = 1
-        cutil_local(matrix(args$z[n, , ], nrow = 1),
-                    matrix(args$theta[n, , ], nrow = 1),
-                    matrix(args$phi[n, , ], nrow = 1),
-                    args$K,
-                    args$N)
-    } else if (dim(args$z)[3] == 1) {   # When J = 1
-        cutil_local(matrix(args$z[n, , ], ncol = 1),
-                    matrix(args$theta[n, , ], ncol = 1),
-                    matrix(args$phi[n, , ], ncol = 1),
-                    args$K,
-                    args$N)
-    } else {
-        cutil_local(args$z[n, , ],
-                    args$theta[n, , ],
-                    args$phi[n, , ],
-                    args$K,
-                    args$N)
-    }
+  if (dim(args$z)[2] == 1) {          # When I = 1
+    cutil_local(matrix(args$z[n, , ], nrow = 1),
+                matrix(args$theta[n, , ], nrow = 1),
+                matrix(args$phi[n, , ], nrow = 1),
+                args$K,
+                args$N)
+  } else if (dim(args$z)[3] == 1) {   # When J = 1
+    cutil_local(matrix(args$z[n, , ], ncol = 1),
+                matrix(args$theta[n, , ], ncol = 1),
+                matrix(args$phi[n, , ], ncol = 1),
+                args$K,
+                args$N)
+  } else {
+    cutil_local(args$z[n, , ],
+                args$theta[n, , ],
+                args$phi[n, , ],
+                args$K,
+                args$N)
+  }
 }
 
 .cutil_regional <- function(n, args) {
-    if (dim(args$z)[2] == 1) {          # When I = 1
-        cutil_regional(matrix(args$z[n, , ], nrow = 1),
-                       matrix(args$theta[n, , ], nrow = 1),
-                       matrix(args$phi[n, , ], nrow = 1),
-                       args$K,
-                       args$N)
-    } else if (dim(args$z)[3] == 1) {   # When J = 1
-        cutil_regional(matrix(args$z[n, , ], ncol = 1),
-                       matrix(args$theta[n, , ], ncol = 1),
-                       matrix(args$phi[n, , ], ncol = 1),
-                       args$K,
-                       args$N)
-    } else {
-        cutil_regional(args$z[n, , ],
-                       args$theta[n, , ],
-                       args$phi[n, , ],
-                       args$K,
-                       args$N)
-    }
+  if (dim(args$z)[2] == 1) {          # When I = 1
+    cutil_regional(matrix(args$z[n, , ], nrow = 1),
+                   matrix(args$theta[n, , ], nrow = 1),
+                   matrix(args$phi[n, , ], nrow = 1),
+                   args$K,
+                   args$N)
+  } else if (dim(args$z)[3] == 1) {   # When J = 1
+    cutil_regional(matrix(args$z[n, , ], ncol = 1),
+                   matrix(args$theta[n, , ], ncol = 1),
+                   matrix(args$phi[n, , ], ncol = 1),
+                   args$K,
+                   args$N)
+  } else {
+    cutil_regional(args$z[n, , ],
+                   args$theta[n, , ],
+                   args$phi[n, , ],
+                   args$K,
+                   args$N)
+  }
 }
 
 # Calculate pi
 predict_pi <- function(z, theta, phi, K) {
-    I <- nrow(z)
-    J <- ncol(z)
+  I <- nrow(z)
+  J <- ncol(z)
 
-    u <- r <- array(dim = c(I, J, K))
-    pi <- array(dim = c(I, J, K))
+  u <- r <- array(dim = c(I, J, K))
+  pi <- array(dim = c(I, J, K))
 
-    # Posterior predictive samples of u and r
+  # Posterior predictive samples of u and r
+  for (k in seq_len(K)) {
+    u[, , k] <- sample_u(z * theta)
+    r[, , k] <- stats::rgamma(I * J, phi, 1)
+  }
+
+  # Derive pi
+  for (j in seq_len(J)) {
     for (k in seq_len(K)) {
-        u[, , k] <- sample_u(z * theta)
-        r[, , k] <- stats::rgamma(I * J, phi, 1)
+      ur <- (u * r)[, j, k]
+      pi[, j, k] <- ur / sum(ur)
     }
+  }
 
-    # Derive pi
-    for (j in seq_len(J)) {
-        for (k in seq_len(K)) {
-            ur <- (u * r)[, j, k]
-            pi[, j, k] <- ur / sum(ur)
-        }
-    }
-
-    pi
+  pi
 }
 
 # Calculate species detection probabilities (local scale)
 predict_detect_probs_local <- function(pi, N) {
-    I <- dim(pi)[1]
-    J <- dim(pi)[2]
+  I <- dim(pi)[1]
+  J <- dim(pi)[2]
 
-    detect_probs <- matrix(nrow = I, ncol = J)
-    for (i in seq_len(I)) {
-        for (j in seq_len(J)) {
-            detect_probs[i, j] <- 1 - prod((1 - pi[i, j, ])^N)
-        }
+  detect_probs <- matrix(nrow = I, ncol = J)
+  for (i in seq_len(I)) {
+    for (j in seq_len(J)) {
+      detect_probs[i, j] <- 1 - prod((1 - pi[i, j, ])^N)
     }
+  }
 
-    detect_probs
+  detect_probs
 }
 
 # Calculate species detection probabilities (regional scale)
 predict_detect_probs_regional <- function(pi, N) {
-    I <- dim(pi)[1]
+  I <- dim(pi)[1]
 
-    detect_probs <- vector(length = I)
-    for (i in seq_len(I)) {
-        detect_probs[i] <- 1 - prod((1 - pi[i, , ])^N)
-    }
+  detect_probs <- vector(length = I)
+  for (i in seq_len(I)) {
+    detect_probs[i] <- 1 - prod((1 - pi[i, , ])^N)
+  }
 
-    detect_probs
+  detect_probs
 }
 
 # Find the maximum K value under the specified budget for regional assessment
 find_maxK <- function(budget, lambda2, lambda3, ulim = 1E4) {
-    J <- 1
-    for (n in 2:log10(ulim)) {
-        K <- seq_len(10^n)
+  J <- 1
+  for (n in 2:log10(ulim)) {
+    K <- seq_len(10^n)
 
-        if (any(budget - lambda2 * J * K - lambda3 * J > 0)) {
-            maxK <- max(K[budget - lambda2 * J * K - lambda3 * J > 0])
-        } else {
-            maxK <- 0
-        }
-
-        if (maxK < length(K))
-            break
-
-        if (n == log10(ulim))
-            stop("Maximum `K` value seems too large under the specified budget and cost values: consider using the `K` argument to specify a smaller set of `K` values of interest.\n")
+    if (any(budget - lambda2 * J * K - lambda3 * J > 0)) {
+      maxK <- max(K[budget - lambda2 * J * K - lambda3 * J > 0])
+    } else {
+      maxK <- 0
     }
-    maxK
+
+    if (maxK < length(K)) {
+      break
+    }
+
+    if (n == log10(ulim)) {
+      stop("Maximum `K` value seems too large under the specified budget and cost values: consider using the `K` argument to specify a smaller set of `K` values of interest.\n")
+    }
+  }
+  maxK
 }
 
 # Find the maximum J value under the specified budget for regional assessment
 find_maxJ <- function(budget, lambda2, lambda3, ulim = 1E6) {
-    K <- 1
-    for (n in 4:log10(ulim)) {
-        J <- seq_len(10^n)
+  K <- 1
+  for (n in 4:log10(ulim)) {
+    J <- seq_len(10^n)
 
-        if (any(budget - lambda2 * J * K - lambda3 * J > 0)) {
-            maxJ <- max(J[budget - lambda2 * J * K - lambda3 * J > 0])
-        } else {
-            maxJ <- 0
-        }
-
-        if (maxJ < length(J))
-            break
-
-        if (n == log10(ulim))
-            stop("Maximum `J` value seems too large under the specified budget and cost values: consider using the `J` argument to specify a smaller set of `J` values of interest.\n")
+    if (any(budget - lambda2 * J * K - lambda3 * J > 0)) {
+      maxJ <- max(J[budget - lambda2 * J * K - lambda3 * J > 0])
+    } else {
+      maxJ <- 0
     }
-    maxJ
+
+    if (maxJ < length(J)) {
+      break
+    }
+
+    if (n == log10(ulim)) {
+      stop("Maximum `J` value seems too large under the specified budget and cost values: consider using the `J` argument to specify a smaller set of `J` values of interest.\n")
+    }
+  }
+  maxJ
 }
 
 # Sample z except for all zero cases
 sample_z <- function(psi) {
-    z <- stats::rbinom(length(psi), 1, psi)
+  z <- stats::rbinom(length(psi), 1, psi)
 
-    # Resample when all species have z = 0
-    if (sum(z)) {
-        return(z)
-    } else {
-        for (i in seq_len(10000)) {
-            z <- stats::rbinom(length(psi), 1, psi)
-            if (sum(z)) return(z)
-        }
-        stop("Failed to generate valid 'z' values under the given parameter set. Providing 'psi' containing higher psi values may fix the issue.")
+  # Resample when all species have z = 0
+  if (sum(z)) {
+    return(z)
+  } else {
+    for (i in seq_len(10000)) {
+      z <- stats::rbinom(length(psi), 1, psi)
+      if (sum(z)) return(z)
     }
+    stop("Failed to generate valid 'z' values under the given parameter set. Providing 'psi' containing higher psi values may fix the issue.")
+  }
 }
 
 # Sample u except for all zero cases
 sample_u <- function(z_theta) {
-    u <- array(stats::rbinom(nrow(z_theta) * ncol(z_theta), 1, z_theta),
-               dim = dim(z_theta))
+  u <- array(stats::rbinom(nrow(z_theta) * ncol(z_theta), 1, z_theta),
+             dim = dim(z_theta))
 
-    # Find cases where all species have u = 0 to resample
-    allzero <- which(colSums(u) == 0)
-    if (length(allzero)) {
-        for (n in seq_along(allzero)) {
-            for (i in seq_len(10000)) {
-                u[, allzero[n]] <-
-                    stats::rbinom(nrow(z_theta), 1, z_theta[, allzero[n]])
-                if (sum(u[, allzero[n]]) == 0) break
-            }
-        }
-        if (any(colSums(u) == 0)) {
-            stop("Failed to generate valid 'u' values under the given parameter set. Providing 'theta' or 'psi' containing higher probability values may fix the issue.")
-        } else {
-            return(u)
-        }
-    } else {
-        return(u)
+  # Find cases where all species have u = 0 to resample
+  allzero <- which(colSums(u) == 0)
+  if (length(allzero)) {
+    for (n in seq_along(allzero)) {
+      for (i in seq_len(10000)) {
+        u[, allzero[n]] <- stats::rbinom(nrow(z_theta), 1, z_theta[, allzero[n]])
+        if (sum(u[, allzero[n]]) == 0) break
+      }
     }
+    if (any(colSums(u) == 0)) {
+      stop("Failed to generate valid 'u' values under the given parameter set. Providing 'theta' or 'psi' containing higher probability values may fix the issue.")
+    } else {
+      return(u)
+    }
+  } else {
+    return(u)
+  }
 }
 
 get_z_i <- function(psi, has_site_dim, site_use) {
-    out <- array(NA, dim = c(dim(psi)[1], dim(psi)[2], ncol(site_use)))
+  out <- array(NA, dim = c(dim(psi)[1], dim(psi)[2], ncol(site_use)))
 
-    if (has_site_dim) {
-        for (j in seq_len(dim(out)[3])) {
-            for (n in seq_len(dim(out)[1]))
-                out[n, , j] <- sample_z(psi[n, , site_use[n, j]])
-        }
-    } else {
-        for (j in seq_len(dim(out)[3])) {
-            for (n in seq_len(dim(out)[1]))
-                out[n, , j] <- sample_z(psi[n, ])
-        }
+  if (has_site_dim) {
+    for (j in seq_len(dim(out)[3])) {
+      for (n in seq_len(dim(out)[1])) {
+        out[n, , j] <- sample_z(psi[n, , site_use[n, j]])
+      }
     }
+  } else {
+    for (j in seq_len(dim(out)[3])) {
+      for (n in seq_len(dim(out)[1])) {
+        out[n, , j] <- sample_z(psi[n, ])
+      }
+    }
+  }
 
-    out
+  out
 }
 
 get_theta_phi_i <- function(param, has_site_dim, site_use) {
-    if (has_site_dim) {
-        out <- array(NA, dim = c(dim(param)[1], dim(param)[2], ncol(site_use)))
+  if (has_site_dim) {
+    out <- array(NA, dim = c(dim(param)[1], dim(param)[2], ncol(site_use)))
 
-        for (j in seq_len(dim(out)[3])) {
-            for (n in seq_len(dim(out)[1])) {
-                out[n, , j] <- param[n, , site_use[n, j]]
-            }
-        }
-    } else {
-        out <- outer(param, rep(1, ncol(site_use)))
+    for (j in seq_len(dim(out)[3])) {
+      for (n in seq_len(dim(out)[1])) {
+        out[n, , j] <- param[n, , site_use[n, j]]
+      }
     }
+  } else {
+    out <- outer(param, rep(1, ncol(site_use)))
+  }
 
-    out
+  out
 }
 
 resample_z_psi_theta_phi <- function(param, has_site_dim, n_sample) {
-    if (has_site_dim) {
-        return(param[sample.int(dim(param)[1], n_sample, replace = TRUE), , ])
-    } else {
-        return(param[sample.int(dim(param)[1], n_sample, replace = TRUE), ])
-    }
+  if (has_site_dim) {
+    return(param[sample.int(dim(param)[1], n_sample, replace = TRUE), , ])
+  } else {
+    return(param[sample.int(dim(param)[1], n_sample, replace = TRUE), ])
+  }
 }
 
 copy_psi_theta_phi <- function(param, has_site_dim, N_rep) {
-    if (has_site_dim) {
-        out <- param[rep(seq_len(dim(param)[1]), N_rep), , ]
-    } else {
-        out <- param[rep(seq_len(dim(param)[1]), N_rep), ]
-    }
-    out
+  if (has_site_dim) {
+    out <- param[rep(seq_len(dim(param)[1]), N_rep), , ]
+  } else {
+    out <- param[rep(seq_len(dim(param)[1]), N_rep), ]
+  }
+  out
 }
-
