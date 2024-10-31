@@ -252,8 +252,7 @@ add_attributes1 <- function(obj, dimension = c("i", "ij", "ijk"),
 
     if (dimension == "ij") {
       attr(obj, "dimension") <- c("Sample", "Species", "Site")
-      if (!is.null(dimnames_y[[1]]) ||
-        !is.null(dimnames_y[[2]]))
+      if (!is.null(dimnames_y[[1]]) || !is.null(dimnames_y[[2]]))
         attr(obj, "label") <- list(
           Sample  = NULL,
           Species = dimnames_y[[1]],
@@ -264,8 +263,8 @@ add_attributes1 <- function(obj, dimension = c("i", "ij", "ijk"),
     if (dimension == "ijk") {
       attr(obj, "dimension") <- c("Sample", "Species", "Site", "Replicate")
       if (!is.null(dimnames_y[[1]]) ||
-        !is.null(dimnames_y[[2]]) ||
-        !is.null(dimnames_y[[3]]))
+            !is.null(dimnames_y[[2]]) ||
+            !is.null(dimnames_y[[3]]))
         attr(obj, "label") <- list(
           Sample    = NULL,
           Species   = dimnames_y[[1]],
@@ -286,8 +285,7 @@ add_attributes1 <- function(obj, dimension = c("i", "ij", "ijk"),
 
     if (dimension == "ij") {
       attr(obj, "dimension") <- c("Species", "Site")
-      if (!is.null(dimnames_y[[1]]) ||
-        !is.null(dimnames_y[[2]]))
+      if (!is.null(dimnames_y[[1]]) || !is.null(dimnames_y[[2]]))
         attr(obj, "label") <- list(
           Species = dimnames_y[[1]],
           Site    = dimnames_y[[2]]
@@ -297,8 +295,8 @@ add_attributes1 <- function(obj, dimension = c("i", "ij", "ijk"),
     if (dimension == "ijk") {
       attr(obj, "dimension") <- c("Species", "Site", "Replicate")
       if (!is.null(dimnames_y[[1]]) ||
-        !is.null(dimnames_y[[2]]) ||
-        !is.null(dimnames_y[[3]]))
+            !is.null(dimnames_y[[2]]) ||
+            !is.null(dimnames_y[[3]]))
         attr(obj, "label") <- list(
           Species   = dimnames_y[[1]],
           Site      = dimnames_y[[2]],

@@ -270,9 +270,9 @@ get_post_pred_link <- function(object, data, parameter) {
   get_post_linpred <- function(post_effect, cov) {
 
     if (is.null(dim(post_effect)) && (length(cov) == 1)) {
-      result <- post_effect * cov         # (vector * numeric)
+      result <- post_effect * cov
     } else {
-      result <- c(post_effect %*% cov)    # (matrix * vector)
+      result <- c(post_effect %*% cov)
     }
 
     return(result)

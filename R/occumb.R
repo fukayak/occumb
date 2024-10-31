@@ -822,7 +822,6 @@ set_covariates <- function(data, formula, formula_shared, param) {
 
       type <- set_phi_theta(formula, formula_shared, data)
 
-      # type = "ij"
       if (type == "ij") {
         dm <- set_design_matrix(formula, get_list_cov(data, "ij"))
         cov <- matrix(dm, nrow = dim(data@y)[2], ncol = ncol(dm))
@@ -830,7 +829,6 @@ set_covariates <- function(data, formula, formula_shared, param) {
         M <- ncol(cov)
       }
 
-      # type = "ijk"
       if (type == "ijk") {
         dm <- set_design_matrix(formula, get_list_cov(data, "ijk"))
         cov <- array(dm, c(dim(data@y)[2], dim(data@y)[3], ncol(dm)))
@@ -844,7 +842,6 @@ set_covariates <- function(data, formula, formula_shared, param) {
 
     type <- set_phi_theta(formula, formula_shared, data)
 
-    # type = "i"
     if (type == "i") {
       dm_shared <-
         set_design_matrix(formula_shared,
@@ -857,7 +854,6 @@ set_covariates <- function(data, formula, formula_shared, param) {
       M_shared <- ncol(cov_shared)
     }
 
-    # type = "ij"
     if (type == "ij") {
       dm <- set_design_matrix(formula, get_list_cov(data, "ij"))
       dm_shared <-
@@ -879,7 +875,6 @@ set_covariates <- function(data, formula, formula_shared, param) {
       M_shared <- dim(cov_shared)[3]
     }
 
-    # type = "ijk"
     if (type == "ijk") {
       dm <- set_design_matrix(formula, get_list_cov(data, "ijk"))
       dm_shared <-
@@ -904,7 +899,6 @@ set_covariates <- function(data, formula, formula_shared, param) {
     }
   }
 
-  ## psi
   if (param == "psi" && formula_shared == ~ 1) {
     # For cases when formula_shared is not specified
     cov_shared <- M_shared <- NULL
@@ -914,7 +908,6 @@ set_covariates <- function(data, formula, formula_shared, param) {
       M <- 1
       type <- "i"
     } else {
-      # type = "ij"
       dm <- set_design_matrix(formula, get_list_cov(data, "ij"))
       cov <- matrix(dm, nrow =  dim(data@y)[2], ncol = ncol(dm))
       colnames(cov) <- colnames(dm)
@@ -927,7 +920,6 @@ set_covariates <- function(data, formula, formula_shared, param) {
 
     type <- set_psi(formula, formula_shared, data)
 
-    # type = "i"
     if (type == "i") {
       dm_shared <-
         set_design_matrix(formula_shared,
@@ -940,7 +932,6 @@ set_covariates <- function(data, formula, formula_shared, param) {
       M_shared <- ncol(cov_shared)
     }
 
-    # type = "ij"
     if (type == "ij") {
       dm <- set_design_matrix(formula, get_list_cov(data, "ij"))
       dm_shared <-
