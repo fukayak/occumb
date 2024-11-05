@@ -61,6 +61,3 @@ inst/doc
 
 # Snapshots
 tests/testthat/_snaps/
-
-# lintr file
-.lintr
