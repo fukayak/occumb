@@ -9,10 +9,10 @@ riverbank_new[riverbank_new == 1] <- "without_vegetation"
 riverbank <- as.factor(riverbank_new)
 
 fish <- occumbData(
-    y = y,
-    spec_cov = list(mismatch = mismatch),
-    site_cov = list(riverbank = riverbank),
-    repl_cov = NULL
+  y = y,
+  spec_cov = list(mismatch = mismatch),
+  site_cov = list(riverbank = riverbank),
+  repl_cov = NULL
 )
 
 usethis::use_data(fish, overwrite = TRUE)
