@@ -15,4 +15,3 @@
 #'  The resulting sequence counts of 50 freshwater fish taxa were recorded.
 #' @source K. Fukaya, N. I. Kondo, S. S. Matsuzaki, T. Kadoya (2021) Data from: Multispecies site occupancy modeling and study design for spatially replicated environmental DNA metabarcoding. Dryad Digital Repository. \doi{10.5061/dryad.3bk3j9kkm}
 "fish"
-

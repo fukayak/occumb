@@ -13,9 +13,9 @@ NULL
 #' @import jagsUI
 #' @export
 setMethod("plot", "occumbFit",
-    function(x, y = NULL, ...) {
-        plot(x@fit, ...)
-    }
+  function(x, y = NULL, ...) {
+    plot(x@fit, ...)
+  }
 )
 
 #' @title Plot method for occumbGof class.
@@ -26,8 +26,7 @@ setMethod("plot", "occumbFit",
 #' @return  Returns \code{NULL} invisibly.
 #' @export
 setMethod("plot", "occumbGof",
-    function(x, y = NULL, ...) {
-        plot_gof(x@stats_obs, x@stats_rep, x@stats, ...)
-    }
+  function(x, y = NULL, ...) {
+    plot_gof(x@stats_obs, x@stats_rep, x@stats, ...)
+  }
 )
-
