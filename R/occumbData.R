@@ -154,7 +154,7 @@ validate_occumbData <- function(object) {
 
 # Data format class for occumb
 setClass("occumbData",
-         slots = c(y = "array",
+         slots = c(y = "array_or_dataframe",
                    spec_cov = "list_or_NULL",
                    site_cov = "list_or_NULL",
                    repl_cov = "list_or_NULL"),
@@ -232,6 +232,20 @@ occumbData <- function(y,
                        spec_cov = NULL,
                        site_cov = NULL,
                        repl_cov = NULL) {
+
+  ## y is a datagrame
+  if (is.data.frame(y)) {
+    y <- y
+    sort_df <- y[order(y[, 3], y[, 2], y[, 1]), , drop = FALSE]
+    dfta <- array(data = unlist(sort_df[, 4]),
+                  dim = c(length(levels(sort_df[, 1])),
+                          length(levels(sort_df[, 2])),
+                          length(levels(sort_df[, 3]))),
+                  dimnames = list(levels(sort_df[, 1]),
+                                  levels(sort_df[, 2]),
+                                  levels(sort_df[, 3])))
+    y <- dfta
+  }
 
   out <- methods::new("occumbData",
                       y = y,
