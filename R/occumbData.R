@@ -232,20 +232,7 @@ occumbData <- function(y,
                        spec_cov = NULL,
                        site_cov = NULL,
                        repl_cov = NULL) {
-
-  ## y is a datagrame
-  if (is.data.frame(y)) {
-    y <- y
-    sort_df <- y[order(y[, 3], y[, 2], y[, 1]), , drop = FALSE]
-    dfta <- array(data = unlist(sort_df[, 4]),
-                  dim = c(length(levels(sort_df[, 1])),
-                          length(levels(sort_df[, 2])),
-                          length(levels(sort_df[, 3]))),
-                  dimnames = list(levels(sort_df[, 1]),
-                                  levels(sort_df[, 2]),
-                                  levels(sort_df[, 3])))
-    y <- dfta
-  }
+  y <- df_to_array(y)
 
   out <- methods::new("occumbData",
                       y = y,
@@ -253,4 +240,28 @@ occumbData <- function(y,
                       site_cov = site_cov,
                       repl_cov = repl_cov)
   return(out)
+}
+
+df_to_array <- function(y) {
+  if(!is.data.frame(y)) {
+    return(y)
+  }
+  
+  if (length(levels(y[, 1])) * length(levels(y[, 2])) * length(levels(y[, 3])) != nrow(y)) {
+    comb <- expand.grid(levels(y[, 1]), levels(y[, 2]), levels(y[, 3]))
+    all_d <- merge(y, comb, all = TRUE)
+    all_d[is.na(all_d)] <- 0
+
+    y <- all_d
+  }
+
+  sort_df <- y[order(y[, 3], y[, 2], y[, 1]), , drop = FALSE]
+  dfta <- array(data = unlist(sort_df[, 4]),
+                dim = c(length(levels(sort_df[, 1])),
+                        length(levels(sort_df[, 2])),
+                        length(levels(sort_df[, 3]))),
+                dimnames = list(levels(sort_df[, 1]),
+                                levels(sort_df[, 2]),
+                                levels(sort_df[, 3])))
+  y <- dfta
 }
