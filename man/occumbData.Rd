@@ -2,14 +2,22 @@
 % Please edit documentation in R/occumbData.R
 \name{occumbData}
 \alias{occumbData}
-\title{Constructor for occumbData data class.}
+\title{Constructor for occumbData data class.
+\code{occumbData()} creates a data list compatible with the model fitting
+function \code{\link{occumb}()}.
+The element (i.e., covariate) names for \code{spec_cov}, \code{site_cov}, and
+\code{repl_cov} must all be unique.
+If \code{y} has a \code{dimnames} attribute, it is retained in the resulting
+\code{occumbData} object, and can be referenced in subsequent analyses.}
 \usage{
 occumbData(y, spec_cov = NULL, site_cov = NULL, repl_cov = NULL)
 }
 \arguments{
-\item{y}{A 3-D array of sequence read counts (\code{integer} values) that may
-have a \code{dimnames} attribute.
-The dimensions are ordered by species, site, and replicate.
+\item{y}{A 3-D array or a dataframe of sequence read counts
+(\code{integer} values). An array may have a \code{dimnames}
+attribute and the dimensions are ordered by species, site, and
+replicate. A dataframe's columns are ordered by species, site,
+replicate, and sequence read counts.
 The data for missing replicates are represented by zero vectors.
 \code{NA}s are not allowed.}
 
@@ -39,10 +47,9 @@ number of replicates).
 An S4 object of the \code{occumbData} class.
 }
 \description{
+Constructor for occumbData data class.
 \code{occumbData()} creates a data list compatible with the model fitting
 function \code{\link{occumb}()}.
-}
-\details{
 The element (i.e., covariate) names for \code{spec_cov}, \code{site_cov}, and
 \code{repl_cov} must all be unique.
 If \code{y} has a \code{dimnames} attribute, it is retained in the resulting
@@ -70,7 +77,6 @@ data_named <- occumbData(
     site_cov = list(cov2 = rnorm(J), cov3 = factor(1:J)),
     repl_cov = list(cov4 = matrix(rnorm(J * K), J, K))
 )
-
 # A real data example
 data(fish_raw)
 fish <- occumbData(

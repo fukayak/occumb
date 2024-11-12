@@ -168,9 +168,11 @@ setClass("occumbData",
 #' If \code{y} has a \code{dimnames} attribute, it is retained in the resulting
 #' \code{occumbData} object, and can be referenced in subsequent analyses.
 #'
-#' @param y A 3-D array of sequence read counts (\code{integer} values) that may
-#'          have a \code{dimnames} attribute.
-#'          The dimensions are ordered by species, site, and replicate.
+#' @param y A 3-D array or a dataframe of sequence read counts
+#'          (\code{integer} values). An array may have a \code{dimnames}
+#'          attribute and the dimensions are ordered by species, site, and
+#'          replicate. A dataframe's columns are ordered by species, site,
+#'          replicate, and sequence read counts.
 #'          The data for missing replicates are represented by zero vectors.
 #'          \code{NA}s are not allowed.
 #' @param spec_cov A named list of species covariates.
