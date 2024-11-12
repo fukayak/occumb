@@ -102,7 +102,6 @@ where the variations of \eqn{\phi}{phi}, \eqn{\theta}{theta}, and
 \code{formula_phi}, \code{formula_theta}, \code{formula_psi},
 \code{formula_phi_shared}, \code{formula_theta_shared}, and
 \code{formula_psi_shared.}
-
 Each parameter may have species-specific effects and effects that are common
 across species, where the former is specified by \code{formula_phi},
 \code{formula_theta}, and \code{formula_psi}, whereas
@@ -172,18 +171,15 @@ res0 <- occumb(data = data)
 res1 <- occumb(formula_psi = ~ cov2, data = data)        # Continuous covariate
 res2 <- occumb(formula_psi = ~ cov3, data = data)        # Categorical covariate
 res3 <- occumb(formula_psi = ~ cov2 * cov3, data = data) # Interaction
-
 # Add species covariate in the three parameters
 # Note that species covariates are modeled as common effects
 res4 <- occumb(formula_phi_shared = ~ cov1, data = data)   # phi
 res5 <- occumb(formula_theta_shared = ~ cov1, data = data) # theta
 res6 <- occumb(formula_psi_shared = ~ cov1, data = data)   # psi
-
 # Add replicate covariates
 # Note that replicate covariates can only be specified for theta and phi
 res7 <- occumb(formula_phi = ~ cov4, data = data)   # phi
 res8 <- occumb(formula_theta = ~ cov4, data = data) # theta
-
 # Specify the prior distribution and MCMC settings explicitly
 res9 <- occumb(data = data, prior_prec = 1E-2, prior_ulim = 1E2,
                n.chains = 1, n.burnin = 1000, n.thin = 1, n.iter = 2000)
