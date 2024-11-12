@@ -2,13 +2,7 @@
 % Please edit documentation in R/occumbData.R
 \name{occumbData}
 \alias{occumbData}
-\title{Constructor for occumbData data class.
-\code{occumbData()} creates a data list compatible with the model fitting
-function \code{\link{occumb}()}.
-The element (i.e., covariate) names for \code{spec_cov}, \code{site_cov}, and
-\code{repl_cov} must all be unique.
-If \code{y} has a \code{dimnames} attribute, it is retained in the resulting
-\code{occumbData} object, and can be referenced in subsequent analyses.}
+\title{Constructor for occumbData data class.}
 \usage{
 occumbData(y, spec_cov = NULL, site_cov = NULL, repl_cov = NULL)
 }
@@ -47,7 +41,6 @@ number of replicates).
 An S4 object of the \code{occumbData} class.
 }
 \description{
-Constructor for occumbData data class.
 \code{occumbData()} creates a data list compatible with the model fitting
 function \code{\link{occumb}()}.
 The element (i.e., covariate) names for \code{spec_cov}, \code{site_cov}, and

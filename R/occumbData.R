@@ -160,8 +160,8 @@ setClass("occumbData",
                    repl_cov = "list_or_NULL"),
          validity = validate_occumbData)
 
-#' Constructor for occumbData data class.
-#' \code{occumbData()} creates a data list compatible with the model fitting
+#' @title Constructor for occumbData data class.
+#' @description \code{occumbData()} creates a data list compatible with the model fitting
 #' function \code{\link{occumb}()}.
 #' The element (i.e., covariate) names for \code{spec_cov}, \code{site_cov}, and
 #' \code{repl_cov} must all be unique.
