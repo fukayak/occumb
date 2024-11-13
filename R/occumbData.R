@@ -249,7 +249,8 @@ df_to_array <- function(y) {
     return(y)
   }
   
-  if (length(levels(y[, 1])) * length(levels(y[, 2])) * length(levels(y[, 3])) != nrow(y)) {
+  unique <- sapply(y, function(y) length(unique(y)))
+  if (prod(unique[-4]) != nrow(y)) {
     comb <- expand.grid(levels(y[, 1]), levels(y[, 2]), levels(y[, 3]))
     all_d <- merge(y, comb, all = TRUE)
     all_d[is.na(all_d)] <- 0
