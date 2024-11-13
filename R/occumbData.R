@@ -154,7 +154,7 @@ validate_occumbData <- function(object) {
 
 # Data format class for occumb
 setClass("occumbData",
-         slots = c(y = "array_or_dataframe",
+         slots = c(y = "array",
                    spec_cov = "list_or_NULL",
                    site_cov = "list_or_NULL",
                    repl_cov = "list_or_NULL"),
