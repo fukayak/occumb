@@ -249,22 +249,22 @@ df_to_array <- function(y) {
     return(y)
   }
   
-  unique <- sapply(y, function(y) length(unique(y)))
-  if (prod(unique[-4]) != nrow(y)) {
-    comb <- expand.grid(levels(y[, 1]), levels(y[, 2]), levels(y[, 3]))
-    all_d <- merge(y, comb, all = TRUE)
-    all_d[is.na(all_d)] <- 0
+  number_ssr <- sapply(y, function(x) length(unique(x)))
+  if (prod(number_ssr[-4]) != nrow(y)) {
+    comb <- expand.grid(unique(y[, 1]), unique(y[, 2]), unique(y[, 3]))
+    comb_value <- merge(y, comb, all = TRUE)
+    comb_all <- replace(comb_value, is.na(comb_value), 0)
 
-    y <- all_d
+    y <- comb_all
   }
 
   sort_df <- y[order(y[, 3], y[, 2], y[, 1]), , drop = FALSE]
   dfta <- array(data = unlist(sort_df[, 4]),
-                dim = c(length(levels(sort_df[, 1])),
-                        length(levels(sort_df[, 2])),
-                        length(levels(sort_df[, 3]))),
-                dimnames = list(levels(sort_df[, 1]),
-                                levels(sort_df[, 2]),
-                                levels(sort_df[, 3])))
-  y <- dfta
+                dim = c(length(unique(sort_df[, 1])),
+                        length(unique(sort_df[, 2])),
+                        length(unique(sort_df[, 3]))),
+                dimnames = list(unique(sort_df[, 1]),
+                                unique(sort_df[, 2]),
+                                unique(sort_df[, 3])))
+  dfta
 }
