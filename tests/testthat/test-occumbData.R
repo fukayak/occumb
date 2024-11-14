@@ -1,3 +1,13 @@
+### Test data ------------------------------------------------------------------
+I <- 2
+J <- 2
+K <- 2
+y <- array(sample.int(I * J * K), dim = c(I, J, K))
+dimnames(y) <- list(c("A", "B"),
+                    c("a", "b"),
+                    c("1", "2"))
+df <- as.data.frame.table(y)
+
 ### Test for validate_occumbData() ---------------------------------------------
 ## Tests for sequence read counts
 
@@ -7,12 +17,8 @@ test_that("Mode check for y works", {
 })
 
 test_that("Check for a dataframe for y works", {
-  data <- array(sample.int(2 * 3 * 4), dim = c(2, 3, 4))
-  dimnames(data) <- list(c("A", "B"),
-                         c("a","b","c"),
-                         c("1", "2", "3", "4"))
-  expect_identical(occumbData(y = data),
-                   occumbData(y = as.data.frame.table(data)))
+  expect_identical(occumbData(y = y),
+                   occumbData(y = df))
 })
 
 test_that("Dimension check for y works", {
@@ -175,24 +181,21 @@ test_that("Check for infinite covariate values works", {
 })
 
 ### Test for df_to_array() ---------------------------------------------
-set.seed(4)
-data <- array(sample.int(2 * 3 * 4), dim = c(2, 3, 4))
-dimnames(data) <- list(c("A", "B"),
-                       c("a","b","c"),
-                       c("1", "2", "3", "4"))
+test_that("Non-dataframe input is returned itself", {
+  expect_identical(y, df_to_array(y))
+  expect_identical(as.list(y),
+                   df_to_array(as.list(y)))
+})
 
 test_that("Check for missing combination works", {
-  data_0 <- data
-  data_0[1,1,1] <- 0
-  data_missing <- as.data.frame.table(data)
-  data_missing <- data_missing[-1, ]
-  expect_identical(data_0,
+  y_missing <- replace(y, 1, 0)
+  data_missing <- df[-1, ]
+  expect_identical(y_missing,
                    df_to_array(data_missing))
 })
 
 test_that("Check for re-ordering dataframe works", {
-  data_r <- as.data.frame.table(data)
-  data_r <- data_r[sample(nrow(data_r)), ]
-  expect_identical(data,
-                   df_to_array(data_r))
+  df_random <- df[sample(nrow(df)), ]
+  expect_identical(y,
+                   df_to_array(df_random))
 })
