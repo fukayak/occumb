@@ -199,3 +199,13 @@ test_that("Check for re-ordering dataframe works", {
   expect_identical(y,
                    df_to_array(df_random))
 })
+
+test_that("Converting numeric columns works", {
+  df[, 3] <- as.numeric(df[, 3])
+  expect_identical(y, df_to_array(df))
+})
+
+test_that("Converting character columns works", {
+  df[, 1] <- as.character(df[, 1])
+  expect_identical(y, df_to_array(df))
+})
