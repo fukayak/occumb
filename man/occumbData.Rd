@@ -8,9 +8,9 @@ occumbData(y, spec_cov = NULL, site_cov = NULL, repl_cov = NULL)
 }
 \arguments{
 \item{y}{A 3-D array or a dataframe of sequence read counts
-(\code{integer} values). An array may have a \code{dimnames}
-attribute and the dimensions are ordered by species, site, and
-replicate. A dataframe's columns are ordered by species, site,
+(\code{integer} values). An array's dimensions are ordered by species,
+site, and replicate, and may have a \code{dimnames} attribute.
+A dataframe's columns are ordered by species, site,
 replicate, and sequence read counts.
 The data for missing replicates are represented by zero vectors.
 \code{NA}s are not allowed.}

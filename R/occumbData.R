@@ -169,9 +169,9 @@ setClass("occumbData",
 #' \code{occumbData} object, and can be referenced in subsequent analyses.
 #'
 #' @param y A 3-D array or a dataframe of sequence read counts
-#'          (\code{integer} values). An array may have a \code{dimnames}
-#'          attribute and the dimensions are ordered by species, site, and
-#'          replicate. A dataframe's columns are ordered by species, site,
+#'          (\code{integer} values). An array's dimensions are ordered by species,
+#'          site, and replicate, and may have a \code{dimnames} attribute.
+#'          A dataframe's columns are ordered by species, site,
 #'          replicate, and sequence read counts.
 #'          The data for missing replicates are represented by zero vectors.
 #'          \code{NA}s are not allowed.
@@ -245,26 +245,28 @@ occumbData <- function(y,
 }
 
 df_to_array <- function(y) {
-  if(!is.data.frame(y)) {
+  if (!is.data.frame(y)) {
     return(y)
   }
   
-  number_ssr <- sapply(y, function(x) length(unique(x)))
-  if (prod(number_ssr[-4]) != nrow(y)) {
-    comb <- expand.grid(unique(y[, 1]), unique(y[, 2]), unique(y[, 3]))
-    comb_value <- merge(y, comb, all = TRUE)
-    comb_all <- replace(comb_value, is.na(comb_value), 0)
+  species <- unique(y[, 1])
+  sites <- unique(y[, 2])
+  repl <- unique(y[, 3])
+  l_spec <- length(species)
+  l_site <- length(sites)
+  l_repl <- length(repl)
 
-    y <- comb_all
+  if (prod(c(l_spec, l_site, l_repl)) != nrow(y)) {
+    y_expand <- merge(y,
+                      expand.grid(species, sites, repl),
+                      all = TRUE)
+    y <- replace(y_expand, is.na(y_expand), 0)
   }
 
-  sort_df <- y[order(y[, 3], y[, 2], y[, 1]), , drop = FALSE]
-  dfta <- array(data = unlist(sort_df[, 4]),
-                dim = c(length(unique(sort_df[, 1])),
-                        length(unique(sort_df[, 2])),
-                        length(unique(sort_df[, 3]))),
-                dimnames = list(unique(sort_df[, 1]),
-                                unique(sort_df[, 2]),
-                                unique(sort_df[, 3])))
-  dfta
+  out <- array(data = y[order(y[, 3], y[, 2], y[, 1]), 4],
+                dim = c(l_spec, l_site, l_repl),
+                dimnames = list(sort(species),
+                                sort(sites),
+                                sort(repl)))
+  out
 }
