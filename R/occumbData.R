@@ -247,6 +247,10 @@ df_to_array <- function(y) {
   if (!is.data.frame(y)) {
     return(y)
   }
+
+  if (any(duplicated(y))) {
+    stop("duplicate detected in your dataset, only unique values are allowed")
+  }
   
   species <- unique(y[, 1])
   sites <- unique(y[, 2])
@@ -255,7 +259,7 @@ df_to_array <- function(y) {
   J <- length(sites)
   K <- length(repl)
 
-  if (prod(c(l_spec, l_site, l_repl)) != nrow(y)) {
+  if (prod(c(I, J, K)) != nrow(y)) {
     y_expand <- merge(y,
                       expand.grid(species, sites, repl),
                       all = TRUE)
@@ -263,7 +267,7 @@ df_to_array <- function(y) {
   }
 
   out <- array(data = y[order(y[, 3], y[, 2], y[, 1]), 4],
-                dim = c(l_spec, l_site, l_repl),
+                dim = c(I, J, K),
                 dimnames = list(sort(species),
                                 sort(sites),
                                 sort(repl)))

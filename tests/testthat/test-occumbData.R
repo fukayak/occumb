@@ -200,6 +200,12 @@ test_that("Check for re-ordering dataframe works", {
                    df_to_array(df_random))
 })
 
+test_that("Check for duplicates works", {
+  df[2, ] <- df[1, ]
+  expect_error(df_to_array(df),
+               "duplicate detected in your dataset, only unique values are allowed")
+})
+
 test_that("Converting numeric columns works", {
   df[, 3] <- as.numeric(df[, 3])
   expect_identical(y, df_to_array(df))
