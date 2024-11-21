@@ -234,10 +234,9 @@ occumbData <- function(y,
                        spec_cov = NULL,
                        site_cov = NULL,
                        repl_cov = NULL) {
-  y <- df_to_array(y)
 
   out <- methods::new("occumbData",
-                      y = y,
+                      y = df_to_array(y),
                       spec_cov = spec_cov,
                       site_cov = site_cov,
                       repl_cov = repl_cov)
@@ -252,9 +251,9 @@ df_to_array <- function(y) {
   species <- unique(y[, 1])
   sites <- unique(y[, 2])
   repl <- unique(y[, 3])
-  l_spec <- length(species)
-  l_site <- length(sites)
-  l_repl <- length(repl)
+  I <- length(species)
+  J <- length(sites)
+  K <- length(repl)
 
   if (prod(c(l_spec, l_site, l_repl)) != nrow(y)) {
     y_expand <- merge(y,
