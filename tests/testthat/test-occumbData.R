@@ -203,7 +203,15 @@ test_that("Check for re-ordering dataframe works", {
 test_that("Check for duplicates works", {
   df[2, ] <- df[1, ]
   expect_error(df_to_array(df),
-               "duplicate detected in your dataset, only unique values are allowed")
+               "duplicate(s) detected in your dataset, only unique values are allowed",
+               fixed = TRUE)
+})
+
+test_that("Check for missing values in species/sites/replicates column works", {
+  df[, 3] <- NA
+  expect_error(df_to_array(df),
+               "species/sites/replicates columns contain missing value(s)",
+               fixed = TRUE)
 })
 
 test_that("Converting numeric columns works", {

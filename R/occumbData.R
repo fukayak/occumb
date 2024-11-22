@@ -248,8 +248,12 @@ df_to_array <- function(y) {
     return(y)
   }
 
-  if (any(duplicated(y))) {
-    stop("duplicate detected in your dataset, only unique values are allowed")
+  if (any(duplicated(y[, -4]))) {
+    if (any(is.na(y[, -4]))) {
+      stop("species/sites/replicates columns contain missing value(s)\n")
+    } else {
+      stop("duplicate(s) detected in your dataset, only unique values are allowed\n")
+    }
   }
   
   species <- unique(y[, 1])
