@@ -189,8 +189,8 @@ test_that("Non-dataframe input is returned itself", {
 
 test_that("Check for missing combination works", {
   data_missing <- df[-1, ]
-  df_0 <- df_to_array(data_missing)
-  expect_identical(df_0["A", "a", "1"], 0)
+  expect_equal(suppressMessages(df_to_array(data_missing))["A", "a", "1"], 0)
+  expect_message(df_to_array(data_missing))
 })
 
 test_that("Check for duplicates works", {
