@@ -172,7 +172,8 @@ setClass("occumbData",
 #'          (\code{integer} values). An array's dimensions are ordered by species,
 #'          site, and replicate, and may have a \code{dimnames} attribute.
 #'          A dataframe's columns are ordered by species, site,
-#'          replicate, and sequence read counts.
+#'          replicate, and sequence read counts. A dataframe will be converted
+#'          to an array.
 #'          The data for missing replicates are represented by zero vectors.
 #'          \code{NA}s are not allowed.
 #' @param spec_cov A named list of species covariates.
@@ -267,6 +268,7 @@ df_to_array <- function(y) {
     y_expand <- merge(y,
                       expand.grid(species, sites, replicate),
                       all = TRUE)
+    message("missing replicate(s) were added to data with 0 as read counts.")
     y <- replace(y_expand, is.na(y_expand), 0)
   }
 

@@ -11,7 +11,8 @@ occumbData(y, spec_cov = NULL, site_cov = NULL, repl_cov = NULL)
 (\code{integer} values). An array's dimensions are ordered by species,
 site, and replicate, and may have a \code{dimnames} attribute.
 A dataframe's columns are ordered by species, site,
-replicate, and sequence read counts.
+replicate, and sequence read counts. A dataframe will be converted
+to an array.
 The data for missing replicates are represented by zero vectors.
 \code{NA}s are not allowed.}
 
