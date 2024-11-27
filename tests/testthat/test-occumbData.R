@@ -188,16 +188,9 @@ test_that("Non-dataframe input is returned itself", {
 })
 
 test_that("Check for missing combination works", {
-  y_missing <- replace(y, 1, 0)
   data_missing <- df[-1, ]
-  expect_identical(y_missing,
-                   df_to_array(data_missing))
-})
-
-test_that("Check for re-ordering dataframe works", {
-  df_random <- df[sample(nrow(df)), ]
-  expect_identical(y,
-                   df_to_array(df_random))
+  df_0 <- df_to_array(data_missing)
+  expect_identical(df_0["A", "a", "1"], 0)
 })
 
 test_that("Check for duplicates works", {

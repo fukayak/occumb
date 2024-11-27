@@ -276,7 +276,7 @@ df_to_array <- function(y) {
   for (i in seq_len(I)) {
     for (j in seq_len(J)) {
       for (k in seq_len(K)) {
-        out[i, j, k] <- x[x[, 1] == species[i] && x[, 2] == sites[j] && x[, 3] == replicate[k], 4]
+        out[i, j, k] <- y[y[, 1] == species[i] & y[, 2] == sites[j] & y[, 3] == replicate[k], 4]
       }
     }
   }
