@@ -258,22 +258,28 @@ df_to_array <- function(y) {
   
   species <- unique(y[, 1])
   sites <- unique(y[, 2])
-  repl <- unique(y[, 3])
+  replicate <- unique(y[, 3])
   I <- length(species)
   J <- length(sites)
-  K <- length(repl)
+  K <- length(replicate)
 
   if (prod(c(I, J, K)) != nrow(y)) {
     y_expand <- merge(y,
-                      expand.grid(species, sites, repl),
+                      expand.grid(species, sites, replicate),
                       all = TRUE)
     y <- replace(y_expand, is.na(y_expand), 0)
   }
 
-  out <- array(data = y[order(y[, 3], y[, 2], y[, 1]), 4],
-                dim = c(I, J, K),
-                dimnames = list(sort(species),
-                                sort(sites),
-                                sort(repl)))
+  out <- array(NA, dim = c(I, J, K))
+  dimnames(out) <- list(species, sites, replicate)
+
+  for (i in seq_len(I)) {
+    for (j in seq_len(J)) {
+      for (k in seq_len(K)) {
+        out[i, j, k] <- x[x[, 1] == species[i] && x[, 2] == sites[j] && x[, 3] == replicate[k], 4]
+      }
+    }
+  }
+
   out
 }
