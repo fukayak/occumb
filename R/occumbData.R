@@ -245,7 +245,9 @@ occumbData <- function(y,
 }
 
 df_to_array <- function(y) {
-  if (!is.data.frame(y)) {
+  if (is.data.frame(y)) {
+    y <- data.frame(y) # To make sure the follwoing operations are applied to data.frame
+  } else {
     return(y)
   }
 
@@ -259,26 +261,26 @@ df_to_array <- function(y) {
   
   species <- unique(y[, 1])
   sites <- unique(y[, 2])
-  replicate <- unique(y[, 3])
+  replicates <- unique(y[, 3])
   I <- length(species)
   J <- length(sites)
-  K <- length(replicate)
+  K <- length(replicates)
 
-  if (prod(c(I, J, K)) != nrow(y)) {
+  if (nrow(y) != prod(c(I, J, K))) {
     y_expand <- merge(y,
-                      expand.grid(species, sites, replicate),
+                      expand.grid(species, sites, replicates),
                       all = TRUE)
     message("missing replicate(s) were added to data with 0 as read counts.")
     y <- replace(y_expand, is.na(y_expand), 0)
   }
 
   out <- array(NA, dim = c(I, J, K))
-  dimnames(out) <- list(species, sites, replicate)
+  dimnames(out) <- list(species, sites, replicates)
 
   for (i in seq_len(I)) {
     for (j in seq_len(J)) {
       for (k in seq_len(K)) {
-        out[i, j, k] <- y[y[, 1] == species[i] & y[, 2] == sites[j] & y[, 3] == replicate[k], 4]
+        out[i, j, k] <- y[y[, 1] == species[i] & y[, 2] == sites[j] & y[, 3] == replicates[k], 4]
       }
     }
   }

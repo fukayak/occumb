@@ -188,31 +188,37 @@ test_that("Non-dataframe input is returned itself", {
 })
 
 test_that("Check for missing combination works", {
-  data_missing <- df[-1, ]
+  data_missing <- subset(df, !(Var1 == "A" & Var2 == "a" & Var3 == "1"))
   expect_equal(suppressMessages(df_to_array(data_missing))["A", "a", "1"], 0)
-  expect_message(df_to_array(data_missing))
+  expect_message(df_to_array(data_missing),
+                 "missing replicate(s) were added to data with 0 as read counts.",
+                 fixed = TRUE)
 })
 
 test_that("Check for duplicates works", {
-  df[2, ] <- df[1, ]
-  expect_error(df_to_array(df),
+  data_duplicated <- df
+  data_duplicated[2, ] <- data_duplicated[1, ]
+  expect_error(df_to_array(data_duplicated),
                "duplicate(s) detected in your dataset, only unique values are allowed",
                fixed = TRUE)
 })
 
 test_that("Check for missing values in species/sites/replicates column works", {
-  df[, 3] <- NA
-  expect_error(df_to_array(df),
+  data_NA <- df
+  data_NA[, 3] <- NA
+  expect_error(df_to_array(data_NA),
                "species/sites/replicates columns contain missing value(s)",
                fixed = TRUE)
 })
 
 test_that("Converting numeric columns works", {
-  df[, 3] <- as.numeric(df[, 3])
-  expect_identical(y, df_to_array(df))
+  data_numeric <- df
+  data_numeric[, 3] <- as.numeric(data_numeric[, 3])
+  expect_identical(y, df_to_array(data_numeric))
 })
 
 test_that("Converting character columns works", {
-  df[, 1] <- as.character(df[, 1])
-  expect_identical(y, df_to_array(df))
+  data_character <- df
+  data_character[, 1] <- as.character(data_character[, 1])
+  expect_identical(y, df_to_array(data_character))
 })
