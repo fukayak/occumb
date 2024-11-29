@@ -269,7 +269,7 @@ df_to_array <- function(y) {
     y_expand <- merge(y,
                       expand.grid(species, sites, replicates),
                       all = TRUE)
-    message("The dataset contained missing obervation(s). read counts of 0 were assigned to them.")
+    message("The dataset contained missing obervation(s). Read counts of 0 were assigned to them.")
     y <- replace(y_expand, is.na(y_expand), 0)
   }
 

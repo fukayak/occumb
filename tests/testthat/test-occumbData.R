@@ -193,7 +193,7 @@ test_that("Check for missing combination works", {
   data_missing <- subset(df, !(Var1 == "A" & Var2 == "a" & Var3 == "1"))
   expect_equal(suppressMessages(df_to_array(data_missing))["A", "a", "1"], 0)
   expect_message(df_to_array(data_missing),
-                 "The dataset contained missing obervation(s). read counts of 0 were assigned to them.",
+                 "The dataset contained missing obervation(s). Read counts of 0 were assigned to them.",
                  fixed = TRUE)
 })
 
