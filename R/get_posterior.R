@@ -47,6 +47,7 @@
 #' @param fit An \code{occumbFit} object.
 #' @param parameter A string of parameter name. See Details for possible choices
 #'  and corresponding parameters.
+#' @param output_dataframe Logical.
 #' @return
 #'  \code{get_post_samples()} returns a vector, matrix, or array of posterior
 #'  samples for a selected parameter.
@@ -95,7 +96,8 @@ get_post_samples <- function(
   parameter = c("z", "pi", "phi", "theta", "psi",
                 "alpha", "beta", "gamma",
                 "alpha_shared", "beta_shared", "gamma_shared",
-                "Mu", "sigma", "rho")
+                "Mu", "sigma", "rho"),
+  output_dataframe = FALSE
 ) {
 
   # Validate arguments
@@ -103,7 +105,7 @@ get_post_samples <- function(
   check_args_get_posterior(fit, parameter)
 
   # Extract
-  out <- .get_post_samples(fit, parameter)
+  out <- .get_post_samples(fit, parameter, output_dataframe)
   out
 }
 
@@ -114,7 +116,8 @@ get_post_summary <- function(
   parameter = c("z", "pi", "phi", "theta", "psi",
                 "alpha", "beta", "gamma",
                 "alpha_shared", "beta_shared", "gamma_shared",
-                "Mu", "sigma", "rho")
+                "Mu", "sigma", "rho"),
+  output_dataframe = FALSE
 ) {
 
   # Validate arguments
@@ -122,7 +125,7 @@ get_post_summary <- function(
   check_args_get_posterior(fit, parameter)
 
   # Extract
-  out <- .get_post_summary(fit, parameter)
+  out <- .get_post_summary(fit, parameter, output_dataframe)
   out
 }
 
@@ -132,7 +135,7 @@ check_args_get_posterior <- function(fit, parameter) {
     stop(paste(parameter, "is not included in the fitted model\n"))
 }
 
-.get_post_samples <- function(fit, parameter) {
+.get_post_samples <- function(fit, parameter, output_dataframe) {
 
   # Extract samples of the specified parameter
   samples_extracted <- eval(
@@ -141,10 +144,21 @@ check_args_get_posterior <- function(fit, parameter) {
 
   # Add attributes
   out <- add_attributes(samples_extracted, fit, parameter, "samples")
-  out
+
+  if (output_dataframe) {
+    # Convert to dataframe
+    df_tmp <- as.data.frame.table(out)
+    colnames(df_tmp) <- c(attributes(out)$dimension, "Value")
+    levels(df_tmp[, 1]) <- seq_along(levels(df_tmp[, 1]))
+    levels(df_tmp[, 2]) <- attributes(out)$label$Species
+    out_df <- df_tmp
+    out_df
+  } else {
+    out
+  }
 }
 
-.get_post_summary <- function(fit, parameter) {
+.get_post_summary <- function(fit, parameter, output_dataframe) {
 
   # Identify rows to extract
   rows_extract <- function(fit, parameter) {
