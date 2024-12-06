@@ -137,6 +137,17 @@ check_args_get_posterior <- function(fit, parameter) {
 
 .get_post_samples <- function(fit, parameter, output_dataframe) {
 
+  # Function for converting the resulting array to dataframe
+  array_to_df <- function(x) {
+    out_df <- as.data.frame.table(x)
+    colnames(out_df) <- c(attributes(x)$dimension, "Value")
+    levels(out_df[, 1]) <- seq_along(levels(out_df[, 1]))
+    for (i in 2:(ncol(out_df) - 1)) {
+      levels(out_df[, i]) <- attributes(x)$label[[i]]
+    }
+    out_df
+  }
+
   # Extract samples of the specified parameter
   samples_extracted <- eval(
     parse(text = paste0("fit@fit$sims.list$", parameter))
@@ -146,17 +157,12 @@ check_args_get_posterior <- function(fit, parameter) {
   out <- add_attributes(samples_extracted, fit, parameter, "samples")
 
   if (output_dataframe) {
-    # Convert to dataframe
-    df_tmp <- as.data.frame.table(out)
-    colnames(df_tmp) <- c(attributes(out)$dimension, "Value")
-    levels(df_tmp[, 1]) <- seq_along(levels(df_tmp[, 1]))
-    levels(df_tmp[, 2]) <- attributes(out)$label$Species
-    out_df <- df_tmp
-    out_df
+    array_to_df(out)
   } else {
     out
   }
 }
+
 
 .get_post_summary <- function(fit, parameter, output_dataframe) {
 
