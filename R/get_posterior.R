@@ -141,10 +141,16 @@ check_args_get_posterior <- function(fit, parameter) {
   array_to_df <- function(x) {
     out_df <- as.data.frame.table(x)
     colnames(out_df) <- c(attributes(x)$dimension, "Value")
+
     levels(out_df[, 1]) <- seq_along(levels(out_df[, 1]))
     for (i in 2:(ncol(out_df) - 1)) {
-      levels(out_df[, i]) <- attributes(x)$label[[i]]
+      if (is.null(attributes(x)$label[[i]])) {
+        levels(out_df[, i]) <- seq_along(levels(out_df[, i]))
+      } else {
+        levels(out_df[, i]) <- attributes(x)$label[[i]]
+      }
     }
+
     out_df
   }
 
