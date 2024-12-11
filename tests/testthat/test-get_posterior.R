@@ -374,6 +374,32 @@ test_that("Extracted samples and attributes are correct when proper parameter na
   expect_identical(test, ans)
 })
 
+test_that("Option for dataframe output works", {
+  # Tests for different parameter dimensions
+  for (param in lpar) {
+
+    test <- try(get_post_samples(fit2, param, output_dataframe = TRUE), silent = TRUE)
+
+    if (class(test) == "try-error") {
+      expect_error(get_post_samples(fit2, param, output_dataframe = TRUE),
+                   sprintf("%s is not included in the fitted model", param))
+    } else {
+      ans_arr <- get_post_samples(fit2, param, output_dataframe = FALSE)
+      ans <- as.data.frame.table(ans_arr)
+      colnames(ans) <- c(attributes(ans_arr)$dimension, "Value")
+
+      levels(ans[, 1]) <- seq_along(levels(ans[, 1]))
+      for (i in 2:(ncol(ans) - 1)) {
+        levels(ans[, i]) <- attributes(ans_arr)$label[[i]]
+      }
+
+      expect_identical(test, ans)
+    }
+  }
+
+  # Tests for NULL label
+})
+
 ### Tests for get_post_summary -------------------------------------------------
 test_that("Extracted tables and attributes are correct when proper parameter names are given", {
 
