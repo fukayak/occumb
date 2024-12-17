@@ -255,7 +255,9 @@ df_to_array <- function(y) {
   }
 
   if (any(duplicated(y[, -4]))) {
-    stop("The dataset contains duplicate observation(s). Ensure that the dataset has only unique observations.\n")
+    dup_list <- y[duplicated(y) | duplicated(y, fromLast = TRUE), ]
+    print(dup_list)
+    stop("The dataset contains duplicate observation(s) listed above. Ensure that the dataset has only unique observations.\n")
   }
 
   species <- unique(y[, 1])
