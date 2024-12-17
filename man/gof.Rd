@@ -97,10 +97,8 @@ data <- occumbData(
     site_cov = list(cov2 = rnorm(J),
                     cov3 = factor(1:J)),
     repl_cov = list(cov4 = matrix(rnorm(J * K), J, K)))
-
 # Fitting a null model
 fit <- occumb(data = data)
-
 # Goodness-of-fit assessment
 gof_result <- gof(fit)
 gof_result

@@ -1,9 +1,26 @@
+### Test data ------------------------------------------------------------------
+I <- 2
+J <- 2
+K <- 2
+y <- array(sample.int(I * J * K), dim = c(I, J, K))
+dimnames(y) <- list(c("A", "B"),
+                    c("a", "b"),
+                    c("1", "2"))
+df <- as.data.frame.table(y)
+
 ### Test for validate_occumbData() ---------------------------------------------
 ## Tests for sequence read counts
 
 test_that("Mode check for y works", {
   expect_error(new("occumbData", y = array(list(), dim = rep(2, 3))),
                "Elements of 'y' are lists but should be integers")
+})
+
+test_that("Check for a dataframe for y works", {
+  expect_identical(occumbData(y = y),
+                   occumbData(y = df))
+  expect_identical(occumbData(y = y),
+                   occumbData(y = tibble::tibble(df)))
 })
 
 test_that("Dimension check for y works", {
@@ -163,4 +180,57 @@ test_that("Check for infinite covariate values works", {
   expect_error(new("occumbData", y = array(1:8, dim = rep(2, 3)),
                    repl_cov = list(c = matrix(c(1:3, Inf), 2, 2))),
                "'repl_cov' contains infinite value")
+})
+
+### Test for df_to_array() ---------------------------------------------
+test_that("Non-dataframe input is returned itself", {
+  expect_identical(y, df_to_array(y))
+  expect_identical(as.list(y),
+                   df_to_array(as.list(y)))
+})
+
+test_that("Check for missing combination works", {
+  data_missing <- subset(df, !(Var1 == "A" & Var2 == "a" & Var3 == "1"))
+  expect_equal(suppressMessages(df_to_array(data_missing))["A", "a", "1"], 0)
+  expect_message(df_to_array(data_missing),
+                 "The dataset contained missing obervation(s). Read counts of 0 were assigned to them.",
+                 fixed = TRUE)
+})
+
+test_that("Check for duplicates works", {
+  data_duplicated <- df
+  data_duplicated[2, ] <- data_duplicated[1, ]
+  expect_error(
+    expect_output(df_to_array(data_duplicated),
+                  data_duplicated[1:2, ]),
+    "The dataset contains duplicate observation(s) listed above. Ensure that the dataset has only unique observations.\n",
+    fixed = TRUE
+  )
+  data_duplicated[2, 4] <- 9999
+  expect_error(
+    expect_output(df_to_array(data_duplicated),
+                  data_duplicated[1:2, ]),
+    "The dataset contains duplicate observation(s) listed above. Ensure that the dataset has only unique observations.\n",
+    fixed = TRUE
+  )
+})
+
+test_that("Check for missing values in species/sites/replicates column works", {
+  data_NA <- df
+  data_NA[1, 3] <- NA
+  expect_error(df_to_array(data_NA),
+               "NAs are not allowed in the dataset.",
+               fixed = TRUE)
+})
+
+test_that("df_to_array() processes numeric columns adequately", {
+  data_numeric <- df
+  data_numeric[, 3] <- as.numeric(data_numeric[, 3])
+  expect_identical(y, df_to_array(data_numeric))
+})
+
+test_that("df_to_array() processes character columns adeuately", {
+  data_character <- df
+  data_character[, 1] <- as.character(data_character[, 1])
+  expect_identical(y, df_to_array(data_character))
 })

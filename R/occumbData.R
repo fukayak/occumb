@@ -160,17 +160,19 @@ setClass("occumbData",
                    repl_cov = "list_or_NULL"),
          validity = validate_occumbData)
 
-#' Constructor for occumbData data class.
-#' \code{occumbData()} creates a data list compatible with the model fitting
+#' @title Constructor for occumbData data class.
+#' @description \code{occumbData()} creates a data list compatible with the model fitting
 #' function \code{\link{occumb}()}.
 #' The element (i.e., covariate) names for \code{spec_cov}, \code{site_cov}, and
 #' \code{repl_cov} must all be unique.
 #' If \code{y} has a \code{dimnames} attribute, it is retained in the resulting
 #' \code{occumbData} object, and can be referenced in subsequent analyses.
 #'
-#' @param y A 3-D array of sequence read counts (\code{integer} values) that may
-#'          have a \code{dimnames} attribute.
-#'          The dimensions are ordered by species, site, and replicate.
+#' @param y A 3-D array or a dataframe of sequence read counts
+#'          (\code{integer} values). An array's dimensions are ordered by species,
+#'          site, and replicate, and may have a \code{dimnames} attribute.
+#'          A dataframe's columns are ordered by species, site,
+#'          replicate, and sequence read counts.
 #'          The data for missing replicates are represented by zero vectors.
 #'          \code{NA}s are not allowed.
 #' @param spec_cov A named list of species covariates.
@@ -234,9 +236,55 @@ occumbData <- function(y,
                        repl_cov = NULL) {
 
   out <- methods::new("occumbData",
-                      y = y,
+                      y = df_to_array(y),
                       spec_cov = spec_cov,
                       site_cov = site_cov,
                       repl_cov = repl_cov)
   return(out)
+}
+
+df_to_array <- function(y) {
+  if (is.data.frame(y)) {
+    y <- data.frame(y) # To make sure the follwoing operations are applied to data.frame
+  } else {
+    return(y)
+  }
+
+  if (any(is.na(y))) {
+    stop("NAs are not allowed in the dataset.\n")
+  }
+
+  if (any(duplicated(y[, -4]))) {
+    dup_list <- y[duplicated(y[, -4]) | duplicated(y[, -4], fromLast = TRUE), ]
+    print(dup_list)
+    stop("The dataset contains duplicate observation(s) listed above. Ensure that the dataset has only unique observations.\n")
+  }
+
+  species <- unique(y[, 1])
+  sites <- unique(y[, 2])
+  replicates <- unique(y[, 3])
+  I <- length(species)
+  J <- length(sites)
+  K <- length(replicates)
+
+  if (nrow(y) != prod(c(I, J, K))) {
+    y_expand <- merge(y,
+                      expand.grid(species, sites, replicates),
+                      all = TRUE)
+    message("The dataset contained missing obervation(s). Read counts of 0 were assigned to them.")
+    y <- replace(y_expand, is.na(y_expand), 0)
+  }
+
+  out <- array(NA, dim = c(I, J, K))
+  dimnames(out) <- list(species, sites, replicates)
+
+  for (i in seq_len(I)) {
+    for (j in seq_len(J)) {
+      for (k in seq_len(K)) {
+        out[i, j, k] <- y[y[, 1] == species[i] & y[, 2] == sites[j] & y[, 3] == replicates[k], 4]
+      }
+    }
+  }
+
+  out
 }

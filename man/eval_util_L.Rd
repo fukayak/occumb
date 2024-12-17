@@ -68,7 +68,6 @@ see the example below).
 It is also possible to examine how the utility varies with different \code{K}
 and \code{N} values without setting a budget level, which may be useful for determining
 a satisfactory level of \code{K} and \code{N} from a purely technical point of view.
-
 The expected utility is defined as the expected value of the conditional
 utility in the form:
 \deqn{U(K, N \mid \boldsymbol{r}, \boldsymbol{u}) = \frac{1}{J}\sum_{j = 1}^{J}\sum_{i = 1}^{I}\left\{1 - \prod_{k = 1}^{K}\left(1 - \frac{u_{ijk}r_{ijk}}{\sum_{m = 1}^{I}u_{mjk}r_{mjk}} \right)^N \right\}}{U(K, N | r, u) = (1 / J) * sum_{j, i}((1 - \prod_{k}(1 - (u[i, j, k] * r[i, j, k])/sum(u[, j, k] * r[, j, k])))^N)}
