@@ -255,7 +255,7 @@ df_to_array <- function(y) {
   }
 
   if (any(duplicated(y[, -4]))) {
-    dup_list <- y[duplicated(y) | duplicated(y, fromLast = TRUE), ]
+    dup_list <- y[duplicated(y[, -4]) | duplicated(y[, -4], fromLast = TRUE), ]
     print(dup_list)
     stop("The dataset contains duplicate observation(s) listed above. Ensure that the dataset has only unique observations.\n")
   }
