@@ -7,9 +7,11 @@
 occumbData(y, spec_cov = NULL, site_cov = NULL, repl_cov = NULL)
 }
 \arguments{
-\item{y}{A 3-D array of sequence read counts (\code{integer} values) that may
-have a \code{dimnames} attribute.
-The dimensions are ordered by species, site, and replicate.
+\item{y}{A 3-D array or a dataframe of sequence read counts
+(\code{integer} values). An array's dimensions are ordered by species,
+site, and replicate, and may have a \code{dimnames} attribute.
+A dataframe's columns are ordered by species, site,
+replicate, and sequence read counts.
 The data for missing replicates are represented by zero vectors.
 \code{NA}s are not allowed.}
 
@@ -41,8 +43,6 @@ An S4 object of the \code{occumbData} class.
 \description{
 \code{occumbData()} creates a data list compatible with the model fitting
 function \code{\link{occumb}()}.
-}
-\details{
 The element (i.e., covariate) names for \code{spec_cov}, \code{site_cov}, and
 \code{repl_cov} must all be unique.
 If \code{y} has a \code{dimnames} attribute, it is retained in the resulting
@@ -70,7 +70,6 @@ data_named <- occumbData(
     site_cov = list(cov2 = rnorm(J), cov3 = factor(1:J)),
     repl_cov = list(cov4 = matrix(rnorm(J * K), J, K))
 )
-
 # A real data example
 data(fish_raw)
 fish <- occumbData(

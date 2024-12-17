@@ -6,3 +6,6 @@
 ^data-raw$
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
+^\.lintr$
+^.*\.Rproj$
+^\.Rproj\.user$
