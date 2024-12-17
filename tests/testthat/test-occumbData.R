@@ -203,7 +203,8 @@ test_that("Check for duplicates works", {
   expect_error(
     expect_output(df_to_array(data_duplicated),
                   data_duplicated[1:2, ]),
-    "The dataset contains duplicate observation(s) listed above. Ensure that the dataset has only unique observations.\n", fixed = TRUE)
+    "The dataset contains duplicate observation(s) listed above. Ensure that the dataset has only unique observations.\n",
+    fixed = TRUE)
 })
 
 test_that("Check for missing values in species/sites/replicates column works", {
