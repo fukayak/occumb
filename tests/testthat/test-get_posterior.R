@@ -437,8 +437,8 @@ test_that("$label$Effects attributes for alpha/beta/gamma are given correctly wh
 test_that("Option for dataframe output works", {
   # Tests for different parameter dimensions
   for (param in lpar) {
-
-    test <- try(get_post_samples(fit2, param, output_dataframe = TRUE), silent = TRUE)
+    test <- try(get_post_samples(fit2, param, output_dataframe = TRUE),
+                silent = TRUE)
 
     if (class(test) == "try-error") {
       expect_error(get_post_samples(fit2, param, output_dataframe = TRUE),
@@ -457,7 +457,30 @@ test_that("Option for dataframe output works", {
     }
   }
 
-  # Tests for NULL label
+  # Tests for cases when species/site/replicate labels are NULL
+  for (param in lpar) {
+    test <- try(get_post_samples(fit1, param, output_dataframe = TRUE),
+                silent = TRUE)
+
+    if (class(test) == "try-error") {
+      expect_error(get_post_samples(fit1, param, output_dataframe = TRUE),
+                   sprintf("%s is not included in the fitted model", param))
+    } else {
+      ans_arr <- get_post_samples(fit1, param, output_dataframe = FALSE)
+      ans <- as.data.frame.table(ans_arr)
+      colnames(ans) <- c(attributes(ans_arr)$dimension, "Value")
+
+      for (i in seq_len(ncol(ans) - 1)) {
+        if (is.null(attributes(ans_arr)$label[[i]])) {
+          levels(ans[, i]) <- seq_along(levels(ans[, i]))
+        } else {
+          levels(ans[, i]) <- attributes(ans_arr)$label[[i]]
+        }
+      }
+
+      expect_identical(test, ans)
+    }
+  }
 })
 
 ### Tests for get_post_summary -------------------------------------------------
