@@ -138,6 +138,9 @@ check_args_get_posterior <- function(fit, parameter) {
   samples_extracted <- eval(
     parse(text = paste0("fit@fit$sims.list$", parameter))
   )
+  if (is.vector(samples_extracted)) {
+    samples_extracted <- matrix(samples_extracted, ncol = 1)
+  }
 
   # Add attributes
   out <- add_attributes(samples_extracted, fit, parameter, "samples")
@@ -310,10 +313,18 @@ add_attributes1 <- function(obj, dimension = c("i", "ij", "ijk"),
 
 add_attributes2 <- function(obj, covariate, dimnames_y, type) {
 
+  has_intercept_only <- function(covariate) {
+    if (is.array(covariate)) {
+      return(dim(covariate)[length(dim(covariate))] == 1)
+    } else {
+      return(identical(covariate, 1))
+    }
+  }
+
   if (type == "samples") {
     attr(obj, "dimension") <- c("Sample", "Species", "Effects")
 
-    if (identical(covariate, 1)) {
+    if (has_intercept_only(covariate)) {
       effect_name <- "(Intercept)"
     } else {
       effect_name <- dimnames(covariate)[[length(dim(covariate))]]
@@ -337,7 +348,7 @@ add_attributes2 <- function(obj, covariate, dimnames_y, type) {
   if (type == "summary") {
     attr(obj, "dimension") <- c("Species", "Effects")
 
-    if (identical(covariate, 1)) {
+    if (has_intercept_only(covariate)) {
       effect_name <- "(Intercept)"
     } else {
       effect_name <- dimnames(covariate)[[length(dim(covariate))]]
