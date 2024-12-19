@@ -138,6 +138,9 @@ check_args_get_posterior <- function(fit, parameter) {
   samples_extracted <- eval(
     parse(text = paste0("fit@fit$sims.list$", parameter))
   )
+  if (is.vector(samples_extracted)) {
+    samples_extracted <- matrix(samples_extracted, ncol = 1)
+  }
 
   # Add attributes
   out <- add_attributes(samples_extracted, fit, parameter, "samples")

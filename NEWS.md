@@ -11,6 +11,7 @@
 * Fix an issue with `sigma`'s default value.
 * Add 'data.frame' as an input of occumbData.
 * Fix a bug in attribute assignment in `get_post_samples` and `get_post_summary`.
+* Fixed `get_post_samples()` not to output a vector.
 
 ## occumb 1.1.0 (2024/3/26)
 * Add `predict()` method for `occumbFit` class.

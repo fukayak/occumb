@@ -300,8 +300,11 @@ test_that("Extracted samples and attributes are correct when proper parameter na
                         Effects = c("cov22")))
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
-  expect_identical(test,
-                   eval(parse(text = paste0("fit1@fit$sims.list$", lpar[i]))))
+  expect_identical(
+    test,
+    matrix(eval(parse(text = paste0("fit1@fit$sims.list$", lpar[i]))),
+           ncol = 1)
+  )
   # Named y
   test <- get_post_samples(fit2, lpar[i])
   expect_identical(attributes(test)$dimension,
@@ -311,8 +314,11 @@ test_that("Extracted samples and attributes are correct when proper parameter na
                         Effects = c("cov22")))
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
-  expect_identical(test,
-                   eval(parse(text = paste0("fit2@fit$sims.list$", lpar[i]))))
+  expect_identical(
+    test,
+    matrix(eval(parse(text = paste0("fit2@fit$sims.list$", lpar[i]))),
+           ncol = 1)
+  )
 
   ## Tests for Mu/sigma
   for (i in 12:13) {
