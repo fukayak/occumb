@@ -47,6 +47,16 @@ fit2 <- occumb(formula_phi = ~ cov6,
                n.chains = 1, n.burnin = 5, n.thin = 1, n.iter = 10,
                verbose = FALSE)
 
+fit3 <- occumb(formula_phi = ~ 1,
+               formula_theta = ~ 1,
+               formula_psi = ~ 1,
+               formula_phi_shared = ~ cov6,
+               formula_theta_shared = ~ cov4,
+               formula_psi_shared = ~ cov3,
+               data = data_named,
+               n.chains = 1, n.burnin = 5, n.thin = 1, n.iter = 10,
+               verbose = FALSE)
+
 lpar <- c("z", "pi", "phi", "theta", "psi",
           "alpha", "beta", "gamma",
           "alpha_shared", "beta_shared", "gamma_shared",
@@ -374,6 +384,50 @@ test_that("Extracted samples and attributes are correct when proper parameter na
   expect_identical(test, ans)
 })
 
+test_that("$label$Effects attributes for alpha/beta/gamma are given correctly when site_cov or repl_cov is specified for shared parameters", {
+  ## Tests for alpha
+  i <- 6
+  test <- get_post_samples(fit3, lpar[i])
+  expect_identical(attributes(test)$dimension,
+                   c("Sample", "Species", "Effects"))
+  expect_identical(attributes(test)$label,
+                   list(Sample = NULL,
+                        Species = dimnames(data_named@y)[[1]],
+                        Effects = "(Intercept)"))
+  attr(test, "dimension") <- NULL
+  attr(test, "label") <- NULL
+  expect_identical(test,
+                   eval(parse(text = paste0("fit3@fit$sims.list$", lpar[i]))))
+
+  ## Tests for beta
+  i <- 7
+  test <- get_post_samples(fit3, lpar[i])
+  expect_identical(attributes(test)$dimension,
+                   c("Sample", "Species", "Effects"))
+  expect_identical(attributes(test)$label,
+                   list(Sample = NULL,
+                        Species = dimnames(data_named@y)[[1]],
+                        Effects = "(Intercept)"))
+  attr(test, "dimension") <- NULL
+  attr(test, "label") <- NULL
+  expect_identical(test,
+                   eval(parse(text = paste0("fit3@fit$sims.list$", lpar[i]))))
+
+  ## Tests for gamma
+  i <- 8
+  test <- get_post_samples(fit3, lpar[i])
+  expect_identical(attributes(test)$dimension,
+                   c("Sample", "Species", "Effects"))
+  expect_identical(attributes(test)$label,
+                   list(Sample = NULL,
+                        Species = dimnames(data_named@y)[[1]],
+                        Effects = "(Intercept)"))
+  attr(test, "dimension") <- NULL
+  attr(test, "label") <- NULL
+  expect_identical(test,
+                   eval(parse(text = paste0("fit3@fit$sims.list$", lpar[i]))))
+})
+
 ### Tests for get_post_summary -------------------------------------------------
 test_that("Extracted tables and attributes are correct when proper parameter names are given", {
 
@@ -654,4 +708,41 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
   ans <- fit2@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit2@fit$summary)), ]
   expect_identical(test, ans)
 
+})
+test_that("$label$Effects attributes for alpha/beta/gamma are given correctly when site_cov or repl_cov is specified for shared parameters", {
+  ## Tests for alpha
+  i <- 6
+  test <- get_post_summary(fit3, lpar[i])
+  expect_identical(attributes(test)$dimension, c("Species", "Effects"))
+  expect_identical(attributes(test)$label,
+                   list(Species = dimnames(data_named@y)[[1]],
+                        Effects = "(Intercept)"))
+  attr(test, "dimension") <- NULL
+  attr(test, "label") <- NULL
+  ans <- fit3@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit3@fit$summary)), ]
+  expect_identical(test, ans)
+
+  ## Tests for beta
+  i <- 7
+  test <- get_post_summary(fit3, lpar[i])
+  expect_identical(attributes(test)$dimension, c("Species", "Effects"))
+  expect_identical(attributes(test)$label,
+                   list(Species = dimnames(data_named@y)[[1]],
+                        Effects = "(Intercept)"))
+  attr(test, "dimension") <- NULL
+  attr(test, "label") <- NULL
+  ans <- fit3@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit3@fit$summary)), ]
+  expect_identical(test, ans)
+
+  ## Tests for gamma
+  i <- 8
+  test <- get_post_summary(fit3, lpar[i])
+  expect_identical(attributes(test)$dimension, c("Species", "Effects"))
+  expect_identical(attributes(test)$label,
+                   list(Species = dimnames(data_named@y)[[1]],
+                        Effects = "(Intercept)"))
+  attr(test, "dimension") <- NULL
+  attr(test, "label") <- NULL
+  ans <- fit3@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit3@fit$summary)), ]
+  expect_identical(test, ans)
 })
