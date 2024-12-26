@@ -175,6 +175,30 @@ check_args_get_posterior <- function(fit, parameter) {
 
 .get_post_summary <- function(fit, parameter, output_dataframe) {
 
+  # Function for converting the resulting array to dataframe
+  array_to_df <- function(x) {
+    summary_df <- data.frame(x)
+    colnames(summary_df) <- colnames(x)
+
+    if (length(attributes(x)$label) == 1) {
+      label_df <- expand.grid(attributes(x)$label[[1]])
+    }
+    if (length(attributes(x)$label) == 2) {
+      label_df <- expand.grid(attributes(x)$label[[1]],
+                              attributes(x)$label[[2]])
+    }
+    if (length(attributes(x)$label) == 3) {
+      label_df <- expand.grid(attributes(x)$label[[1]],
+                              attributes(x)$label[[2]],
+                              attributes(x)$label[[3]])
+    }
+    colnames(label_df) <- attributes(x)$dimension
+
+    out_df <- cbind(parameter, label_df, summary_df)
+    colnames(out_df)[1] <- "Parameter"
+    out_df
+  }
+
   # Identify rows to extract
   rows_extract <- function(fit, parameter) {
     # Get model arguments
@@ -206,7 +230,12 @@ check_args_get_posterior <- function(fit, parameter) {
 
   # Add attributes
   out <- add_attributes(summary_extracted, fit, parameter, "summary")
-  out
+
+  if (output_dataframe) {
+    array_to_df(out)
+  } else {
+    out
+  }
 }
 
 add_attributes <- function(obj, fit, parameter,
