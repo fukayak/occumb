@@ -176,16 +176,36 @@ check_args_get_posterior <- function(fit, parameter) {
 .get_post_summary <- function(fit, parameter, output_dataframe) {
 
   # Function for converting the resulting array to dataframe
-  array_to_df <- function(x) {
-    summary_df <- data.frame(x)
-    colnames(summary_df) <- colnames(x)
+  array_to_df <- function(x, parameter) {
+
+    if (is.null(dim(x))) {
+      summary_df <- data.frame(matrix(x, nrow = 1))
+      colnames(summary_df) <- names(x)
+      rownames(summary_df) <- paste0(parameter, "[1]")
+    } else {
+      summary_df <- data.frame(x)
+      colnames(summary_df) <- colnames(x)
+    }
 
     if (length(attributes(x)$label) == 1) {
       label_df <- expand.grid(attributes(x)$label[[1]])
     }
     if (length(attributes(x)$label) == 2) {
-      label_df <- expand.grid(attributes(x)$label[[1]],
-                              attributes(x)$label[[2]])
+      if (parameter == "rho") {
+        idx1 <- unlist(
+          sapply(seq_along(attributes(x)$label[[1]]), seq)
+        )
+        idx2 <- unlist(
+          sapply(seq_along(attributes(x)$label[[1]]), \(x) rep(x + 1, x))
+        )
+        label_df <- data.frame(
+          attributes(x)$label[[1]][idx1],
+          attributes(x)$label[[2]][idx2]
+        )
+      } else {
+        label_df <- expand.grid(attributes(x)$label[[1]],
+                                attributes(x)$label[[2]])
+      }
     }
     if (length(attributes(x)$label) == 3) {
       label_df <- expand.grid(attributes(x)$label[[1]],
@@ -232,7 +252,7 @@ check_args_get_posterior <- function(fit, parameter) {
   out <- add_attributes(summary_extracted, fit, parameter, "summary")
 
   if (output_dataframe) {
-    array_to_df(out)
+    array_to_df(out, parameter)
   } else {
     out
   }

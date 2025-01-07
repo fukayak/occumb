@@ -764,6 +764,86 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
   expect_identical(test, ans)
 
 })
+
+test_that("Option for dataframe output works", {
+  # Tests for different parameter dimensions
+  for (param in lpar) {
+    test <- try(get_post_summary(fit2, param, output_dataframe = TRUE),
+                silent = TRUE)
+
+    if (class(test) == "try-error") {
+      expect_error(get_post_summary(fit2, param, output_dataframe = TRUE),
+                   sprintf("%s is not included in the fitted model", param))
+    } else {
+      ans_arr <- get_post_summary(fit2, param, output_dataframe = FALSE)
+
+      if (is.null(dim(ans_arr))) {
+        summary_df <- data.frame(matrix(ans_arr, nrow = 1))
+        colnames(summary_df) <- names(ans_arr)
+        rownames(summary_df) <- paste0(param, "[1]")
+      } else {
+        summary_df <- data.frame(ans_arr)
+        colnames(summary_df) <- colnames(ans_arr)
+      }
+
+      if (length(attributes(ans_arr)$label) == 1) {
+        label_df <- expand.grid(attributes(ans_arr)$label[[1]])
+      }
+      if (length(attributes(ans_arr)$label) == 2) {
+        if (param == "rho") {
+          idx1 <- unlist(
+            sapply(seq_along(attributes(ans_arr)$label[[1]]), seq)
+          )
+          idx2 <- unlist(
+            sapply(seq_along(attributes(ans_arr)$label[[1]]), \(x) rep(x + 1, x))
+          )
+          label_df <- data.frame(
+            attributes(ans_arr)$label[[1]][idx1],
+            attributes(ans_arr)$label[[2]][idx2]
+          )
+        } else {
+          label_df <- expand.grid(attributes(ans_arr)$label[[1]],
+                                  attributes(ans_arr)$label[[2]])
+        }
+      }
+      if (length(attributes(ans_arr)$label) == 3) {
+        label_df <- expand.grid(attributes(ans_arr)$label[[1]],
+                                attributes(ans_arr)$label[[2]],
+                                attributes(ans_arr)$label[[3]])
+      }
+      colnames(label_df) <- attributes(ans_arr)$dimension
+
+      ans <- cbind(param, label_df, summary_df)
+      colnames(ans)[1] <- "Parameter"
+
+      expect_identical(test, ans)
+
+      # Tests for label part
+      if (length(attributes(ans_arr)$label) == 1) {
+        label_ans <- sprintf("%s[%s]",
+                             param,
+                             match(label_df[[1]], attributes(ans_arr)$label[[1]]))
+      }
+      if (length(attributes(ans_arr)$label) == 2) {
+        label_ans <- sprintf("%s[%s,%s]",
+                             param,
+                             match(label_df[[1]], attributes(ans_arr)$label[[1]]),
+                             match(label_df[[2]], attributes(ans_arr)$label[[2]]))
+      }
+      if (length(attributes(ans_arr)$label) == 3) {
+        label_ans <- sprintf("%s[%s,%s,%s]",
+                             param,
+                             match(label_df[[1]], attributes(ans_arr)$label[[1]]),
+                             match(label_df[[2]], attributes(ans_arr)$label[[2]]),
+                             match(label_df[[3]], attributes(ans_arr)$label[[3]]))
+      }
+
+      expect_identical(rownames(test), label_ans)
+
+    }
+  }
+})
+
 test_that("$label$Effects attributes for alpha/beta/gamma are given correctly when site_cov or repl_cov is specified for shared parameters", {
   ## Tests for alpha
   i <- 6
