@@ -870,6 +870,12 @@ test_that("Option for dataframe output works", {
       colnames(label_df) <- attributes(ans_arr)$dimension
 
       ans <- data.frame(Parameter = factor(param), label_df, summary_df)
+      colnames(ans)[colnames(ans) == "X2.5."] <- "2.5%"
+      colnames(ans)[colnames(ans) == "X25."] <- "25%"
+      colnames(ans)[colnames(ans) == "X50."] <- "50%"
+      colnames(ans)[colnames(ans) == "X75."] <- "75%"
+      colnames(ans)[colnames(ans) == "X97.5."] <- "97.5%"
+
       expect_identical(test, ans)
 
       # Tests for label part
@@ -980,6 +986,12 @@ test_that("Option for dataframe output works", {
       }
 
       ans <- data.frame(Parameter = factor(param), label_df, summary_df)
+      colnames(ans)[colnames(ans) == "X2.5."] <- "2.5%"
+      colnames(ans)[colnames(ans) == "X25."] <- "25%"
+      colnames(ans)[colnames(ans) == "X50."] <- "50%"
+      colnames(ans)[colnames(ans) == "X75."] <- "75%"
+      colnames(ans)[colnames(ans) == "X97.5."] <- "97.5%"
+
       expect_identical(test, ans)
 
       # Tests for label part

@@ -241,7 +241,13 @@ check_args_get_posterior <- function(fit, parameter) {
     summary_df <- get_summary_df(x)
     label_df <- get_label_df(x, fit, parameter)
 
-    data.frame(Parameter = factor(parameter), label_df, summary_df)
+    out <- data.frame(Parameter = factor(parameter), label_df, summary_df)
+    colnames(out)[colnames(out) == "X2.5."] <- "2.5%"
+    colnames(out)[colnames(out) == "X25."] <- "25%"
+    colnames(out)[colnames(out) == "X50."] <- "50%"
+    colnames(out)[colnames(out) == "X75."] <- "75%"
+    colnames(out)[colnames(out) == "X97.5."] <- "97.5%"
+    out
   }
 
   # Identify rows to extract
