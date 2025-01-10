@@ -178,11 +178,11 @@ check_args_get_posterior <- function(fit, parameter) {
   # Function for converting the resulting array to dataframe
   array_to_df <- function(x, parameter, fit) {
 
-    get_summary_df <- function(x, parameter) {
+    get_summary_df <- function(x) {
       if (is.null(dim(x))) {
         summary_df <- data.frame(matrix(x, nrow = 1))
         colnames(summary_df) <- names(x)
-        rownames(summary_df) <- parameter
+        rownames(summary_df) <- attributes(x)$parameter
       } else {
         summary_df <- data.frame(x)
         colnames(summary_df) <- colnames(x)
@@ -209,7 +209,7 @@ check_args_get_posterior <- function(fit, parameter) {
         label_df <- expand.grid(get_label(1))
       }
       if (length(attributes(x)$dimension) == 2) {
-        if (parameter == "rho") {
+        if (attributes(x)$parameter == "rho") {
           idx1 <- unlist(
             sapply(seq_along(attributes(x)$label[[1]]), seq)
           )
@@ -235,7 +235,7 @@ check_args_get_posterior <- function(fit, parameter) {
       label_df
     }
 
-    summary_df <- get_summary_df(x, parameter)
+    summary_df <- get_summary_df(x)
     label_df <- get_label_df(x, fit, parameter)
 
     out_df <- cbind(parameter, label_df, summary_df)
@@ -297,50 +297,52 @@ add_attributes <- function(obj, fit, parameter,
   dimnames_y <- dimnames(fit@data@y)
 
   if (parameter == "z")
-    return(add_attributes1(obj, "ij", dimnames_y, type))
+    return(add_attributes1(obj, "ij", dimnames_y, type, parameter))
 
   if (parameter == "pi")
-    return(add_attributes1(obj, "ijk", dimnames_y, type))
+    return(add_attributes1(obj, "ijk", dimnames_y, type, parameter))
 
   if (parameter == "phi")
-    return(add_attributes1(obj, margs$phi, dimnames_y, type))
+    return(add_attributes1(obj, margs$phi, dimnames_y, type, parameter))
 
   if (parameter == "theta")
-    return(add_attributes1(obj, margs$theta, dimnames_y, type))
+    return(add_attributes1(obj, margs$theta, dimnames_y, type, parameter))
 
   if (parameter == "psi")
-    return(add_attributes1(obj, margs$psi, dimnames_y, type))
+    return(add_attributes1(obj, margs$psi, dimnames_y, type, parameter))
 
   if (parameter == "alpha")
-    return(add_attributes2(obj, margs$cov_phi, dimnames_y, type))
+    return(add_attributes2(obj, margs$cov_phi, dimnames_y, type, parameter))
 
   if (parameter == "beta")
-    return(add_attributes2(obj, margs$cov_theta, dimnames_y, type))
+    return(add_attributes2(obj, margs$cov_theta, dimnames_y, type, parameter))
 
   if (parameter == "gamma")
-    return(add_attributes2(obj, margs$cov_psi, dimnames_y, type))
+    return(add_attributes2(obj, margs$cov_psi, dimnames_y, type, parameter))
 
   if (parameter == "alpha_shared")
-    return(add_attributes3(obj, margs$cov_phi_shared, type))
+    return(add_attributes3(obj, margs$cov_phi_shared, type, parameter))
 
   if (parameter == "beta_shared")
-    return(add_attributes3(obj, margs$cov_theta_shared, type))
+    return(add_attributes3(obj, margs$cov_theta_shared, type, parameter))
 
   if (parameter == "gamma_shared")
-    return(add_attributes3(obj, margs$cov_psi_shared, type))
+    return(add_attributes3(obj, margs$cov_psi_shared, type, parameter))
 
   if (parameter == "Mu")
-    return(add_attributes4(obj, fit, FALSE, type))
+    return(add_attributes4(obj, fit, FALSE, type, parameter))
 
   if (parameter == "sigma")
-    return(add_attributes4(obj, fit, FALSE, type))
+    return(add_attributes4(obj, fit, FALSE, type, parameter))
 
   if (parameter == "rho")
-    return(add_attributes4(obj, fit, TRUE, type))
+    return(add_attributes4(obj, fit, TRUE, type, parameter))
 }
 
 add_attributes1 <- function(obj, dimension = c("i", "ij", "ijk"),
-                            dimnames_y, type) {
+                            dimnames_y, type, parameter) {
+
+  attr(obj, "parameter") <- parameter
 
   if (type == "samples") {
     if (dimension == "i") {
@@ -410,7 +412,7 @@ add_attributes1 <- function(obj, dimension = c("i", "ij", "ijk"),
   return(obj)
 }
 
-add_attributes2 <- function(obj, covariate, dimnames_y, type) {
+add_attributes2 <- function(obj, covariate, dimnames_y, type, parameter) {
 
   has_intercept_only <- function(covariate) {
     if (is.array(covariate)) {
@@ -419,6 +421,8 @@ add_attributes2 <- function(obj, covariate, dimnames_y, type) {
       return(identical(covariate, 1))
     }
   }
+
+  attr(obj, "parameter") <- parameter
 
   if (type == "samples") {
     attr(obj, "dimension") <- c("Sample", "Species", "Effects")
@@ -469,7 +473,9 @@ add_attributes2 <- function(obj, covariate, dimnames_y, type) {
   return(obj)
 }
 
-add_attributes3 <- function(obj, covariate, type) {
+add_attributes3 <- function(obj, covariate, type, parameter) {
+
+  attr(obj, "parameter") <- parameter
 
   if (type == "samples") {
     if (is.null(covariate)) {
@@ -497,7 +503,7 @@ add_attributes3 <- function(obj, covariate, type) {
   return(obj)
 }
 
-add_attributes4 <- function(obj, fit, is_rho, type) {
+add_attributes4 <- function(obj, fit, is_rho, type, parameter) {
 
   # Get model arguments
   margs <- set_modargs(stats::as.formula(fit@occumb_args$formula_phi),
@@ -507,6 +513,8 @@ add_attributes4 <- function(obj, fit, is_rho, type) {
                        stats::as.formula(fit@occumb_args$formula_theta_shared),
                        stats::as.formula(fit@occumb_args$formula_psi_shared),
                        fit@data)
+
+  attr(obj, "parameter") <- parameter
 
   if (type == "samples") {
     if (identical(fit@occumb_args$formula_phi, "~ 1")) {
