@@ -780,7 +780,7 @@ test_that("Option for dataframe output works", {
       if (is.null(dim(ans_arr))) {
         summary_df <- data.frame(matrix(ans_arr, nrow = 1))
         colnames(summary_df) <- names(ans_arr)
-        rownames(summary_df) <- paste0(param, "[1]")
+        rownames(summary_df) <- param
       } else {
         summary_df <- data.frame(ans_arr)
         colnames(summary_df) <- colnames(ans_arr)
@@ -819,29 +819,33 @@ test_that("Option for dataframe output works", {
       expect_identical(test, ans)
 
       # Tests for label part
-      if (length(attributes(ans_arr)$label) == 1) {
-        label_ans <- sprintf(
-          "%s[%s]",
-          param,
-          match(label_df[[1]], attributes(ans_arr)$label[[1]])
-        )
-      }
-      if (length(attributes(ans_arr)$label) == 2) {
-        label_ans <- sprintf(
-          "%s[%s,%s]",
-          param,
-          match(label_df[[1]], attributes(ans_arr)$label[[1]]),
-          match(label_df[[2]], attributes(ans_arr)$label[[2]])
-        )
-      }
-      if (length(attributes(ans_arr)$label) == 3) {
-        label_ans <- sprintf(
-          "%s[%s,%s,%s]",
-          param,
-          match(label_df[[1]], attributes(ans_arr)$label[[1]]),
-          match(label_df[[2]], attributes(ans_arr)$label[[2]]),
-          match(label_df[[3]], attributes(ans_arr)$label[[3]])
-        )
+      if (nrow(test) > 1) {
+        if (length(attributes(ans_arr)$label) == 1) {
+          label_ans <- sprintf(
+            "%s[%s]",
+            param,
+            match(label_df[[1]], attributes(ans_arr)$label[[1]])
+          )
+        }
+        if (length(attributes(ans_arr)$label) == 2) {
+          label_ans <- sprintf(
+            "%s[%s,%s]",
+            param,
+            match(label_df[[1]], attributes(ans_arr)$label[[1]]),
+            match(label_df[[2]], attributes(ans_arr)$label[[2]])
+          )
+        }
+        if (length(attributes(ans_arr)$label) == 3) {
+          label_ans <- sprintf(
+            "%s[%s,%s,%s]",
+            param,
+            match(label_df[[1]], attributes(ans_arr)$label[[1]]),
+            match(label_df[[2]], attributes(ans_arr)$label[[2]]),
+            match(label_df[[3]], attributes(ans_arr)$label[[3]])
+          )
+        }
+      } else {
+        label_ans <- param
       }
 
       expect_identical(rownames(test), label_ans)
@@ -909,7 +913,7 @@ test_that("Option for dataframe output works", {
 
         summary_df <- matrix(summary_df, nrow = 1)
         colnames(summary_df) <- names(get_post_summary(fit1, param))
-        rownames(summary_df) <- paste0(param, "[1]")
+        rownames(summary_df) <- param
         attr(summary_df, "dimension") <-
           attributes(get_post_summary(fit1, param))$dimension
         attr(summary_df, "label") <-
@@ -924,53 +928,57 @@ test_that("Option for dataframe output works", {
       expect_identical(test, ans)
 
       # Tests for label part
-      if (length(attributes(summary_df)$dimension) == 1) {
-        if (is.null(attributes(summary_df)$label[[1]])) {
-          label1 <- label_df[[1]]
-        } else {
-          label1 <- match(label_df[[1]], attributes(summary_df)$label[[1]])
-        }
+      if (nrow(test) > 1) {
+        if (length(attributes(summary_df)$dimension) == 1) {
+          if (is.null(attributes(summary_df)$label[[1]])) {
+            label1 <- label_df[[1]]
+          } else {
+            label1 <- match(label_df[[1]], attributes(summary_df)$label[[1]])
+          }
 
-        label_ans <- sprintf(
-          "%s[%s]", param, label1
-        )
-      }
-      if (length(attributes(summary_df)$dimension) == 2) {
-        if (is.null(attributes(summary_df)$label[[1]])) {
-          label1 <- label_df[[1]]
-        } else {
-          label1 <- match(label_df[[1]], attributes(summary_df)$label[[1]])
+          label_ans <- sprintf(
+            "%s[%s]", param, label1
+          )
         }
-        if (is.null(attributes(summary_df)$label[[2]])) {
-          label2 <- label_df[[2]]
-        } else {
-          label2 <- match(label_df[[2]], attributes(summary_df)$label[[2]])
-        }
+        if (length(attributes(summary_df)$dimension) == 2) {
+          if (is.null(attributes(summary_df)$label[[1]])) {
+            label1 <- label_df[[1]]
+          } else {
+            label1 <- match(label_df[[1]], attributes(summary_df)$label[[1]])
+          }
+          if (is.null(attributes(summary_df)$label[[2]])) {
+            label2 <- label_df[[2]]
+          } else {
+            label2 <- match(label_df[[2]], attributes(summary_df)$label[[2]])
+          }
 
-        label_ans <- sprintf(
-          "%s[%s,%s]", param, label1, label2
-        )
-      }
-      if (length(attributes(summary_df)$dimension) == 3) {
-        if (is.null(attributes(summary_df)$label[[1]])) {
-          label1 <- label_df[[1]]
-        } else {
-          label1 <- match(label_df[[1]], attributes(summary_df)$label[[1]])
+          label_ans <- sprintf(
+            "%s[%s,%s]", param, label1, label2
+          )
         }
-        if (is.null(attributes(summary_df)$label[[2]])) {
-          label2 <- label_df[[2]]
-        } else {
-          label2 <- match(label_df[[2]], attributes(summary_df)$label[[2]])
-        }
-        if (is.null(attributes(summary_df)$label[[3]])) {
-          label3 <- label_df[[3]]
-        } else {
-          label3 <- match(label_df[[3]], attributes(summary_df)$label[[3]])
-        }
+        if (length(attributes(summary_df)$dimension) == 3) {
+          if (is.null(attributes(summary_df)$label[[1]])) {
+            label1 <- label_df[[1]]
+          } else {
+            label1 <- match(label_df[[1]], attributes(summary_df)$label[[1]])
+          }
+          if (is.null(attributes(summary_df)$label[[2]])) {
+            label2 <- label_df[[2]]
+          } else {
+            label2 <- match(label_df[[2]], attributes(summary_df)$label[[2]])
+          }
+          if (is.null(attributes(summary_df)$label[[3]])) {
+            label3 <- label_df[[3]]
+          } else {
+            label3 <- match(label_df[[3]], attributes(summary_df)$label[[3]])
+          }
 
-        label_ans <- sprintf(
-          "%s[%s,%s,%s]", param, label1, label2, label3
-        )
+          label_ans <- sprintf(
+            "%s[%s,%s,%s]", param, label1, label2, label3
+          )
+        }
+      } else {
+        label_ans <- param
       }
 
       expect_identical(rownames(test), label_ans)

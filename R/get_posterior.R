@@ -182,7 +182,7 @@ check_args_get_posterior <- function(fit, parameter) {
       if (is.null(dim(x))) {
         summary_df <- data.frame(matrix(x, nrow = 1))
         colnames(summary_df) <- names(x)
-        rownames(summary_df) <- paste0(parameter, "[1]")
+        rownames(summary_df) <- parameter
       } else {
         summary_df <- data.frame(x)
         colnames(summary_df) <- colnames(x)
