@@ -480,6 +480,7 @@ test_that("Option for dataframe output works", {
         levels(ans[, i]) <- attributes(ans_arr)$label[[i]]
       }
 
+      ans <- data.frame(Parameter = factor(param), ans)
       expect_identical(test, ans)
     }
   }
@@ -505,6 +506,7 @@ test_that("Option for dataframe output works", {
         }
       }
 
+      ans <- data.frame(Parameter = factor(param), ans)
       expect_identical(test, ans)
     }
   }
@@ -862,11 +864,12 @@ test_that("Option for dataframe output works", {
                                 attributes(ans_arr)$label[[2]],
                                 attributes(ans_arr)$label[[3]])
       }
+      for (i in seq_len(ncol(label_df))) {
+        label_df[[i]] <- factor(label_df[[i]])
+      }
       colnames(label_df) <- attributes(ans_arr)$dimension
 
-      ans <- cbind(param, label_df, summary_df)
-      colnames(ans)[1] <- "Parameter"
-
+      ans <- data.frame(Parameter = factor(param), label_df, summary_df)
       expect_identical(test, ans)
 
       # Tests for label part
@@ -945,6 +948,9 @@ test_that("Option for dataframe output works", {
                               get_label(2),
                               get_label(3))
     }
+    for (i in seq_len(ncol(label_df))) {
+      label_df[[i]] <- factor(label_df[[i]])
+    }
     colnames(label_df) <- attributes(x)$dimension
 
     label_df
@@ -973,9 +979,7 @@ test_that("Option for dataframe output works", {
         label_df <- get_label_df(summary_df, fit1, param)
       }
 
-      ans <- cbind(param, label_df, summary_df)
-      colnames(ans)[1] <- "Parameter"
-
+      ans <- data.frame(Parameter = factor(param), label_df, summary_df)
       expect_identical(test, ans)
 
       # Tests for label part

@@ -151,7 +151,7 @@ check_args_get_posterior <- function(fit, parameter) {
       }
     }
 
-    out_df
+    data.frame(Parameter = factor(parameter), out_df)
   }
 
   # Extract samples of the specified parameter
@@ -230,6 +230,9 @@ check_args_get_posterior <- function(fit, parameter) {
                                 get_label(2),
                                 get_label(3))
       }
+      for (i in seq_len(ncol(label_df))) {
+        label_df[[i]] <- factor(label_df[[i]])
+      }
       colnames(label_df) <- attributes(x)$dimension
 
       label_df
@@ -238,9 +241,7 @@ check_args_get_posterior <- function(fit, parameter) {
     summary_df <- get_summary_df(x)
     label_df <- get_label_df(x, fit, parameter)
 
-    out_df <- cbind(parameter, label_df, summary_df)
-    colnames(out_df)[1] <- "Parameter"
-    out_df
+    data.frame(Parameter = factor(parameter), label_df, summary_df)
   }
 
   # Identify rows to extract
