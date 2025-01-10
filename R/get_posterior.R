@@ -176,43 +176,67 @@ check_args_get_posterior <- function(fit, parameter) {
 .get_post_summary <- function(fit, parameter, output_dataframe) {
 
   # Function for converting the resulting array to dataframe
-  array_to_df <- function(x, parameter) {
+  array_to_df <- function(x, parameter, fit) {
 
-    if (is.null(dim(x))) {
-      summary_df <- data.frame(matrix(x, nrow = 1))
-      colnames(summary_df) <- names(x)
-      rownames(summary_df) <- paste0(parameter, "[1]")
-    } else {
-      summary_df <- data.frame(x)
-      colnames(summary_df) <- colnames(x)
-    }
-
-    if (length(attributes(x)$label) == 1) {
-      label_df <- expand.grid(attributes(x)$label[[1]])
-    }
-    if (length(attributes(x)$label) == 2) {
-      if (parameter == "rho") {
-        idx1 <- unlist(
-          sapply(seq_along(attributes(x)$label[[1]]), seq)
-        )
-        idx2 <- unlist(
-          sapply(seq_along(attributes(x)$label[[1]]), \(x) rep(x + 1, x))
-        )
-        label_df <- data.frame(
-          attributes(x)$label[[1]][idx1],
-          attributes(x)$label[[2]][idx2]
-        )
+    get_summary_df <- function(x, parameter) {
+      if (is.null(dim(x))) {
+        summary_df <- data.frame(matrix(x, nrow = 1))
+        colnames(summary_df) <- names(x)
+        rownames(summary_df) <- paste0(parameter, "[1]")
       } else {
-        label_df <- expand.grid(attributes(x)$label[[1]],
-                                attributes(x)$label[[2]])
+        summary_df <- data.frame(x)
+        colnames(summary_df) <- colnames(x)
       }
+      summary_df
     }
-    if (length(attributes(x)$label) == 3) {
-      label_df <- expand.grid(attributes(x)$label[[1]],
-                              attributes(x)$label[[2]],
-                              attributes(x)$label[[3]])
+
+    get_label_df <- function(x, fit, parameter) {
+      get_label <- function(i) {
+        if (is.null(attributes(x)$label[[i]])) {
+          if (attributes(x)$dimension[[i]] == "Species") {
+            seq_len(dim(get_data(fit, "y"))[1])
+          } else if (attributes(x)$dimension[[i]] == "Site") {
+            seq_len(dim(get_data(fit, "y"))[2])
+          } else if (attributes(x)$dimension[[i]] == "Replicate") {
+            seq_len(dim(get_data(fit, "y"))[3])
+          }
+        } else {
+          attributes(x)$label[[i]]
+        }
+      }
+
+      if (length(attributes(x)$dimension) == 1) {
+        label_df <- expand.grid(get_label(1))
+      }
+      if (length(attributes(x)$dimension) == 2) {
+        if (parameter == "rho") {
+          idx1 <- unlist(
+            sapply(seq_along(attributes(x)$label[[1]]), seq)
+          )
+          idx2 <- unlist(
+            sapply(seq_along(attributes(x)$label[[1]]), \(n) rep(n + 1, n))
+          )
+          label_df <- data.frame(
+            attributes(x)$label[[1]][idx1],
+            attributes(x)$label[[2]][idx2]
+          )
+        } else {
+          label_df <- expand.grid(get_label(1),
+                                  get_label(2))
+        }
+      }
+      if (length(attributes(x)$dimension) == 3) {
+        label_df <- expand.grid(get_label(1),
+                                get_label(2),
+                                get_label(3))
+      }
+      colnames(label_df) <- attributes(x)$dimension
+
+      label_df
     }
-    colnames(label_df) <- attributes(x)$dimension
+
+    summary_df <- get_summary_df(x, parameter)
+    label_df <- get_label_df(x, fit, parameter)
 
     out_df <- cbind(parameter, label_df, summary_df)
     colnames(out_df)[1] <- "Parameter"
@@ -252,7 +276,7 @@ check_args_get_posterior <- function(fit, parameter) {
   out <- add_attributes(summary_extracted, fit, parameter, "summary")
 
   if (output_dataframe) {
-    array_to_df(out, parameter)
+    array_to_df(out, parameter, fit)
   } else {
     out
   }

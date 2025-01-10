@@ -435,7 +435,7 @@ test_that("$label$Effects attributes for alpha/beta/gamma are given correctly wh
 })
 
 test_that("Option for dataframe output works", {
-  # Tests for different parameter dimensions
+  ## Tests for cases when dimension labels are fully supplied (use fit2)
   for (param in lpar) {
     test <- try(get_post_samples(fit2, param, output_dataframe = TRUE),
                 silent = TRUE)
@@ -457,7 +457,7 @@ test_that("Option for dataframe output works", {
     }
   }
 
-  # Tests for cases when species/site/replicate labels are NULL
+  # Tests for cases when species/site/replicate labels are NULL (use fit1)
   for (param in lpar) {
     test <- try(get_post_samples(fit1, param, output_dataframe = TRUE),
                 silent = TRUE)
@@ -766,7 +766,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
 })
 
 test_that("Option for dataframe output works", {
-  # Tests for different parameter dimensions
+  ## Tests for cases when dimension labels are fully supplied (use fit2)
   for (param in lpar) {
     test <- try(get_post_summary(fit2, param, output_dataframe = TRUE),
                 silent = TRUE)
@@ -820,22 +820,157 @@ test_that("Option for dataframe output works", {
 
       # Tests for label part
       if (length(attributes(ans_arr)$label) == 1) {
-        label_ans <- sprintf("%s[%s]",
-                             param,
-                             match(label_df[[1]], attributes(ans_arr)$label[[1]]))
+        label_ans <- sprintf(
+          "%s[%s]",
+          param,
+          match(label_df[[1]], attributes(ans_arr)$label[[1]])
+        )
       }
       if (length(attributes(ans_arr)$label) == 2) {
-        label_ans <- sprintf("%s[%s,%s]",
-                             param,
-                             match(label_df[[1]], attributes(ans_arr)$label[[1]]),
-                             match(label_df[[2]], attributes(ans_arr)$label[[2]]))
+        label_ans <- sprintf(
+          "%s[%s,%s]",
+          param,
+          match(label_df[[1]], attributes(ans_arr)$label[[1]]),
+          match(label_df[[2]], attributes(ans_arr)$label[[2]])
+        )
       }
       if (length(attributes(ans_arr)$label) == 3) {
-        label_ans <- sprintf("%s[%s,%s,%s]",
-                             param,
-                             match(label_df[[1]], attributes(ans_arr)$label[[1]]),
-                             match(label_df[[2]], attributes(ans_arr)$label[[2]]),
-                             match(label_df[[3]], attributes(ans_arr)$label[[3]]))
+        label_ans <- sprintf(
+          "%s[%s,%s,%s]",
+          param,
+          match(label_df[[1]], attributes(ans_arr)$label[[1]]),
+          match(label_df[[2]], attributes(ans_arr)$label[[2]]),
+          match(label_df[[3]], attributes(ans_arr)$label[[3]])
+        )
+      }
+
+      expect_identical(rownames(test), label_ans)
+
+    }
+  }
+
+  ## Tests for cases when species/site/replicate labels are NULL (use fit1)
+  get_label_df <- function(x, fit, parameter) {
+    get_label <- function(i) {
+      if (is.null(attributes(x)$label[[i]])) {
+        if (attributes(x)$dimension[[i]] == "Species") {
+          seq_len(dim(get_data(fit, "y"))[1])
+        } else if (attributes(x)$dimension[[i]] == "Site") {
+          seq_len(dim(get_data(fit, "y"))[2])
+        } else if (attributes(x)$dimension[[i]] == "Replicate") {
+          seq_len(dim(get_data(fit, "y"))[3])
+        }
+      } else {
+        attributes(x)$label[[i]]
+      }
+    }
+
+    if (length(attributes(x)$dimension) == 1) {
+      label_df <- expand.grid(get_label(1))
+    }
+    if (length(attributes(x)$dimension) == 2) {
+      if (parameter == "rho") {
+        idx1 <- unlist(
+          sapply(seq_along(attributes(x)$label[[1]]), seq)
+        )
+        idx2 <- unlist(
+          sapply(seq_along(attributes(x)$label[[1]]), \(n) rep(n + 1, n))
+        )
+        label_df <- data.frame(
+          attributes(x)$label[[1]][idx1],
+          attributes(x)$label[[2]][idx2]
+        )
+      } else {
+        label_df <- expand.grid(get_label(1),
+                                get_label(2))
+      }
+    }
+    if (length(attributes(x)$dimension) == 3) {
+      label_df <- expand.grid(get_label(1),
+                              get_label(2),
+                              get_label(3))
+    }
+    colnames(label_df) <- attributes(x)$dimension
+
+    label_df
+  }
+
+  for (param in lpar) {
+    test <- try(get_post_summary(fit1, param, output_dataframe = TRUE),
+                silent = TRUE)
+
+    if (class(test) == "try-error") {
+      expect_error(get_post_summary(fit1, param, output_dataframe = TRUE),
+                   sprintf("%s is not included in the fitted model", param))
+    } else {
+      summary_df <- get_post_summary(fit1, param)
+      if (is.null(dim(summary_df))) {
+        label_df <- get_label_df(summary_df, fit1, param)
+
+        summary_df <- matrix(summary_df, nrow = 1)
+        colnames(summary_df) <- names(get_post_summary(fit1, param))
+        rownames(summary_df) <- paste0(param, "[1]")
+        attr(summary_df, "dimension") <-
+          attributes(get_post_summary(fit1, param))$dimension
+        attr(summary_df, "label") <-
+          attributes(get_post_summary(fit1, param))$label
+      } else {
+        label_df <- get_label_df(summary_df, fit1, param)
+      }
+
+      ans <- cbind(param, label_df, summary_df)
+      colnames(ans)[1] <- "Parameter"
+
+      expect_identical(test, ans)
+
+      # Tests for label part
+      if (length(attributes(summary_df)$dimension) == 1) {
+        if (is.null(attributes(summary_df)$label[[1]])) {
+          label1 <- label_df[[1]]
+        } else {
+          label1 <- match(label_df[[1]], attributes(summary_df)$label[[1]])
+        }
+
+        label_ans <- sprintf(
+          "%s[%s]", param, label1
+        )
+      }
+      if (length(attributes(summary_df)$dimension) == 2) {
+        if (is.null(attributes(summary_df)$label[[1]])) {
+          label1 <- label_df[[1]]
+        } else {
+          label1 <- match(label_df[[1]], attributes(summary_df)$label[[1]])
+        }
+        if (is.null(attributes(summary_df)$label[[2]])) {
+          label2 <- label_df[[2]]
+        } else {
+          label2 <- match(label_df[[2]], attributes(summary_df)$label[[2]])
+        }
+
+        label_ans <- sprintf(
+          "%s[%s,%s]", param, label1, label2
+        )
+      }
+      if (length(attributes(summary_df)$dimension) == 3) {
+        if (is.null(attributes(summary_df)$label[[1]])) {
+          label1 <- label_df[[1]]
+        } else {
+          label1 <- match(label_df[[1]], attributes(summary_df)$label[[1]])
+        }
+        if (is.null(attributes(summary_df)$label[[2]])) {
+          label2 <- label_df[[2]]
+        } else {
+          label2 <- match(label_df[[2]], attributes(summary_df)$label[[2]])
+        }
+        if (is.null(attributes(summary_df)$label[[3]])) {
+          label3 <- label_df[[3]]
+        } else {
+          label3 <- match(label_df[[3]], attributes(summary_df)$label[[3]])
+        }
+
+        label_ans <- sprintf(
+          "%s[%s,%s,%s]", param, label1, label2, label3
+        )
       }
 
       expect_identical(rownames(test), label_ans)
