@@ -38,7 +38,8 @@
 #'  for details of these parameters.
 #'
 #'  The parameter may have dimensions corresponding to species, sites,
-#'  replicates, and effects (covariates) and the \code{dimension} and \code{label}
+#'  replicates, and effects (covariates), and when
+#'  \code{output_dataframe = FALSE}, the \code{dimension} and \code{label}
 #'  attributes are added to the output object to inform these dimensions.
 #'  If the sequence read count data \code{y} have species, site, or replicate
 #'  names appended as the \code{dimnames} attribute (see Details in
@@ -47,22 +48,27 @@
 #' @param fit An \code{occumbFit} object.
 #' @param parameter A string of parameter name. See Details for possible choices
 #'  and corresponding parameters.
-#' @param output_dataframe Logical.
+#' @param output_dataframe If \code{TRUE}, results are returned in data frame
+#'  format.
 #' @return
-#'  \code{get_post_samples()} returns a vector, matrix, or array of posterior
-#'  samples for a selected parameter.
+#'  By default, \code{get_post_samples()} returns a vector, matrix, or array of
+#'  posterior samples for a selected parameter.
 #'
-#'  \code{get_post_summary()} returns a table (matrix) of the posterior summary
-#'  of the selected parameters. The elements of the posterior summary are the
-#'  same as those obtained with the \code{\link[jagsUI]{jags}()} function in the
-#'  \code{jagsUI} package: they include the mean, standard deviation, percentiles
-#'  of posterior samples; the \code{Rhat} statistic; the effective sample size,
-#'  \code{n.eff}; \code{overlap0}, which checks if 0 falls in the parameter's 95%
-#'  credible interval; and the proportion of the posterior with the same sign
-#'  as the mean, \code{f}.
+#'  \code{get_post_summary()} returns, by default, a table (matrix) of the
+#'  posterior summary of the selected parameters. The elements of the posterior
+#'  summary are the same as those obtained with the \code{\link[jagsUI]{jags}()}
+#'  function in the \code{jagsUI} package: they include the mean, standard
+#'  deviation, percentiles of posterior samples; the \code{Rhat} statistic;
+#'  the effective sample size, \code{n.eff}; \code{overlap0}, which checks if 0
+#'  falls in the parameter's 95% credible interval; and the proportion of the
+#'  posterior with the same sign as the mean, \code{f}.
 #'
 #'  The \code{dimension} and \code{label} attributes of the output object
 #'  provide information regarding the dimensions of the parameter.
+#'
+#'  When \code{output_dataframe = TRUE}, the results are returned in data
+#'  frame format where the attributes obtained when
+#'  \code{output_dataframe = FALSE} are incorporated into the table.
 #' @examples
 #' \donttest{
 #' # Generate the smallest random dataset (2 species * 2 sites * 2 reps)
