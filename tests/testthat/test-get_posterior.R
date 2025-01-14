@@ -70,6 +70,7 @@ test_that("Extracted samples and attributes are correct when proper parameter na
   # Unnamed y
   test <- get_post_samples(fit1, lpar[i])
   expect_identical(attributes(test)$dimension, c("Sample", "Species", "Site"))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   expect_identical(test,
                    eval(parse(text = paste0("fit1@fit$sims.list$", lpar[i]))))
@@ -80,6 +81,7 @@ test_that("Extracted samples and attributes are correct when proper parameter na
                    list(Sample = NULL,
                         Species = dimnames(data_named@y)[[1]],
                         Site = dimnames(data_named@y)[[2]]))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   expect_identical(test,
@@ -91,6 +93,7 @@ test_that("Extracted samples and attributes are correct when proper parameter na
   test <- get_post_samples(fit1, lpar[i])
   expect_identical(attributes(test)$dimension,
                    c("Sample", "Species", "Site", "Replicate"))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   expect_identical(test,
                    eval(parse(text = paste0("fit1@fit$sims.list$", lpar[i]))))
@@ -103,6 +106,7 @@ test_that("Extracted samples and attributes are correct when proper parameter na
                         Species = dimnames(data_named@y)[[1]],
                         Site = dimnames(data_named@y)[[2]],
                         Replicate = dimnames(data_named@y)[[3]]))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   expect_identical(test,
@@ -114,6 +118,7 @@ test_that("Extracted samples and attributes are correct when proper parameter na
   test <- get_post_samples(fit1, lpar[i])
   expect_identical(attributes(test)$dimension,
                    c("Sample", "Species", "Site", "Replicate"))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   expect_identical(test,
                    eval(parse(text = paste0("fit1@fit$sims.list$", lpar[i]))))
@@ -126,6 +131,7 @@ test_that("Extracted samples and attributes are correct when proper parameter na
                         Species = dimnames(data_named@y)[[1]],
                         Site = dimnames(data_named@y)[[2]],
                         Replicate = dimnames(data_named@y)[[3]]))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   expect_identical(test,
@@ -137,6 +143,7 @@ test_that("Extracted samples and attributes are correct when proper parameter na
   test <- get_post_samples(fit1, lpar[i])
   expect_identical(attributes(test)$dimension,
                    c("Sample", "Species", "Site"))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   expect_identical(test,
                    eval(parse(text = paste0("fit1@fit$sims.list$", lpar[i]))))
@@ -148,6 +155,7 @@ test_that("Extracted samples and attributes are correct when proper parameter na
                    list(Sample = NULL,
                         Species = dimnames(data_named@y)[[1]],
                         Site = dimnames(data_named@y)[[2]]))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   expect_identical(test,
@@ -159,6 +167,7 @@ test_that("Extracted samples and attributes are correct when proper parameter na
   test <- get_post_samples(fit1, lpar[i])
   expect_identical(attributes(test)$dimension,
                    c("Sample", "Species"))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   expect_identical(test,
                    eval(parse(text = paste0("fit1@fit$sims.list$", lpar[i]))))
@@ -169,6 +178,7 @@ test_that("Extracted samples and attributes are correct when proper parameter na
   expect_identical(attributes(test)$label,
                    list(Sample = NULL,
                         Species = dimnames(data_named@y)[[1]]))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   expect_identical(test,
@@ -184,6 +194,7 @@ test_that("Extracted samples and attributes are correct when proper parameter na
                    list(Sample = NULL,
                         Species = NULL,
                         Effects = c("(Intercept)", "cov62", "cov63", "cov64")))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   expect_identical(test,
@@ -196,6 +207,7 @@ test_that("Extracted samples and attributes are correct when proper parameter na
                    list(Sample = NULL,
                         Species = dimnames(data_named@y)[[1]],
                         Effects = c("(Intercept)", "cov62", "cov63", "cov64")))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   expect_identical(test,
@@ -211,6 +223,7 @@ test_that("Extracted samples and attributes are correct when proper parameter na
                    list(Sample = NULL,
                         Species = NULL,
                         Effects = c("(Intercept)", "cov42", "cov43")))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   expect_identical(test,
@@ -223,6 +236,7 @@ test_that("Extracted samples and attributes are correct when proper parameter na
                    list(Sample = NULL,
                         Species = dimnames(data_named@y)[[1]],
                         Effects = c("(Intercept)", "cov42", "cov43")))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   expect_identical(test,
@@ -238,6 +252,7 @@ test_that("Extracted samples and attributes are correct when proper parameter na
                    list(Sample = NULL,
                         Species = NULL,
                         Effects = "(Intercept)"))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   expect_identical(test,
@@ -250,6 +265,7 @@ test_that("Extracted samples and attributes are correct when proper parameter na
                    list(Sample = NULL,
                         Species = dimnames(data_named@y)[[1]],
                         Effects = "(Intercept)"))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   expect_identical(test,
@@ -273,6 +289,7 @@ test_that("Extracted samples and attributes are correct when proper parameter na
   expect_identical(attributes(test)$label,
                    list(Sample = NULL,
                         Effects = c("cov22", "cov3", "cov22:cov3")))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   expect_identical(test,
@@ -284,6 +301,7 @@ test_that("Extracted samples and attributes are correct when proper parameter na
   expect_identical(attributes(test)$label,
                    list(Sample = NULL,
                         Effects = c("cov22", "cov3", "cov22:cov3")))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   expect_identical(test,
@@ -298,6 +316,7 @@ test_that("Extracted samples and attributes are correct when proper parameter na
   expect_identical(attributes(test)$label,
                    list(Sample = NULL,
                         Effects = c("cov22")))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   expect_identical(
@@ -312,6 +331,7 @@ test_that("Extracted samples and attributes are correct when proper parameter na
   expect_identical(attributes(test)$label,
                    list(Sample = NULL,
                         Effects = c("cov22")))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   expect_identical(
@@ -332,6 +352,7 @@ test_that("Extracted samples and attributes are correct when proper parameter na
                                       "phi | cov63", "phi | cov64",
                                       "theta | (Intercept)", "theta | cov42", "theta | cov43",
                                       "psi | (Intercept)")))
+    attr(test, "parameter") <- NULL
     attr(test, "dimension") <- NULL
     attr(test, "label") <- NULL
     expect_identical(test,
@@ -346,6 +367,7 @@ test_that("Extracted samples and attributes are correct when proper parameter na
                                       "phi | cov63", "phi | cov64",
                                       "theta | (Intercept)", "theta | cov42", "theta | cov43",
                                       "psi | (Intercept)")))
+    attr(test, "parameter") <- NULL
     attr(test, "dimension") <- NULL
     attr(test, "label") <- NULL
     expect_identical(test,
@@ -367,6 +389,7 @@ test_that("Extracted samples and attributes are correct when proper parameter na
                                      "phi | cov63", "phi | cov64",
                                      "theta | (Intercept)", "theta | cov42", "theta | cov43",
                                      "psi | (Intercept)")))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   ans <- eval(parse(text = paste0("fit1@fit$sims.list$", lpar[i])))
@@ -384,6 +407,7 @@ test_that("Extracted samples and attributes are correct when proper parameter na
                                      "phi | cov63", "phi | cov64",
                                      "theta | (Intercept)", "theta | cov42", "theta | cov43",
                                      "psi | (Intercept)")))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   ans <- eval(parse(text = paste0("fit2@fit$sims.list$", lpar[i])))
@@ -400,6 +424,7 @@ test_that("$label$Effects attributes for alpha/beta/gamma are given correctly wh
                    list(Sample = NULL,
                         Species = dimnames(data_named@y)[[1]],
                         Effects = "(Intercept)"))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   expect_identical(test,
@@ -414,6 +439,7 @@ test_that("$label$Effects attributes for alpha/beta/gamma are given correctly wh
                    list(Sample = NULL,
                         Species = dimnames(data_named@y)[[1]],
                         Effects = "(Intercept)"))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   expect_identical(test,
@@ -428,10 +454,62 @@ test_that("$label$Effects attributes for alpha/beta/gamma are given correctly wh
                    list(Sample = NULL,
                         Species = dimnames(data_named@y)[[1]],
                         Effects = "(Intercept)"))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   expect_identical(test,
                    eval(parse(text = paste0("fit3@fit$sims.list$", lpar[i]))))
+})
+
+test_that("Option for dataframe output works", {
+  ## Tests for cases when dimension labels are fully supplied (use fit2)
+  for (param in lpar) {
+    test <- try(get_post_samples(fit2, param, output_dataframe = TRUE),
+                silent = TRUE)
+
+    if (class(test) == "try-error") {
+      expect_error(get_post_samples(fit2, param, output_dataframe = TRUE),
+                   sprintf("%s is not included in the fitted model", param))
+    } else {
+      ans_arr <- get_post_samples(fit2, param, output_dataframe = FALSE)
+      ans <- as.data.frame.table(ans_arr)
+      colnames(ans) <- c(attributes(ans_arr)$dimension, "Value")
+
+      levels(ans[, 1]) <- seq_along(levels(ans[, 1]))
+      for (i in 2:(ncol(ans) - 1)) {
+        levels(ans[, i]) <- attributes(ans_arr)$label[[i]]
+      }
+
+      ans <- data.frame(Parameter = factor(param), ans)
+      expect_identical(test, ans)
+    }
+  }
+
+  # Tests for cases when species/site/replicate labels are NULL (use fit1)
+  for (param in lpar) {
+    test <- try(get_post_samples(fit1, param, output_dataframe = TRUE),
+                silent = TRUE)
+
+    if (class(test) == "try-error") {
+      expect_error(get_post_samples(fit1, param, output_dataframe = TRUE),
+                   sprintf("%s is not included in the fitted model", param))
+    } else {
+      ans_arr <- get_post_samples(fit1, param, output_dataframe = FALSE)
+      ans <- as.data.frame.table(ans_arr)
+      colnames(ans) <- c(attributes(ans_arr)$dimension, "Value")
+
+      for (i in seq_len(ncol(ans) - 1)) {
+        if (is.null(attributes(ans_arr)$label[[i]])) {
+          levels(ans[, i]) <- seq_along(levels(ans[, i]))
+        } else {
+          levels(ans[, i]) <- attributes(ans_arr)$label[[i]]
+        }
+      }
+
+      ans <- data.frame(Parameter = factor(param), ans)
+      expect_identical(test, ans)
+    }
+  }
 })
 
 ### Tests for get_post_summary -------------------------------------------------
@@ -442,6 +520,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
   # Unnamed y
   test <- get_post_summary(fit1, lpar[i])
   expect_identical(attributes(test)$dimension, c("Species", "Site"))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   ans <- fit1@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit1@fit$summary)), ]
   expect_identical(test, ans)
@@ -451,6 +530,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
   expect_identical(attributes(test)$label,
                    list(Species = dimnames(data_named@y)[[1]],
                         Site = dimnames(data_named@y)[[2]]))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   ans <- fit2@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit2@fit$summary)), ]
@@ -461,6 +541,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
   # Unnamed y
   test <- get_post_summary(fit1, lpar[i])
   expect_identical(attributes(test)$dimension, c("Species", "Site", "Replicate"))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   ans <- fit1@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit1@fit$summary)), ]
   expect_identical(test, ans)
@@ -471,6 +552,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
                    list(Species = dimnames(data_named@y)[[1]],
                         Site = dimnames(data_named@y)[[2]],
                         Replicate = dimnames(data_named@y)[[3]]))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   ans <- fit2@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit2@fit$summary)), ]
@@ -481,6 +563,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
   # Unnamed y
   test <- get_post_summary(fit1, lpar[i])
   expect_identical(attributes(test)$dimension, c("Species", "Site", "Replicate"))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   ans <- fit1@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit1@fit$summary)), ]
   expect_identical(test, ans)
@@ -491,6 +574,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
                    list(Species = dimnames(data_named@y)[[1]],
                         Site = dimnames(data_named@y)[[2]],
                         Replicate = dimnames(data_named@y)[[3]]))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   ans <- fit2@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit2@fit$summary)), ]
@@ -501,6 +585,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
   # Unnamed y
   test <- get_post_summary(fit1, lpar[i])
   expect_identical(attributes(test)$dimension, c("Species", "Site"))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   ans <- fit1@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit1@fit$summary)), ]
   expect_identical(test, ans)
@@ -510,6 +595,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
   expect_identical(attributes(test)$label,
                    list(Species = dimnames(data_named@y)[[1]],
                         Site = dimnames(data_named@y)[[2]]))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   ans <- fit2@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit2@fit$summary)), ]
@@ -520,6 +606,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
   # Unnamed y
   test <- get_post_summary(fit1, lpar[i])
   expect_identical(attributes(test)$dimension, c("Species"))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   ans <- fit1@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit1@fit$summary)), ]
   expect_identical(test, ans)
@@ -528,6 +615,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
   expect_identical(attributes(test)$dimension, c("Species"))
   expect_identical(attributes(test)$label,
                    list(Species = dimnames(data_named@y)[[1]]))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   ans <- fit2@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit2@fit$summary)), ]
@@ -541,6 +629,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
   expect_identical(attributes(test)$label,
                    list(Species = NULL,
                         Effects = c("(Intercept)", "cov62", "cov63", "cov64")))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   ans <- fit1@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit1@fit$summary)), ]
@@ -551,6 +640,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
   expect_identical(attributes(test)$label,
                    list(Species = dimnames(data_named@y)[[1]],
                         Effects = c("(Intercept)", "cov62", "cov63", "cov64")))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   ans <- fit2@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit2@fit$summary)), ]
@@ -564,6 +654,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
   expect_identical(attributes(test)$label,
                    list(Species = NULL,
                         Effects = c("(Intercept)", "cov42", "cov43")))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   ans <- fit1@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit1@fit$summary)), ]
@@ -574,6 +665,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
   expect_identical(attributes(test)$label,
                    list(Species = dimnames(data_named@y)[[1]],
                         Effects = c("(Intercept)", "cov42", "cov43")))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   ans <- fit2@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit2@fit$summary)), ]
@@ -587,6 +679,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
   expect_identical(attributes(test)$label,
                    list(Species = NULL,
                         Effects = "(Intercept)"))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   ans <- fit1@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit1@fit$summary)), ]
@@ -597,6 +690,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
   expect_identical(attributes(test)$label,
                    list(Species = dimnames(data_named@y)[[1]],
                         Effects = "(Intercept)"))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   ans <- fit2@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit2@fit$summary)), ]
@@ -618,6 +712,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
   expect_identical(attributes(test)$dimension, c("Effects"))
   expect_identical(attributes(test)$label,
                    list(Effects = c("cov22", "cov3", "cov22:cov3")))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   ans <- fit1@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit1@fit$summary)), ]
@@ -627,6 +722,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
   expect_identical(attributes(test)$dimension, c("Effects"))
   expect_identical(attributes(test)$label,
                    list(Effects = c("cov22", "cov3", "cov22:cov3")))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   ans <- fit2@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit2@fit$summary)), ]
@@ -639,6 +735,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
   expect_identical(attributes(test)$dimension, c("Effects"))
   expect_identical(attributes(test)$label,
                    list(Effects = "cov22"))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   ans <- fit1@fit$summary["gamma_shared", ]
@@ -648,6 +745,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
   expect_identical(attributes(test)$dimension, c("Effects"))
   expect_identical(attributes(test)$label,
                    list(Effects = "cov22"))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   ans <- fit2@fit$summary["gamma_shared", ]
@@ -663,6 +761,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
                                       "phi | cov63", "phi | cov64",
                                       "theta | (Intercept)", "theta | cov42", "theta | cov43",
                                       "psi | (Intercept)")))
+    attr(test, "parameter") <- NULL
     attr(test, "dimension") <- NULL
     attr(test, "label") <- NULL
     ans <- fit1@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit1@fit$summary)), ]
@@ -675,6 +774,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
                                       "phi | cov63", "phi | cov64",
                                       "theta | (Intercept)", "theta | cov42", "theta | cov43",
                                       "psi | (Intercept)")))
+    attr(test, "parameter") <- NULL
     attr(test, "dimension") <- NULL
     attr(test, "label") <- NULL
     ans <- fit2@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit2@fit$summary)), ]
@@ -694,6 +794,7 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
                                      "phi | cov63", "phi | cov64",
                                      "theta | (Intercept)", "theta | cov42", "theta | cov43",
                                      "psi | (Intercept)")))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   ans <- fit1@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit1@fit$summary)), ]
@@ -709,12 +810,250 @@ test_that("Extracted tables and attributes are correct when proper parameter nam
                                      "phi | cov63", "phi | cov64",
                                      "theta | (Intercept)", "theta | cov42", "theta | cov43",
                                      "psi | (Intercept)")))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   ans <- fit2@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit2@fit$summary)), ]
   expect_identical(test, ans)
 
 })
+
+test_that("Option for dataframe output works", {
+  ## Tests for cases when dimension labels are fully supplied (use fit2)
+  for (param in lpar) {
+    test <- try(get_post_summary(fit2, param, output_dataframe = TRUE),
+                silent = TRUE)
+
+    if (class(test) == "try-error") {
+      expect_error(get_post_summary(fit2, param, output_dataframe = TRUE),
+                   sprintf("%s is not included in the fitted model", param))
+    } else {
+      ans_arr <- get_post_summary(fit2, param, output_dataframe = FALSE)
+
+      if (is.null(dim(ans_arr))) {
+        summary_df <- data.frame(matrix(ans_arr, nrow = 1))
+        colnames(summary_df) <- names(ans_arr)
+        rownames(summary_df) <- param
+      } else {
+        summary_df <- data.frame(ans_arr)
+        colnames(summary_df) <- colnames(ans_arr)
+      }
+
+      if (length(attributes(ans_arr)$label) == 1) {
+        label_df <- expand.grid(attributes(ans_arr)$label[[1]])
+      }
+      if (length(attributes(ans_arr)$label) == 2) {
+        if (param == "rho") {
+          idx1 <- unlist(
+            sapply(seq_along(attributes(ans_arr)$label[[1]]), seq)
+          )
+          idx2 <- unlist(
+            sapply(seq_along(attributes(ans_arr)$label[[1]]), \(x) rep(x + 1, x))
+          )
+          label_df <- data.frame(
+            attributes(ans_arr)$label[[1]][idx1],
+            attributes(ans_arr)$label[[2]][idx2]
+          )
+        } else {
+          label_df <- expand.grid(attributes(ans_arr)$label[[1]],
+                                  attributes(ans_arr)$label[[2]])
+        }
+      }
+      if (length(attributes(ans_arr)$label) == 3) {
+        label_df <- expand.grid(attributes(ans_arr)$label[[1]],
+                                attributes(ans_arr)$label[[2]],
+                                attributes(ans_arr)$label[[3]])
+      }
+      for (i in seq_len(ncol(label_df))) {
+        label_df[[i]] <- factor(label_df[[i]])
+      }
+      colnames(label_df) <- attributes(ans_arr)$dimension
+
+      ans <- data.frame(Parameter = factor(param), label_df, summary_df)
+      colnames(ans)[colnames(ans) == "X2.5."] <- "2.5%"
+      colnames(ans)[colnames(ans) == "X25."] <- "25%"
+      colnames(ans)[colnames(ans) == "X50."] <- "50%"
+      colnames(ans)[colnames(ans) == "X75."] <- "75%"
+      colnames(ans)[colnames(ans) == "X97.5."] <- "97.5%"
+
+      expect_identical(test, ans)
+
+      # Tests for label part
+      if (nrow(test) > 1) {
+        if (length(attributes(ans_arr)$label) == 1) {
+          label_ans <- sprintf(
+            "%s[%s]",
+            param,
+            match(label_df[[1]], attributes(ans_arr)$label[[1]])
+          )
+        }
+        if (length(attributes(ans_arr)$label) == 2) {
+          label_ans <- sprintf(
+            "%s[%s,%s]",
+            param,
+            match(label_df[[1]], attributes(ans_arr)$label[[1]]),
+            match(label_df[[2]], attributes(ans_arr)$label[[2]])
+          )
+        }
+        if (length(attributes(ans_arr)$label) == 3) {
+          label_ans <- sprintf(
+            "%s[%s,%s,%s]",
+            param,
+            match(label_df[[1]], attributes(ans_arr)$label[[1]]),
+            match(label_df[[2]], attributes(ans_arr)$label[[2]]),
+            match(label_df[[3]], attributes(ans_arr)$label[[3]])
+          )
+        }
+      } else {
+        label_ans <- param
+      }
+
+      expect_identical(rownames(test), label_ans)
+
+    }
+  }
+
+  ## Tests for cases when species/site/replicate labels are NULL (use fit1)
+  get_label_df <- function(x, fit, parameter) {
+    get_label <- function(i) {
+      if (is.null(attributes(x)$label[[i]])) {
+        if (attributes(x)$dimension[[i]] == "Species") {
+          seq_len(dim(get_data(fit, "y"))[1])
+        } else if (attributes(x)$dimension[[i]] == "Site") {
+          seq_len(dim(get_data(fit, "y"))[2])
+        } else if (attributes(x)$dimension[[i]] == "Replicate") {
+          seq_len(dim(get_data(fit, "y"))[3])
+        }
+      } else {
+        attributes(x)$label[[i]]
+      }
+    }
+
+    if (length(attributes(x)$dimension) == 1) {
+      label_df <- expand.grid(get_label(1))
+    }
+    if (length(attributes(x)$dimension) == 2) {
+      if (parameter == "rho") {
+        idx1 <- unlist(
+          sapply(seq_along(attributes(x)$label[[1]]), seq)
+        )
+        idx2 <- unlist(
+          sapply(seq_along(attributes(x)$label[[1]]), \(n) rep(n + 1, n))
+        )
+        label_df <- data.frame(
+          attributes(x)$label[[1]][idx1],
+          attributes(x)$label[[2]][idx2]
+        )
+      } else {
+        label_df <- expand.grid(get_label(1),
+                                get_label(2))
+      }
+    }
+    if (length(attributes(x)$dimension) == 3) {
+      label_df <- expand.grid(get_label(1),
+                              get_label(2),
+                              get_label(3))
+    }
+    for (i in seq_len(ncol(label_df))) {
+      label_df[[i]] <- factor(label_df[[i]])
+    }
+    colnames(label_df) <- attributes(x)$dimension
+
+    label_df
+  }
+
+  for (param in lpar) {
+    test <- try(get_post_summary(fit1, param, output_dataframe = TRUE),
+                silent = TRUE)
+
+    if (class(test) == "try-error") {
+      expect_error(get_post_summary(fit1, param, output_dataframe = TRUE),
+                   sprintf("%s is not included in the fitted model", param))
+    } else {
+      summary_df <- get_post_summary(fit1, param)
+      if (is.null(dim(summary_df))) {
+        label_df <- get_label_df(summary_df, fit1, param)
+
+        summary_df <- matrix(summary_df, nrow = 1)
+        colnames(summary_df) <- names(get_post_summary(fit1, param))
+        rownames(summary_df) <- param
+        attr(summary_df, "dimension") <-
+          attributes(get_post_summary(fit1, param))$dimension
+        attr(summary_df, "label") <-
+          attributes(get_post_summary(fit1, param))$label
+      } else {
+        label_df <- get_label_df(summary_df, fit1, param)
+      }
+
+      ans <- data.frame(Parameter = factor(param), label_df, summary_df)
+      colnames(ans)[colnames(ans) == "X2.5."] <- "2.5%"
+      colnames(ans)[colnames(ans) == "X25."] <- "25%"
+      colnames(ans)[colnames(ans) == "X50."] <- "50%"
+      colnames(ans)[colnames(ans) == "X75."] <- "75%"
+      colnames(ans)[colnames(ans) == "X97.5."] <- "97.5%"
+
+      expect_identical(test, ans)
+
+      # Tests for label part
+      if (nrow(test) > 1) {
+        if (length(attributes(summary_df)$dimension) == 1) {
+          if (is.null(attributes(summary_df)$label[[1]])) {
+            label1 <- label_df[[1]]
+          } else {
+            label1 <- match(label_df[[1]], attributes(summary_df)$label[[1]])
+          }
+
+          label_ans <- sprintf(
+            "%s[%s]", param, label1
+          )
+        }
+        if (length(attributes(summary_df)$dimension) == 2) {
+          if (is.null(attributes(summary_df)$label[[1]])) {
+            label1 <- label_df[[1]]
+          } else {
+            label1 <- match(label_df[[1]], attributes(summary_df)$label[[1]])
+          }
+          if (is.null(attributes(summary_df)$label[[2]])) {
+            label2 <- label_df[[2]]
+          } else {
+            label2 <- match(label_df[[2]], attributes(summary_df)$label[[2]])
+          }
+
+          label_ans <- sprintf(
+            "%s[%s,%s]", param, label1, label2
+          )
+        }
+        if (length(attributes(summary_df)$dimension) == 3) {
+          if (is.null(attributes(summary_df)$label[[1]])) {
+            label1 <- label_df[[1]]
+          } else {
+            label1 <- match(label_df[[1]], attributes(summary_df)$label[[1]])
+          }
+          if (is.null(attributes(summary_df)$label[[2]])) {
+            label2 <- label_df[[2]]
+          } else {
+            label2 <- match(label_df[[2]], attributes(summary_df)$label[[2]])
+          }
+          if (is.null(attributes(summary_df)$label[[3]])) {
+            label3 <- label_df[[3]]
+          } else {
+            label3 <- match(label_df[[3]], attributes(summary_df)$label[[3]])
+          }
+
+          label_ans <- sprintf(
+            "%s[%s,%s,%s]", param, label1, label2, label3
+          )
+        }
+      } else {
+        label_ans <- param
+      }
+
+      expect_identical(rownames(test), label_ans)
+
+    }
+  }
+})
+
 test_that("$label$Effects attributes for alpha/beta/gamma are given correctly when site_cov or repl_cov is specified for shared parameters", {
   ## Tests for alpha
   i <- 6
@@ -723,6 +1062,7 @@ test_that("$label$Effects attributes for alpha/beta/gamma are given correctly wh
   expect_identical(attributes(test)$label,
                    list(Species = dimnames(data_named@y)[[1]],
                         Effects = "(Intercept)"))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   ans <- fit3@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit3@fit$summary)), ]
@@ -735,6 +1075,7 @@ test_that("$label$Effects attributes for alpha/beta/gamma are given correctly wh
   expect_identical(attributes(test)$label,
                    list(Species = dimnames(data_named@y)[[1]],
                         Effects = "(Intercept)"))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   ans <- fit3@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit3@fit$summary)), ]
@@ -747,6 +1088,7 @@ test_that("$label$Effects attributes for alpha/beta/gamma are given correctly wh
   expect_identical(attributes(test)$label,
                    list(Species = dimnames(data_named@y)[[1]],
                         Effects = "(Intercept)"))
+  attr(test, "parameter") <- NULL
   attr(test, "dimension") <- NULL
   attr(test, "label") <- NULL
   ans <- fit3@fit$summary[grep(paste0(lpar[i], "\\["), rownames(fit3@fit$summary)), ]

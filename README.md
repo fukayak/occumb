@@ -3,8 +3,8 @@
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/fukayak/occumb/workflows/R-CMD-check/badge.svg)](https://github.com/fukayak/occumb/actions)
 [![CRAN status](https://www.r-pkg.org/badges/version/occumb)](https://CRAN.R-project.org/package=occumb)
-[![](http://cranlogs.r-pkg.org/badges/grand-total/occumb)](https://cran.r-project.org/package=occumb)
-[![](http://cranlogs.r-pkg.org/badges/last-month/occumb)](https://cran.r-project.org/package=occumb)
+[![Total downloads](http://cranlogs.r-pkg.org/badges/grand-total/occumb)](http://cranlogs.r-pkg.org/badges/grand-total/occumb)
+[![Monthly downloads](http://cranlogs.r-pkg.org/badges/last-month/occumb)](http://cranlogs.r-pkg.org/badges/last-month/occumb)
 [![Codecov test coverage](https://codecov.io/gh/fukayak/occumb/graph/badge.svg)](https://app.codecov.io/gh/fukayak/occumb)
 <!-- badges: end -->
 
