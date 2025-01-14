@@ -13,7 +13,7 @@ parameters from a model-fit object."><meta name="robots" content="noindex"></hea
 
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.1.0.9011</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.1.0.9012</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,13 +56,15 @@ parameters from a model-fit object.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_post_samples</span><span class="op">(</span></span>
 <span>  <span class="va">fit</span>,</span>
 <span>  parameter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"z"</span>, <span class="st">"pi"</span>, <span class="st">"phi"</span>, <span class="st">"theta"</span>, <span class="st">"psi"</span>, <span class="st">"alpha"</span>, <span class="st">"beta"</span>, <span class="st">"gamma"</span>,</span>
-<span>    <span class="st">"alpha_shared"</span>, <span class="st">"beta_shared"</span>, <span class="st">"gamma_shared"</span>, <span class="st">"Mu"</span>, <span class="st">"sigma"</span>, <span class="st">"rho"</span><span class="op">)</span></span>
+<span>    <span class="st">"alpha_shared"</span>, <span class="st">"beta_shared"</span>, <span class="st">"gamma_shared"</span>, <span class="st">"Mu"</span>, <span class="st">"sigma"</span>, <span class="st">"rho"</span><span class="op">)</span>,</span>
+<span>  output_dataframe <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">get_post_summary</span><span class="op">(</span></span>
 <span>  <span class="va">fit</span>,</span>
 <span>  parameter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"z"</span>, <span class="st">"pi"</span>, <span class="st">"phi"</span>, <span class="st">"theta"</span>, <span class="st">"psi"</span>, <span class="st">"alpha"</span>, <span class="st">"beta"</span>, <span class="st">"gamma"</span>,</span>
-<span>    <span class="st">"alpha_shared"</span>, <span class="st">"beta_shared"</span>, <span class="st">"gamma_shared"</span>, <span class="st">"Mu"</span>, <span class="st">"sigma"</span>, <span class="st">"rho"</span><span class="op">)</span></span>
+<span>    <span class="st">"alpha_shared"</span>, <span class="st">"beta_shared"</span>, <span class="st">"gamma_shared"</span>, <span class="st">"Mu"</span>, <span class="st">"sigma"</span>, <span class="st">"rho"</span><span class="op">)</span>,</span>
+<span>  output_dataframe <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -78,21 +80,29 @@ parameters from a model-fit object.</p>
 <dd><p>A string of parameter name. See Details for possible choices
 and corresponding parameters.</p></dd>
 
+
+<dt id="arg-output-dataframe">output_dataframe<a class="anchor" aria-label="anchor" href="#arg-output-dataframe"></a></dt>
+<dd><p>If <code>TRUE</code>, results are returned in data frame
+format.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p><code>get_post_samples()</code> returns a vector, matrix, or array of posterior
-samples for a selected parameter.</p>
-<p><code>get_post_summary()</code> returns a table (matrix) of the posterior summary
-of the selected parameters. The elements of the posterior summary are the
-same as those obtained with the <code><a href="https://kenkellner.com/jagsUI/reference/jags.html" class="external-link">jags</a>()</code> function in the
-<code>jagsUI</code> package: they include the mean, standard deviation, percentiles
-of posterior samples; the <code>Rhat</code> statistic; the effective sample size,
-<code>n.eff</code>; <code>overlap0</code>, which checks if 0 falls in the parameter's 95%
-credible interval; and the proportion of the posterior with the same sign
-as the mean, <code>f</code>.</p>
+    <p>By default, <code>get_post_samples()</code> returns a vector, matrix, or array of
+posterior samples for a selected parameter.</p>
+<p><code>get_post_summary()</code> returns, by default, a table (matrix) of the
+posterior summary of the selected parameters. The elements of the posterior
+summary are the same as those obtained with the <code><a href="https://kenkellner.com/jagsUI/reference/jags.html" class="external-link">jags</a>()</code>
+function in the <code>jagsUI</code> package: they include the mean, standard
+deviation, percentiles of posterior samples; the <code>Rhat</code> statistic;
+the effective sample size, <code>n.eff</code>; <code>overlap0</code>, which checks if 0
+falls in the parameter's 95% credible interval; and the proportion of the
+posterior with the same sign as the mean, <code>f</code>.</p>
 <p>The <code>dimension</code> and <code>label</code> attributes of the output object
 provide information regarding the dimensions of the parameter.</p>
+<p>When <code>output_dataframe = TRUE</code>, the results are returned in data
+frame format where the attributes obtained when
+<code>output_dataframe = FALSE</code> are incorporated into the table.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -153,7 +163,8 @@ probabilities (<code>psi</code>).</p></dd>
 </dl><p>See <a href="https://fukayak.github.io/occumb/articles/model_specification.html">the package vignette</a>
 for details of these parameters.</p>
 <p>The parameter may have dimensions corresponding to species, sites,
-replicates, and effects (covariates) and the <code>dimension</code> and <code>label</code>
+replicates, and effects (covariates), and when
+<code>output_dataframe = FALSE</code>, the <code>dimension</code> and <code>label</code>
 attributes are added to the output object to inform these dimensions.
 If the sequence read count data <code>y</code> have species, site, or replicate
 names appended as the <code>dimnames</code> attribute (see Details in
@@ -294,6 +305,8 @@ attribute of the returned object.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [39,]    1    1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [40,]    1    1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"parameter")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "z"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"dimension")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Sample"  "Species" "Site"   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"label")</span>
@@ -310,6 +323,9 @@ attribute of the returned object.</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">post_sample_z</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $dim</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 40  2  2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $parameter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "z"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $dimension</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Sample"  "Species" "Site"   </span>
@@ -333,6 +349,8 @@ attribute of the returned object.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> z[2,1]    1  0    1   1   1   1     1   NA     1        0 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> z[1,2]    1  0    1   1   1   1     1   NA     1        0 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> z[2,2]    1  0    1   1   1   1     1   NA     1        0 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"parameter")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "z"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"dimension")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Species" "Site"   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"label")</span>
@@ -355,6 +373,9 @@ attribute of the returned object.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "mean"     "sd"       "2.5%"     "25%"      "50%"      "75%"     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "97.5%"    "Rhat"     "n.eff"    "overlap0" "f"       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $parameter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "z"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $dimension</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Species" "Site"   </span>
