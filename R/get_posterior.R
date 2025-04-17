@@ -144,7 +144,7 @@ check_args_get_posterior <- function(fit, parameter) {
 .get_post_samples <- function(fit, parameter, output_dataframe) {
 
   # Function for converting the resulting array to dataframe
-  array_to_df <- function(x) {
+  array_to_df <- function(x, parameter) {
     out_df <- as.data.frame.table(x)
     colnames(out_df) <- c(attributes(x)$dimension, "Value")
 
@@ -172,7 +172,7 @@ check_args_get_posterior <- function(fit, parameter) {
   out <- add_attributes(samples_extracted, fit, parameter, "samples")
 
   if (output_dataframe) {
-    array_to_df(out)
+    array_to_df(out, parameter)
   } else {
     out
   }
