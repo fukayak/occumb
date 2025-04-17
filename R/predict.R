@@ -50,65 +50,83 @@ setMethod("predict", signature(object = "occumbFit"),
     scale     <- match.arg(scale)
     type      <- match.arg(type)
 
-    if (missing(newdata) | is.null(newdata)) {
-      data <- object@data
-    } else {
-      check_newdata(newdata, object)
-      data <- newdata
-      if (!identical(dimnames(newdata@y)[[1]], dimnames(object@data@y)[[1]])) {
-        dimnames(data@y)[[1]] <- dimnames(object@data@y)[[1]]
-      }
-    }
-
-    inv_link <- switch(parameter,
-                       phi   = exp,
-                       theta = stats::plogis,
-                       psi   = stats::plogis)
-
-    post_pred_link <- get_post_pred_link(object, data, parameter)
-
-    if (type == "quantiles") {
-
-      out <- apply(post_pred_link,
-                   2:length(dim(post_pred_link)),
-                   stats::quantile, probs = c(0.5, 0.025, 0.975))
-
-      if (scale == "response") {
-        out <- inv_link(out)
-      }
-
-    } else if (type == "mean") {
-
-      if (scale == "response") {
-        out <- apply(inv_link(post_pred_link),
-                     2:length(dim(post_pred_link)),
-                     mean)
-      } else if (scale == "link") {
-        out <- apply(post_pred_link,
-                     2:length(dim(post_pred_link)),
-                     mean)
-      }
-
-      if (is.null(dim(out))) {
-        out <- array(out, c(1, length(out)))
-      } else {
-        out <- array(out, c(1, dim(out)))
-      }
-
-    } else if (type == "samples") {
-
-      out <- post_pred_link
-
-      if (scale == "response") {
-        out <- inv_link(out)
-      }
-
-    }
-
-    return(add_attributes_predict(out, parameter, scale, type, data))
+    out_without_attributes <-
+      get_predict(object, newdata, parameter, scale, type)
+    out <- add_attributes_predict(out_without_attributes,
+                                  object,
+                                  newdata,
+                                  parameter,
+                                  scale,
+                                  type)
+    return(out)
   }
 )
 
+get_predict <- function(object, newdata, parameter, scale, type) {
+
+  set_inv_link <- function(parameter) {
+    switch(parameter,
+           phi   = exp,
+           theta = stats::plogis,
+           psi   = stats::plogis)
+  }
+
+  data           <- set_data_predict(newdata, object)
+  post_pred_link <- get_post_pred_link(object, data, parameter)
+  inv_link       <- set_inv_link(parameter)
+
+  if (type == "quantiles") {
+    result <- apply(post_pred_link,
+                    2:length(dim(post_pred_link)),
+                    stats::quantile, probs = c(0.5, 0.025, 0.975))
+
+    if (scale == "response") {
+      result <- inv_link(result)
+    }
+  }
+
+  if (type == "mean") {
+    if (scale == "response") {
+      result <- apply(inv_link(post_pred_link),
+                      2:length(dim(post_pred_link)),
+                      mean)
+    }
+    if (scale == "link") {
+      result <- apply(post_pred_link,
+                      2:length(dim(post_pred_link)),
+                      mean)
+    }
+
+    if (is.null(dim(result))) {
+      result <- array(result, c(1, length(result)))
+    } else {
+      result <- array(result, c(1, dim(result)))
+    }
+  }
+
+  if (type == "samples") {
+    result <- post_pred_link
+
+    if (scale == "response") {
+      result <- inv_link(result)
+    }
+  }
+
+  return(result)
+}
+
+set_data_predict <- function(newdata, object) {
+  if (missing(newdata) | is.null(newdata)) {
+    return(object@data)
+  }
+
+  check_newdata(newdata, object)
+  data <- newdata
+  if (!identical(dimnames(newdata@y)[[1]], dimnames(object@data@y)[[1]])) {
+    dimnames(data@y)[[1]] <- dimnames(object@data@y)[[1]]
+  }
+  return(data)
+}
 
 check_newdata <- function(newdata, object) {
 
@@ -369,7 +387,7 @@ get_post_pred_link <- function(object, data, parameter) {
 }
 
 
-add_attributes_predict <- function(x, parameter, scale, type, data) {
+add_attributes_predict <- function(x, object, newdata, parameter, scale, type) {
 
   label_pred <- function(x, data) {
 
@@ -394,6 +412,8 @@ add_attributes_predict <- function(x, parameter, scale, type, data) {
 
     return(out)
   }
+
+  data <- set_data_predict(newdata, object)
 
   attr(x, "parameter") <- parameter
   attr(x, "scale")     <- scale
