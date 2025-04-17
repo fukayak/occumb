@@ -18,6 +18,8 @@ NULL
 #'  upper limits of the 95% credible interval of the prediction.
 #'  \code{type = "mean"} returns the posterior mean of the prediction.
 #'  \code{type = "samples"} returns the posterior samples of the prediction.
+#' @param output_dataframe If \code{TRUE}, results are returned in data frame
+#'  format.
 #' @return
 #'  Predictions are obtained as a matrix or array that can have dimensions
 #'  corresponding to statistics (or samples), species, sites, and replicates.
@@ -27,6 +29,10 @@ NULL
 #'  names appended as the \code{dimnames} attribute (see Details in
 #'  \code{\link{occumbData}()}), they will be copied into the \code{label}
 #'  attribute of the returned object.
+#'
+#'  When \code{output_dataframe = TRUE}, the results are returned in data
+#'  frame format where the attributes obtained when
+#'  \code{output_dataframe = FALSE} are incorporated into the table.
 #' @details
 #'  Applying \code{predict()} to an \code{occumbFit} object generates predictions
 #'  for the specified parameter (\code{phi}, \code{theta}, or \code{psi}) based
@@ -44,21 +50,24 @@ setMethod("predict", signature(object = "occumbFit"),
            newdata = NULL,
            parameter = c("phi", "theta", "psi"),
            scale = c("response", "link"),
-           type = c("quantiles", "mean", "samples")) {
+           type = c("quantiles", "mean", "samples"),
+           output_dataframe = FALSE) {
 
     parameter <- match.arg(parameter)
     scale     <- match.arg(scale)
     type      <- match.arg(type)
 
-    out_without_attributes <-
-      get_predict(object, newdata, parameter, scale, type)
-    out <- add_attributes_predict(out_without_attributes,
-                                  object,
-                                  newdata,
-                                  parameter,
-                                  scale,
-                                  type)
-    return(out)
+    result_array <- object |>
+      get_predict(newdata, parameter, scale, type) |>
+      add_attributes_predict(object, newdata, parameter, scale, type)
+
+    if (output_dataframe) {
+      result_df <- result_array |>
+        array_to_df_predict(parameter, scale, type)
+      return(result_df)
+    } else {
+      return(result_array)
+    }
   }
 )
 
@@ -442,4 +451,51 @@ add_attributes_predict <- function(x, object, newdata, parameter, scale, type) {
   }
 
   return(x)
+}
+
+array_to_df_predict <- function(x_array, parameter, scale, type) {
+
+  convert_to_df <- function(x_array) {
+    x_df <- as.data.frame.table(x_array)
+    colnames(x_df) <- c(attributes(x_array)$dimension, "Value")
+    return(x_df)
+  }
+
+  assign_labels <- function(x_df_without_labels, x_array, start) {
+    result <- x_df_without_labels
+
+    for (i in start:(ncol(x_df_without_labels) - 1)) {
+      if (is.null(attributes(x_array)$label[[i]])) {
+        levels(result[, i]) <- seq_along(levels(x_df_without_labels[, i]))
+      } else {
+        levels(result[, i]) <- attributes(x_array)$label[[i]]
+      }
+    }
+
+    return(result)
+  }
+
+  if (type == "quantiles") {
+    x_df <- x_array |>
+      convert_to_df() |>
+      assign_labels(x_array, 2)
+  }
+
+  if (type == "mean") {
+    x_df_without_labels <- x_array |>
+      convert_to_df()
+
+    x_df_without_labels$Statistics <- factor("mean")
+
+    x_df <- x_df_without_labels |>
+      assign_labels(x_array, 2)
+  }
+
+  if (type == "samples") {
+    x_df <- x_array |>
+      convert_to_df() |>
+      assign_labels(x_array, 1)
+  }
+
+  return(data.frame(Parameter = factor(parameter), Scale = factor(scale), x_df))
 }
