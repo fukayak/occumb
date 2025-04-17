@@ -34,16 +34,29 @@ jobs:
       - name: Install jags (windows-latest)
         if: runner.os == 'Windows'
         run: |
-          curl.exe -o wjags.exe --url https://deac-fra.dl.sourceforge.net/project/mcmc-jags/JAGS/4.x/Windows/JAGS-4.3.1.exe
+          curl.exe -L -o wjags.exe --url https://deac-fra.dl.sourceforge.net/project/mcmc-jags/JAGS/4.x/Windows/JAGS-4.3.1.exe
           wjags.exe /S
           del wjags.exe
         shell: cmd
 
-      - name: Install jags (macOS-latest)
-        if: runner.os == 'macOS'
-        run : |
-            # rm '/usr/local/bin/gfortran'
-              brew install jags
+      - name: Install JAGS for macOS
+        if: matrix.config.os == 'macos-latest'
+        run: |
+          set -e
+          if [[ "$(uname -m)" == "arm64" ]]; then
+            echo "Detected macOS-arm64 (Apple Silicon). Installing JAGS using .pkg file."
+
+            # Download the .pkg file
+            curl -L -o JAGS-4.3.2.pkg https://sourceforge.net/projects/mcmc-jags/files/JAGS/4.x/Mac%20OS%20X/JAGS-4.3.2.pkg/download
+
+            # Install the package
+            sudo installer -pkg JAGS-4.3.2.pkg -target /
+
+          else
+            echo "Using Homebrew for JAGS installation on macOS Intel."
+            brew update
+            brew install jags
+          fi
 
       - uses: r-lib/actions/setup-pandoc@v2
 
