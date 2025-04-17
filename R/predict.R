@@ -50,7 +50,7 @@ setMethod("predict", signature(object = "occumbFit"),
     scale     <- match.arg(scale)
     type      <- match.arg(type)
 
-    if (missing(newdata)) {
+    if (missing(newdata) | is.null(newdata)) {
       data <- object@data
     } else {
       check_newdata(newdata, object)
