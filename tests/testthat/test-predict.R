@@ -2,8 +2,10 @@
 I <- 2
 J <- 3
 K <- 4
-y <- array(sample.int(I * J * K), dim = c(I, J, K))
+y <- y_unnamed <- array(sample.int(I * J * K), dim = c(I, J, K))
 dimnames(y)[[1]] <- sprintf("species %s", 1:I)
+dimnames(y)[[2]] <- sprintf("site %s", 1:J)
+dimnames(y)[[3]] <- sprintf("replicate %s", 1:K)
 data <- occumbData(y = y,
                    spec_cov = list(cov1 = rnorm(I),
                                    cov2 = letters[1:I],
@@ -16,6 +18,20 @@ data <- occumbData(y = y,
                    repl_cov = list(cov9 = matrix(rnorm(J * K), J, K),
                                    cov10 = matrix(letters[1:(J * K)], J, K),
                                    cov11 = matrix(rep(c(TRUE, FALSE), J * K / 2), J, K)))
+data_unnamed <-
+  occumbData(y = y_unnamed,
+             spec_cov = list(cov1 = rnorm(I),
+                             cov2 = letters[1:I],
+                             cov3 = factor(1:I),
+                             cov4 = c(TRUE, FALSE)),
+             site_cov = list(cov5 = rnorm(J),
+                             cov6 = letters[1:J],
+                             cov7 = factor(1:J),
+                             cov8 = c(TRUE, FALSE, TRUE)),
+             repl_cov = list(cov9 = matrix(rnorm(J * K), J, K),
+                             cov10 = matrix(letters[1:(J * K)], J, K),
+                             cov11 = matrix(rep(c(TRUE, FALSE), J * K / 2), J, K)))
+
 
 ### Tests for check_newdata() --------------------------------------------------
 test_that("check_newdata() works correctly", {
@@ -2821,4 +2837,282 @@ test_that("Prediction and addition of attributes for psi works correctly", {
     attr(pred, "dimension") <- attr(pred, "label") <- NULL
 
   expect_equal(pred, ans)
+})
+
+test_that("Option for dataframe output works", {
+
+  test_dataframe_output <- function(fit, parameter, scale, type) {
+
+    pred <- predict(fit, parameter = parameter, scale = scale, type = type,
+                    output_dataframe = TRUE)
+    pred_array <- predict(fit, parameter = parameter, scale = scale, type = type,
+                          output_dataframe = FALSE)
+    parameter_dimension <- 
+      eval(parse(text = paste0("get_modargs(fit)$", parameter)))
+
+    multiplier_type <- switch(type,
+                              quantiles = 3,
+                              mean = 1,
+                              samples = N)
+    multiplier_parameter_dimension <- switch(parameter_dimension,
+                                             i = I,
+                                             ij = I * J,
+                                             ijk = I * J * K)
+    colnames_dimension <- switch(parameter_dimension,
+                                 i = c("Species"),
+                                 ij = c("Species", "Sites"),
+                                 ijk = c("Species", "Sites", "Replicates"))
+
+    nrows_ans <- multiplier_type * multiplier_parameter_dimension
+    ncols_ans <- switch(parameter_dimension,
+                        i = 5,
+                        ij = 6,
+                        ijk = 7)
+    colnames_ans <- if (type == "samples") {
+      c(c("Parameter", "Scale", "Samples"), colnames_dimension, "Value")
+    } else {
+      c(c("Parameter", "Scale", "Statistics"), colnames_dimension, "Value")
+    }
+
+    Parameter_ans <- factor(rep(parameter, nrows_ans))
+    Scale_ans <- factor(rep(attributes(pred_array)$scale, nrows_ans))
+    Statistics_Samples_ans <- if (type == "samples") {
+      factor(rep(seq_len(N), multiplier_parameter_dimension))
+    } else {
+      factor(rep(attributes(pred_array)$label$Statistics,
+                 multiplier_parameter_dimension),
+             levels = attributes(pred_array)$label$Statistics)
+    }
+
+    # Tests for object structure
+    checkmate::expect_data_frame(pred, nrows = nrows_ans, ncols = ncols_ans)
+    expect_identical(colnames(pred), colnames_ans)
+
+    # Tests for object contents
+    expect_identical(pred$Parameter, Parameter_ans)
+    expect_identical(pred$Scale, Scale_ans)
+    expect_identical(pred[[3]], Statistics_Samples_ans)
+    expect_identical(pred$Value, c(pred_array))
+
+    if (is.null(attributes(pred_array)$label$Species)) {
+      label_spec <- seq_len(I)
+    } else {
+      label_spec <- attributes(pred_array)$label$Species
+    }
+
+    if (is.null(attributes(pred_array)$label$Sites)) {
+      label_site <- seq_len(J)
+    } else {
+      label_site <- attributes(pred_array)$label$Sites
+    }
+
+    if (is.null(attributes(pred_array)$label$Replicates)) {
+      label_repl <- seq_len(K)
+    } else {
+      label_repl <- attributes(pred_array)$label$Replicates
+    }
+
+    if (parameter_dimension == "i") {
+      labels_ans <- expand.grid(seq_len(multiplier_type),
+                                label_spec)
+
+      Species_ans <- factor(labels_ans[, 2])
+      if (!is.null(attributes(pred_array)$label$Species))
+        levels(Species_ans) <- attributes(pred_array)$label$Species
+
+      expect_identical(pred$Species, Species_ans)
+    }
+    if (parameter_dimension == "ij") {
+      labels_ans <- expand.grid(seq_len(multiplier_type),
+                                label_spec,
+                                label_site)
+
+      Species_ans <- factor(labels_ans[, 2])
+      if (!is.null(attributes(pred_array)$label$Species))
+        levels(Species_ans) <- attributes(pred_array)$label$Species
+
+      expect_identical(pred$Species, Species_ans)
+
+      Sites_ans <- factor(labels_ans[, 3])
+      if (!is.null(attributes(pred_array)$label$Sites))
+        levels(Sites_ans) <- attributes(pred_array)$label$Sites
+
+      expect_identical(pred$Sites, Sites_ans)
+    }
+    if (parameter_dimension == "ijk") {
+      labels_ans <- expand.grid(seq_len(multiplier_type),
+                                label_spec,
+                                label_site,
+                                label_repl)
+
+      Species_ans <- factor(labels_ans[, 2])
+      if (!is.null(attributes(pred_array)$label$Species))
+        levels(Species_ans) <- attributes(pred_array)$label$Species
+
+      expect_identical(pred$Species, Species_ans)
+
+      Sites_ans <- factor(labels_ans[, 3])
+      if (!is.null(attributes(pred_array)$label$Sites))
+        levels(Sites_ans) <- attributes(pred_array)$label$Sites
+
+      expect_identical(pred$Sites, Sites_ans)
+
+      Replicates_ans <- factor(labels_ans[, 4])
+      if (!is.null(attributes(pred_array)$label$Replicates))
+        levels(Replicates_ans) <- attributes(pred_array)$label$Replicates
+
+      expect_identical(pred$Replicates, Replicates_ans)
+    }
+  }
+
+  N <- 10
+
+  ## type = "i"
+  fit <- occumb(data = data,
+                n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = N,
+                verbose = FALSE)
+
+  fit_unnamed <- occumb(data = data_unnamed,
+                        n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = N,
+                        verbose = FALSE)
+
+  # Tests for phi
+  test_dataframe_output(fit,         "phi", "link", "quantiles")
+  test_dataframe_output(fit,         "phi", "link", "mean")
+  test_dataframe_output(fit,         "phi", "link", "samples")
+  test_dataframe_output(fit,         "phi", "response", "quantiles")
+  test_dataframe_output(fit,         "phi", "response", "mean")
+  test_dataframe_output(fit,         "phi", "response", "samples")
+  test_dataframe_output(fit_unnamed, "phi", "link", "quantiles")
+  test_dataframe_output(fit_unnamed, "phi", "link", "mean")
+  test_dataframe_output(fit_unnamed, "phi", "link", "samples")
+  test_dataframe_output(fit_unnamed, "phi", "response", "quantiles")
+  test_dataframe_output(fit_unnamed, "phi", "response", "mean")
+  test_dataframe_output(fit_unnamed, "phi", "response", "samples")
+
+  # Tests for theta
+  test_dataframe_output(fit,         "theta", "link", "quantiles")
+  test_dataframe_output(fit,         "theta", "link", "mean")
+  test_dataframe_output(fit,         "theta", "link", "samples")
+  test_dataframe_output(fit,         "theta", "response", "quantiles")
+  test_dataframe_output(fit,         "theta", "response", "mean")
+  test_dataframe_output(fit,         "theta", "response", "samples")
+  test_dataframe_output(fit_unnamed, "theta", "link", "quantiles")
+  test_dataframe_output(fit_unnamed, "theta", "link", "mean")
+  test_dataframe_output(fit_unnamed, "theta", "link", "samples")
+  test_dataframe_output(fit_unnamed, "theta", "response", "quantiles")
+  test_dataframe_output(fit_unnamed, "theta", "response", "mean")
+  test_dataframe_output(fit_unnamed, "theta", "response", "samples")
+
+  # Tests for psi
+  test_dataframe_output(fit,         "psi", "link", "quantiles")
+  test_dataframe_output(fit,         "psi", "link", "mean")
+  test_dataframe_output(fit,         "psi", "link", "samples")
+  test_dataframe_output(fit,         "psi", "response", "quantiles")
+  test_dataframe_output(fit,         "psi", "response", "mean")
+  test_dataframe_output(fit,         "psi", "response", "samples")
+  test_dataframe_output(fit_unnamed, "psi", "link", "quantiles")
+  test_dataframe_output(fit_unnamed, "psi", "link", "mean")
+  test_dataframe_output(fit_unnamed, "psi", "link", "samples")
+  test_dataframe_output(fit_unnamed, "psi", "response", "quantiles")
+  test_dataframe_output(fit_unnamed, "psi", "response", "mean")
+  test_dataframe_output(fit_unnamed, "psi", "response", "samples")
+
+  ## type = "ij"
+  fit <- occumb(data = data,
+                formula_phi = ~ cov5,
+                formula_theta = ~ cov5,
+                formula_psi = ~ cov5,
+                n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = N,
+                verbose = FALSE)
+
+  fit_unnamed <- occumb(data = data_unnamed,
+                        formula_phi = ~ cov5,
+                        formula_theta = ~ cov5,
+                        formula_psi = ~ cov5,
+                        n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = N,
+                        verbose = FALSE)
+
+  # Tests for phi
+  test_dataframe_output(fit,         "phi", "link", "quantiles")
+  test_dataframe_output(fit,         "phi", "link", "mean")
+  test_dataframe_output(fit,         "phi", "link", "samples")
+  test_dataframe_output(fit,         "phi", "response", "quantiles")
+  test_dataframe_output(fit,         "phi", "response", "mean")
+  test_dataframe_output(fit,         "phi", "response", "samples")
+  test_dataframe_output(fit_unnamed, "phi", "link", "quantiles")
+  test_dataframe_output(fit_unnamed, "phi", "link", "mean")
+  test_dataframe_output(fit_unnamed, "phi", "link", "samples")
+  test_dataframe_output(fit_unnamed, "phi", "response", "quantiles")
+  test_dataframe_output(fit_unnamed, "phi", "response", "mean")
+  test_dataframe_output(fit_unnamed, "phi", "response", "samples")
+
+  # Tests for theta
+  test_dataframe_output(fit,         "theta", "link", "quantiles")
+  test_dataframe_output(fit,         "theta", "link", "mean")
+  test_dataframe_output(fit,         "theta", "link", "samples")
+  test_dataframe_output(fit,         "theta", "response", "quantiles")
+  test_dataframe_output(fit,         "theta", "response", "mean")
+  test_dataframe_output(fit,         "theta", "response", "samples")
+  test_dataframe_output(fit_unnamed, "theta", "link", "quantiles")
+  test_dataframe_output(fit_unnamed, "theta", "link", "mean")
+  test_dataframe_output(fit_unnamed, "theta", "link", "samples")
+  test_dataframe_output(fit_unnamed, "theta", "response", "quantiles")
+  test_dataframe_output(fit_unnamed, "theta", "response", "mean")
+  test_dataframe_output(fit_unnamed, "theta", "response", "samples")
+
+  # Tests for psi
+  test_dataframe_output(fit,         "psi", "link", "quantiles")
+  test_dataframe_output(fit,         "psi", "link", "mean")
+  test_dataframe_output(fit,         "psi", "link", "samples")
+  test_dataframe_output(fit,         "psi", "response", "quantiles")
+  test_dataframe_output(fit,         "psi", "response", "mean")
+  test_dataframe_output(fit,         "psi", "response", "samples")
+  test_dataframe_output(fit_unnamed, "psi", "link", "quantiles")
+  test_dataframe_output(fit_unnamed, "psi", "link", "mean")
+  test_dataframe_output(fit_unnamed, "psi", "link", "samples")
+  test_dataframe_output(fit_unnamed, "psi", "response", "quantiles")
+  test_dataframe_output(fit_unnamed, "psi", "response", "mean")
+  test_dataframe_output(fit_unnamed, "psi", "response", "samples")
+
+  ## type = "ijk"
+  fit <- occumb(data = data,
+                formula_phi = ~ cov9,
+                formula_theta = ~ cov9,
+                n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = N,
+                verbose = FALSE)
+
+  fit_unnamed <- occumb(data = data_unnamed,
+                        formula_phi = ~ cov9,
+                        formula_theta = ~ cov9,
+                        n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = N,
+                        verbose = FALSE)
+
+  # Tests for phi
+  test_dataframe_output(fit,         "phi", "link", "quantiles")
+  test_dataframe_output(fit,         "phi", "link", "mean")
+  test_dataframe_output(fit,         "phi", "link", "samples")
+  test_dataframe_output(fit,         "phi", "response", "quantiles")
+  test_dataframe_output(fit,         "phi", "response", "mean")
+  test_dataframe_output(fit,         "phi", "response", "samples")
+  test_dataframe_output(fit_unnamed, "phi", "link", "quantiles")
+  test_dataframe_output(fit_unnamed, "phi", "link", "mean")
+  test_dataframe_output(fit_unnamed, "phi", "link", "samples")
+  test_dataframe_output(fit_unnamed, "phi", "response", "quantiles")
+  test_dataframe_output(fit_unnamed, "phi", "response", "mean")
+  test_dataframe_output(fit_unnamed, "phi", "response", "samples")
+
+  # Tests for theta
+  test_dataframe_output(fit,         "theta", "link", "quantiles")
+  test_dataframe_output(fit,         "theta", "link", "mean")
+  test_dataframe_output(fit,         "theta", "link", "samples")
+  test_dataframe_output(fit,         "theta", "response", "quantiles")
+  test_dataframe_output(fit,         "theta", "response", "mean")
+  test_dataframe_output(fit,         "theta", "response", "samples")
+  test_dataframe_output(fit_unnamed, "theta", "link", "quantiles")
+  test_dataframe_output(fit_unnamed, "theta", "link", "mean")
+  test_dataframe_output(fit_unnamed, "theta", "link", "samples")
+  test_dataframe_output(fit_unnamed, "theta", "response", "quantiles")
+  test_dataframe_output(fit_unnamed, "theta", "response", "mean")
+  test_dataframe_output(fit_unnamed, "theta", "response", "samples")
 })
