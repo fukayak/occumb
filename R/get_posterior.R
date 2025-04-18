@@ -258,14 +258,8 @@ check_args_get_posterior <- function(fit, parameter) {
 
   # Identify rows to extract
   rows_extract <- function(fit, parameter) {
-    # Get model arguments
-    margs <- set_modargs(stats::as.formula(fit@occumb_args$formula_phi),
-                         stats::as.formula(fit@occumb_args$formula_theta),
-                         stats::as.formula(fit@occumb_args$formula_psi),
-                         stats::as.formula(fit@occumb_args$formula_phi_shared),
-                         stats::as.formula(fit@occumb_args$formula_theta_shared),
-                         stats::as.formula(fit@occumb_args$formula_psi_shared),
-                         fit@data)
+
+    margs <- get_modargs(fit)
 
     pattern <- paste0(parameter, "\\[")
     if (parameter == "alpha_shared") {
@@ -298,14 +292,7 @@ check_args_get_posterior <- function(fit, parameter) {
 add_attributes <- function(obj, fit, parameter,
                            type = c("samples", "summary")) {
 
-  # Get model arguments
-  margs <- set_modargs(stats::as.formula(fit@occumb_args$formula_phi),
-                       stats::as.formula(fit@occumb_args$formula_theta),
-                       stats::as.formula(fit@occumb_args$formula_psi),
-                       stats::as.formula(fit@occumb_args$formula_phi_shared),
-                       stats::as.formula(fit@occumb_args$formula_theta_shared),
-                       stats::as.formula(fit@occumb_args$formula_psi_shared),
-                       fit@data)
+  margs <- get_modargs(fit)
 
   dimnames_y <- dimnames(fit@data@y)
 
