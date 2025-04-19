@@ -1037,4 +1037,13 @@ get_modargs <- function(occumbFit) {
               stats::as.formula(occumbFit@occumb_args$formula_psi_shared),
               occumbFit@data)
 }
+get_covariates <- function(occumbFit, parameter) {
+  eval(parse(text = sprintf("
+    set_covariates(occumbFit@data,
+                   formula(occumbFit@occumb_args$formula_%s),
+                   formula(occumbFit@occumb_args$formula_%s_shared),
+                   '%s')",
+    parameter, parameter, parameter)
+  ))
+}
 # -----------------------------------------------------------------------------

@@ -714,10 +714,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
                 n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = N,
                 verbose = FALSE)
 
-  list_cov <- set_covariates(data,
-                             formula(fit@occumb_args$formula_phi),
-                             formula(fit@occumb_args$formula_phi_shared),
-                             "phi")
+  list_cov <- get_covariates(fit, "phi")
   post_effect <- get_post_samples(fit, "alpha")
 
   pred_link <- matrix(nrow = N, ncol = I)
@@ -816,10 +813,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
                 n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
                 verbose = FALSE)
 
-  list_cov <- set_covariates(data,
-                             formula(fit@occumb_args$formula_phi),
-                             formula(fit@occumb_args$formula_phi_shared),
-                             "phi")
+  list_cov <- get_covariates(fit, "phi")
   post_effect <- get_post_samples(fit, "alpha")
 
   pred_link <- array(dim = c(N, I, J))
@@ -928,10 +922,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
                 n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
                 verbose = FALSE)
 
-  list_cov <- set_covariates(data,
-                             formula(fit@occumb_args$formula_phi),
-                             formula(fit@occumb_args$formula_phi_shared),
-                             "phi")
+  list_cov <- get_covariates(fit, "phi")
   post_effect <- get_post_samples(fit, "alpha")
 
   pred_link <- array(dim = c(N, I, J, K))
@@ -1054,10 +1045,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
                 n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
                 verbose = FALSE)
 
-  list_cov <- set_covariates(data,
-                             formula(fit@occumb_args$formula_phi),
-                             formula(fit@occumb_args$formula_phi_shared),
-                             "phi")
+  list_cov <- get_covariates(fit, "phi")
   post_effect <- get_post_samples(fit, "alpha")
   post_effect_shared <- get_post_samples(fit, "alpha_shared")
 
@@ -1158,10 +1146,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
                 n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
                 verbose = FALSE)
 
-  list_cov <- set_covariates(data,
-                             formula(fit@occumb_args$formula_phi),
-                             formula(fit@occumb_args$formula_phi_shared),
-                             "phi")
+  list_cov <- get_covariates(fit, "phi")
   post_effect <- get_post_samples(fit, "alpha")
   post_effect_shared <- get_post_samples(fit, "alpha_shared")
 
@@ -1263,10 +1248,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
                 n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
                 verbose = FALSE)
 
-  list_cov <- set_covariates(data,
-                             formula(fit@occumb_args$formula_phi),
-                             formula(fit@occumb_args$formula_phi_shared),
-                             "phi")
+  list_cov <- get_covariates(fit, "phi")
   post_effect <- get_post_samples(fit, "alpha")
   post_effect_shared <- get_post_samples(fit, "alpha_shared")
 
@@ -1378,10 +1360,7 @@ test_that("Prediction and addition of attributes for phi works correctly", {
                 n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
                 verbose = FALSE)
 
-  list_cov <- set_covariates(data,
-                             formula(fit@occumb_args$formula_phi),
-                             formula(fit@occumb_args$formula_phi_shared),
-                             "phi")
+  list_cov <- get_covariates(fit, "phi")
   post_effect <- get_post_samples(fit, "alpha")
   post_effect_shared <- get_post_samples(fit, "alpha_shared")
 
@@ -1510,10 +1489,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
                 n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = N,
                 verbose = FALSE)
 
-  list_cov <- set_covariates(data,
-                             formula(fit@occumb_args$formula_theta),
-                             formula(fit@occumb_args$formula_theta_shared),
-                             "theta")
+  list_cov <- get_covariates(fit, "theta")
   post_effect <- get_post_samples(fit, "beta")
 
   pred_link <- matrix(nrow = N, ncol = I)
@@ -1612,10 +1588,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
                 n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
                 verbose = FALSE)
 
-  list_cov <- set_covariates(data,
-                             formula(fit@occumb_args$formula_theta),
-                             formula(fit@occumb_args$formula_theta_shared),
-                             "theta")
+  list_cov <- get_covariates(fit, "theta")
   post_effect <- get_post_samples(fit, "beta")
 
   pred_link <- array(dim = c(N, I, J))
@@ -1724,10 +1697,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
                 n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
                 verbose = FALSE)
 
-  list_cov <- set_covariates(data,
-                             formula(fit@occumb_args$formula_theta),
-                             formula(fit@occumb_args$formula_theta_shared),
-                             "theta")
+  list_cov <- get_covariates(fit, "theta")
   post_effect <- get_post_samples(fit, "beta")
 
   pred_link <- array(dim = c(N, I, J, K))
@@ -1850,10 +1820,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
                 n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
                 verbose = FALSE)
 
-  list_cov <- set_covariates(data,
-                             formula(fit@occumb_args$formula_theta),
-                             formula(fit@occumb_args$formula_theta_shared),
-                             "theta")
+  list_cov <- get_covariates(fit, "theta")
   post_effect <- get_post_samples(fit, "beta")
   post_effect_shared <- get_post_samples(fit, "beta_shared")
 
@@ -1954,10 +1921,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
                 n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
                 verbose = FALSE)
 
-  list_cov <- set_covariates(data,
-                             formula(fit@occumb_args$formula_theta),
-                             formula(fit@occumb_args$formula_theta_shared),
-                             "theta")
+  list_cov <- get_covariates(fit, "theta")
   post_effect <- get_post_samples(fit, "beta")
   post_effect_shared <- get_post_samples(fit, "beta_shared")
 
@@ -2059,10 +2023,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
                 n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
                 verbose = FALSE)
 
-  list_cov <- set_covariates(data,
-                             formula(fit@occumb_args$formula_theta),
-                             formula(fit@occumb_args$formula_theta_shared),
-                             "theta")
+  list_cov <- get_covariates(fit, "theta")
   post_effect <- get_post_samples(fit, "beta")
   post_effect_shared <- get_post_samples(fit, "beta_shared")
 
@@ -2174,10 +2135,7 @@ test_that("Prediction and addition of attributes for theta works correctly", {
                 n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
                 verbose = FALSE)
 
-  list_cov <- set_covariates(data,
-                             formula(fit@occumb_args$formula_theta),
-                             formula(fit@occumb_args$formula_theta_shared),
-                             "theta")
+  list_cov <- get_covariates(fit, "theta")
   post_effect <- get_post_samples(fit, "beta")
   post_effect_shared <- get_post_samples(fit, "beta_shared")
 
@@ -2306,10 +2264,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
                 n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = N,
                 verbose = FALSE)
 
-  list_cov <- set_covariates(data,
-                             formula(fit@occumb_args$formula_psi),
-                             formula(fit@occumb_args$formula_psi_shared),
-                             "psi")
+  list_cov <- get_covariates(fit, "psi")
   post_effect <- get_post_samples(fit, "gamma")
 
   pred_link <- matrix(nrow = N, ncol = I)
@@ -2408,10 +2363,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
                 n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
                 verbose = FALSE)
 
-  list_cov <- set_covariates(data,
-                             formula(fit@occumb_args$formula_psi),
-                             formula(fit@occumb_args$formula_psi_shared),
-                             "psi")
+  list_cov <- get_covariates(fit, "psi")
   post_effect <- get_post_samples(fit, "gamma")
 
   pred_link <- array(dim = c(N, I, J))
@@ -2520,10 +2472,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
                 n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
                 verbose = FALSE)
 
-  list_cov <- set_covariates(data,
-                             formula(fit@occumb_args$formula_psi),
-                             formula(fit@occumb_args$formula_psi_shared),
-                             "psi")
+  list_cov <- get_covariates(fit, "psi")
   post_effect <- get_post_samples(fit, "gamma")
   post_effect_shared <- get_post_samples(fit, "gamma_shared")
 
@@ -2624,10 +2573,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
                 n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
                 verbose = FALSE)
 
-  list_cov <- set_covariates(data,
-                             formula(fit@occumb_args$formula_psi),
-                             formula(fit@occumb_args$formula_psi_shared),
-                             "psi")
+  list_cov <- get_covariates(fit, "psi")
   post_effect <- get_post_samples(fit, "gamma")
   post_effect_shared <- get_post_samples(fit, "gamma_shared")
 
@@ -2729,10 +2675,7 @@ test_that("Prediction and addition of attributes for psi works correctly", {
                 n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
                 verbose = FALSE)
 
-  list_cov <- set_covariates(data,
-                             formula(fit@occumb_args$formula_psi),
-                             formula(fit@occumb_args$formula_psi_shared),
-                             "psi")
+  list_cov <- get_covariates(fit, "psi")
   post_effect <- get_post_samples(fit, "gamma")
   post_effect_shared <- get_post_samples(fit, "gamma_shared")
 

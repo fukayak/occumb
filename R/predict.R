@@ -326,7 +326,7 @@ get_post_pred_link <- function(object, data, parameter) {
            theta = "beta_shared",
            psi = "gamma_shared")
 
-  list_cov <- set_covariates(data, formula, formula_shared, parameter)
+  list_cov <- get_covariates(object, parameter)
   has_shared_effect <- !is.null(list_cov$cov_shared)
 
   I <- dim(data@y)[1]
