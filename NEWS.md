@@ -13,6 +13,8 @@
 * Fix a bug in attribute assignment in `get_post_samples` and `get_post_summary`.
 * Fixed `get_post_samples()` not to output a vector.
 * Add a data frame output option in `get_post_samples()` and `get_post_summary()`.
+* Add a data frame output option in `predict()`.
+* Refactor unit tests for `predict()`.
 
 ## occumb 1.1.0 (2024/3/26)
 * Add `predict()` method for `occumbFit` class.
