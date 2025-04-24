@@ -2,6 +2,7 @@
 I <- 2
 J <- 3
 K <- 4
+N <- 5
 y <- y_unnamed <- array(sample.int(I * J * K), dim = c(I, J, K))
 dimnames(y)[[1]] <- sprintf("species %s", 1:I)
 dimnames(y)[[2]] <- sprintf("site %s", 1:J)
@@ -706,2081 +707,417 @@ test_that("Species labels are copied correctly", {
 })
 
 ### Tests for the function output ----------------------------------------------
-test_that("Prediction and addition of attributes for phi works correctly", {
-  N <- 10
+test_that("Prediction and addition of attributes works correctly", {
+  test_array_output <- function(data,
+                                formula = ~ 1,
+                                formula_shared = ~ 1,
+                                test_psi = TRUE,
+                                n.chains = 1,
+                                n.burnin = 0,
+                                n.thin = 1,
+                                n.iter) {
 
-  ## No shared effects, type = "i"
-  fit <- occumb(data = data,
-                n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = N,
-                verbose = FALSE)
+    if (test_psi) {
+      fit <- occumb(data = data,
+                    formula_phi = formula,
+                    formula_theta = formula,
+                    formula_psi = formula,
+                    formula_phi_shared = formula_shared,
+                    formula_theta_shared = formula_shared,
+                    formula_psi_shared = formula_shared,
+                    n.chains = n.chains,
+                    n.burnin = n.burnin,
+                    n.thin = n.thin,
+                    n.iter = n.iter,
+                    verbose = FALSE)
+    } else {
+      fit <- occumb(data = data,
+                    formula_phi = formula,
+                    formula_theta = formula,
+                    formula_psi = ~ 1,
+                    formula_phi_shared = formula_shared,
+                    formula_theta_shared = formula_shared,
+                    formula_psi_shared = ~ 1,
+                    n.chains = n.chains,
+                    n.burnin = n.burnin,
+                    n.thin = n.thin,
+                    n.iter = n.iter,
+                    verbose = FALSE)
+    }
 
-  list_cov <- get_covariates(fit, "phi")
-  post_effect <- get_post_samples(fit, "alpha")
+    .test_array_output(fit, "phi", "link",     "quantiles")
+    .test_array_output(fit, "phi", "link",     "mean")
+    .test_array_output(fit, "phi", "link",     "samples")
+    .test_array_output(fit, "phi", "response", "quantiles")
+    .test_array_output(fit, "phi", "response", "mean")
+    .test_array_output(fit, "phi", "response", "samples")
 
-  pred_link <- matrix(nrow = N, ncol = I)
-  for (i in seq_len(I)) {
-    pred_link[, i] <- post_effect[, i, ] * list_cov$cov
-  }
+    .test_array_output(fit, "theta", "link",     "quantiles")
+    .test_array_output(fit, "theta", "link",     "mean")
+    .test_array_output(fit, "theta", "link",     "samples")
+    .test_array_output(fit, "theta", "response", "quantiles")
+    .test_array_output(fit, "theta", "response", "mean")
+    .test_array_output(fit, "theta", "response", "samples")
 
-  # 1. scale = link, type = quantiles
-  pred <- predict(fit, parameter = "phi", scale = "link", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- apply(pred_link, 2:length(dim(pred_link)),
-                quantile, probs = c(0.5, 0.025, 0.975))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 2. scale = response, type = quantiles
-  pred <- predict(fit, parameter = "phi", scale = "response", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- exp(ans)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 3. scale = link, type = mean
-  pred <- predict(fit, parameter = "phi", scale = "link", type = "mean")
-
-  expect_equal(dim(pred), c(1, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 4. scale = response, type = mean
-  pred <- predict(fit, parameter = "phi", scale = "response", type = "mean")
-
-  expect_equal(dim(pred), c(1, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- array(apply(exp(pred_link), 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 5. scale = link, type = samples
-  pred <- predict(fit, parameter = "phi", scale = "link", type = "samples")
-
-  expect_equal(dim(pred), c(N, I))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- pred_link
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 6. scale = response, type = samples
-  pred <- predict(fit, parameter = "phi", scale = "response", type = "samples")
-
-  expect_equal(dim(pred), c(N, I))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- exp(pred_link)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-
-  ## No shared effects, type = "ij"
-  fit <- occumb(data = data, formula_phi = ~ cov5,
-                n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
-                verbose = FALSE)
-
-  list_cov <- get_covariates(fit, "phi")
-  post_effect <- get_post_samples(fit, "alpha")
-
-  pred_link <- array(dim = c(N, I, J))
-  for (i in seq_len(I)) {
-    for (j in seq_len(J)) {
-      pred_link[, i, j] <- post_effect[, i, ] %*% list_cov$cov[j, ]
+    if (test_psi) {
+      .test_array_output(fit, "psi", "link",     "quantiles")
+      .test_array_output(fit, "psi", "link",     "mean")
+      .test_array_output(fit, "psi", "link",     "samples")
+      .test_array_output(fit, "psi", "response", "quantiles")
+      .test_array_output(fit, "psi", "response", "mean")
+      .test_array_output(fit, "psi", "response", "samples")
     }
   }
 
-  # 1. scale = link, type = quantiles
-  pred <- predict(fit, parameter = "phi", scale = "link", type = "quantiles")
+  .test_array_output <- function(fit, parameter, scale, type) {
 
-  expect_equal(dim(pred), c(3, I, J))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
+    test_object_structure <- function(fit, parameter, scale, type) {
 
-  ans  <- apply(pred_link, 2:length(dim(pred_link)),
-                quantile, probs = c(0.5, 0.025, 0.975))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
+      pred <- predict(fit, parameter = parameter, scale = scale, type = type)
+      parameter_dimension <- set_parameter_dimension(fit, parameter)
+      dim_ans <- set_dim_ans(type, parameter_dimension)
 
-  expect_equal(pred, ans)
+      expect_equal(dim(pred), dim_ans)
+    }
 
-  # 2. scale = response, type = quantiles
-  pred <- predict(fit, parameter = "phi", scale = "response", type = "quantiles")
+    test_object_attributes <- function(fit, parameter, scale, type) {
 
-  expect_equal(dim(pred), c(3, I, J))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
+      pred <- predict(fit, parameter = parameter, scale = scale, type = type)
+      parameter_dimension <- set_parameter_dimension(fit, parameter)
+      label_dimension_ans <-
+        set_label_dimension_ans(type, parameter_dimension)
+      label_statistics_ans <- set_label_statistics_ans(type)
 
-  ans  <- exp(ans)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
+      expect_equal(attributes(pred)$dimension, label_dimension_ans)
 
-  expect_equal(pred, ans)
+      if (type == "samples") {
+        expect_equal(attributes(pred)$label$Samples, NULL)
+      } else {
+        expect_equal(attributes(pred)$label$Statistics, label_statistics_ans)
+      }
 
-  # 3. scale = link, type = mean
-  pred <- predict(fit, parameter = "phi", scale = "link", type = "mean")
+      expect_equal(attributes(pred)$label$Species,
+                   dimnames(fit@data@y)[[1]])
+      if (parameter_dimension != "i") {
+        expect_equal(attributes(pred)$label$Sites,
+                     dimnames(fit@data@y)[[2]])
+      }
+      if (parameter_dimension == "ijk") {
+        expect_equal(attributes(pred)$label$Replicates,
+                     dimnames(fit@data@y)[[3]])
+      }
+    }
 
-  expect_equal(dim(pred), c(1, I, J))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
+    test_object_contents <- function(fit, parameter, scale, type) {
 
-  ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean),
-                c(1, dim(pred_link)[-1]))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
+      pred <- predict(fit, parameter = parameter, scale = scale, type = type)
+      pred_without_attributes <- pred |>
+        remove_attributes("parameter") |>
+        remove_attributes("scale") |>
+        remove_attributes("dimension") |>
+        remove_attributes("label")
+      pred_ans <- set_pred_ans(fit, parameter, scale, type)
 
-  expect_equal(pred, ans)
+      expect_equal(pred_without_attributes, pred_ans)
+    }
 
-  # 4. scale = response, type = mean
-  pred <- predict(fit, parameter = "phi", scale = "response", type = "mean")
+    set_parameter_dimension <- function(fit, parameter) {
+      eval(parse(text = paste0("get_modargs(fit)$", parameter)))
+    }
 
-  expect_equal(dim(pred), c(1, I, J))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
+    set_dim_ans <- function(type, parameter_dimension) {
+      if (type == "quantiles") {
+        if (parameter_dimension == "i") {
+          return(c(3, I))
+        }
+        if (parameter_dimension == "ij") {
+          return(c(3, I, J))
+        }
+        if (parameter_dimension == "ijk") {
+          return(c(3, I, J, K))
+        }
+      }
 
-  ans  <- array(apply(exp(pred_link), 2:length(dim(pred_link)), mean),
-                c(1, dim(pred_link)[-1]))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
+      if (type == "mean") {
+        if (parameter_dimension == "i") {
+          return(c(1, I))
+        }
+        if (parameter_dimension == "ij") {
+          return(c(1, I, J))
+        }
+        if (parameter_dimension == "ijk") {
+          return(c(1, I, J, K))
+        }
+      }
 
-  expect_equal(pred, ans)
+      if (type == "samples") {
+        if (parameter_dimension == "i") {
+          return(c(N, I))
+        }
+        if (parameter_dimension == "ij") {
+          return(c(N, I, J))
+        }
+        if (parameter_dimension == "ijk") {
+          return(c(N, I, J, K))
+        }
+      }
+    }
 
-  # 5. scale = link, type = samples
-  pred <- predict(fit, parameter = "phi", scale = "link", type = "samples")
+    set_label_dimension_ans <- function(type, parameter_dimension) {
+      if (type == "samples") {
+        if (parameter_dimension == "i") {
+          return(c("Samples", "Species"))
+        }
+        if (parameter_dimension == "ij") {
+          return(c("Samples", "Species", "Sites"))
+        }
+        if (parameter_dimension == "ijk") {
+          return(c("Samples", "Species", "Sites", "Replicates"))
+        }
+      } else {
+        if (parameter_dimension == "i") {
+          return(c("Statistics", "Species"))
+        }
+        if (parameter_dimension == "ij") {
+          return(c("Statistics", "Species", "Sites"))
+        }
+        if (parameter_dimension == "ijk") {
+          return(c("Statistics", "Species", "Sites", "Replicates"))
+        }
+      }
+    }
 
-  expect_equal(dim(pred), c(N, I, J))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
+    set_label_statistics_ans <- function(type) {
+      if (type == "quantiles") {
+        return(c("50%", "2.5%", "97.5%"))
+      }
+      if (type == "mean") {
+        return("mean")
+      }
+    }
 
-  ans  <- pred_link
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
+    remove_attributes <- function(x, attribute) {
+      attr(x, attribute) <- NULL
+      return(x)
+    }
 
-  expect_equal(pred, ans)
+    set_pred_ans <- function(fit, parameter, scale, type) {
+      pred_ans <- get_pred_link(fit, parameter, scale, type) |>
+        get_pred_ans(fit, parameter, scale, type)
 
-  # 6. scale = response, type = samples
-  pred <- predict(fit, parameter = "phi", scale = "response", type = "samples")
+      return(pred_ans)
+    }
 
-  expect_equal(dim(pred), c(N, I, J))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
+    get_pred_link <- function(fit, parameter, scale, type) {
 
-  ans  <- exp(pred_link)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
+      parameter_dimension <- set_parameter_dimension(fit, parameter)
+      has_shared_effect   <- set_has_shared_effect(fit, parameter)
+      coefficient         <- set_coefficient(parameter)
+      coefficient_shared  <- set_coefficient_shared(parameter)
+      list_cov            <- get_covariates(fit, parameter)
+      post_effect         <- get_post_samples(fit, coefficient)
+      if (has_shared_effect) {
+        post_effect_shared <- get_post_samples(fit, coefficient_shared)
+      }
 
-  expect_equal(pred, ans)
+      if (parameter_dimension == "i") {
+        pred_link <- matrix(nrow = N, ncol = I)
 
+        if (!has_shared_effect) {
+          for (i in seq_len(I)) {
+            pred_link[, i] <- post_effect[, i, ] * list_cov$cov
+          }
+        } else {
+          if (length(post_effect_shared) > 1) {
+            for (i in seq_len(I)) {
+              pred_link[, i] <- post_effect[, i, ] * list_cov$cov +
+                post_effect_shared %*% list_cov$cov_shared[i, ]
+            }
+          } else {
+            for (i in seq_len(I)) {
+              pred_link[, i] <- post_effect[, i, ] * list_cov$cov +
+                post_effect_shared * list_cov$cov_shared[i, ]
+            }
+          }
+        }
+
+        return(pred_link)
+      }
+
+      if (parameter_dimension == "ij") {
+        pred_link <- array(dim = c(N, I, J))
+
+        if (!has_shared_effect) {
+          for (i in seq_len(I)) {
+            for (j in seq_len(J)) {
+              pred_link[, i, j] <- post_effect[, i, ] %*% list_cov$cov[j, ]
+            }
+          }
+        } else {
+          if (length(post_effect_shared) > 1) {
+            for (i in seq_len(I)) {
+              for (j in seq_len(J)) {
+                pred_link[, i, j] <- post_effect[, i, ] %*% list_cov$cov[j, ] +
+                  post_effect_shared %*% list_cov$cov_shared[i, j, ]
+              }
+            }
+          } else {
+            for (i in seq_len(I)) {
+              for (j in seq_len(J)) {
+                pred_link[, i, j] <- post_effect[, i, ] %*% list_cov$cov[j, ] +
+                  post_effect_shared * list_cov$cov_shared[i, j, ]
+              }
+            }
+          }
+        }
+
+        return(pred_link)
+      }
+
+      if (parameter_dimension == "ijk") {
+        pred_link <- array(dim = c(N, I, J, K))
+
+        if (!has_shared_effect) {
+          for (i in seq_len(I)) {
+            for (j in seq_len(J)) {
+              for (k in seq_len(K)) {
+                pred_link[, i, j, k] <- post_effect[, i, ] %*% list_cov$cov[j, k, ]
+              }
+            }
+          }
+        } else {
+          if (length(post_effect_shared) > 1) {
+            for (i in seq_len(I)) {
+              for (j in seq_len(J)) {
+                for (k in seq_len(K)) {
+                  pred_link[, i, j, k] <-
+                    post_effect[, i, ] %*% list_cov$cov[j, k, ] +
+                    post_effect_shared %*% list_cov$cov_shared[i, j, k, ]
+                }
+              }
+            }
+          } else {
+            for (i in seq_len(I)) {
+              for (j in seq_len(J)) {
+                for (k in seq_len(K)) {
+                  pred_link[, i, j, k] <-
+                    post_effect[, i, ] %*% list_cov$cov[j, k, ] +
+                    post_effect_shared * list_cov$cov_shared[i, j, k, ]
+                }
+              }
+            }
+          }
+        }
+
+        return(pred_link)
+      }
+    }
+
+    get_pred_ans <- function(pred_link, fit, parameter, scale, type) {
+
+      parameter_dimension <- set_parameter_dimension(fit, parameter)
+      inv_link <- set_inv_link(parameter)
+
+      if (type == "quantiles") {
+        pred_ans <- apply(pred_link, 2:length(dim(pred_link)),
+                          quantile, probs = c(0.5, 0.025, 0.975))
+        if (scale == "response") {
+          pred_ans <- inv_link(pred_ans)
+        }
+
+        return(pred_ans)
+      }
+
+      if (type == "mean") {
+        if (scale == "link") {
+          if (parameter_dimension == "i") {
+            pred_ans <- array(apply(pred_link, 2:length(dim(pred_link)), mean),
+                              c(1, ncol(pred_link)))
+          } else {
+            pred_ans <- array(apply(pred_link, 2:length(dim(pred_link)), mean),
+                              c(1, dim(pred_link)[-1]))
+          }
+        }
+        if (scale == "response") {
+          if (parameter_dimension == "i") {
+            pred_ans <-
+              array(apply(inv_link(pred_link), 2:length(dim(pred_link)), mean),
+                    c(1, ncol(pred_link)))
+          } else {
+            pred_ans <-
+              array(apply(inv_link(pred_link), 2:length(dim(pred_link)), mean),
+                    c(1, dim(pred_link)[-1]))
+          }
+        }
+
+        return(pred_ans)
+      }
+
+      if (type == "samples") {
+        if (scale == "link") {
+          pred_ans <- pred_link
+        }
+        if (scale == "response") {
+          pred_ans <- inv_link(pred_link)
+        }
+
+        return(pred_ans)
+      }
+    }
+
+    set_has_shared_effect <- function(fit, parameter) {
+      eval(parse(text = paste0("get_modargs(fit)$", parameter, "_shared")))
+    }
+
+    set_coefficient <- function(parameter) {
+      switch(parameter,
+             phi = "alpha",
+             theta = "beta",
+             psi = "gamma")
+    }
+
+    set_coefficient_shared <- function(parameter) {
+      switch(parameter,
+             phi = "alpha_shared",
+             theta = "beta_shared",
+             psi = "gamma_shared")
+    }
+
+    set_inv_link <- function(parameter) {
+      switch(parameter,
+             phi   = exp,
+             theta = stats::plogis,
+             psi   = stats::plogis)
+    }
+
+    test_object_structure(fit, parameter, scale, type)
+    test_object_attributes(fit, parameter, scale, type)
+    test_object_contents(fit, parameter, scale, type)
+  }
+
+  ## No shared effects, type = "i"
+  test_array_output(data, n.iter = N)
+
+  ## No shared effects, type = "ij"
+  test_array_output(data, formula = ~ cov5, n.iter = N)
 
   ## No shared effects, type = "ijk"
-  fit <- occumb(data = data, formula_phi = ~ cov9,
-                n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
-                verbose = FALSE)
-
-  list_cov <- get_covariates(fit, "phi")
-  post_effect <- get_post_samples(fit, "alpha")
-
-  pred_link <- array(dim = c(N, I, J, K))
-  for (i in seq_len(I)) {
-    for (j in seq_len(J)) {
-      for (k in seq_len(K)) {
-        pred_link[, i, j, k] <- post_effect[, i, ] %*% list_cov$cov[j, k, ]
-      }
-    }
-  }
-
-  # 1. scale = link, type = quantiles
-  pred <- predict(fit, parameter = "phi", scale = "link", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I, J, K))
-  expect_equal(attributes(pred)$dimension,
-               c("Statistics", "Species", "Sites", "Replicates"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-  expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
-
-  ans  <- apply(pred_link, 2:length(dim(pred_link)),
-                quantile, probs = c(0.5, 0.025, 0.975))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 2. scale = response, type = quantiles
-  pred <- predict(fit, parameter = "phi", scale = "response", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I, J, K))
-  expect_equal(attributes(pred)$dimension,
-               c("Statistics", "Species", "Sites", "Replicates"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-  expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
-
-  ans  <- exp(ans)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 3. scale = link, type = mean
-  pred <- predict(fit, parameter = "phi", scale = "link", type = "mean")
-
-  expect_equal(dim(pred), c(1, I, J, K))
-  expect_equal(attributes(pred)$dimension,
-               c("Statistics", "Species", "Sites", "Replicates"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-  expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
-
-  ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean),
-                c(1, dim(pred_link)[-1]))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 4. scale = response, type = mean
-  pred <- predict(fit, parameter = "phi", scale = "response", type = "mean")
-
-  expect_equal(dim(pred), c(1, I, J, K))
-  expect_equal(attributes(pred)$dimension,
-               c("Statistics", "Species", "Sites", "Replicates"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-  expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
-
-  ans  <- array(apply(exp(pred_link), 2:length(dim(pred_link)), mean),
-                c(1, dim(pred_link)[-1]))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 5. scale = link, type = samples
-  pred <- predict(fit, parameter = "phi", scale = "link", type = "samples")
-
-  expect_equal(dim(pred), c(N, I, J, K))
-  expect_equal(attributes(pred)$dimension,
-               c("Samples", "Species", "Sites", "Replicates"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-  expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
-
-  ans  <- pred_link
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 6. scale = response, type = samples
-  pred <- predict(fit, parameter = "phi", scale = "response", type = "samples")
-
-  expect_equal(dim(pred), c(N, I, J, K))
-  expect_equal(attributes(pred)$dimension,
-               c("Samples", "Species", "Sites", "Replicates"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-  expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
-
-  ans  <- exp(pred_link)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
+  test_array_output(data, formula = ~ cov9, test_psi = FALSE, n.iter = N)
 
   ## With shared effects, type = "i"
-  fit <- occumb(data = data, formula_phi_shared = ~ cov1,
-                n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
-                verbose = FALSE)
+  test_array_output(data, formula_shared = ~ cov1, n.iter = N)
 
-  list_cov <- get_covariates(fit, "phi")
-  post_effect <- get_post_samples(fit, "alpha")
-  post_effect_shared <- get_post_samples(fit, "alpha_shared")
-
-  pred_link <- matrix(nrow = N, ncol = I)
-  for (i in seq_len(I)) {
-    pred_link[, i] <-
-      post_effect[, i, ] * list_cov$cov +
-      post_effect_shared * list_cov$cov_shared[i, ]
-  }
-
-  # 1. scale = link, type = quantiles
-  pred <- predict(fit, parameter = "phi", scale = "link", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- apply(pred_link, 2:length(dim(pred_link)),
-                quantile, probs = c(0.5, 0.025, 0.975))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 2. scale = response, type = quantiles
-  pred <- predict(fit, parameter = "phi", scale = "response", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- exp(ans)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 3. scale = link, type = mean
-  pred <- predict(fit, parameter = "phi", scale = "link", type = "mean")
-
-  expect_equal(dim(pred), c(1, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 4. scale = response, type = mean
-  pred <- predict(fit, parameter = "phi", scale = "response", type = "mean")
-
-  expect_equal(dim(pred), c(1, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- array(apply(exp(pred_link), 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 5. scale = link, type = samples
-  pred <- predict(fit, parameter = "phi", scale = "link", type = "samples")
-
-  expect_equal(dim(pred), c(N, I))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- pred_link
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 6. scale = response, type = samples
-  pred <- predict(fit, parameter = "phi", scale = "response", type = "samples")
-
-  expect_equal(dim(pred), c(N, I))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- exp(pred_link)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-
-  fit <- occumb(data = data, formula_phi_shared = ~ cov1 + cov2,
-                n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
-                verbose = FALSE)
-
-  list_cov <- get_covariates(fit, "phi")
-  post_effect <- get_post_samples(fit, "alpha")
-  post_effect_shared <- get_post_samples(fit, "alpha_shared")
-
-  pred_link <- matrix(nrow = N, ncol = I)
-  for (i in seq_len(I)) {
-    pred_link[, i] <-
-      post_effect[, i, ] * list_cov$cov +
-      post_effect_shared %*% list_cov$cov_shared[i, ]
-  }
-
-  # 1. scale = link, type = quantiles
-  pred <- predict(fit, parameter = "phi", scale = "link", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- apply(pred_link, 2:length(dim(pred_link)),
-                quantile, probs = c(0.5, 0.025, 0.975))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 2. scale = response, type = quantiles
-  pred <- predict(fit, parameter = "phi", scale = "response", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- exp(ans)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 3. scale = link, type = mean
-  pred <- predict(fit, parameter = "phi", scale = "link", type = "mean")
-
-  expect_equal(dim(pred), c(1, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 4. scale = response, type = mean
-  pred <- predict(fit, parameter = "phi", scale = "response", type = "mean")
-
-  expect_equal(dim(pred), c(1, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- array(apply(exp(pred_link), 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 5. scale = link, type = samples
-  pred <- predict(fit, parameter = "phi", scale = "link", type = "samples")
-
-  expect_equal(dim(pred), c(N, I))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- pred_link
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 6. scale = response, type = samples
-  pred <- predict(fit, parameter = "phi", scale = "response", type = "samples")
-
-  expect_equal(dim(pred), c(N, I))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- exp(pred_link)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
+  # With discrete covariates
+  test_array_output(data, formula_shared = ~ cov1 + cov2, n.iter = N)
 
   ## With shared effects, type = "ij"
-  fit <- occumb(data = data, formula_phi = ~ cov5, formula_phi_shared = ~ cov1,
-                n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
-                verbose = FALSE)
-
-  list_cov <- get_covariates(fit, "phi")
-  post_effect <- get_post_samples(fit, "alpha")
-  post_effect_shared <- get_post_samples(fit, "alpha_shared")
-
-  pred_link <- array(dim = c(N, I, J))
-  for (i in seq_len(I)) {
-    for (j in seq_len(J)) {
-      pred_link[, i, j] <-
-        post_effect[, i, ] %*% list_cov$cov[j, ] +
-        post_effect_shared * list_cov$cov_shared[i, j, ]
-    }
-  }
-
-  # 1. scale = link, type = quantiles
-  pred <- predict(fit, parameter = "phi", scale = "link", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I, J))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- apply(pred_link, 2:length(dim(pred_link)),
-                quantile, probs = c(0.5, 0.025, 0.975))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 2. scale = response, type = quantiles
-  pred <- predict(fit, parameter = "phi", scale = "response", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I, J))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- exp(ans)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 3. scale = link, type = mean
-  pred <- predict(fit, parameter = "phi", scale = "link", type = "mean")
-
-  expect_equal(dim(pred), c(1, I, J))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean),
-                c(1, dim(pred_link)[-1]))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 4. scale = response, type = mean
-  pred <- predict(fit, parameter = "phi", scale = "response", type = "mean")
-
-  expect_equal(dim(pred), c(1, I, J))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- array(apply(exp(pred_link), 2:length(dim(pred_link)), mean),
-                c(1, dim(pred_link)[-1]))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 5. scale = link, type = samples
-  pred <- predict(fit, parameter = "phi", scale = "link", type = "samples")
-
-  expect_equal(dim(pred), c(N, I, J))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- pred_link
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 6. scale = response, type = samples
-  pred <- predict(fit, parameter = "phi", scale = "response", type = "samples")
-
-  expect_equal(dim(pred), c(N, I, J))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- exp(pred_link)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
+  test_array_output(data, formula = ~ cov5, formula_shared = ~ cov1, n.iter = N)
 
   ## With shared effects, type = "ijk"
-  fit <- occumb(data = data, formula_phi = ~ cov9, formula_phi_shared = ~ cov1,
-                n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
-                verbose = FALSE)
-
-  list_cov <- get_covariates(fit, "phi")
-  post_effect <- get_post_samples(fit, "alpha")
-  post_effect_shared <- get_post_samples(fit, "alpha_shared")
-
-  pred_link <- array(dim = c(N, I, J, K))
-  for (i in seq_len(I)) {
-    for (j in seq_len(J)) {
-      for (k in seq_len(K)) {
-        pred_link[, i, j, k] <-
-          post_effect[, i, ] %*% list_cov$cov[j, k, ] +
-          post_effect_shared * list_cov$cov_shared[i, j, k, ]
-      }
-    }
-  }
-
-  # 1. scale = link, type = quantiles
-  pred <- predict(fit, parameter = "phi", scale = "link", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I, J, K))
-  expect_equal(attributes(pred)$dimension,
-               c("Statistics", "Species", "Sites", "Replicates"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-  expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
-
-  ans  <- apply(pred_link, 2:length(dim(pred_link)),
-                quantile, probs = c(0.5, 0.025, 0.975))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 2. scale = response, type = quantiles
-  pred <- predict(fit, parameter = "phi", scale = "response", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I, J, K))
-  expect_equal(attributes(pred)$dimension,
-               c("Statistics", "Species", "Sites", "Replicates"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-  expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
-
-  ans  <- exp(ans)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 3. scale = link, type = mean
-  pred <- predict(fit, parameter = "phi", scale = "link", type = "mean")
-
-  expect_equal(dim(pred), c(1, I, J, K))
-  expect_equal(attributes(pred)$dimension,
-               c("Statistics", "Species", "Sites", "Replicates"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-  expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
-
-  ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean),
-                c(1, dim(pred_link)[-1]))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 4. scale = response, type = mean
-  pred <- predict(fit, parameter = "phi", scale = "response", type = "mean")
-
-  expect_equal(dim(pred), c(1, I, J, K))
-  expect_equal(attributes(pred)$dimension,
-               c("Statistics", "Species", "Sites", "Replicates"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-  expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
-
-  ans  <- array(apply(exp(pred_link), 2:length(dim(pred_link)), mean),
-                c(1, dim(pred_link)[-1]))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 5. scale = link, type = samples
-  pred <- predict(fit, parameter = "phi", scale = "link", type = "samples")
-
-  expect_equal(dim(pred), c(N, I, J, K))
-  expect_equal(attributes(pred)$dimension,
-               c("Samples", "Species", "Sites", "Replicates"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-  expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
-
-  ans  <- pred_link
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 6. scale = response, type = samples
-  pred <- predict(fit, parameter = "phi", scale = "response", type = "samples")
-
-  expect_equal(dim(pred), c(N, I, J, K))
-  expect_equal(attributes(pred)$dimension,
-               c("Samples", "Species", "Sites", "Replicates"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-  expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
-
-  ans  <- exp(pred_link)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
+  test_array_output(data, formula = ~ cov9, formula_shared = ~ cov1, test_psi = FALSE,
+      n.iter = N)
 })
 
-test_that("Prediction and addition of attributes for theta works correctly", {
-  N <- 10
-
-  ## No shared effects, type = "i"
-  fit <- occumb(data = data,
-                n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = N,
-                verbose = FALSE)
-
-  list_cov <- get_covariates(fit, "theta")
-  post_effect <- get_post_samples(fit, "beta")
-
-  pred_link <- matrix(nrow = N, ncol = I)
-  for (i in seq_len(I)) {
-    pred_link[, i] <- post_effect[, i, ] * list_cov$cov
-  }
-
-  # 1. scale = link, type = quantiles
-  pred <- predict(fit, parameter = "theta", scale = "link", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- apply(pred_link, 2:length(dim(pred_link)),
-                quantile, probs = c(0.5, 0.025, 0.975))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 2. scale = response, type = quantiles
-  pred <- predict(fit, parameter = "theta", scale = "response", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- plogis(ans)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 3. scale = link, type = mean
-  pred <- predict(fit, parameter = "theta", scale = "link", type = "mean")
-
-  expect_equal(dim(pred), c(1, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 4. scale = response, type = mean
-  pred <- predict(fit, parameter = "theta", scale = "response", type = "mean")
-
-  expect_equal(dim(pred), c(1, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- array(apply(plogis(pred_link), 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 5. scale = link, type = samples
-  pred <- predict(fit, parameter = "theta", scale = "link", type = "samples")
-
-  expect_equal(dim(pred), c(N, I))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- pred_link
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 6. scale = response, type = samples
-  pred <- predict(fit, parameter = "theta", scale = "response", type = "samples")
-
-  expect_equal(dim(pred), c(N, I))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- plogis(pred_link)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-
-  ## No shared effects, type = "ij"
-  fit <- occumb(data = data, formula_theta = ~ cov5,
-                n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
-                verbose = FALSE)
-
-  list_cov <- get_covariates(fit, "theta")
-  post_effect <- get_post_samples(fit, "beta")
-
-  pred_link <- array(dim = c(N, I, J))
-  for (i in seq_len(I)) {
-    for (j in seq_len(J)) {
-      pred_link[, i, j] <- post_effect[, i, ] %*% list_cov$cov[j, ]
-    }
-  }
-
-  # 1. scale = link, type = quantiles
-  pred <- predict(fit, parameter = "theta", scale = "link", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I, J))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- apply(pred_link, 2:length(dim(pred_link)),
-                quantile, probs = c(0.5, 0.025, 0.975))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 2. scale = response, type = quantiles
-  pred <- predict(fit, parameter = "theta", scale = "response", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I, J))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- plogis(ans)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 3. scale = link, type = mean
-  pred <- predict(fit, parameter = "theta", scale = "link", type = "mean")
-
-  expect_equal(dim(pred), c(1, I, J))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean),
-                c(1, dim(pred_link)[-1]))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 4. scale = response, type = mean
-  pred <- predict(fit, parameter = "theta", scale = "response", type = "mean")
-
-  expect_equal(dim(pred), c(1, I, J))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- array(apply(plogis(pred_link), 2:length(dim(pred_link)), mean),
-                c(1, dim(pred_link)[-1]))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 5. scale = link, type = samples
-  pred <- predict(fit, parameter = "theta", scale = "link", type = "samples")
-
-  expect_equal(dim(pred), c(N, I, J))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- pred_link
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 6. scale = response, type = samples
-  pred <- predict(fit, parameter = "theta", scale = "response", type = "samples")
-
-  expect_equal(dim(pred), c(N, I, J))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- plogis(pred_link)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-
-  ## No shared effects, type = "ijk"
-  fit <- occumb(data = data, formula_theta = ~ cov9,
-                n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
-                verbose = FALSE)
-
-  list_cov <- get_covariates(fit, "theta")
-  post_effect <- get_post_samples(fit, "beta")
-
-  pred_link <- array(dim = c(N, I, J, K))
-  for (i in seq_len(I)) {
-    for (j in seq_len(J)) {
-      for (k in seq_len(K)) {
-        pred_link[, i, j, k] <- post_effect[, i, ] %*% list_cov$cov[j, k, ]
-      }
-    }
-  }
-
-  # 1. scale = link, type = quantiles
-  pred <- predict(fit, parameter = "theta", scale = "link", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I, J, K))
-  expect_equal(attributes(pred)$dimension,
-               c("Statistics", "Species", "Sites", "Replicates"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-  expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
-
-  ans  <- apply(pred_link, 2:length(dim(pred_link)),
-                quantile, probs = c(0.5, 0.025, 0.975))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 2. scale = response, type = quantiles
-  pred <- predict(fit, parameter = "theta", scale = "response", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I, J, K))
-  expect_equal(attributes(pred)$dimension,
-               c("Statistics", "Species", "Sites", "Replicates"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-  expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
-
-  ans  <- plogis(ans)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 3. scale = link, type = mean
-  pred <- predict(fit, parameter = "theta", scale = "link", type = "mean")
-
-  expect_equal(dim(pred), c(1, I, J, K))
-  expect_equal(attributes(pred)$dimension,
-               c("Statistics", "Species", "Sites", "Replicates"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-  expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
-
-  ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean),
-                c(1, dim(pred_link)[-1]))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 4. scale = response, type = mean
-  pred <- predict(fit, parameter = "theta", scale = "response", type = "mean")
-
-  expect_equal(dim(pred), c(1, I, J, K))
-  expect_equal(attributes(pred)$dimension,
-               c("Statistics", "Species", "Sites", "Replicates"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-  expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
-
-  ans  <- array(apply(plogis(pred_link), 2:length(dim(pred_link)), mean),
-                c(1, dim(pred_link)[-1]))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 5. scale = link, type = samples
-  pred <- predict(fit, parameter = "theta", scale = "link", type = "samples")
-
-  expect_equal(dim(pred), c(N, I, J, K))
-  expect_equal(attributes(pred)$dimension,
-               c("Samples", "Species", "Sites", "Replicates"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-  expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
-
-  ans  <- pred_link
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 6. scale = response, type = samples
-  pred <- predict(fit, parameter = "theta", scale = "response", type = "samples")
-
-  expect_equal(dim(pred), c(N, I, J, K))
-  expect_equal(attributes(pred)$dimension,
-               c("Samples", "Species", "Sites", "Replicates"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-  expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
-
-  ans  <- plogis(pred_link)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-
-  ## With shared effects, type = "i"
-  fit <- occumb(data = data, formula_theta_shared = ~ cov1,
-                n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
-                verbose = FALSE)
-
-  list_cov <- get_covariates(fit, "theta")
-  post_effect <- get_post_samples(fit, "beta")
-  post_effect_shared <- get_post_samples(fit, "beta_shared")
-
-  pred_link <- matrix(nrow = N, ncol = I)
-  for (i in seq_len(I)) {
-    pred_link[, i] <-
-      post_effect[, i, ] * list_cov$cov +
-      post_effect_shared * list_cov$cov_shared[i, ]
-  }
-
-  # 1. scale = link, type = quantiles
-  pred <- predict(fit, parameter = "theta", scale = "link", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- apply(pred_link, 2:length(dim(pred_link)),
-                quantile, probs = c(0.5, 0.025, 0.975))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 2. scale = response, type = quantiles
-  pred <- predict(fit, parameter = "theta", scale = "response", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- plogis(ans)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 3. scale = link, type = mean
-  pred <- predict(fit, parameter = "theta", scale = "link", type = "mean")
-
-  expect_equal(dim(pred), c(1, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 4. scale = response, type = mean
-  pred <- predict(fit, parameter = "theta", scale = "response", type = "mean")
-
-  expect_equal(dim(pred), c(1, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- array(apply(plogis(pred_link), 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 5. scale = link, type = samples
-  pred <- predict(fit, parameter = "theta", scale = "link", type = "samples")
-
-  expect_equal(dim(pred), c(N, I))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- pred_link
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 6. scale = response, type = samples
-  pred <- predict(fit, parameter = "theta", scale = "response", type = "samples")
-
-  expect_equal(dim(pred), c(N, I))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- plogis(pred_link)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-
-  fit <- occumb(data = data, formula_theta_shared = ~ cov1 + cov2,
-                n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
-                verbose = FALSE)
-
-  list_cov <- get_covariates(fit, "theta")
-  post_effect <- get_post_samples(fit, "beta")
-  post_effect_shared <- get_post_samples(fit, "beta_shared")
-
-  pred_link <- matrix(nrow = N, ncol = I)
-  for (i in seq_len(I)) {
-    pred_link[, i] <-
-      post_effect[, i, ] * list_cov$cov +
-      post_effect_shared %*% list_cov$cov_shared[i, ]
-  }
-
-  # 1. scale = link, type = quantiles
-  pred <- predict(fit, parameter = "theta", scale = "link", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- apply(pred_link, 2:length(dim(pred_link)),
-                quantile, probs = c(0.5, 0.025, 0.975))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 2. scale = response, type = quantiles
-  pred <- predict(fit, parameter = "theta", scale = "response", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- plogis(ans)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 3. scale = link, type = mean
-  pred <- predict(fit, parameter = "theta", scale = "link", type = "mean")
-
-  expect_equal(dim(pred), c(1, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 4. scale = response, type = mean
-  pred <- predict(fit, parameter = "theta", scale = "response", type = "mean")
-
-  expect_equal(dim(pred), c(1, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- array(apply(plogis(pred_link), 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 5. scale = link, type = samples
-  pred <- predict(fit, parameter = "theta", scale = "link", type = "samples")
-
-  expect_equal(dim(pred), c(N, I))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- pred_link
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 6. scale = response, type = samples
-  pred <- predict(fit, parameter = "theta", scale = "response", type = "samples")
-
-  expect_equal(dim(pred), c(N, I))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- plogis(pred_link)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-
-  ## With shared effects, type = "ij"
-  fit <- occumb(data = data, formula_theta = ~ cov5, formula_theta_shared = ~ cov1,
-                n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
-                verbose = FALSE)
-
-  list_cov <- get_covariates(fit, "theta")
-  post_effect <- get_post_samples(fit, "beta")
-  post_effect_shared <- get_post_samples(fit, "beta_shared")
-
-  pred_link <- array(dim = c(N, I, J))
-  for (i in seq_len(I)) {
-    for (j in seq_len(J)) {
-      pred_link[, i, j] <-
-        post_effect[, i, ] %*% list_cov$cov[j, ] +
-        post_effect_shared * list_cov$cov_shared[i, j, ]
-    }
-  }
-
-  # 1. scale = link, type = quantiles
-  pred <- predict(fit, parameter = "theta", scale = "link", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I, J))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- apply(pred_link, 2:length(dim(pred_link)),
-                quantile, probs = c(0.5, 0.025, 0.975))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 2. scale = response, type = quantiles
-  pred <- predict(fit, parameter = "theta", scale = "response", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I, J))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- plogis(ans)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 3. scale = link, type = mean
-  pred <- predict(fit, parameter = "theta", scale = "link", type = "mean")
-
-  expect_equal(dim(pred), c(1, I, J))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean),
-                c(1, dim(pred_link)[-1]))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 4. scale = response, type = mean
-  pred <- predict(fit, parameter = "theta", scale = "response", type = "mean")
-
-  expect_equal(dim(pred), c(1, I, J))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- array(apply(plogis(pred_link), 2:length(dim(pred_link)), mean),
-                c(1, dim(pred_link)[-1]))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 5. scale = link, type = samples
-  pred <- predict(fit, parameter = "theta", scale = "link", type = "samples")
-
-  expect_equal(dim(pred), c(N, I, J))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- pred_link
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 6. scale = response, type = samples
-  pred <- predict(fit, parameter = "theta", scale = "response", type = "samples")
-
-  expect_equal(dim(pred), c(N, I, J))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- plogis(pred_link)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-
-  ## With shared effects, type = "ijk"
-  fit <- occumb(data = data, formula_theta = ~ cov9, formula_theta_shared = ~ cov1,
-                n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
-                verbose = FALSE)
-
-  list_cov <- get_covariates(fit, "theta")
-  post_effect <- get_post_samples(fit, "beta")
-  post_effect_shared <- get_post_samples(fit, "beta_shared")
-
-  pred_link <- array(dim = c(N, I, J, K))
-  for (i in seq_len(I)) {
-    for (j in seq_len(J)) {
-      for (k in seq_len(K)) {
-        pred_link[, i, j, k] <-
-          post_effect[, i, ] %*% list_cov$cov[j, k, ] +
-          post_effect_shared * list_cov$cov_shared[i, j, k, ]
-      }
-    }
-  }
-
-  # 1. scale = link, type = quantiles
-  pred <- predict(fit, parameter = "theta", scale = "link", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I, J, K))
-  expect_equal(attributes(pred)$dimension,
-               c("Statistics", "Species", "Sites", "Replicates"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-  expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
-
-  ans  <- apply(pred_link, 2:length(dim(pred_link)),
-                quantile, probs = c(0.5, 0.025, 0.975))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 2. scale = response, type = quantiles
-  pred <- predict(fit, parameter = "theta", scale = "response", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I, J, K))
-  expect_equal(attributes(pred)$dimension,
-               c("Statistics", "Species", "Sites", "Replicates"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-  expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
-
-  ans  <- plogis(ans)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 3. scale = link, type = mean
-  pred <- predict(fit, parameter = "theta", scale = "link", type = "mean")
-
-  expect_equal(dim(pred), c(1, I, J, K))
-  expect_equal(attributes(pred)$dimension,
-               c("Statistics", "Species", "Sites", "Replicates"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-  expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
-
-  ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean),
-                c(1, dim(pred_link)[-1]))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 4. scale = response, type = mean
-  pred <- predict(fit, parameter = "theta", scale = "response", type = "mean")
-
-  expect_equal(dim(pred), c(1, I, J, K))
-  expect_equal(attributes(pred)$dimension,
-               c("Statistics", "Species", "Sites", "Replicates"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-  expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
-
-  ans  <- array(apply(plogis(pred_link), 2:length(dim(pred_link)), mean),
-                c(1, dim(pred_link)[-1]))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 5. scale = link, type = samples
-  pred <- predict(fit, parameter = "theta", scale = "link", type = "samples")
-
-  expect_equal(dim(pred), c(N, I, J, K))
-  expect_equal(attributes(pred)$dimension,
-               c("Samples", "Species", "Sites", "Replicates"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-  expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
-
-  ans  <- pred_link
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 6. scale = response, type = samples
-  pred <- predict(fit, parameter = "theta", scale = "response", type = "samples")
-
-  expect_equal(dim(pred), c(N, I, J, K))
-  expect_equal(attributes(pred)$dimension,
-               c("Samples", "Species", "Sites", "Replicates"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-  expect_equal(attributes(pred)$label$Replicates, dimnames(fit@data@y)[[3]])
-
-  ans  <- plogis(pred_link)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-})
-
-test_that("Prediction and addition of attributes for psi works correctly", {
-  N <- 10
-
-  ## No shared effects, type = "i"
-  fit <- occumb(data = data,
-                n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = N,
-                verbose = FALSE)
-
-  list_cov <- get_covariates(fit, "psi")
-  post_effect <- get_post_samples(fit, "gamma")
-
-  pred_link <- matrix(nrow = N, ncol = I)
-  for (i in seq_len(I)) {
-    pred_link[, i] <- post_effect[, i, ] * list_cov$cov
-  }
-
-  # 1. scale = link, type = quantiles
-  pred <- predict(fit, parameter = "psi", scale = "link", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- apply(pred_link, 2:length(dim(pred_link)),
-                quantile, probs = c(0.5, 0.025, 0.975))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 2. scale = response, type = quantiles
-  pred <- predict(fit, parameter = "psi", scale = "response", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- plogis(ans)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 3. scale = link, type = mean
-  pred <- predict(fit, parameter = "psi", scale = "link", type = "mean")
-
-  expect_equal(dim(pred), c(1, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 4. scale = response, type = mean
-  pred <- predict(fit, parameter = "psi", scale = "response", type = "mean")
-
-  expect_equal(dim(pred), c(1, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- array(apply(plogis(pred_link), 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 5. scale = link, type = samples
-  pred <- predict(fit, parameter = "psi", scale = "link", type = "samples")
-
-  expect_equal(dim(pred), c(N, I))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- pred_link
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 6. scale = response, type = samples
-  pred <- predict(fit, parameter = "psi", scale = "response", type = "samples")
-
-  expect_equal(dim(pred), c(N, I))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- plogis(pred_link)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-
-  ## No shared effects, type = "ij"
-  fit <- occumb(data = data, formula_psi = ~ cov5,
-                n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
-                verbose = FALSE)
-
-  list_cov <- get_covariates(fit, "psi")
-  post_effect <- get_post_samples(fit, "gamma")
-
-  pred_link <- array(dim = c(N, I, J))
-  for (i in seq_len(I)) {
-    for (j in seq_len(J)) {
-      pred_link[, i, j] <- post_effect[, i, ] %*% list_cov$cov[j, ]
-    }
-  }
-
-  # 1. scale = link, type = quantiles
-  pred <- predict(fit, parameter = "psi", scale = "link", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I, J))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- apply(pred_link, 2:length(dim(pred_link)),
-                quantile, probs = c(0.5, 0.025, 0.975))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 2. scale = response, type = quantiles
-  pred <- predict(fit, parameter = "psi", scale = "response", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I, J))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- plogis(ans)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 3. scale = link, type = mean
-  pred <- predict(fit, parameter = "psi", scale = "link", type = "mean")
-
-  expect_equal(dim(pred), c(1, I, J))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean),
-                c(1, dim(pred_link)[-1]))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 4. scale = response, type = mean
-  pred <- predict(fit, parameter = "psi", scale = "response", type = "mean")
-
-  expect_equal(dim(pred), c(1, I, J))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- array(apply(plogis(pred_link), 2:length(dim(pred_link)), mean),
-                c(1, dim(pred_link)[-1]))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 5. scale = link, type = samples
-  pred <- predict(fit, parameter = "psi", scale = "link", type = "samples")
-
-  expect_equal(dim(pred), c(N, I, J))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- pred_link
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 6. scale = response, type = samples
-  pred <- predict(fit, parameter = "psi", scale = "response", type = "samples")
-
-  expect_equal(dim(pred), c(N, I, J))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- plogis(pred_link)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-
-  ## With shared effects, type = "i"
-  fit <- occumb(data = data, formula_psi_shared = ~ cov1,
-                n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
-                verbose = FALSE)
-
-  list_cov <- get_covariates(fit, "psi")
-  post_effect <- get_post_samples(fit, "gamma")
-  post_effect_shared <- get_post_samples(fit, "gamma_shared")
-
-  pred_link <- matrix(nrow = N, ncol = I)
-  for (i in seq_len(I)) {
-    pred_link[, i] <-
-      post_effect[, i, ] * list_cov$cov +
-      post_effect_shared * list_cov$cov_shared[i, ]
-  }
-
-  # 1. scale = link, type = quantiles
-  pred <- predict(fit, parameter = "psi", scale = "link", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- apply(pred_link, 2:length(dim(pred_link)),
-                quantile, probs = c(0.5, 0.025, 0.975))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 2. scale = response, type = quantiles
-  pred <- predict(fit, parameter = "psi", scale = "response", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- plogis(ans)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 3. scale = link, type = mean
-  pred <- predict(fit, parameter = "psi", scale = "link", type = "mean")
-
-  expect_equal(dim(pred), c(1, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 4. scale = response, type = mean
-  pred <- predict(fit, parameter = "psi", scale = "response", type = "mean")
-
-  expect_equal(dim(pred), c(1, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- array(apply(plogis(pred_link), 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 5. scale = link, type = samples
-  pred <- predict(fit, parameter = "psi", scale = "link", type = "samples")
-
-  expect_equal(dim(pred), c(N, I))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- pred_link
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 6. scale = response, type = samples
-  pred <- predict(fit, parameter = "psi", scale = "response", type = "samples")
-
-  expect_equal(dim(pred), c(N, I))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- plogis(pred_link)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-
-  fit <- occumb(data = data, formula_psi_shared = ~ cov1 + cov2,
-                n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
-                verbose = FALSE)
-
-  list_cov <- get_covariates(fit, "psi")
-  post_effect <- get_post_samples(fit, "gamma")
-  post_effect_shared <- get_post_samples(fit, "gamma_shared")
-
-  pred_link <- matrix(nrow = N, ncol = I)
-  for (i in seq_len(I)) {
-    pred_link[, i] <-
-      post_effect[, i, ] * list_cov$cov +
-      post_effect_shared %*% list_cov$cov_shared[i, ]
-  }
-
-  # 1. scale = link, type = quantiles
-  pred <- predict(fit, parameter = "psi", scale = "link", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- apply(pred_link, 2:length(dim(pred_link)),
-                quantile, probs = c(0.5, 0.025, 0.975))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 2. scale = response, type = quantiles
-  pred <- predict(fit, parameter = "psi", scale = "response", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- plogis(ans)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 3. scale = link, type = mean
-  pred <- predict(fit, parameter = "psi", scale = "link", type = "mean")
-
-  expect_equal(dim(pred), c(1, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 4. scale = response, type = mean
-  pred <- predict(fit, parameter = "psi", scale = "response", type = "mean")
-
-  expect_equal(dim(pred), c(1, I))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- array(apply(plogis(pred_link), 2:length(dim(pred_link)), mean), c(1, ncol(pred_link)))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 5. scale = link, type = samples
-  pred <- predict(fit, parameter = "psi", scale = "link", type = "samples")
-
-  expect_equal(dim(pred), c(N, I))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- pred_link
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 6. scale = response, type = samples
-  pred <- predict(fit, parameter = "psi", scale = "response", type = "samples")
-
-  expect_equal(dim(pred), c(N, I))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-
-  ans  <- plogis(pred_link)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-
-  ## With shared effects, type = "ij"
-  fit <- occumb(data = data, formula_psi = ~ cov5, formula_psi_shared = ~ cov1,
-                n.chains = 1, n.burnin = 0, n.thin = 1, n.iter = 10,
-                verbose = FALSE)
-
-  list_cov <- get_covariates(fit, "psi")
-  post_effect <- get_post_samples(fit, "gamma")
-  post_effect_shared <- get_post_samples(fit, "gamma_shared")
-
-  pred_link <- array(dim = c(N, I, J))
-  for (i in seq_len(I)) {
-    for (j in seq_len(J)) {
-      pred_link[, i, j] <-
-        post_effect[, i, ] %*% list_cov$cov[j, ] +
-        post_effect_shared * list_cov$cov_shared[i, j, ]
-    }
-  }
-
-  # 1. scale = link, type = quantiles
-  pred <- predict(fit, parameter = "psi", scale = "link", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I, J))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- apply(pred_link, 2:length(dim(pred_link)),
-                quantile, probs = c(0.5, 0.025, 0.975))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 2. scale = response, type = quantiles
-  pred <- predict(fit, parameter = "psi", scale = "response", type = "quantiles")
-
-  expect_equal(dim(pred), c(3, I, J))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Statistics, c("50%", "2.5%", "97.5%"))
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- plogis(ans)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 3. scale = link, type = mean
-  pred <- predict(fit, parameter = "psi", scale = "link", type = "mean")
-
-  expect_equal(dim(pred), c(1, I, J))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- array(apply(pred_link, 2:length(dim(pred_link)), mean),
-                c(1, dim(pred_link)[-1]))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 4. scale = response, type = mean
-  pred <- predict(fit, parameter = "psi", scale = "response", type = "mean")
-
-  expect_equal(dim(pred), c(1, I, J))
-  expect_equal(attributes(pred)$dimension, c("Statistics", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Statistics, "mean")
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- array(apply(plogis(pred_link), 2:length(dim(pred_link)), mean),
-                c(1, dim(pred_link)[-1]))
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 5. scale = link, type = samples
-  pred <- predict(fit, parameter = "psi", scale = "link", type = "samples")
-
-  expect_equal(dim(pred), c(N, I, J))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- pred_link
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-
-  # 6. scale = response, type = samples
-  pred <- predict(fit, parameter = "psi", scale = "response", type = "samples")
-
-  expect_equal(dim(pred), c(N, I, J))
-  expect_equal(attributes(pred)$dimension, c("Samples", "Species", "Sites"))
-  expect_equal(attributes(pred)$label$Samples, NULL)
-  expect_equal(attributes(pred)$label$Species, dimnames(fit@data@y)[[1]])
-  expect_equal(attributes(pred)$label$Sites, dimnames(fit@data@y)[[2]])
-
-  ans  <- plogis(pred_link)
-  attr(pred, "parameter") <- attr(pred, "scale") <-
-    attr(pred, "dimension") <- attr(pred, "label") <- NULL
-
-  expect_equal(pred, ans)
-})
 
 test_that("Option for dataframe output works", {
 
@@ -2907,8 +1244,6 @@ test_that("Option for dataframe output works", {
       expect_identical(pred$Replicates, Replicates_ans)
     }
   }
-
-  N <- 10
 
   ## type = "i"
   fit <- occumb(data = data,
