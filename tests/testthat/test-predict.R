@@ -777,6 +777,7 @@ test_that("Prediction and addition of attributes works correctly", {
       parameter_dimension <- set_parameter_dimension(fit, parameter)
       dim_ans <- set_dim_ans(type, parameter_dimension)
 
+      checkmate::expect_array(pred)
       expect_equal(dim(pred), dim_ans)
     }
 
@@ -788,6 +789,8 @@ test_that("Prediction and addition of attributes works correctly", {
         set_label_dimension_ans(type, parameter_dimension)
       label_statistics_ans <- set_label_statistics_ans(type)
 
+      expect_equal(attributes(pred)$parameter, parameter)
+      expect_equal(attributes(pred)$scale, scale)
       expect_equal(attributes(pred)$dimension, label_dimension_ans)
 
       if (type == "samples") {
@@ -1097,25 +1100,46 @@ test_that("Prediction and addition of attributes works correctly", {
 
   ## No shared effects, type = "i"
   test_array_output(data, n.iter = N)
+  test_array_output(data_unnamed, n.iter = N)
 
   ## No shared effects, type = "ij"
   test_array_output(data, formula = ~ cov5, n.iter = N)
+  test_array_output(data_unnamed, formula = ~ cov5, n.iter = N)
 
   ## No shared effects, type = "ijk"
   test_array_output(data, formula = ~ cov9, test_psi = FALSE, n.iter = N)
+  test_array_output(data_unnamed, formula = ~ cov9, test_psi = FALSE, n.iter = N)
 
   ## With shared effects, type = "i"
   test_array_output(data, formula_shared = ~ cov1, n.iter = N)
+  test_array_output(data_unnamed, formula_shared = ~ cov1, n.iter = N)
 
   # With discrete covariates
   test_array_output(data, formula_shared = ~ cov1 + cov2, n.iter = N)
+  test_array_output(data_unnamed, formula_shared = ~ cov1 + cov2, n.iter = N)
 
   ## With shared effects, type = "ij"
   test_array_output(data, formula = ~ cov5, formula_shared = ~ cov1, n.iter = N)
+  test_array_output(data_unnamed, formula = ~ cov5, formula_shared = ~ cov1,
+                    n.iter = N)
+
+  # With discrete covariates
+  test_array_output(data, formula = ~ cov5, formula_shared = ~ cov1 + cov2,
+                    n.iter = N)
+  test_array_output(data_unnamed, formula = ~ cov5, formula_shared = ~ cov1 + cov2,
+                    n.iter = N)
 
   ## With shared effects, type = "ijk"
-  test_array_output(data, formula = ~ cov9, formula_shared = ~ cov1, test_psi = FALSE,
-      n.iter = N)
+  test_array_output(data, formula = ~ cov9, formula_shared = ~ cov1,
+                    test_psi = FALSE, n.iter = N)
+  test_array_output(data_unnamed, formula = ~ cov9, formula_shared = ~ cov1,
+                    test_psi = FALSE, n.iter = N)
+
+  # With discrete covariates
+  test_array_output(data, formula = ~ cov9, formula_shared = ~ cov1 + cov2,
+                    test_psi = FALSE, n.iter = N)
+  test_array_output(data_unnamed, formula = ~ cov9, formula_shared = ~ cov1 + cov2,
+                    test_psi = FALSE, n.iter = N)
 })
 
 
