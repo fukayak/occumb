@@ -1028,4 +1028,22 @@ get_list_cov <- function(data, type, shared = FALSE) {
 get_data <- function(occumbFit, variable) {
   eval(parse(text = paste0("occumbFit@data@", variable)))
 }
+get_modargs <- function(occumbFit) {
+  set_modargs(stats::as.formula(occumbFit@occumb_args$formula_phi),
+              stats::as.formula(occumbFit@occumb_args$formula_theta),
+              stats::as.formula(occumbFit@occumb_args$formula_psi),
+              stats::as.formula(occumbFit@occumb_args$formula_phi_shared),
+              stats::as.formula(occumbFit@occumb_args$formula_theta_shared),
+              stats::as.formula(occumbFit@occumb_args$formula_psi_shared),
+              occumbFit@data)
+}
+get_covariates <- function(occumbFit, parameter) {
+  eval(parse(text = sprintf("
+    set_covariates(occumbFit@data,
+                   formula(occumbFit@occumb_args$formula_%s),
+                   formula(occumbFit@occumb_args$formula_%s_shared),
+                   '%s')",
+    parameter, parameter, parameter)
+  ))
+}
 # -----------------------------------------------------------------------------

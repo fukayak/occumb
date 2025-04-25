@@ -9,7 +9,8 @@
   newdata = NULL,
   parameter = c("phi", "theta", "psi"),
   scale = c("response", "link"),
-  type = c("quantiles", "mean", "samples")
+  type = c("quantiles", "mean", "samples"),
+  output_dataframe = FALSE
 )
 }
 \arguments{
@@ -31,6 +32,9 @@ the prediction in addition to 2.5 and 97.5\% quantiles as the lower and
 upper limits of the 95\% credible interval of the prediction.
 \code{type = "mean"} returns the posterior mean of the prediction.
 \code{type = "samples"} returns the posterior samples of the prediction.}
+
+\item{output_dataframe}{If \code{TRUE}, results are returned in data frame
+format.}
 }
 \value{
 Predictions are obtained as a matrix or array that can have dimensions
@@ -41,6 +45,10 @@ If the sequence read count data \code{y} has species, site, or replicate
 names appended as the \code{dimnames} attribute (see Details in
 \code{\link{occumbData}()}), they will be copied into the \code{label}
 attribute of the returned object.
+
+When \code{output_dataframe = TRUE}, the results are returned in data
+frame format where the attributes obtained when
+\code{output_dataframe = FALSE} are incorporated into the table.
 }
 \description{
 Obtain predictions of parameters related to species occupancy

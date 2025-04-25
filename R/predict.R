@@ -18,6 +18,8 @@ NULL
 #'  upper limits of the 95% credible interval of the prediction.
 #'  \code{type = "mean"} returns the posterior mean of the prediction.
 #'  \code{type = "samples"} returns the posterior samples of the prediction.
+#' @param output_dataframe If \code{TRUE}, results are returned in data frame
+#'  format.
 #' @return
 #'  Predictions are obtained as a matrix or array that can have dimensions
 #'  corresponding to statistics (or samples), species, sites, and replicates.
@@ -27,6 +29,10 @@ NULL
 #'  names appended as the \code{dimnames} attribute (see Details in
 #'  \code{\link{occumbData}()}), they will be copied into the \code{label}
 #'  attribute of the returned object.
+#'
+#'  When \code{output_dataframe = TRUE}, the results are returned in data
+#'  frame format where the attributes obtained when
+#'  \code{output_dataframe = FALSE} are incorporated into the table.
 #' @details
 #'  Applying \code{predict()} to an \code{occumbFit} object generates predictions
 #'  for the specified parameter (\code{phi}, \code{theta}, or \code{psi}) based
@@ -44,71 +50,92 @@ setMethod("predict", signature(object = "occumbFit"),
            newdata = NULL,
            parameter = c("phi", "theta", "psi"),
            scale = c("response", "link"),
-           type = c("quantiles", "mean", "samples")) {
+           type = c("quantiles", "mean", "samples"),
+           output_dataframe = FALSE) {
 
     parameter <- match.arg(parameter)
     scale     <- match.arg(scale)
     type      <- match.arg(type)
 
-    if (missing(newdata)) {
-      data <- object@data
+    result_array <- object |>
+      get_predict(newdata, parameter, scale, type) |>
+      add_attributes_predict(object, newdata, parameter, scale, type)
+
+    if (output_dataframe) {
+      result_df <- result_array |>
+        array_to_df_predict(parameter, scale, type)
+      return(result_df)
     } else {
-      check_newdata(newdata, object)
-      data <- newdata
-      if (!identical(dimnames(newdata@y)[[1]], dimnames(object@data@y)[[1]])) {
-        dimnames(data@y)[[1]] <- dimnames(object@data@y)[[1]]
-      }
+      return(result_array)
     }
-
-    inv_link <- switch(parameter,
-                       phi   = exp,
-                       theta = stats::plogis,
-                       psi   = stats::plogis)
-
-    post_pred_link <- get_post_pred_link(object, data, parameter)
-
-    if (type == "quantiles") {
-
-      out <- apply(post_pred_link,
-                   2:length(dim(post_pred_link)),
-                   stats::quantile, probs = c(0.5, 0.025, 0.975))
-
-      if (scale == "response") {
-        out <- inv_link(out)
-      }
-
-    } else if (type == "mean") {
-
-      if (scale == "response") {
-        out <- apply(inv_link(post_pred_link),
-                     2:length(dim(post_pred_link)),
-                     mean)
-      } else if (scale == "link") {
-        out <- apply(post_pred_link,
-                     2:length(dim(post_pred_link)),
-                     mean)
-      }
-
-      if (is.null(dim(out))) {
-        out <- array(out, c(1, length(out)))
-      } else {
-        out <- array(out, c(1, dim(out)))
-      }
-
-    } else if (type == "samples") {
-
-      out <- post_pred_link
-
-      if (scale == "response") {
-        out <- inv_link(out)
-      }
-
-    }
-
-    return(add_attributes_predict(out, parameter, scale, type, data))
   }
 )
 
+get_predict <- function(object, newdata, parameter, scale, type) {
+
+  set_inv_link <- function(parameter) {
+    switch(parameter,
+           phi   = exp,
+           theta = stats::plogis,
+           psi   = stats::plogis)
+  }
+
+  data           <- set_data_predict(newdata, object)
+  post_pred_link <- get_post_pred_link(object, data, parameter)
+  inv_link       <- set_inv_link(parameter)
+
+  if (type == "quantiles") {
+    result <- apply(post_pred_link,
+                    2:length(dim(post_pred_link)),
+                    stats::quantile, probs = c(0.5, 0.025, 0.975))
+
+    if (scale == "response") {
+      result <- inv_link(result)
+    }
+  }
+
+  if (type == "mean") {
+    if (scale == "response") {
+      result <- apply(inv_link(post_pred_link),
+                      2:length(dim(post_pred_link)),
+                      mean)
+    }
+    if (scale == "link") {
+      result <- apply(post_pred_link,
+                      2:length(dim(post_pred_link)),
+                      mean)
+    }
+
+    if (is.null(dim(result))) {
+      result <- array(result, c(1, length(result)))
+    } else {
+      result <- array(result, c(1, dim(result)))
+    }
+  }
+
+  if (type == "samples") {
+    result <- post_pred_link
+
+    if (scale == "response") {
+      result <- inv_link(result)
+    }
+  }
+
+  return(result)
+}
+
+set_data_predict <- function(newdata, object) {
+  if (missing(newdata) | is.null(newdata)) {
+    return(object@data)
+  }
+
+  check_newdata(newdata, object)
+  data <- newdata
+  if (!identical(dimnames(newdata@y)[[1]], dimnames(object@data@y)[[1]])) {
+    dimnames(data@y)[[1]] <- dimnames(object@data@y)[[1]]
+  }
+  return(data)
+}
 
 check_newdata <- function(newdata, object) {
 
@@ -299,7 +326,7 @@ get_post_pred_link <- function(object, data, parameter) {
            theta = "beta_shared",
            psi = "gamma_shared")
 
-  list_cov <- set_covariates(data, formula, formula_shared, parameter)
+  list_cov <- get_covariates(object, parameter)
   has_shared_effect <- !is.null(list_cov$cov_shared)
 
   I <- dim(data@y)[1]
@@ -369,7 +396,7 @@ get_post_pred_link <- function(object, data, parameter) {
 }
 
 
-add_attributes_predict <- function(x, parameter, scale, type, data) {
+add_attributes_predict <- function(x, object, newdata, parameter, scale, type) {
 
   label_pred <- function(x, data) {
 
@@ -394,6 +421,8 @@ add_attributes_predict <- function(x, parameter, scale, type, data) {
 
     return(out)
   }
+
+  data <- set_data_predict(newdata, object)
 
   attr(x, "parameter") <- parameter
   attr(x, "scale")     <- scale
@@ -422,4 +451,51 @@ add_attributes_predict <- function(x, parameter, scale, type, data) {
   }
 
   return(x)
+}
+
+array_to_df_predict <- function(x_array, parameter, scale, type) {
+
+  convert_to_df <- function(x_array) {
+    x_df <- as.data.frame.table(x_array)
+    colnames(x_df) <- c(attributes(x_array)$dimension, "Value")
+    return(x_df)
+  }
+
+  assign_labels <- function(x_df_without_labels, x_array, start) {
+    result <- x_df_without_labels
+
+    for (i in start:(ncol(x_df_without_labels) - 1)) {
+      if (is.null(attributes(x_array)$label[[i]])) {
+        levels(result[, i]) <- seq_along(levels(x_df_without_labels[, i]))
+      } else {
+        levels(result[, i]) <- attributes(x_array)$label[[i]]
+      }
+    }
+
+    return(result)
+  }
+
+  if (type == "quantiles") {
+    x_df <- x_array |>
+      convert_to_df() |>
+      assign_labels(x_array, 2)
+  }
+
+  if (type == "mean") {
+    x_df_without_labels <- x_array |>
+      convert_to_df()
+
+    x_df_without_labels$Statistics <- factor("mean")
+
+    x_df <- x_df_without_labels |>
+      assign_labels(x_array, 2)
+  }
+
+  if (type == "samples") {
+    x_df <- x_array |>
+      convert_to_df() |>
+      assign_labels(x_array, 1)
+  }
+
+  return(data.frame(Parameter = factor(parameter), Scale = factor(scale), x_df))
 }
