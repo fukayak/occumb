@@ -9,7 +9,7 @@ and detection from an occumbFit model object."><meta name="robots" content="noin
 
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.1.0.9012</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.1.0.9013</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,7 +53,8 @@ and detection from an <code>occumbFit</code> model object.</p>
 <span>  newdata <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  parameter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"phi"</span>, <span class="st">"theta"</span>, <span class="st">"psi"</span><span class="op">)</span>,</span>
 <span>  scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"response"</span>, <span class="st">"link"</span><span class="op">)</span>,</span>
-<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"quantiles"</span>, <span class="st">"mean"</span>, <span class="st">"samples"</span><span class="op">)</span></span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"quantiles"</span>, <span class="st">"mean"</span>, <span class="st">"samples"</span><span class="op">)</span>,</span>
+<span>  output_dataframe <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -89,6 +90,11 @@ upper limits of the 95% credible interval of the prediction.
 <code>type = "mean"</code> returns the posterior mean of the prediction.
 <code>type = "samples"</code> returns the posterior samples of the prediction.</p></dd>
 
+
+<dt id="arg-output-dataframe">output_dataframe<a class="anchor" aria-label="anchor" href="#arg-output-dataframe"></a></dt>
+<dd><p>If <code>TRUE</code>, results are returned in data frame
+format.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -100,6 +106,9 @@ If the sequence read count data <code>y</code> has species, site, or replicate
 names appended as the <code>dimnames</code> attribute (see Details in
 <code><a href="occumbData.html">occumbData</a>()</code>), they will be copied into the <code>label</code>
 attribute of the returned object.</p>
+<p>When <code>output_dataframe = TRUE</code>, the results are returned in data
+frame format where the attributes obtained when
+<code>output_dataframe = FALSE</code> are incorporated into the table.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
