@@ -234,14 +234,14 @@ occumbData <- function(y,
                        repl_cov = NULL) {
 
   out <- methods::new("occumbData",
-                      y = df_to_array(y),
+                      y = df_to_array_if_needed(y),
                       spec_cov = spec_cov,
                       site_cov = site_cov,
                       repl_cov = repl_cov)
   return(out)
 }
 
-df_to_array <- function(y) {
+df_to_array_if_needed <- function(y) {
   if (is.data.frame(y)) {
     y <- data.frame(y) # To make sure the follwoing operations are applied to data.frame
   } else {
