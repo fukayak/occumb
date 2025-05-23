@@ -57,13 +57,24 @@ setMethod("predict", signature(object = "occumbFit"),
     scale     <- match.arg(scale)
     type      <- match.arg(type)
 
-    result_array <- object |>
-      get_predict(newdata, parameter, scale, type) |>
-      add_attributes_predict(object, newdata, parameter, scale, type)
+    result_array_without_attributes <- get_predict(
+      object,
+      newdata,
+      parameter,
+      scale,
+      type
+    )
+    result_array <- add_attributes_predict(
+      result_array_without_attributes,
+      object,
+      newdata,
+      parameter,
+      scale,
+      type
+    )
 
     if (output_dataframe) {
-      result_df <- result_array |>
-        array_to_df_predict(parameter, scale, type)
+      result_df <- array_to_df_predict(result_array, parameter, scale, type)
       return(result_df)
     } else {
       return(result_array)
@@ -476,25 +487,17 @@ array_to_df_predict <- function(x_array, parameter, scale, type) {
   }
 
   if (type == "quantiles") {
-    x_df <- x_array |>
-      convert_to_df() |>
-      assign_labels(x_array, 2)
+    x_df <- assign_labels(convert_to_df(x_array), x_array, 2)
   }
 
   if (type == "mean") {
-    x_df_without_labels <- x_array |>
-      convert_to_df()
-
+    x_df_without_labels <- convert_to_df(x_array)
     x_df_without_labels$Statistics <- factor("mean")
-
-    x_df <- x_df_without_labels |>
-      assign_labels(x_array, 2)
+    x_df <- assign_labels(x_df_without_labels, x_array, 2)
   }
 
   if (type == "samples") {
-    x_df <- x_array |>
-      convert_to_df() |>
-      assign_labels(x_array, 1)
+    x_df <- assign_labels(convert_to_df(x_array), x_array, 1)
   }
 
   return(data.frame(Parameter = factor(parameter), Scale = factor(scale), x_df))

@@ -220,7 +220,8 @@ check_args_get_posterior <- function(fit, parameter) {
             sapply(seq_along(attributes(x)$label[[1]]), seq)
           )
           idx2 <- unlist(
-            sapply(seq_along(attributes(x)$label[[1]]), \(n) rep(n + 1, n))
+            sapply(seq_along(attributes(x)$label[[1]]),
+                   function(n) rep(n + 1, n))
           )
           label_df <- data.frame(
             attributes(x)$label[[1]][idx1],
