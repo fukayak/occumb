@@ -74,12 +74,12 @@ An S4 object of the \code{occumbFit} class containing the results of
 the model fitting and the supplied dataset.
 }
 \description{
-\code{occumb()} fits the multispecies site-occupancy model for eDNA
+\code{occumb()} fits the community site-occupancy model for eDNA
 metabarcoding (Fukaya et al. 2022) and returns a model-fit object containing
 posterior samples.
 }
 \details{
-\code{occumb()} allows the fitting of a range of multispecies site
+\code{occumb()} allows the fitting of a range of community site
 occupancy models, including covariates at different levels of the data
 generation process.
 The most general form of the model can be written as follows (the notation

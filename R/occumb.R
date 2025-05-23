@@ -7,11 +7,11 @@ setClass("occumbFit", slots = c(fit = "jagsUI",
                                 occumb_args = "list"))
 
 #' @title Model-fitting function.
-#' @description \code{occumb()} fits the multispecies site-occupancy model for eDNA
+#' @description \code{occumb()} fits the community site-occupancy model for eDNA
 #'  metabarcoding (Fukaya et al. 2022) and returns a model-fit object containing
 #'  posterior samples.
 #' @details
-#'  \code{occumb()} allows the fitting of a range of multispecies site
+#'  \code{occumb()} allows the fitting of a range of community site
 #'  occupancy models, including covariates at different levels of the data
 #'  generation process.
 #'  The most general form of the model can be written as follows (the notation
