@@ -178,12 +178,16 @@ setValidity("occumbData", function(object) {
 #'                 or \code{integer}) or discrete (\code{logical},
 #'                 \code{factor}, or \code{character}) variables whose length
 #'                 is \code{dim(y)[1]} (i.e., the number of species).
+#'                 The order of the species of the covariate values must
+#'                 correspond to that of the species dimension of `y`.
 #'                 \code{NA}s are not allowed.
 #' @param site_cov A named list of site covariates.
 #'                 Each covariate can be a vector of continuous (\code{numeric}
 #'                 or \code{integer}) or discrete (\code{logical},
 #'                 \code{factor}, or \code{character}) variables whose length
 #'                 is \code{dim(y)[1]} (i.e., the number of sites).
+#'                 The order of the sites of the covariate values must
+#'                 correspond to that of the site dimension of `y`.
 #'                 \code{NA}s are not allowed.
 #' @param repl_cov A named list of replicate covariates.
 #'                 Each covariate can be a matrix of continuous (\code{numeric}
@@ -191,6 +195,9 @@ setValidity("occumbData", function(object) {
 #'                 \code{character}) variables with dimensions equal to
 #'                 \code{dim(y)[2:3]} (i.e., number of sites \eqn{\times}{*}
 #'                 number of replicates).
+#'                 The order of the sites and replicates of the covariate
+#'                 values must correspond to that of the site and replicate
+#'                 dimensions of `y`.
 #'                 \code{NA}s are not allowed.
 #' @return  An S4 object of the \code{occumbData} class.
 #' @examples
