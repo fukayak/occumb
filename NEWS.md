@@ -1,22 +1,10 @@
-# occumb (development version)
-* Add test-coverage workflow
-* Add snapshot tests for `plot()` and `summary()`
-* Fix an issue with an error message by character covariates.
-* Add `stats = chi_squared` option to `gof()`
-* Fix an issue with having `.` with other covariates in formula
-* Fix an issue with throwing a warning message instead of an error
-* Change error message for validate_occumbData 
-* Add a test to throw an error when integer is too large
-* Add tests for `gof` under unbalanced designs
-* Fix an issue with `sigma`'s default value.
-* Add 'data.frame' as an input of occumbData.
-* Fix a bug in attribute assignment in `get_post_samples` and `get_post_summary`.
-* Fixed `get_post_samples()` not to output a vector.
+## occumb 1.2.0 (2025/5/23)
+* Add a data frame input option in `occumbData()`.
 * Add a data frame output option in `get_post_samples()` and `get_post_summary()`.
 * Add a data frame output option in `predict()`.
-* Refactor unit tests for `predict()`.
-* Refactor `occumbData()`.
-* Fix documentation.
+* Add `stats = chi_squared` option to `gof()`.
+* Internal changes to fix a number of known bugs, more helpful error messages, and additional testing.
+* Improved function documentation.
 
 ## occumb 1.1.0 (2024/3/26)
 * Add `predict()` method for `occumbFit` class.

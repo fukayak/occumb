@@ -1,3 +1,70 @@
+# occumb (version 1.2.0)
+
+## Test environments
+
+- local: Linux Mint 20.2 R 4.5.0
+- win-builder (release, devel)
+- mac-builder (release)
+
+## R CMD check results
+
+### local
+
+0 errors | 1 warning | 0 notes
+
+* checking data for ASCII and uncompressed saves ...
+WARNING
+‘qpdf’ is needed for checks on size reduction of PDFs
+
+This warning appears locally but not in win-builder and mac-builder.
+
+### win-builder (release)
+
+0 errors | 0 warnings | 1 note
+
+* checking CRAN incoming feasibility ... [12s] NOTE
+Maintainer: 'Keiichi Fukaya <fukayak99@gmail.com>'
+
+Possibly misspelled words in DESCRIPTION:
+  Hasebe (15:16)
+
+Found the following (possibly) invalid URLs:
+  URL: https://www.mbr-pwrc.usgs.gov/pubanalysis/keryroylebook/
+    From: man/gof.Rd
+    Status: 404
+    Message: Not Found
+  URL: https://www.stat.columbia.edu/~gelman/book/
+    From: man/gof.Rd
+    Status: 403
+    Message: Forbidden
+
+The above URL actually works.
+
+### win-builder (devel)
+
+0 errors | 0 warnings | 1 note
+
+* checking CRAN incoming feasibility ... [12s] NOTE
+Maintainer: 'Keiichi Fukaya <fukayak99@gmail.com>'
+
+Possibly misspelled words in DESCRIPTION:
+  Hasebe (15:16)
+
+Found the following (possibly) invalid URLs:
+  URL: https://www.mbr-pwrc.usgs.gov/pubanalysis/keryroylebook/
+    From: man/gof.Rd
+    Status: 404
+    Message: Not Found
+  URL: https://www.stat.columbia.edu/~gelman/book/
+    From: man/gof.Rd
+    Status: 403
+    Message: Forbidden
+
+### mac-builder
+
+0 errors | 0 warnings | 0 note
+
+
 # occumb (version 1.1.0)
 
 ## Test environments
