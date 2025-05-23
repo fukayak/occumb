@@ -11,7 +11,8 @@ Description: Fits community site occupancy models to environmental DNA
     metabarcoding data collected using spatially-replicated survey design.
     Model fitting results can be used to evaluate and compare the effectiveness
     of species detection to find an efficient survey design.
-    Reference: Fukaya et al. (2022) <doi:10.1111/2041-210X.13732>.
+    Reference: Fukaya et al. (2022) <doi:10.1111/2041-210X.13732>,
+    Fukaya and Hasebe (2025) <doi:10.1101/2025.01.09.632116>.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
