@@ -1,8 +1,14 @@
 #' @include classes.R
 NULL
 
-# Validation for occumbData
-validate_occumbData <- function(object) {
+# Data format class for occumb
+setClass("occumbData",
+         slots = c(y = "array",
+                   spec_cov = "list_or_NULL",
+                   site_cov = "list_or_NULL",
+                   repl_cov = "list_or_NULL"))
+
+setValidity("occumbData", function(object) {
   msg <- NULL
 
   ### Tests for sequence read counts
@@ -150,15 +156,7 @@ validate_occumbData <- function(object) {
   }
 
   ifelse(is.null(msg), TRUE, msg)
-}
-
-# Data format class for occumb
-setClass("occumbData",
-         slots = c(y = "array",
-                   spec_cov = "list_or_NULL",
-                   site_cov = "list_or_NULL",
-                   repl_cov = "list_or_NULL"),
-         validity = validate_occumbData)
+})
 
 #' @title Constructor for occumbData data class.
 #' @description \code{occumbData()} creates a data list compatible with the model fitting

@@ -8,7 +8,7 @@ dimnames(y) <- list(c("A", "B"),
                     c("1", "2"))
 df <- as.data.frame.table(y)
 
-### Test for validate_occumbData() ---------------------------------------------
+### Test for the validity method -----------------------------------------------
 ## Tests for sequence read counts
 
 test_that("Mode check for y works", {
