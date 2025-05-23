@@ -74,7 +74,7 @@ fish # Result not shown
 
 ## Fit models
 
-Using the `fish` dataset (or the dataset constructed with `occumbData()`), one can fit a multispecies site occupancy model for eDNA metabarcoding using the `occumb()` function which fits the model in a fully Bayesian approach via the Markov Chain Monte Carlo (MCMC) method implemented in [JAGS](https://mcmc-jags.sourceforge.io/).
+Using the `fish` dataset (or the dataset constructed with `occumbData()`), one can fit a community site occupancy model for eDNA metabarcoding using the `occumb()` function which fits the model in a fully Bayesian approach via the Markov Chain Monte Carlo (MCMC) method implemented in [JAGS](https://mcmc-jags.sourceforge.io/).
 
 `occumb()` has several arguments that accept model formulas to fit different model variants using the usual R formula syntax. See `vignette("model_specification")` for an overview of the models that `occumb()` can fit and details on how to specify models.
 
@@ -824,7 +824,7 @@ plot(gof_result)
 
 ## Analyze study design
 
-The model fitted with `occumb()` can be used to identify eDNA metabarcoding study designs that can effectively detect the species present. How many sites, within-site replicates, and sequencing depths are required for reliable species detection? What is the best balance between the number of sites visited, number of within-site replicates, and sequencing depth under a limited budget? The multispecies site occupancy model fit by `occumb()` answers these questions by predicting the number of species expected to be detected using specific study designs.
+The model fitted with `occumb()` can be used to identify eDNA metabarcoding study designs that can effectively detect the species present. How many sites, within-site replicates, and sequencing depths are required for reliable species detection? What is the best balance between the number of sites visited, number of within-site replicates, and sequencing depth under a limited budget? The community site occupancy model fit by `occumb()` answers these questions by predicting the number of species expected to be detected using specific study designs.
 
 `eval_util_L()` and `eval_util_R()` are functions available for these purposes. These two functions assume species diversity assessments at different spatial scales (i.e., the former is for local (L) and the latter for regional (R)). Specifically, `eval_util_L()` is appropriate if you are interested in assessing species diversity only for the study sites included in the dataset, and `eval_util_R()` is appropriate if you are interested in assessing species diversity in a broader area that includes the study sites in the dataset (i.e., the population of sites or a "metacommunity").
 

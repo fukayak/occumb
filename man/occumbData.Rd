@@ -20,6 +20,8 @@ Each covariate can be a vector of continuous (\code{numeric}
 or \code{integer}) or discrete (\code{logical},
 \code{factor}, or \code{character}) variables whose length
 is \code{dim(y)[1]} (i.e., the number of species).
+The order of the species of the covariate values must
+correspond to that of the species dimension of \code{y}.
 \code{NA}s are not allowed.}
 
 \item{site_cov}{A named list of site covariates.
@@ -27,6 +29,8 @@ Each covariate can be a vector of continuous (\code{numeric}
 or \code{integer}) or discrete (\code{logical},
 \code{factor}, or \code{character}) variables whose length
 is \code{dim(y)[1]} (i.e., the number of sites).
+The order of the sites of the covariate values must
+correspond to that of the site dimension of \code{y}.
 \code{NA}s are not allowed.}
 
 \item{repl_cov}{A named list of replicate covariates.
@@ -35,6 +39,9 @@ or \code{integer}) or discrete (\code{logical} or
 \code{character}) variables with dimensions equal to
 \code{dim(y)[2:3]} (i.e., number of sites \eqn{\times}{*}
 number of replicates).
+The order of the sites and replicates of the covariate
+values must correspond to that of the site and replicate
+dimensions of \code{y}.
 \code{NA}s are not allowed.}
 }
 \value{

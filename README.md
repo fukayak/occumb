@@ -10,11 +10,11 @@
 
 <!-- badges: end -->
 
-occumb is an R package that provides functionalities for the application of [multispecies site occupancy modeling for environmental DNA (eDNA) metabarcoding](https://doi.org/10.1111/2041-210X.13732).
+occumb is an R package that provides functionalities for the application of [community site occupancy modeling for environmental DNA (eDNA) metabarcoding](https://doi.org/10.1111/2041-210X.13732).
 
 This package allows users to fit the model with a fully Bayesian approach using conventional formulas in R. This enables the analysis of the detectability of species at different stages of the workflow of eDNA metabarcoding and the inference of species site occupancy while accounting for false negatives. It also provides functionality for model-based inference to assist in the optimization of the study design.
 
-See [the package vignette](https://fukayak.github.io/occumb/articles/occumb.html) to learn how to use the package and the [original paper](https://doi.org/10.1111/2041-210X.13732) for details of the model and inference.
+See [the package vignette](https://fukayak.github.io/occumb/articles/occumb.html) to learn how to use the package and the [original paper](https://doi.org/10.1111/2041-210X.13732) for details of the model and inference. [This paper](https://doi.org/10.1101/2025.01.09.632116) provides an overview of the occumb package and an example of its application to the eDNA metabarcoding of aquatic insects.
 
 ## Installation
 

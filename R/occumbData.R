@@ -1,8 +1,14 @@
 #' @include classes.R
 NULL
 
-# Validation for occumbData
-validate_occumbData <- function(object) {
+# Data format class for occumb
+setClass("occumbData",
+         slots = c(y = "array",
+                   spec_cov = "list_or_NULL",
+                   site_cov = "list_or_NULL",
+                   repl_cov = "list_or_NULL"))
+
+setValidity("occumbData", function(object) {
   msg <- NULL
 
   ### Tests for sequence read counts
@@ -150,15 +156,7 @@ validate_occumbData <- function(object) {
   }
 
   ifelse(is.null(msg), TRUE, msg)
-}
-
-# Data format class for occumb
-setClass("occumbData",
-         slots = c(y = "array",
-                   spec_cov = "list_or_NULL",
-                   site_cov = "list_or_NULL",
-                   repl_cov = "list_or_NULL"),
-         validity = validate_occumbData)
+})
 
 #' @title Constructor for occumbData data class.
 #' @description \code{occumbData()} creates a data list compatible with the model fitting
@@ -180,12 +178,16 @@ setClass("occumbData",
 #'                 or \code{integer}) or discrete (\code{logical},
 #'                 \code{factor}, or \code{character}) variables whose length
 #'                 is \code{dim(y)[1]} (i.e., the number of species).
+#'                 The order of the species of the covariate values must
+#'                 correspond to that of the species dimension of `y`.
 #'                 \code{NA}s are not allowed.
 #' @param site_cov A named list of site covariates.
 #'                 Each covariate can be a vector of continuous (\code{numeric}
 #'                 or \code{integer}) or discrete (\code{logical},
 #'                 \code{factor}, or \code{character}) variables whose length
 #'                 is \code{dim(y)[1]} (i.e., the number of sites).
+#'                 The order of the sites of the covariate values must
+#'                 correspond to that of the site dimension of `y`.
 #'                 \code{NA}s are not allowed.
 #' @param repl_cov A named list of replicate covariates.
 #'                 Each covariate can be a matrix of continuous (\code{numeric}
@@ -193,6 +195,9 @@ setClass("occumbData",
 #'                 \code{character}) variables with dimensions equal to
 #'                 \code{dim(y)[2:3]} (i.e., number of sites \eqn{\times}{*}
 #'                 number of replicates).
+#'                 The order of the sites and replicates of the covariate
+#'                 values must correspond to that of the site and replicate
+#'                 dimensions of `y`.
 #'                 \code{NA}s are not allowed.
 #' @return  An S4 object of the \code{occumbData} class.
 #' @examples
@@ -236,14 +241,14 @@ occumbData <- function(y,
                        repl_cov = NULL) {
 
   out <- methods::new("occumbData",
-                      y = df_to_array(y),
+                      y = df_to_array_if_needed(y),
                       spec_cov = spec_cov,
                       site_cov = site_cov,
                       repl_cov = repl_cov)
   return(out)
 }
 
-df_to_array <- function(y) {
+df_to_array_if_needed <- function(y) {
   if (is.data.frame(y)) {
     y <- data.frame(y) # To make sure the follwoing operations are applied to data.frame
   } else {
