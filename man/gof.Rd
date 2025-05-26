@@ -77,7 +77,7 @@ P. B. Conn, D. S. Johnson, P. J. Williams, S. R. Melin and M. B. Hooten.
 
 A. Gelman, J. B. Carlin, H. S. Stern D. B. Dunson, A. Vehtari and
 D. B. Rubin (2013) \emph{Bayesian Data Analysis}. 3rd edition.
-Chapman and Hall/CRC. \url{http://www.stat.columbia.edu/~gelman/book/}
+Chapman and Hall/CRC. \url{https://www.stat.columbia.edu/~gelman/book/}
 
 M. Kéry and J. A. Royle (2016) \emph{Applied Hierarchical Modeling in
 Ecology --- Analysis of Distribution, Abundance and Species Richness in R

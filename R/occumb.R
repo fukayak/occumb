@@ -768,17 +768,14 @@ set_design_matrix <- function(formula, list_cov, omit_intercept = FALSE) {
     out <- tryCatch({
       stats::model.matrix(formula, data = list_cov)
     }, warning = function(w) {
-      formula_terms <- formula |>
-        stats::terms() |>
-        attr("variable")
+      formula_terms <- attr(stats::terms(formula), "variable")
 
-      invalid <- formula_terms |>
-        sapply(function(x) {
+      invalid <- sapply(formula_terms, function(x) {
           inherits(x, "call") &&
             x[[1]] == "poly" &&
             eval(parse(text = sprintf("is.character(list_cov$%s)", all.vars(x))))
         }
-        )
+      )
 
       if (any(invalid)) {
         stop(
