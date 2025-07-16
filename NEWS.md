@@ -1,3 +1,6 @@
+# occumb 1.2.1 (2025/7/16)
+* This patch release only fixes bibliographic information in package documents.
+
 ## occumb 1.2.0 (2025/5/23)
 * Add a data frame input option in `occumbData()`.
 * Add a data frame output option in `get_post_samples()` and `get_post_summary()`.

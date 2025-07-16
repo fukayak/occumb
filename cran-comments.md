@@ -1,3 +1,68 @@
+# occumb (version 1.2.1)
+
+## Test environments
+
+- local: Linux Mint 22.1 R 4.5.1
+- win-builder (release, devel)
+- mac-builder (release)
+
+## R CMD check results
+
+### local
+
+0 errors | 1 warning | 1 note
+
+❯ checking R/sysdata.rda ... OK
+   WARNING
+  ‘qpdf’ is needed for checks on size reduction of PDFs
+
+❯ checking for future file timestamps ... NOTE
+  unable to verify current time
+
+These issues appears locally but not in win-builder and mac-builder.
+
+### win-builder (release)
+
+0 errors | 0 warnings | 1 note
+
+* checking CRAN incoming feasibility ... [13s] NOTE
+Maintainer: 'Keiichi Fukaya <fukayak99@gmail.com>'
+
+Found the following (possibly) invalid URLs:
+  URL: https://www.mbr-pwrc.usgs.gov/pubanalysis/keryroylebook/
+    From: man/gof.Rd
+    Status: 404
+    Message: Not Found
+  URL: https://www.stat.columbia.edu/~gelman/book/
+    From: man/gof.Rd
+    Status: 403
+    Message: Forbidden
+
+The above URL actually works.
+
+### win-builder (devel)
+
+0 errors | 0 warnings | 1 note
+
+* checking CRAN incoming feasibility ... [11s] NOTE
+Maintainer: 'Keiichi Fukaya <fukayak99@gmail.com>'
+
+Found the following (possibly) invalid URLs:
+  URL: https://www.mbr-pwrc.usgs.gov/pubanalysis/keryroylebook/
+    From: man/gof.Rd
+    Status: 404
+    Message: Not Found
+  URL: https://www.stat.columbia.edu/~gelman/book/
+    From: man/gof.Rd
+    Status: 403
+    Message: Forbidden
+
+### mac-builder
+
+0 errors | 0 warnings | 0 notes
+
+
+
 # occumb (version 1.2.0)
 
 ## Test environments
