@@ -24,7 +24,7 @@ The `occumb()` function implements a hierarchical model that represents the sequ
 This model allows us to account for false-negative species detection errors that occur at different stages of the metabarcoding workflow.
 To identify the model parameters, replicates at different levels are required; that is, one should have multiple sites and multiple within-site replicates. However, it is not necessary to have a balanced design with the same number of replicates at all sites.
 A brief and less formal description of this model is provided below.
-Readers are encouraged to refer to the [original paper](https://doi.org/10.1111/2041-210X.13732) for a more formal and complete explanation.
+Readers are encouraged to refer to the [original](https://doi.org/10.1111/2041-210X.13732) and [subsequent](https://doi.org/10.1002/1438-390X.12219) papers for a more formal and complete explanation.
 
 # Modeling the sequential sampling process of eDNA metabarcoding
 
