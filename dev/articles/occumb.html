@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Introduction to occumb • occumb</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- katex math --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script><script src="../katex-auto.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -21,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.2.1.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.2.1.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -104,16 +105,15 @@ function can be used to provide an overview of the dataset.</p>
 <span><span class="co">#&gt;  L, C, R</span></span></code></pre></div>
 <p>A summary of the sequence read count data can be found in the first
 block of the output. Data were obtained from samples taken from 50 sites
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>×</mo><annotation encoding="application/x-tex">\times</annotation></semantics></math>
-(up to) three replicates, with 50 fish species recorded. A summary of
-the missing samples, number of replicates per site, and sequencing depth
-(i.e., the total number of sequence reads per sample) is also presented.
-The second block of the output indicates that the <code>fish</code> data
-also have two covariates: one continuous species covariate,
-<code>mismatch</code>, and one discrete site covariate,
-<code>riverbank</code>, which can be used in the following analysis. The
-third block of the output shows the labels assigned to the 50 species,
-50 sites, and three replicates.</p>
+<span class="math inline">\times</span> (up to) three replicates, with
+50 fish species recorded. A summary of the missing samples, number of
+replicates per site, and sequencing depth (i.e., the total number of
+sequence reads per sample) is also presented. The second block of the
+output indicates that the <code>fish</code> data also have two
+covariates: one continuous species covariate, <code>mismatch</code>, and
+one discrete site covariate, <code>riverbank</code>, which can be used
+in the following analysis. The third block of the output shows the
+labels assigned to the 50 species, 50 sites, and three replicates.</p>
 <p>As such, the <code>fish</code> data brought together a set of data
 relevant to the analysis using the <code>occumb</code> package. When
 analyzing one’s own dataset, you can use <code><a href="../reference/occumbData.html">occumbData()</a></code> to
@@ -344,11 +344,10 @@ function.</p>
 different values for each site depending on the <code>riverbank</code>
 covariate (remember the <code>psi_formula</code> argument for
 <code>fit1</code>). Therefore, <code>psi</code> was estimated for each
-of the 50 species
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>×</mo><annotation encoding="application/x-tex">\times</annotation></semantics></math>
-50 sites (note that <code>psi</code> differs for each species by
-default), and the two subscripts in brackets distinguish them. Which
-species and site parameter was <code>psi[1,1]</code> about? How about
+of the 50 species <span class="math inline">\times</span> 50 sites (note
+that <code>psi</code> differs for each species by default), and the two
+subscripts in brackets distinguish them. Which species and site
+parameter was <code>psi[1,1]</code> about? How about
 <code>psi[2,1]</code>? Information regarding the dimensions of the
 parameters is provided in the attributes of the resulting object.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
