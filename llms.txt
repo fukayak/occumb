@@ -1,0 +1,131 @@
+# occumb: Site Occupancy Modeling for Environmental DNA Metabarcoding
+
+occumb is an R package that provides functionalities for the application
+of [community site occupancy modeling for environmental DNA (eDNA)
+metabarcoding](https://doi.org/10.1111/2041-210X.13732).
+
+This package allows users to fit the model with a fully Bayesian
+approach using conventional formulas in R. This enables the analysis of
+the detectability of species at different stages of the workflow of eDNA
+metabarcoding and the inference of species site occupancy while
+accounting for false negatives. It also provides functionality for
+model-based inference to assist in the optimization of the study design.
+
+See [the package
+vignette](https://fukayak.github.io/occumb/articles/occumb.html) to
+learn how to use the package and the [original
+paper](https://doi.org/10.1111/2041-210X.13732) for details of the model
+and inference. The [subsequent
+paper](https://doi.org/10.1002/1438-390X.12219) provides an overview of
+the occumb package and an example of its application to the eDNA
+metabarcoding of aquatic insects.
+
+## Installation
+
+You need first install JAGS following the instructions on the [JAGS
+homepage](https://mcmc-jags.sourceforge.io/).
+
+You can then install the latest stable version of the package from CRAN:
+
+``` r
+install.packages("occumb")
+```
+
+or the GitHub repository:
+
+``` r
+remotes::install_github("fukayak/occumb", ref = "main")
+```
+
+## Contact information
+
+Questions and bug reports can be emailed to Keiichi Fukaya
+(<fukaya.keiichi@nies.go.jp>).
+
+## Credits
+
+The development of occumb would not have been possible without, among
+others, Martyn Plummer’s [JAGS](https://mcmc-jags.sourceforge.io/) and
+Ken Kellner’s [jagsUI](https://CRAN.R-project.org/package=jagsUI) R
+package, because the main functionality of occumb for model fitting via
+Markov chain Monte Carlo (MCMC) relies on these libraries. Taku Kadoya
+encouraged us to develop this package. Koji Makiyama, Shinya Uryu, and
+Kentaro Matsuura contributed to package testing. Mito Ikemoto and
+Kentaro Uehira provided valuable feedback through package trials and
+documentation reviews. Funding was provided by Japan Society for the
+Promotion of Science (KAKENHI; Nos. 20K06102 and 23H02240).
+
+# Package index
+
+## Setup dataset
+
+Functions for building a dataset object used for model-fitting.
+
+- [`occumbData()`](https://fukayak.github.io/occumb/reference/occumbData.md)
+  : Constructor for occumbData data class.
+
+## Model fitting
+
+Functions for fitting a model.
+
+- [`occumb()`](https://fukayak.github.io/occumb/reference/occumb.md) :
+  Model-fitting function.
+
+## Model assessment
+
+Functions for assessment of the fitted model.
+
+- [`get_post_samples()`](https://fukayak.github.io/occumb/reference/get_posterior.md)
+  [`get_post_summary()`](https://fukayak.github.io/occumb/reference/get_posterior.md)
+  : Extract posterior samples or summary of parameters from a model-fit
+  object.
+- [`gof()`](https://fukayak.github.io/occumb/reference/gof.md) :
+  Goodness-of-fit assessment of the fitted model.
+
+## Study design for effective species detection
+
+Functions for the model-based assessment of study design.
+
+- [`eval_util_L()`](https://fukayak.github.io/occumb/reference/eval_util_L.md)
+  : Expected utility for local species diversity assessments.
+- [`eval_util_R()`](https://fukayak.github.io/occumb/reference/eval_util_R.md)
+  : Expected utility for regional species diversity assessments.
+- [`list_cond_L()`](https://fukayak.github.io/occumb/reference/list_cond_L.md)
+  : Conditions for local assessment under certain budget and cost
+  values.
+- [`list_cond_R()`](https://fukayak.github.io/occumb/reference/list_cond_R.md)
+  : Conditions for regional assessment under certain budget and cost
+  values.
+
+## S4 methods
+
+Generic function methods applied to occumb package outputs.
+
+- [`plot(`*`<occumbFit>`*`)`](https://fukayak.github.io/occumb/reference/plot-occumbFit-method.md)
+  : Plot method for occumbFit class.
+- [`plot(`*`<occumbGof>`*`)`](https://fukayak.github.io/occumb/reference/plot-occumbGof-method.md)
+  : Plot method for occumbGof class.
+- [`predict(`*`<occumbFit>`*`)`](https://fukayak.github.io/occumb/reference/predict-occumbFit-method.md)
+  : Predict method for occumbFit class.
+- [`summary(`*`<occumbData>`*`)`](https://fukayak.github.io/occumb/reference/summary-occumbData-method.md)
+  : Summary method for occumbData class.
+- [`summary(`*`<occumbFit>`*`)`](https://fukayak.github.io/occumb/reference/summary-occumbFit-method.md)
+  : Summary method for occumbFit class.
+
+## Dataset
+
+Example dataset to illustrate function usage.
+
+- [`fish`](https://fukayak.github.io/occumb/reference/fish.md) : Fish
+  eDNA metabarcoding dataset
+- [`fish_raw`](https://fukayak.github.io/occumb/reference/fish_raw.md) :
+  Fish eDNA metabarcoding dataset
+
+# Articles
+
+### All vignettes
+
+- [Model specification in
+  occumb()](https://fukayak.github.io/occumb/articles/model_specification.md):
+- [Introduction to
+  occumb](https://fukayak.github.io/occumb/articles/occumb.md):
