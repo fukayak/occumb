@@ -1,3 +1,6 @@
+# occumb (development version)
+* Fix pkgdown's math rendering
+
 # occumb 1.2.1 (2025/7/16)
 * This patch release only fixes bibliographic information in package documents.
 
