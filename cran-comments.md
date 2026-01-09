@@ -1,3 +1,55 @@
+# occumb (version 1.2.2)
+
+## Test environments
+
+- local: Ubuntu 24.04.3 LTS R 4.5.2
+- win-builder (release, devel)
+- mac-builder (release)
+
+## R CMD check results
+
+### local
+
+0 errors | 0 warning | 0 note
+
+### win-builder (release)
+
+0 errors | 0 warning | 1 note
+
+* checking CRAN incoming feasibility ... [19s] NOTE
+Maintainer: 'Keiichi Fukaya <fukayak99@gmail.com>'
+
+Found the following (possibly) invalid URLs:
+  URL: https://www.mbr-pwrc.usgs.gov/pubanalysis/keryroylebook/
+    From: man/gof.Rd
+    Status: 404
+    Message: Not Found
+  URL: https://www.stat.columbia.edu/~gelman/book/
+    From: man/gof.Rd
+    Status: 403
+    Message: Forbidden
+
+The above URLs actually work.
+
+### win-builder (devel)
+
+0 errors | 0 warning | 1 note
+
+* checking CRAN incoming feasibility ... [10s] NOTE
+Maintainer: 'Keiichi Fukaya <fukayak99@gmail.com>'
+
+Found the following (possibly) invalid URLs:
+  URL: https://www.mbr-pwrc.usgs.gov/pubanalysis/keryroylebook/
+    From: man/gof.Rd
+    Status: 404
+    Message: Not Found
+
+The above URL actually works.
+
+### mac-builder
+
+0 errors | 0 warning | 0 note
+
 # occumb (version 1.2.1)
 
 ## Test environments

@@ -1,8 +1,7 @@
-# occumb (development version)
-* Fix initial value specification for JAGS 5.0.0 release
-* Fix pkgdown's math rendering
+## occumb 1.2.2 (2026/1/9)
+* This patch release includes internal changes for the anticipated JAGS 5.0.0 release and fixes for math rendering issues in the package vignettes.
 
-# occumb 1.2.1 (2025/7/16)
+## occumb 1.2.1 (2025/7/16)
 * This patch release only fixes bibliographic information in package documents.
 
 ## occumb 1.2.0 (2025/5/23)
