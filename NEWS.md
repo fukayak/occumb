@@ -1,4 +1,5 @@
 # occumb (development version)
+* Fix initial value specification for JAGS 5.0.0 release
 * Fix pkgdown's math rendering
 
 # occumb 1.2.1 (2025/7/16)
