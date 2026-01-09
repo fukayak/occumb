@@ -445,12 +445,14 @@ inits_code <- function(const, margs, dat) {
 
   if (dat$prior_ulim > 10) {
     out <- c(out,
-             "         sigma    = stats::rnorm(margs$M, mean = 1, sd = 0.1))")
+             "         sigma    = stats::rnorm(margs$M, mean = 1, sd = 0.1),")
   } else {
     out <- c(out,
-             sprintf("         sigma    = stats::runif(margs$M, min = 0, max = %s))",
+             sprintf("         sigma    = stats::runif(margs$M, min = 0, max = %s),",
                      dat$prior_ulim))
   }
+  out <- c(out,
+           "         rho      = {rho <- matrix(NA, margs$M - 1, margs$M); rho[upper.tri(rho)] <- 0; rho})")
 
   out <- c(out, "}")
 

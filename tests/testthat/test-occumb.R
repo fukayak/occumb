@@ -230,7 +230,8 @@ test_that("Code for initial value function is correct for 144 available models",
              "         spec_eff = matrix(stats::rnorm(const$I * margs$M, sd = 0.1),",
              "                           const$I, margs$M),",
              "         Mu       = stats::rnorm(margs$M, sd = 0.1),",
-             "         sigma    = stats::rnorm(margs$M, mean = 1, sd = 0.1))",
+             "         sigma    = stats::rnorm(margs$M, mean = 1, sd = 0.1),",
+             "         rho      = {rho <- matrix(NA, margs$M - 1, margs$M); rho[upper.tri(rho)] <- 0; rho})",
              "}")
 
     res <- inits_code(const, margs, dat)
@@ -262,8 +263,9 @@ test_that("Code for initial value function is correct for 144 available models",
              "         Mu       = stats::rnorm(margs$M, sd = 0.1),")
 
     ans <- c(ans,
-             sprintf("         sigma    = stats::runif(margs$M, min = 0, max = %s))",
-                     dat$prior_ulim))
+             sprintf("         sigma    = stats::runif(margs$M, min = 0, max = %s),",
+                     dat$prior_ulim),
+             "         rho      = {rho <- matrix(NA, margs$M - 1, margs$M); rho[upper.tri(rho)] <- 0; rho})")
 
     ans <- c(ans, "}")
 
