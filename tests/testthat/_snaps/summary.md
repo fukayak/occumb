@@ -53,7 +53,7 @@
       Saved parameters:
        Mu sigma rho alpha beta gamma phi theta psi z pi deviance 
       
-      MCMC ran for 0.001 minutes at time 2024-10-22 14:00:01.027647:
+      MCMC ran for 0.001 minutes at time 2024-10-22 05:00:01.027647:
        For each of 1 chains:
         Adaptation:            100 iterations (sufficient)
         Burn-in:               10 iterations
