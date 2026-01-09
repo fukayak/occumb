@@ -11,7 +11,7 @@ posterior samples."><meta name="robots" content="noindex"></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.1.0.9014</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.2.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -148,7 +148,7 @@ standard deviation of species-specific parameters.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments passed to <code><a href="https://kenkellner.com/jagsUI/reference/jags.html" class="external-link">jags</a>()</code> function.</p></dd>
+<dd><p>Additional arguments passed to <code><a href="https://kenkellner.com/jagsUI/reference/jags.html" class="external-link">jags()</a></code> function.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -203,16 +203,16 @@ range of \(-\)1 to 1 is specified by default.</p>
 <p>See <a href="https://fukayak.github.io/occumb/articles/model_specification.html">the package vignette</a>
 for details on the model specifications in <code>occumb()</code>.</p>
 <p>The <code>data</code> argument requires a dataset object to be generated using
-<code>ocumbData()</code>; see the document of <code><a href="occumbData.html">occumbData</a>()</code>.</p>
-<p>The model is fit using the <code><a href="https://kenkellner.com/jagsUI/reference/jags.html" class="external-link">jags</a>()</code> function of the
+<code>ocumbData()</code>; see the document of <code><a href="occumbData.html">occumbData()</a></code>.</p>
+<p>The model is fit using the <code><a href="https://kenkellner.com/jagsUI/reference/jags.html" class="external-link">jags()</a></code> function of the
 <a href="https://cran.r-project.org/package=jagsUI" class="external-link">jagsUI</a> package, where
 Markov chain Monte Carlo (MCMC) methods are used to
 obtain posterior samples of the parameters and latent variables.
 Arguments <code>n.chains</code>, <code>n.adapt</code>, <code>n.burnin</code>, <code>n.thin</code>,
 <code>n.iter</code>, and <code>parallel</code> are passed on to arguments of the
-same name in the <code><a href="https://kenkellner.com/jagsUI/reference/jags.html" class="external-link">jags</a>()</code> function.
+same name in the <code><a href="https://kenkellner.com/jagsUI/reference/jags.html" class="external-link">jags()</a></code> function.
 See the document of <a href="https://cran.r-project.org/package=jagsUI" class="external-link">jagsUI</a>'s
-<code><a href="https://kenkellner.com/jagsUI/reference/jags.html" class="external-link">jags</a>()</code> function for details.
+<code><a href="https://kenkellner.com/jagsUI/reference/jags.html" class="external-link">jags()</a></code> function for details.
 A set of random initial values is used to perform an MCMC run.</p>
     </div>
     <div class="section level2">
@@ -564,7 +564,7 @@ and Evolution</em> <strong>13</strong>:183–193.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>
