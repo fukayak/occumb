@@ -43,7 +43,7 @@ summary(fish)
 
 A summary of the sequence read count data can be found in the first
 block of the output. Data were obtained from samples taken from 50 sites
-$\times$ (up to) three replicates, with 50 fish species recorded. A
+\times (up to) three replicates, with 50 fish species recorded. A
 summary of the missing samples, number of replicates per site, and
 sequencing depth (i.e., the total number of sequence reads per sample)
 is also presented. The second block of the output indicates that the
@@ -327,7 +327,7 @@ post_summary_psi
 In the `fit1` model, `psi` was assumed to have different values for each
 site depending on the `riverbank` covariate (remember the `psi_formula`
 argument for `fit1`). Therefore, `psi` was estimated for each of the 50
-species $\times$ 50 sites (note that `psi` differs for each species by
+species \times 50 sites (note that `psi` differs for each species by
 default), and the two subscripts in brackets distinguish them. Which
 species and site parameter was `psi[1,1]` about? How about `psi[2,1]`?
 Information regarding the dimensions of the parameters is provided in

@@ -1,5 +1,13 @@
 # Changelog
 
+## occumb 1.2.2 (2026/1/9)
+
+CRAN release: 2026-01-09
+
+- This patch release includes internal changes for the anticipated JAGS
+  5.0.0 release and fixes for math rendering issues in the package
+  vignettes.
+
 ## occumb 1.2.1 (2025/7/16)
 
 CRAN release: 2025-07-16
@@ -7,7 +15,9 @@ CRAN release: 2025-07-16
 - This patch release only fixes bibliographic information in package
   documents.
 
-### occumb 1.2.0 (2025/5/23)
+## occumb 1.2.0 (2025/5/23)
+
+CRAN release: 2025-05-24
 
 - Add a data frame input option in
   [`occumbData()`](https://fukayak.github.io/occumb/reference/occumbData.md).
@@ -23,7 +33,9 @@ CRAN release: 2025-07-16
   messages, and additional testing.
 - Improved function documentation.
 
-### occumb 1.1.0 (2024/3/26)
+## occumb 1.1.0 (2024/3/26)
+
+CRAN release: 2024-03-26
 
 - Add [`predict()`](https://rdrr.io/r/stats/predict.html) method for
   `occumbFit` class.
@@ -33,18 +45,24 @@ CRAN release: 2025-07-16
   and additional testing.
 - Improved function documentation and vignette.
 
-### occumb 1.0.3 (2024/01/04)
+## occumb 1.0.3 (2024/01/04)
+
+CRAN release: 2024-01-08
 
 - Internal changes to fix a number of known bugs, more helpful error
   messages, and additional testing.
 - Improved function documentation.
 
-### occumb 1.0.2 (2023/10/19)
+## occumb 1.0.2 (2023/10/19)
+
+CRAN release: 2023-10-19
 
 - Fix license issue: occumb is licensed under GPLv3.
 - Some document fixes.
 
-### occumb 1.0.1 (2023/09/21)
+## occumb 1.0.1 (2023/09/21)
+
+CRAN release: 2023-09-23
 
 - This patch release fixes issues with
   [`plot()`](https://rdrr.io/r/graphics/plot.default.html) and
@@ -54,7 +72,7 @@ CRAN release: 2025-07-16
   [`gof()`](https://fukayak.github.io/occumb/reference/gof.md) to accept
   additional arguments for figure formatting.
 
-### occumb 1.0.0 (2023/09/14)
+## occumb 1.0.0 (2023/09/14)
 
 - Add `z`, `theta`, and `phi` arguments to
   [`eval_util_L()`](https://fukayak.github.io/occumb/reference/eval_util_L.md).
@@ -66,12 +84,12 @@ CRAN release: 2025-07-16
 - Remove `loglik()` function from the package.
 - Some bug fixes, internal changes, and document improvements.
 
-### occumb 0.6.1 (2023/07/27)
+## occumb 0.6.1 (2023/07/27)
 
 - Add model specification vignette.
 - Some fixes and improvements of documentation.
 
-### occumb 0.6.0 (2023/07/20)
+## occumb 0.6.0 (2023/07/20)
 
 - Add package vignette.
 - Add `fish` and `fish_raw` data.
@@ -86,12 +104,12 @@ CRAN release: 2025-07-16
   functions.
 - Some bug fixes, internal changes, and documentation improvements.
 
-### occumb 0.5.1 (2023/04/27)
+## occumb 0.5.1 (2023/04/27)
 
 - Add pkgdown website.
 - Some bug fixes and internal changes.
 
-### occumb 0.5.0 (2023/04/26)
+## occumb 0.5.0 (2023/04/26)
 
 - Add
   [`get_post_samples()`](https://fukayak.github.io/occumb/reference/get_posterior.md)
@@ -109,7 +127,7 @@ CRAN release: 2025-07-16
   [`eval_util_R()`](https://fukayak.github.io/occumb/reference/eval_util_R.md)
   functions on Windows.
 
-### occumb 0.4.2 (2022/12/13)
+## occumb 0.4.2 (2022/12/13)
 
 - Fix an issue of parallel computation of
   [`eval_util_L()`](https://fukayak.github.io/occumb/reference/eval_util_L.md)
@@ -117,7 +135,7 @@ CRAN release: 2025-07-16
   [`eval_util_R()`](https://fukayak.github.io/occumb/reference/eval_util_R.md)
   functions on Windows.
 
-### occumb 0.4.1 (2022/11/16)
+## occumb 0.4.1 (2022/11/16)
 
 - Fix some computational issues in
   [`eval_util_L()`](https://fukayak.github.io/occumb/reference/eval_util_L.md)
@@ -125,7 +143,7 @@ CRAN release: 2025-07-16
   [`eval_util_R()`](https://fukayak.github.io/occumb/reference/eval_util_R.md)
   functions.
 
-### occumb 0.4.0 (2022/06/03)
+## occumb 0.4.0 (2022/06/03)
 
 - Add
   [`eval_util_L()`](https://fukayak.github.io/occumb/reference/eval_util_L.md)
@@ -138,7 +156,7 @@ CRAN release: 2025-07-16
   [`list_cond_R()`](https://fukayak.github.io/occumb/reference/list_cond_R.md)
   functions.
 
-### occumb 0.3.0 (2022/03/31)
+## occumb 0.3.0 (2022/03/31)
 
 - Add [`gof()`](https://fukayak.github.io/occumb/reference/gof.md)
   function.
@@ -148,13 +166,13 @@ CRAN release: 2025-07-16
   function.
 - Add `data` field in `occumbFit` class.
 
-### occumb 0.2.1 (2021/11/21)
+## occumb 0.2.1 (2021/11/21)
 
 - A few bug fixes.
 - Add validations for the inputs of
   [`occumb()`](https://fukayak.github.io/occumb/reference/occumb.md).
 
-### occumb 0.2.0 (2021/11/19)
+## occumb 0.2.0 (2021/11/19)
 
 - Change occumbData class specification and
   [`occumbData()`](https://fukayak.github.io/occumb/reference/occumbData.md)
@@ -163,7 +181,7 @@ CRAN release: 2025-07-16
   function.
 - Add methods for `occumbFit` class: `plot`, `print`, `summary`.
 
-### occumb 0.1.0 (2021/9/10)
+## occumb 0.1.0 (2021/9/10)
 
 - Initial development of occumb package.
 - Add
