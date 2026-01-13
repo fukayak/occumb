@@ -1,5 +1,4 @@
 ## code to prepare `snapshot_occumb` object goes here
-Sys.setenv(TZ = "UTC")
 setwd("<occumb directory>")
 devtools::load_all()
 
