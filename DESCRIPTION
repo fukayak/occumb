@@ -24,7 +24,13 @@ Suggests:
     spelling,
     testthat (>= 3.0.0),
     tibble,
-    vdiffr
+    vdiffr,
+    nimble,
+    coda,
+    parallel,
+    dqrng,
+    randtoolbox,
+    DoE.base
 Config/testthat/edition: 3
 Imports: 
     stats,
@@ -39,10 +45,12 @@ Collate:
     'fish_raw.R'
     'get_posterior.R'
     'gof.R'
+    'nimbleSummary.R'
     'occumbData.R'
     'occumb.R'
     'plot.R'
     'predict.R'
+    'run_nimble.R'
     'show.R'
     'summary.R'
     'utility.R'

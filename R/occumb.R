@@ -4,6 +4,7 @@ NULL
 # Class for model-fit results of occumb
 setClass("occumbFit", slots = c(fit = "jagsUI",
                                 data = "occumbData",
+                                engine = "character",
                                 occumb_args = "list"))
 
 #' @title Model-fitting function.
@@ -103,6 +104,9 @@ setClass("occumbFit", slots = c(fit = "jagsUI",
 #' @param n.thin Thinning rate. Must be a positive integer.
 #' @param n.iter Total number of iterations per chain (including burn-in).
 #' @param parallel If TRUE, run MCMC chains in parallel on multiple CPU cores.
+#' @param engine Character string specifying the MCMC backend used for model
+#'   fitting. Either `"JAGS"` (default; via \code{\link[jagsUI]{jags}()}) or
+#'   `"NIMBLE"` (via the \pkg{nimble} package).
 #' @param ... Additional arguments passed to \code{\link[jagsUI]{jags}()} function.
 #' @return  An S4 object of the \code{occumbFit} class containing the results of
 #'          the model fitting and the supplied dataset.
@@ -162,9 +166,11 @@ occumb <- function(formula_phi = ~ 1,
                    n.thin = 10,
                    n.iter = 20000,
                    parallel = FALSE,
+                   engine = c("JAGS", "NIMBLE"),
                    ...) {
-
+  
   # Validate arguments
+  engine <- match.arg(engine)
   check_args_occumb(data, formula_phi, formula_theta, formula_psi,
                     formula_phi_shared, formula_theta_shared,
                     formula_psi_shared, prior_prec, prior_ulim)
@@ -192,25 +198,53 @@ occumb <- function(formula_phi = ~ 1,
                                  margs$theta_shared,
                                  margs$psi_shared)
 
-  # Write model file
-  model <- tempfile()
-  writeLines(write_jags_model(margs$phi, margs$theta, margs$psi,
-                              margs$phi_shared,
-                              margs$theta_shared,
-                              margs$psi_shared), model)
+  if (engine == "JAGS") {
+    # Write model file
+    model <- tempfile()
+    writeLines(write_jags_model(margs$phi, margs$theta, margs$psi,
+                                margs$phi_shared,
+                                margs$theta_shared,
+                                margs$psi_shared), model)
+    
+    # Run MCMC in JAGS
+    fit <- jagsUI::jags(dat, inits, params, model,
+                        n.chains = n.chains,
+                        n.adapt  = n.adapt,
+                        n.iter   = n.iter,
+                        n.burnin = n.burnin,
+                        n.thin   = n.thin,
+                        parallel = parallel, ...)
+  } else { # NIMBLE
+    # Write model file
+    M_cov <- lapply(margs[c("m_phi", "m_theta", "m_psi")], length)
+    M_cov_shared <- margs[c("M_phi_shared", "M_theta_shared", "M_psi_shared")]
+    names(M_cov_shared) <- c("M_phi_shared", "M_theta_shared", "M_psi_shared")
+    model_code <- write_nimble_model(margs$phi, margs$theta, margs$psi,
+                                     margs$phi_shared,
+                                     margs$theta_shared,
+                                     margs$psi_shared,
+                                     M_cov_phi          = M_cov$m_phi,
+                                     M_cov_phi_shared   = M_cov_shared$M_phi_shared,
+                                     M_cov_theta        = M_cov$m_theta,
+                                     M_cov_theta_shared = M_cov_shared$M_theta_shared,
+                                     M_cov_psi          = M_cov$m_psi,
+                                     M_cov_psi_shared   = M_cov_shared$M_psi_shared)
+    model_file <- tempfile()
+    writeLines(model_code, model_file)
 
-  # Run MCMC in JAGS
-  fit <- jagsUI::jags(dat, inits, params, model,
+    # Run MCMC in NIMBLE
+    fit <- run_nimble(dat, const, inits, params, model_code, model_file,
                       n.chains = n.chains,
                       n.adapt  = n.adapt,
                       n.iter   = n.iter,
                       n.burnin = n.burnin,
                       n.thin   = n.thin,
                       parallel = parallel, ...)
-
+  }
+  
   # Output
   out <- methods::new(
-    "occumbFit", fit = fit, data = data,
+    "occumbFit", fit = fit, data = data, engine = tolower(engine),
     occumb_args = list(
       formula_phi          = paste(as.character(formula_phi),
                                    collapse = " "),
@@ -228,6 +262,7 @@ occumb <- function(formula_phi = ~ 1,
       prior_ulim           = prior_ulim
     )
   )
+  
   out
 }
 

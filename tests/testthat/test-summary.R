@@ -28,3 +28,9 @@ test_that("summary() has known output for occumbFit", {
     summary(occumb:::internal_fit)
   )
 })
+
+test_that("summary() has known output for occumbFit (engine = NIMBLE)", {
+  expect_snapshot(
+    summary(occumb:::internal_fit_nimble)
+  )
+})

@@ -52,14 +52,16 @@ setMethod("summary", signature(object = "occumbFit"),
           crayon::bold(":\n"), sep = "")
     }
     cat(" For each of", object@fit$mcmc.info$n.chains, "chains:\n")
-    if (all(object@fit$mcmc.info$sufficient.adapt)) {
-      cat("  Adaptation:           ",
-          mean(object@fit$mcmc.info$n.adapt),
-          "iterations (sufficient)\n")
-    } else {
-      cat("  Adaptation:           ",
-          mean(object@fit$mcmc.info$n.adapt),
-          "iterations (possibly insufficient)\n")
+    if (object@engine != "nimble") {
+      if (all(object@fit$mcmc.info$sufficient.adapt)) {
+        cat("  Adaptation:           ",
+            mean(object@fit$mcmc.info$n.adapt),
+            "iterations (sufficient)\n")
+      } else {
+        cat("  Adaptation:           ",
+            mean(object@fit$mcmc.info$n.adapt),
+            "iterations (possibly insufficient)\n")
+      }
     }
     cat("  Burn-in:              ",
         object@fit$mcmc.info$n.burnin,
@@ -67,8 +69,13 @@ setMethod("summary", signature(object = "occumbFit"),
     cat("  Thin rate:            ",
         object@fit$mcmc.info$n.thin,
         "iterations\n")
+    
+    total_chain_length <- object@fit$mcmc.info$n.iter
+    if (object@engine != "nimble") {
+      total_chain_length <- total_chain_length + mean(object@fit$mcmc.info$n.adapt)
+    }
     cat("  Total chain length:   ",
-        object@fit$mcmc.info$n.iter + mean(object@fit$mcmc.info$n.adapt),
+        total_chain_length,
         "iterations\n")
     cat("  Posterior sample size:",
         object@fit$mcmc.info$n.samples / object@fit$mcmc.info$n.chains,
