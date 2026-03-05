@@ -140,7 +140,7 @@
       Saved parameters:
        Mu sigma rho alpha beta gamma phi theta psi z pi 
       
-      MCMC ran for 1.307 minutes at time 2026-02-22 05:09:12.727355:
+      MCMC ran for 0.66 minutes at time 2026-03-05 17:20:25.946704:
        For each of 1 chains:
         Burn-in:               10 iterations
         Thin rate:             1 iterations

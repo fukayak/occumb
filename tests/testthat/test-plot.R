@@ -7,6 +7,14 @@ test_that("plot() has known output for occumbFit)", {
   )
 })
 
+test_that("plot() has known output for occumbFit (engine = NIMBLE)", {
+  plot_occumbFit <- function() plot(occumb:::internal_fit_nimble)
+  vdiffr::expect_doppelganger(
+    title = "occumbFit_nimble",
+    fig = plot_occumbFit
+  )
+})
+
 ### Test for plot() gof --------------------------------------------------------
 test_that("plot() has known output for gof", {
   plot_gof <- function() plot(occumb:::gof_ft)

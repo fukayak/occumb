@@ -43,10 +43,9 @@ run_nimble <- function(data, const, inits, params, model_code_strings, model_fil
   model_code <- to_model_code(model_code_strings)
   dots_arguments <- list(...)
   n.cores <- dots_arguments$n.cores
-  if (!is.null(n.cores)) n.cores <- as.integer(n.cores)
-  stopifnot(is.null(n.cores) || is.integer(n.cores))
+  stopifnot(is.null(n.cores) || (is.numeric(n.cores) && length(n.cores) == 1L && n.cores > 0))
   seed <- dots_arguments$seed
-  stopifnot(is.null(seed) || is.logical(seed) || (is.numeric(seed) && length(seed) == n.chains))
+  stopifnot(is.null(seed) || is.logical(seed) || is.numeric(seed))
   store.data <- dots_arguments$store.data
   stopifnot(is.null(store.data) || is.logical(store.data))
   if (is.null(store.data)) store.data <- FALSE
@@ -110,8 +109,20 @@ run_nimble_parallel <- function(inits, code, const, data, monitors,
     n.cores <- n.chains
     nimble::messageIfVerbose("[Note] 'n.cores' exceeds 'n.chains'; reducing 'n.cores' to 'n.chains'.")
   }
+
   cluster <- parallel::makeCluster(n.cores)
+  on.exit({
+    tryCatch(parallel::stopCluster(cl = cluster), error = function(e) NULL)
+    for (nd in cluster)
+      tryCatch(close(nd$con), error = function(e) NULL)
+  }, add = TRUE)
+
   parallel::clusterEvalQ(cluster, library(nimble))
+  parallel::clusterExport(
+    cluster,
+    varlist = c("set_rng", "find_sampler_indices_fast"),
+    envir = asNamespace("occumb")
+  )
   results <- parallel::parLapply(cl = cluster, X = inits,
                                  fun = run_nimble_model, code = code,
                                  const = const, data = data,
@@ -131,13 +142,16 @@ run_nimble_model <- function(inits, code, const, data, monitors,
     seed  <- inits$.RNG.seed
     set_rng(inits$.RNG.name)
     inits <- inits[ls(inits)]
+    inits_model <- inits
   } else {
     seed  <- vapply(inits, function(x) x$.RNG.seed, FUN.VALUE = numeric(1L))
     set_rng(inits[[1]]$.RNG.name)
     inits <- lapply(inits, function(x) x[ls(x)])
+    inits_model <- inits[[1]]
   }
+
   model  <- nimble::nimbleModel(code = code, constants = const, data = data,
-                                inits = inits[[1L]])
+                                inits = inits_model)
   Cmodel <- nimble::compileNimble(model)
   conf   <- nimble::configureMCMC(Cmodel, monitors = monitors, print = FALSE)
   conf$replaceSamplers(target = "Mu", type = "RW_block", silent = TRUE)
@@ -254,7 +268,7 @@ write_nimble_model <- function(phi, theta, psi,
         term2 <- "inprod(alpha_shared[1:M_phi_shared], cov_phi_shared[i, 1:M_phi_shared])"
       }
       model <- c(model, paste0(
-                 "        log(phi[i]) <- ", term1, " + ", term2))
+        "        log(phi[i]) <- ", term1, " + ", term2))
     } else if (phi == "ij") {
       if (M_cov_phi == 1) {
         term1 <- "alpha[i, 1] * cov_phi[j, 1]"
@@ -268,7 +282,7 @@ write_nimble_model <- function(phi, theta, psi,
       }
       model <- c(model,
                  "        for (j in 1:J) {", paste0(
-                 "            log(phi[i, j]) <- ", term1, " + ", term2),
+                   "            log(phi[i, j]) <- ", term1, " + ", term2),
                  "        }")
     } else if (phi == "ijk") {
       if (M_cov_phi == 1) {
@@ -284,7 +298,7 @@ write_nimble_model <- function(phi, theta, psi,
       model <- c(model,
                  "        for (j in 1:J) {",
                  "            for (k in 1:K) {", paste0(
-                 "                log(phi[i, j, k]) <- ", term1, " + ", term2),
+                   "                log(phi[i, j, k]) <- ", term1, " + ", term2),
                  "            }",
                  "        }")
     }
@@ -341,7 +355,7 @@ write_nimble_model <- function(phi, theta, psi,
         term2 <- "inprod(beta_shared[1:M_theta_shared], cov_theta_shared[i, 1:M_theta_shared])"
       }
       model <- c(model, paste0(
-                 "        logit(theta[i]) <- ", term1, " + ", term2))
+        "        logit(theta[i]) <- ", term1, " + ", term2))
     } else if (theta == "ij") {
       if (M_cov_theta == 1) {
         term1 <- "beta[i, 1] * cov_theta[j, 1]"
@@ -355,7 +369,7 @@ write_nimble_model <- function(phi, theta, psi,
       }
       model <- c(model,
                  "        for (j in 1:J) {", paste0(
-                 "            logit(theta[i, j]) <- ", term1, " + ", term2),
+                   "            logit(theta[i, j]) <- ", term1, " + ", term2),
                  "        }")
     } else if (theta == "ijk") {
       if (M_cov_theta == 1) {
@@ -371,7 +385,7 @@ write_nimble_model <- function(phi, theta, psi,
       model <- c(model,
                  "        for (j in 1:J) {",
                  "            for (k in 1:K) {", paste0(
-                 "                logit(theta[i, j, k]) <- ", term1, " + ", term2),
+                   "                logit(theta[i, j, k]) <- ", term1, " + ", term2),
                  "            }",
                  "        }")
     }
@@ -442,7 +456,7 @@ write_nimble_model <- function(phi, theta, psi,
       }
       model <- c(model,
                  "        for (j in 1:J) {", paste0(
-                 "            logit(psi[i, j]) <- ", term1, " + ", term2),
+                   "            logit(psi[i, j]) <- ", term1, " + ", term2),
                  "        }")
     }
   } else {
@@ -565,10 +579,10 @@ pad_dummy_value <- function(x, dummy_value = -999) {
 set_inits_nimble <- function(inits, seed, n.chains, n_rho) {
   if (is.null(seed)) {
     seeds <- floor(stats::runif(n.chains, min = 1, max = 1e+05))
-  } else if (isFALSE(seed)) {
+  } else if (isFALSE(seed) && length(seed) == 1L) {
     set.seed(NULL)
     seeds <- floor(stats::runif(n.chains, min = 1, max = 1e+05))
-  } else if (isTRUE(seed)) {
+  } else if (isTRUE(seed) && length(seed) == 1L) {
     seeds <- seq_len(n.chains)
   } else if (is.numeric(seed) && length(seed) == n.chains) {
     if (length(unique(seed)) < n.chains) {
@@ -662,6 +676,10 @@ make_jagsui_compatible <- function(fit, env = parent.frame()) {
     # Remove whitespace in parameter names (e.g., "alpha[1, 1]" -> "alpha[1,1]")
     rownames(fit$summary) <- gsub(pattern = "\\s", replacement = "",
                                   rownames(fit$summary))
+    for (chain in seq_along(fit$samples)) {
+      colnames(fit$samples[[chain]]) <- gsub(pattern = "\\s", replacement = "",
+                                             colnames(fit$samples[[chain]]))
+    }
     fit$parallel   <- parallel
     fit$parameters <- params
     fit$model      <- to_occumb_nimble_model(model_code_strings, const_nimble, data_nimble)
@@ -688,7 +706,7 @@ to_occumb_nimble_model <- function(model_code_strings, const, data) {
 #' @export
 print.occumb_nimble_model <- function(x, ...) {
   cat(crayon::bold("NIMBLE model:"), "\n")
-  for (i in seq_alonglen(x$model_code_strings)) {
+  for (i in seq_along(x$model_code_strings)) {
     cat(x$model_code_strings[i], "\n", sep = "")
   }
 
