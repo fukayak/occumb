@@ -20,6 +20,7 @@ occumb(
   n.thin = 10,
   n.iter = 20000,
   parallel = FALSE,
+  engine = c("JAGS", "NIMBLE"),
   ...
 )
 }
@@ -66,6 +67,10 @@ standard deviation of species-specific parameters.}
 \item{n.iter}{Total number of iterations per chain (including burn-in).}
 
 \item{parallel}{If TRUE, run MCMC chains in parallel on multiple CPU cores.}
+
+\item{engine}{Character string specifying the MCMC backend used for model
+fitting. Either \code{"JAGS"} (default; via \code{\link[jagsUI]{jags}()}) or
+\code{"NIMBLE"} (via the \pkg{nimble} package).}
 
 \item{...}{Additional arguments passed to \code{\link[jagsUI]{jags}()} function.}
 }

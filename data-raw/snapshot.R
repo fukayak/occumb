@@ -26,4 +26,11 @@ internal_fit <- occumb(
 
 gof_ft <- gof(internal_fit, core = 2, plot = FALSE)
 
-usethis::use_data(internal_fit, gof_ft, internal = TRUE, overwrite = TRUE)
+internal_fit_nimble <- occumb(
+  data = data,
+  n.chains = 1, n.burnin = 10, n.thin = 1, n.iter = 20,
+  engine = "NIMBLE"
+)
+
+usethis::use_data(internal_fit, internal_fit_nimble, gof_ft, 
+                  internal = TRUE, overwrite = TRUE, version = 2)
