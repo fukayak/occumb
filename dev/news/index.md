@@ -3,6 +3,8 @@
 ## occumb (development version)
 
 - Fix timezone specification for snapshot testing
+- Add an option to select the NIMBLE engine in
+  [`occumb()`](https://fukayak.github.io/occumb/dev/reference/occumb.md)
 
 ### occumb 1.2.2 (2026/1/9)
 

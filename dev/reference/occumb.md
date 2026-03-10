@@ -23,6 +23,7 @@ occumb(
   n.thin = 10,
   n.iter = 20000,
   parallel = FALSE,
+  engine = c("JAGS", "NIMBLE"),
   ...
 )
 ```
@@ -101,6 +102,13 @@ occumb(
 - parallel:
 
   If TRUE, run MCMC chains in parallel on multiple CPU cores.
+
+- engine:
+
+  Character string specifying the MCMC backend used for model fitting.
+  Either `"JAGS"` (default; via
+  [`jags()`](https://kenkellner.com/jagsUI/reference/jags.html)) or
+  `"NIMBLE"` (via the nimble package).
 
 - ...:
 
