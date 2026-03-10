@@ -69,3 +69,4 @@ builds a NIMBLE model, runs MCMC (optionally in parallel), summarizes the
 posterior samples, and returns an object compatible with the
 \pkg{jagsUI}-style fit object.
 }
+\keyword{internal}

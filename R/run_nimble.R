@@ -35,6 +35,7 @@
 #'   }
 #'
 #' @return \pkg{jagsUI}-style fit object.
+#' @keywords internal
 run_nimble <- function(data, const, inits, params, model_code_strings, model_file,
                        n.chains, n.iter, n.burnin, n.thin, parallel, ...) {
   attach_nimble_package()
@@ -184,6 +185,7 @@ run_nimble_model <- function(inits, code, const, data, monitors,
 #' @param conf A \code{\link[nimble]{MCMCconf}} object from the \pkg{nimble} package.
 #' @param nodes A parameter name (character string).
 #' @return An integer vector of indices into \code{conf$getSamplers()}.
+#' @keywords internal
 find_sampler_indices_fast <- function(conf, nodes) {
   samplerConfs <- conf$samplerConfs
   model <- conf$model

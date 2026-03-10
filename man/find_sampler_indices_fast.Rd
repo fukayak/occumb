@@ -18,3 +18,4 @@ An integer vector of indices into \code{conf$getSamplers()}.
 This function provides a fast alternative to \code{conf$findSamplersOnNodes()},
 which can be slow for large target samplers.
 }
+\keyword{internal}

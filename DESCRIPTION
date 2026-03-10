@@ -1,11 +1,15 @@
 Package: occumb
 Title: Site Occupancy Modeling for Environmental DNA Metabarcoding
-Version: 1.2.2.9000
+Version: 1.2.2.9001
 Authors@R: c(
     person("Keiichi", "Fukaya", , "fukayak99@gmail.com", role = c("aut", "cre")),
     person("Ken", "Kellner", role = "cph",
-           comment = "summary method for occumbFit class"),
-    person("Mika", "Takahashi", , "takahashi.mika@nies.go.jp", role = "aut")
+           comment = "summary method for occumbFit class and processing of NIMBLE results"),
+    person("Mika", "Takahashi", , "takahashi.mika@nies.go.jp", role = "aut"),
+    person("Koji", "Makiyama", role = "ctb",
+           comment = "option to use NIMBLE"),
+    person("Kentaro", "Matsuura", role = "ctb",
+           comment = "option to use NIMBLE")
   )
 Description: Fits community site occupancy models to environmental DNA
     metabarcoding data collected using spatially-replicated survey design.
