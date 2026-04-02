@@ -1,5 +1,5 @@
 ### Test cases for write_nimble_model --------------------------------------------
-method <- c("pairwise", "full")[1]
+method <- if (identical(Sys.getenv("OCCUMB_TEST_WRITE_NIMBLE_MODEL_FULL"), "true")) "full" else "pairwise"
 
 phi <- theta <- c("i", "ij", "ijk")
 psi <- c("i", "ij")
