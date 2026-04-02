@@ -711,6 +711,7 @@ make_jagsui_compatible <- function(fit, env = parent.frame()) {
     fit$model      <- to_occumb_nimble_model(model_code_strings, const_nimble, data_nimble)
     fit$modfile    <- model_file
     fit$run.date   <- start_time
+    fit$mcmc.info$n.iter       <- n.iter
     fit$mcmc.info$n.burnin     <- n.burnin
     fit$mcmc.info$n.thin       <- n.thin
     fit$mcmc.info$elapsed.mins <- elapsed_mins
