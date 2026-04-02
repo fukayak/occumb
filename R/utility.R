@@ -1131,7 +1131,7 @@ sample_u <- function(z_theta) {
     for (n in seq_along(allzero)) {
       for (i in seq_len(10000)) {
         u[, allzero[n]] <- stats::rbinom(nrow(z_theta), 1, z_theta[, allzero[n]])
-        if (sum(u[, allzero[n]]) == 0) break
+        if (sum(u[, allzero[n]]) > 0) break
       }
     }
     if (any(colSums(u) == 0)) {
