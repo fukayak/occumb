@@ -1,6 +1,8 @@
 # occumb (development version)
 * Fix timezone specification for snapshot testing
 * Add an option to select the NIMBLE engine in `occumb()`
+* Fix a bug in `sample_u()`
+* Make predict tests opt-in via environment variable
 
 ## occumb 1.2.2 (2026/1/9)
 * This patch release includes internal changes for the anticipated JAGS 5.0.0 release and fixes for math rendering issues in the package vignettes.

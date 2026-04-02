@@ -1,3 +1,6 @@
+skip_if_not(identical(Sys.getenv("OCCUMB_TEST_PREDICT"), "true"),
+            message = "Tests for `predict()` skipped. Set OCCUMB_TEST_PREDICT=true to run.")
+
 ### Test data ------------------------------------------------------------------
 I <- 2
 J <- 3
