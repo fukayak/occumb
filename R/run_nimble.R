@@ -69,7 +69,7 @@ run_nimble <- function(data, const, inits, params, model_code_strings, model_fil
   data_nimble <- set_data_nimble(data)
 
   # Set initial values
-  n_rho <- max(const_nimble$rho)
+  n_rho <- max(const_nimble$rho_index)
   inits_nimble <- set_inits_nimble(inits, seed, n.chains, n_rho)
 
   # Run MCMC in NIMBLE
