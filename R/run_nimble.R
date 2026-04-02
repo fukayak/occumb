@@ -691,6 +691,9 @@ make_jagsui_compatible <- function(fit, env = parent.frame()) {
       colnames(fit$samples[[chain]]) <- rename_rho_labels(
         colnames(fit$samples[[chain]]), const_nimble$rho_index)
     }
+    # Reshape sims.list$rho to [samples, M-1, M] to match JAGS convention
+    fit$sims.list$rho <- reshape_rho_sims(fit$sims.list$rho,
+                                          const_nimble$rho_index)
     fit$parallel   <- parallel
     fit$parameters <- params
     fit$model      <- to_occumb_nimble_model(model_code_strings, const_nimble, data_nimble)
@@ -719,6 +722,19 @@ rename_rho_labels <- function(param_names, rho_index) {
   idx <- param_names %in% names(mapping)
   param_names[idx] <- mapping[param_names[idx]]
   param_names
+}
+
+reshape_rho_sims <- function(rho_sims, rho_index) {
+  M <- nrow(rho_index)
+  n_draws <- nrow(rho_sims)
+  out <- array(NA, dim = c(n_draws, M - 1, M))
+  for (m1 in 1:(M - 1)) {
+    for (m2 in (m1 + 1):M) {
+      k <- rho_index[m1, m2]
+      out[, m1, m2] <- rho_sims[, k]
+    }
+  }
+  out
 }
 
 to_occumb_nimble_model <- function(model_code_strings, const, data) {
