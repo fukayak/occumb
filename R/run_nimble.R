@@ -152,16 +152,17 @@ run_nimble_model <- function(inits, code, const, data, monitors,
   }
 
   model  <- nimble::nimbleModel(code = code, constants = const, data = data,
-                                inits = inits_model)
+                                inits = inits_model, buildDerivs = TRUE)
   Cmodel <- nimble::compileNimble(model)
   conf   <- nimble::configureMCMC(Cmodel, monitors = monitors, print = FALSE)
-  conf$replaceSamplers(target = "Mu", type = "RW_block", silent = TRUE)
+  conf$replaceSamplers(target = "Mu", type = "barker", silent = TRUE)
+  conf$replaceSamplers(target = "sigma", type = "barker", silent = TRUE)
   inds_r <- find_sampler_indices_fast(conf, nodes = "r")
   conf$removeSamplers(ind = inds_r)
   for (j in seq_len(const$J)) {
     for (k in seq_len(const$K)) {
       target <- sprintf("r[, %d, %d]", j, k)
-      conf$addSampler(target = target, type = "RW_block", silent = TRUE)
+      conf$addSampler(target = target, type = "barker", silent = TRUE)
     }
   }
   MCMC   <- nimble::buildMCMC(conf)
