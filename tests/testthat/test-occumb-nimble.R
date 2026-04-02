@@ -565,14 +565,12 @@ test_that("set_inits_nimble replaces rho with double(n_rho)", {
   expect_equal(result[[1]]$rho, double(5))
 })
 
-test_that("set_inits_nimble includes .RNG.name and .RNG.seed", {
+test_that("set_inits_nimble includes .RNG.seed", {
   skip_if_not_installed("nimble")
   result <- occumb:::set_inits_nimble(mock_inits, seed = TRUE,
                                       n.chains = 2, n_rho = 1)
   for (i in seq_along(result)) {
-    expect_true(".RNG.name" %in% names(result[[i]]))
     expect_true(".RNG.seed" %in% names(result[[i]]))
-    expect_true(is.character(result[[i]]$.RNG.name))
     expect_true(is.numeric(result[[i]]$.RNG.seed))
   }
 })

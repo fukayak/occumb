@@ -121,7 +121,7 @@ run_nimble_parallel <- function(inits, code, const, data, monitors,
   parallel::clusterEvalQ(cluster, library(nimble))
   parallel::clusterExport(
     cluster,
-    varlist = c("set_rng", "find_sampler_indices_fast"),
+    varlist = c("find_sampler_indices_fast"),
     envir = asNamespace("occumb")
   )
   results <- parallel::parLapply(cl = cluster, X = inits,
@@ -141,12 +141,10 @@ run_nimble_model <- function(inits, code, const, data, monitors,
                              parallel = FALSE) {
   if (parallel) {
     seed  <- inits$.RNG.seed
-    set_rng(inits$.RNG.name)
     inits <- inits[ls(inits)]
     inits_model <- inits
   } else {
     seed  <- vapply(inits, function(x) x$.RNG.seed, FUN.VALUE = numeric(1L))
-    set_rng(inits[[1]]$.RNG.name)
     inits <- lapply(inits, function(x) x[ls(x)])
     inits_model <- inits[[1]]
   }
@@ -602,69 +600,11 @@ set_inits_nimble <- function(inits, seed, n.chains, n_rho) {
     set.seed(s)
     i <- inits()
     i$rho <- double(n_rho)
-    append(i, list(.RNG.name = get_rng_name(), .RNG.seed = s))
+    append(i, list(.RNG.seed = s))
   })
   inits_nimble
 }
 
-get_rng_name <- function() {
-  kind <- RNGkind()[1]
-
-  if (kind != "user-supplied") {
-    return(paste0("base::", kind))
-  }
-
-  # --- randtoolbox ---
-  # Note: Example of switching RNG to 'randtoolbox' (and restoring it):
-  # randtoolbox::set.generator("WELL", version = "19937a")
-  # RNGkind()
-  # randtoolbox::set.generator("default")
-  if (requireNamespace("randtoolbox", quietly = TRUE)) {
-    desc <- tryCatch(randtoolbox::get.description(), error = function(e) NULL)
-    if (!is.null(desc)) {
-      kind <- desc$name
-      params <- desc$parameters
-      params <- mapply(function(n, v) sprintf("%s='%s'", n, v), names(params), params)
-      params <- paste0(params, collapse = ",")
-      return(sprintf("randtoolbox::%s:%s", kind, params))
-    }
-  }
-
-  # --- dqrng ---
-  # Note: Example of switching RNG to 'dqrng' (and restoring it):
-  # dqrng::dqRNGkind("Xoshiro256++")
-  # dqrng::register_methods()
-  # RNGkind()
-  # dqrng::restore_methods()
-  if (requireNamespace("dqrng", quietly = TRUE)) {
-    kind <- tryCatch(dqrng::dqrng_get_state()[1], error = function(e) NULL)
-    if (!is.null(kind)) {
-      return(paste0("dqrng::", kind))
-    }
-  }
-
-  "base::user-supplied"
-}
-
-set_rng <- function(rng_name) {
-  # rng_name: e.g. "base::Mersenne-Twister"
-  split <- strsplit(rng_name, "::")[[1]]
-  package <- split[1]
-  rng_kind <- split[2]
-  if (package == "base") {
-    RNGkind(rng_kind)
-  } else if (package == "randtoolbox") {
-    split_kind <- strsplit(rng_kind, ":")[[1]]
-    name <- split_kind[1]
-    parameters <- eval(parse(text = sprintf("c(%s)",  split_kind[2])))
-    randtoolbox::set.generator(name, parameters)
-  } else if (package == "dqrng") {
-    dqrng::dqRNGkind(rng_kind)
-    dqrng::register_methods()
-  } else {
-    warning(sprintf("Unsupported RNG '%s' (base/randtoolbox/dqrng).", rng_name), call. = FALSE)
-  }
-}
 
 detect_cores_omit_one <- function() {
   # detect cores (may be NA on some systems)

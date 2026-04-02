@@ -32,8 +32,6 @@ Suggests:
     nimble,
     coda,
     parallel,
-    dqrng,
-    randtoolbox,
     DoE.base
 Config/testthat/edition: 3
 Imports: 
