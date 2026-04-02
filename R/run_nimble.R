@@ -694,6 +694,18 @@ make_jagsui_compatible <- function(fit, env = parent.frame()) {
     # Reshape sims.list$rho to [samples, M-1, M] to match JAGS convention
     fit$sims.list$rho <- reshape_rho_sims(fit$sims.list$rho,
                                           const_nimble$rho_index)
+    # Strip "[1]" from scalar parameters to match JAGS convention
+    # (e.g., "gamma_shared[1]" -> "gamma_shared")
+    rownames(fit$summary) <- strip_scalar_indices(rownames(fit$summary))
+    for (chain in seq_along(fit$samples)) {
+      colnames(fit$samples[[chain]]) <-
+        strip_scalar_indices(colnames(fit$samples[[chain]]))
+    }
+    for (nm in names(fit$sims.list)) {
+      if (is.matrix(fit$sims.list[[nm]]) && ncol(fit$sims.list[[nm]]) == 1) {
+        fit$sims.list[[nm]] <- drop(fit$sims.list[[nm]])
+      }
+    }
     fit$parallel   <- parallel
     fit$parameters <- params
     fit$model      <- to_occumb_nimble_model(model_code_strings, const_nimble, data_nimble)
@@ -735,6 +747,18 @@ reshape_rho_sims <- function(rho_sims, rho_index) {
     }
   }
   out
+}
+
+strip_scalar_indices <- function(param_names) {
+  # Identify names like "foo[1]" where "foo[2]" does not exist
+  scalar_pattern <- "^(.+)\\[1\\]$"
+  candidate_indices <- grep(scalar_pattern, param_names)
+  if (length(candidate_indices) == 0) return(param_names)
+
+  base_names <- sub(scalar_pattern, "\\1", param_names[candidate_indices])
+  is_scalar <- !(paste0(base_names, "[2]") %in% param_names)
+  param_names[candidate_indices[is_scalar]] <- base_names[is_scalar]
+  param_names
 }
 
 to_occumb_nimble_model <- function(model_code_strings, const, data) {
