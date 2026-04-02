@@ -346,3 +346,245 @@ test_that("NIMBLE code is correct", {
     expect_equal(res, ans)
   }
 })
+
+### Tests for NIMBLE setup helper functions ------------------------------------
+
+make_test_const <- function(I = 2, J = 2, K = 2) {
+  list(I = I, J = J, K = K,
+       N = matrix(10L, nrow = J, ncol = K))
+}
+
+make_test_data <- function(m_phi = 1L, m_theta = 2L, m_psi = 3L,
+                           shared = FALSE) {
+  I <- 2; J <- 2; K <- 2
+  M <- max(c(m_phi, m_theta, m_psi))
+  data <- list(
+    y = array(1L, dim = c(I, J, K)),
+    M = M,
+    m_phi = m_phi, m_theta = m_theta, m_psi = m_psi,
+    prior_prec = 0.01, prior_ulim = 20,
+    cov_phi = matrix(1, J, 1),
+    cov_theta = matrix(1, J, 1),
+    cov_psi = matrix(1, J, 1)
+  )
+  if (shared) {
+    data$M_phi_shared <- 2L
+    data$M_theta_shared <- 2L
+    data$M_psi_shared <- 2L
+    data$cov_phi_shared <- matrix(1, I, 2)
+    data$cov_theta_shared <- matrix(1, J, 2)
+    data$cov_psi_shared <- matrix(1, I, 2)
+  }
+  data
+}
+
+default_const <- make_test_const()
+default_data <- make_test_data()
+default_data_shared <- make_test_data(shared = TRUE)
+default_const_result <- occumb:::set_const_nimble(default_const, default_data)
+default_data_result <- occumb:::set_data_nimble(default_data)
+mock_inits <- function() list(z = 1, rho = matrix(0, 1, 2))
+
+## pad_dummy_value / make_rho_index --------------------------------------------
+
+test_that("pad_dummy_value pads length-1 vector with -999", {
+  expect_equal(occumb:::pad_dummy_value(5L), c(5L, -999))
+})
+
+test_that("pad_dummy_value leaves length-2+ vector unchanged", {
+  expect_equal(occumb:::pad_dummy_value(c(1L, 2L)), c(1L, 2L))
+  expect_equal(occumb:::pad_dummy_value(1:5), 1:5)
+})
+
+test_that("make_rho_index produces correct upper-triangular index matrix", {
+  idx <- occumb:::make_rho_index(3)
+  expected <- matrix(c(0L, 0L, 0L,
+                       1L, 0L, 0L,
+                       2L, 3L, 0L), nrow = 3, ncol = 3)
+  expect_equal(idx, expected)
+})
+
+## set_const_nimble() ----------------------------------------------------------
+
+test_that("set_const_nimble extracts I, J, K, N, M, prior_prec, prior_ulim", {
+  const <- make_test_const(I = 3, J = 4, K = 5)
+  result <- occumb:::set_const_nimble(const, default_data)
+  expect_equal(result$I, 3)
+  expect_equal(result$J, 4)
+  expect_equal(result$K, 5)
+  expect_equal(result$N, matrix(10L, nrow = 4, ncol = 5))
+  expect_equal(result$M, default_data$M)
+  expect_equal(result$prior_prec, default_data$prior_prec)
+  expect_equal(result$prior_ulim, default_data$prior_ulim)
+})
+
+test_that("set_const_nimble computes M_phi/M_theta/M_psi from m_* lengths", {
+  data <- make_test_data(m_phi = 1L, m_theta = 2:3, m_psi = 4:6)
+  result <- occumb:::set_const_nimble(default_const, data)
+  expect_equal(result$M_phi, 1)
+  expect_equal(result$M_theta, 2)
+  expect_equal(result$M_psi, 3)
+})
+
+test_that("set_const_nimble pads length-1 m_* with dummy value", {
+  expect_equal(default_const_result$m_phi, c(1L, -999))
+  expect_equal(default_const_result$m_theta, c(2L, -999))
+  expect_equal(default_const_result$m_psi, c(3L, -999))
+})
+
+test_that("set_const_nimble does not pad length-2+ m_*", {
+  data <- make_test_data(m_phi = 1:2, m_theta = 3:4, m_psi = 5:6)
+  result <- occumb:::set_const_nimble(default_const, data)
+  expect_equal(result$m_phi, 1:2)
+  expect_equal(result$m_theta, 3:4)
+  expect_equal(result$m_psi, 5:6)
+})
+
+test_that("set_const_nimble includes correct rho_index", {
+  expect_equal(default_const_result$rho_index,
+               occumb:::make_rho_index(default_data$M))
+})
+
+test_that("set_const_nimble excludes M_*_shared when not shared", {
+  expect_false("M_phi_shared" %in% names(default_const_result))
+  expect_false("M_theta_shared" %in% names(default_const_result))
+  expect_false("M_psi_shared" %in% names(default_const_result))
+})
+
+test_that("set_const_nimble includes M_*_shared when shared", {
+  result <- occumb:::set_const_nimble(default_const, default_data_shared)
+  expect_equal(result$M_phi_shared, 2L)
+  expect_equal(result$M_theta_shared, 2L)
+  expect_equal(result$M_psi_shared, 2L)
+})
+
+## set_data_nimble() -----------------------------------------------------------
+
+test_that("set_data_nimble extracts y and cov_* with correct values", {
+  expect_equal(default_data_result$y, default_data$y)
+  expect_equal(default_data_result$cov_phi, default_data$cov_phi)
+  expect_equal(default_data_result$cov_theta, default_data$cov_theta)
+  expect_equal(default_data_result$cov_psi, default_data$cov_psi)
+})
+
+test_that("set_data_nimble excludes dimension and prior elements", {
+  excluded <- c("M", "m_phi", "m_theta", "m_psi", "prior_prec", "prior_ulim")
+  for (nm in excluded) {
+    expect_false(nm %in% names(default_data_result),
+                 info = paste(nm, "should be excluded"))
+  }
+})
+
+test_that("set_data_nimble excludes cov_*_shared when not shared", {
+  expect_false("cov_phi_shared" %in% names(default_data_result))
+  expect_false("cov_theta_shared" %in% names(default_data_result))
+  expect_false("cov_psi_shared" %in% names(default_data_result))
+})
+
+test_that("set_data_nimble includes cov_*_shared when shared", {
+  result <- occumb:::set_data_nimble(default_data_shared)
+  expect_true("cov_phi_shared" %in% names(result))
+  expect_true("cov_theta_shared" %in% names(result))
+  expect_true("cov_psi_shared" %in% names(result))
+})
+
+## set_inits_nimble() ----------------------------------------------------------
+
+test_that("set_inits_nimble with seed=TRUE produces reproducible results", {
+  skip_if_not_installed("nimble")
+  result1 <- occumb:::set_inits_nimble(mock_inits, seed = TRUE,
+                                       n.chains = 2, n_rho = 3)
+  result2 <- occumb:::set_inits_nimble(mock_inits, seed = TRUE,
+                                       n.chains = 2, n_rho = 3)
+  expect_equal(result1[[1]]$z, result2[[1]]$z)
+  expect_equal(result1[[2]]$z, result2[[2]]$z)
+  expect_equal(result1[[1]]$rho, result2[[1]]$rho)
+  expect_equal(result1[[1]]$.RNG.seed, result2[[1]]$.RNG.seed)
+  expect_equal(result1[[2]]$.RNG.seed, result2[[2]]$.RNG.seed)
+})
+
+test_that("set_inits_nimble with seed=NULL returns n.chains elements", {
+  skip_if_not_installed("nimble")
+  result <- occumb:::set_inits_nimble(mock_inits, seed = NULL,
+                                      n.chains = 3, n_rho = 1)
+  expect_length(result, 3)
+})
+
+test_that("set_inits_nimble with seed=FALSE produces distinct per-chain seeds", {
+  skip_if_not_installed("nimble")
+  result <- occumb:::set_inits_nimble(mock_inits, seed = FALSE,
+                                      n.chains = 3, n_rho = 1)
+  expect_length(result, 3)
+  seeds <- vapply(result, function(x) x$.RNG.seed, numeric(1))
+  expect_equal(length(unique(seeds)), 3)
+})
+
+test_that("set_inits_nimble with numeric vector uses seeds directly", {
+  skip_if_not_installed("nimble")
+  result <- occumb:::set_inits_nimble(mock_inits, seed = c(10, 20),
+                                      n.chains = 2, n_rho = 1)
+  expect_equal(result[[1]]$.RNG.seed, 10)
+  expect_equal(result[[2]]$.RNG.seed, 20)
+})
+
+test_that("set_inits_nimble with single numeric expands to per-chain seeds", {
+  skip_if_not_installed("nimble")
+  expect_message(
+    result <- occumb:::set_inits_nimble(mock_inits, seed = 100,
+                                        n.chains = 3, n_rho = 1),
+    "Expanding"
+  )
+  expect_equal(result[[1]]$.RNG.seed, 100)
+  expect_equal(result[[2]]$.RNG.seed, 101)
+  expect_equal(result[[3]]$.RNG.seed, 102)
+})
+
+test_that("set_inits_nimble errors on invalid seed", {
+  skip_if_not_installed("nimble")
+  expect_error(
+    occumb:::set_inits_nimble(mock_inits, seed = "abc",
+                              n.chains = 2, n_rho = 1),
+    "Invalid 'seed'"
+  )
+})
+
+test_that("set_inits_nimble errors when seed vector length != n.chains", {
+  skip_if_not_installed("nimble")
+  expect_error(
+    occumb:::set_inits_nimble(mock_inits, seed = c(1, 2, 3),
+                              n.chains = 2, n_rho = 1),
+    "Invalid 'seed'"
+  )
+})
+
+test_that("set_inits_nimble replaces rho with double(n_rho)", {
+  skip_if_not_installed("nimble")
+  mock_inits_large_rho <- function() list(z = 1, rho = matrix(99, 2, 3))
+  result <- occumb:::set_inits_nimble(mock_inits_large_rho, seed = TRUE,
+                                      n.chains = 1, n_rho = 5)
+  expect_equal(result[[1]]$rho, double(5))
+})
+
+test_that("set_inits_nimble includes .RNG.name and .RNG.seed", {
+  skip_if_not_installed("nimble")
+  result <- occumb:::set_inits_nimble(mock_inits, seed = TRUE,
+                                      n.chains = 2, n_rho = 1)
+  for (i in seq_along(result)) {
+    expect_true(".RNG.name" %in% names(result[[i]]))
+    expect_true(".RNG.seed" %in% names(result[[i]]))
+    expect_true(is.character(result[[i]]$.RNG.name))
+    expect_true(is.numeric(result[[i]]$.RNG.seed))
+  }
+})
+
+test_that("set_inits_nimble warns on duplicate seeds", {
+  skip_if_not_installed("nimble")
+  old_verbose <- nimble::getNimbleOption("verbose")
+  nimble::nimbleOptions(verbose = TRUE)
+  on.exit(nimble::nimbleOptions(verbose = old_verbose))
+  expect_message(
+    occumb:::set_inits_nimble(mock_inits, seed = c(42, 42),
+                              n.chains = 2, n_rho = 1),
+    "duplicates"
+  )
+})
