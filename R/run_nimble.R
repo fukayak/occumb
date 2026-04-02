@@ -683,6 +683,14 @@ make_jagsui_compatible <- function(fit, env = parent.frame()) {
       colnames(fit$samples[[chain]]) <- gsub(pattern = "\\s", replacement = "",
                                              colnames(fit$samples[[chain]]))
     }
+    # Rename rho labels from vector style to matrix style
+    # (e.g., "rho[1]" -> "rho[1,2]") to match JAGS convention
+    rownames(fit$summary) <- rename_rho_labels(rownames(fit$summary),
+                                               const_nimble$rho_index)
+    for (chain in seq_along(fit$samples)) {
+      colnames(fit$samples[[chain]]) <- rename_rho_labels(
+        colnames(fit$samples[[chain]]), const_nimble$rho_index)
+    }
     fit$parallel   <- parallel
     fit$parameters <- params
     fit$model      <- to_occumb_nimble_model(model_code_strings, const_nimble, data_nimble)
@@ -697,6 +705,20 @@ make_jagsui_compatible <- function(fit, env = parent.frame()) {
     }
     fit
   })
+}
+
+rename_rho_labels <- function(param_names, rho_index) {
+  M <- nrow(rho_index)
+  mapping <- character()
+  for (m1 in 1:(M - 1)) {
+    for (m2 in (m1 + 1):M) {
+      k <- rho_index[m1, m2]
+      mapping[paste0("rho[", k, "]")] <- paste0("rho[", m1, ",", m2, "]")
+    }
+  }
+  idx <- param_names %in% names(mapping)
+  param_names[idx] <- mapping[param_names[idx]]
+  param_names
 }
 
 to_occumb_nimble_model <- function(model_code_strings, const, data) {
