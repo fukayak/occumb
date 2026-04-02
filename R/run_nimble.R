@@ -771,24 +771,8 @@ to_occumb_nimble_model <- function(model_code_strings, const, data) {
 
 #' @export
 print.occumb_nimble_model <- function(x, ...) {
-  cat(crayon::bold("NIMBLE model:"), "\n")
+  cat(crayon::bold("NIMBLE model:"), "\n\n")
   for (i in seq_along(x$model_code_strings)) {
     cat(x$model_code_strings[i], "\n", sep = "")
   }
-
-  seq_depth <- apply(x$data$y, c(2, 3), sum)
-  n_missing <- sum(is.na(seq_depth))
-  reps_per_site <- apply(seq_depth, 1, function(x) sum(!is.na(x)))
-  mean_seq_depth <- mean(seq_depth, na.rm = TRUE)
-  sd_seq_depth <- stats::sd(seq_depth, na.rm = TRUE)
-
-  cat(crayon::bold("Sequence read counts:"), "\n")
-  cat(sprintf(" Number of species, I = %d", x$const$I), "\n")
-  cat(sprintf(" Number of sites, J = %d", x$const$J), "\n")
-  cat(sprintf(" Maximum number of replicates per site, K = %d", x$const$K), "\n")
-  cat(sprintf(" Number of missing observations = %d", n_missing), "\n")
-  cat(sprintf(" Number of replicates per site: %.2f (average), %.2f (sd)",
-              mean(reps_per_site), stats::sd(reps_per_site)), "\n")
-  cat(sprintf(" Sequencing depth: %.1f (average), %.1f (sd)",
-              mean_seq_depth, sd_seq_depth), "\n")
 }
