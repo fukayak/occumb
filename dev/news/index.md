@@ -5,6 +5,11 @@
 - Fix timezone specification for snapshot testing
 - Add an option to select the NIMBLE engine in
   [`occumb()`](https://fukayak.github.io/occumb/dev/reference/occumb.md)
+- Fix a bug in `sample_u()`
+- Make predict tests opt-in via environment variable
+- Add a vignette comparing the performance of the two MCMC engine
+  options
+- Set the requirement for the nimble package to v1.4.2 or later
 
 ### occumb 1.2.2 (2026/1/9)
 

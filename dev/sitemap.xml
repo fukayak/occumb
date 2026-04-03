@@ -1,6 +1,7 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://fukayak.github.io/occumb/dev/LICENSE.html</loc></url>
 <url><loc>https://fukayak.github.io/occumb/dev/articles/index.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/dev/articles/mcmc_engine_options.html</loc></url>
 <url><loc>https://fukayak.github.io/occumb/dev/articles/model_specification.html</loc></url>
 <url><loc>https://fukayak.github.io/occumb/dev/articles/occumb.html</loc></url>
 <url><loc>https://fukayak.github.io/occumb/dev/authors.html</loc></url>
@@ -8,7 +9,6 @@
 <url><loc>https://fukayak.github.io/occumb/dev/news/index.html</loc></url>
 <url><loc>https://fukayak.github.io/occumb/dev/reference/eval_util_L.html</loc></url>
 <url><loc>https://fukayak.github.io/occumb/dev/reference/eval_util_R.html</loc></url>
-<url><loc>https://fukayak.github.io/occumb/dev/reference/find_sampler_indices_fast.html</loc></url>
 <url><loc>https://fukayak.github.io/occumb/dev/reference/fish.html</loc></url>
 <url><loc>https://fukayak.github.io/occumb/dev/reference/fish_raw.html</loc></url>
 <url><loc>https://fukayak.github.io/occumb/dev/reference/get_posterior.html</loc></url>

@@ -85,7 +85,8 @@ occumb(
 
 - n.adapt:
 
-  Number of iterations to run in the JAGS adaptive phase.
+  Number of iterations to run in the JAGS adaptive phase. Ignored when
+  `engine = "NIMBLE"`.
 
 - n.burnin:
 
@@ -177,17 +178,12 @@ The `data` argument requires a dataset object to be generated using
 
 The model is fit using the
 [`jags()`](https://kenkellner.com/jagsUI/reference/jags.html) function
-of the [jagsUI](https://cran.r-project.org/package=jagsUI) package,
-where Markov chain Monte Carlo (MCMC) methods are used to obtain
-posterior samples of the parameters and latent variables. Arguments
-`n.chains`, `n.adapt`, `n.burnin`, `n.thin`, `n.iter`, and `parallel`
-are passed on to arguments of the same name in the
-[`jags()`](https://kenkellner.com/jagsUI/reference/jags.html) function.
-See the document of
-[jagsUI](https://cran.r-project.org/package=jagsUI)'s
-[`jags()`](https://kenkellner.com/jagsUI/reference/jags.html) function
-for details. A set of random initial values is used to perform an MCMC
-run.
+of the [jagsUI](https://cran.r-project.org/package=jagsUI) package (when
+`engine = “JAGS”`) or the
+[nimble](https://cran.r-project.org/package=nimble) package (when
+`engine = “NIMBLE”`), where Markov chain Monte Carlo (MCMC) methods are
+used to obtain posterior samples of the parameters and latent variables.
+A set of random initial values is used to perform an MCMC run.
 
 ## References
 

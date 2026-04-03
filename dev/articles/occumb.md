@@ -94,8 +94,10 @@ This model fitting can take approximately one hour. Given that
 [`occumb()`](https://fukayak.github.io/occumb/dev/reference/occumb.md)
 fits a class of complex hierarchical models with many parameters and
 unknown variables, it may require, depending on the dataset size, a long
-time and/or a lot of memory for model fitting. Setting `parallel = TRUE`
-is recommended for faster model fitting through parallel computations.
+time and/or a lot of memory for model fitting. For faster model fitting,
+users are encouraged to set `parallel = TRUE` to enable parallel
+computations and `engine = "NIMBLE"` to use the NIMBLE MCMC engine (see
+[`vignette("mcmc_engine_options")`](https://fukayak.github.io/occumb/dev/articles/mcmc_engine_options.md)).
 
 A model incorporating species and site covariates from the `fish`
 dataset can be fitted as follows:

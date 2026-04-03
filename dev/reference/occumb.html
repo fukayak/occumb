@@ -11,7 +11,7 @@ posterior samples."><meta name="robots" content="noindex"></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.2.2.9001</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.2.2.9007</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,7 +23,8 @@ posterior samples."><meta name="robots" content="noindex"></head><body>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/model_specification.html">Model specification in occumb()</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/mcmc_engine_options.html">Options for MCMC engines in occumb()</a></li>
+    <li><a class="dropdown-item" href="../articles/model_specification.html">Model specification in occumb()</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -129,7 +130,8 @@ standard deviation of species-specific parameters.</p></dd>
 
 
 <dt id="arg-n-adapt">n.adapt<a class="anchor" aria-label="anchor" href="#arg-n-adapt"></a></dt>
-<dd><p>Number of iterations to run in the JAGS adaptive phase.</p></dd>
+<dd><p>Number of iterations to run in the JAGS adaptive phase.
+Ignored when <code>engine = "NIMBLE"</code>.</p></dd>
 
 
 <dt id="arg-n-burnin">n.burnin<a class="anchor" aria-label="anchor" href="#arg-n-burnin"></a></dt>
@@ -212,14 +214,11 @@ for details on the model specifications in <code>occumb()</code>.</p>
 <p>The <code>data</code> argument requires a dataset object to be generated using
 <code>ocumbData()</code>; see the document of <code><a href="occumbData.html">occumbData()</a></code>.</p>
 <p>The model is fit using the <code><a href="https://kenkellner.com/jagsUI/reference/jags.html" class="external-link">jags()</a></code> function of the
-<a href="https://cran.r-project.org/package=jagsUI" class="external-link">jagsUI</a> package, where
+<a href="https://cran.r-project.org/package=jagsUI" class="external-link">jagsUI</a> package (when
+<code>engine = “JAGS”</code>) or the <a href="https://cran.r-project.org/package=nimble" class="external-link">nimble</a>
+package (when <code>engine = “NIMBLE”</code>), where
 Markov chain Monte Carlo (MCMC) methods are used to
 obtain posterior samples of the parameters and latent variables.
-Arguments <code>n.chains</code>, <code>n.adapt</code>, <code>n.burnin</code>, <code>n.thin</code>,
-<code>n.iter</code>, and <code>parallel</code> are passed on to arguments of the
-same name in the <code><a href="https://kenkellner.com/jagsUI/reference/jags.html" class="external-link">jags()</a></code> function.
-See the document of <a href="https://cran.r-project.org/package=jagsUI" class="external-link">jagsUI</a>'s
-<code><a href="https://kenkellner.com/jagsUI/reference/jags.html" class="external-link">jags()</a></code> function for details.
 A set of random initial values is used to perform an MCMC run.</p>
     </div>
     <div class="section level2">

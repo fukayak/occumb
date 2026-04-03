@@ -28,11 +28,11 @@ run_nimble(
 
 - data:
 
-  A named list containing the observed data and covariates for JAGS.
+  A named list containing the observed data and covariates for NIMBLE.
 
 - const:
 
-  A named list of model constants for JAGS.
+  A named list of model constants for NIMBLE.
 
 - inits:
 

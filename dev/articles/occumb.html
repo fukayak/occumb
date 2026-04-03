@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.2.2.9001</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.2.2.9007</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,7 +36,8 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/model_specification.html">Model specification in occumb()</a></li>
+<li><a class="dropdown-item" href="../articles/mcmc_engine_options.html">Options for MCMC engines in occumb()</a></li>
+    <li><a class="dropdown-item" href="../articles/model_specification.html">Model specification in occumb()</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -144,9 +145,11 @@ follows:</p>
 <p>This model fitting can take approximately one hour. Given that
 <code><a href="../reference/occumb.html">occumb()</a></code> fits a class of complex hierarchical models with
 many parameters and unknown variables, it may require, depending on the
-dataset size, a long time and/or a lot of memory for model fitting.
-Setting <code>parallel = TRUE</code> is recommended for faster model
-fitting through parallel computations.</p>
+dataset size, a long time and/or a lot of memory for model fitting. For
+faster model fitting, users are encouraged to set
+<code>parallel = TRUE</code> to enable parallel computations and
+<code>engine = "NIMBLE"</code> to use the NIMBLE MCMC engine (see
+<code><a href="../articles/mcmc_engine_options.html">vignette("mcmc_engine_options")</a></code>).</p>
 <p>A model incorporating species and site covariates from the
 <code>fish</code> dataset can be fitted as follows:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
