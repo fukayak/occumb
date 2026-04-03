@@ -119,11 +119,6 @@ run_nimble_parallel <- function(inits, code, const, data, monitors,
   }, add = TRUE)
 
   parallel::clusterEvalQ(cluster, library(nimble))
-  parallel::clusterExport(
-    cluster,
-    varlist = c("find_sampler_indices_fast"),
-    envir = asNamespace("occumb")
-  )
   results <- parallel::parLapply(cl = cluster, X = inits,
                                  fun = run_nimble_model, code = code,
                                  const = const, data = data,
@@ -155,7 +150,7 @@ run_nimble_model <- function(inits, code, const, data, monitors,
   conf   <- nimble::configureMCMC(Cmodel, monitors = monitors, print = FALSE)
   conf$replaceSamplers(target = "Mu", type = "barker", silent = TRUE)
   conf$replaceSamplers(target = "sigma", type = "barker", silent = TRUE)
-  inds_r <- find_sampler_indices_fast(conf, nodes = "r")
+  inds_r <- conf$findSamplersOnNodes("r")
   conf$removeSamplers(ind = inds_r)
   for (j in seq_len(const$J)) {
     for (k in seq_len(const$K)) {
@@ -169,38 +164,6 @@ run_nimble_model <- function(inits, code, const, data, monitors,
                             thin = n.thin, nchains = n.chains, inits = inits,
                             setSeed = seed)
   result
-}
-
-# TODO: The next NIMBLE release is expected to include the following change.
-# Once occumb depends on that version, stop using this function and switch back
-# to NIMBLE’s original function.
-# https://github.com/nimble-dev/nimble/pull/1614
-#
-#' Find sampler indices (fast)
-#'
-#' This function provides a fast alternative to \code{conf$findSamplersOnNodes()},
-#' which can be slow for large target samplers.
-#'
-#' @param conf A \code{\link[nimble]{MCMCconf}} object from the \pkg{nimble} package.
-#' @param nodes A parameter name (character string).
-#' @return An integer vector of indices into \code{conf$getSamplers()}.
-#' @keywords internal
-find_sampler_indices_fast <- function(conf, nodes) {
-  samplerConfs <- conf$samplerConfs
-  model <- conf$model
-
-  if (length(samplerConfs) == 0) return(integer())
-  nodes <- model$expandNodeNames(nodes, returnScalarComponents = TRUE, sort = TRUE)
-  samplerConfNodesList <- lapply(samplerConfs, function(sc) sc$targetAsScalar)
-
-  # Match requested nodes in the flattened node list and map matches back to sampler indices.
-  samplerIndices <- 1:length(samplerConfs)
-  samplerConfNodesLengths <- unlist(lapply(samplerConfNodesList, length))
-  flatSamplerConfNodes <- unlist(samplerConfNodesList)
-  flatSamplerIndices <- rep.int(samplerIndices, times = samplerConfNodesLengths)
-  flatNodePositions <- unlist(lapply(nodes, function(n) which(n == flatSamplerConfNodes)))
-  matchedSamplerIndices <- flatSamplerIndices[flatNodePositions]
-  unique(matchedSamplerIndices)
 }
 
 # Auto-generate JAGS model code
