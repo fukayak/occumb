@@ -58,7 +58,8 @@ standard deviation of species-specific parameters.}
 
 \item{n.chains}{Number of Markov chains to run.}
 
-\item{n.adapt}{Number of iterations to run in the JAGS adaptive phase.}
+\item{n.adapt}{Number of iterations to run in the JAGS adaptive phase.
+Ignored when \code{engine = "NIMBLE"}.}
 
 \item{n.burnin}{Number of iterations at the beginning of the chain to discard.}
 
@@ -139,14 +140,11 @@ The \code{data} argument requires a dataset object to be generated using
 \code{ocumbData()}; see the document of \code{\link{occumbData}()}.
 
 The model is fit using the \code{\link[jagsUI]{jags}()} function of the
-\href{https://cran.r-project.org/package=jagsUI}{jagsUI} package, where
+\href{https://cran.r-project.org/package=jagsUI}{jagsUI} package (when
+\code{engine = “JAGS”}) or the \href{https://cran.r-project.org/package=nimble}{nimble}
+package (when \code{engine = “NIMBLE”}), where
 Markov chain Monte Carlo (MCMC) methods are used to
 obtain posterior samples of the parameters and latent variables.
-Arguments \code{n.chains}, \code{n.adapt}, \code{n.burnin}, \code{n.thin},
-\code{n.iter}, and \code{parallel} are passed on to arguments of the
-same name in the \code{\link[jagsUI]{jags}()} function.
-See the document of \href{https://cran.r-project.org/package=jagsUI}{jagsUI}'s
-\code{\link[jagsUI]{jags}()} function for details.
 A set of random initial values is used to perform an MCMC run.
 }
 \section{References}{

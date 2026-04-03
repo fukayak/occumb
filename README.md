@@ -20,6 +20,12 @@ See [the package vignette](https://fukayak.github.io/occumb/articles/occumb.html
 
 You need first install JAGS following the instructions on the [JAGS homepage](https://mcmc-jags.sourceforge.io/).
 
+To use the NIMBLE engine for faster computation (`engine = "NIMBLE"` in `occumb()`), you also need to install the [nimble](https://CRAN.R-project.org/package=nimble) package separately:
+
+```r
+install.packages("nimble")
+```
+
 You can then install the latest stable version of the package from CRAN:
 
 ```r
@@ -38,4 +44,9 @@ Questions and bug reports can be emailed to Keiichi Fukaya (fukaya.keiichi@nies.
 
 ## Credits
 
-The development of occumb would not have been possible without, among others, Martyn Plummer's [JAGS](https://mcmc-jags.sourceforge.io/) and Ken Kellner's [jagsUI](https://CRAN.R-project.org/package=jagsUI) R package, because the main functionality of occumb for model fitting via Markov chain Monte Carlo (MCMC) relies on these libraries. Taku Kadoya encouraged us to develop this package. Koji Makiyama, Shinya Uryu, and Kentaro Matsuura contributed to package testing. Mito Ikemoto and Kentaro Uehira provided valuable feedback through package trials and documentation reviews. Funding was provided by Japan Society for the Promotion of Science (KAKENHI; Nos. 20K06102 and 23H02240).
+The development of occumb would not have been possible without, among others, Martyn Plummer's [JAGS](https://mcmc-jags.sourceforge.io/) and Ken Kellner's [jagsUI](https://CRAN.R-project.org/package=jagsUI) R package, because the main functionality of occumb for model fitting via Markov chain Monte Carlo (MCMC) relies on these libraries.
+Later, occumb benefited greatly from [NIMBLE](https://r-nimble.org/) for faster MCMC computation.
+Taku Kadoya encouraged us to develop this package.
+Koji Makiyama, Shinya Uryu, and Kentaro Matsuura contributed to package testing.
+Mito Ikemoto and Kentaro Uehira provided valuable feedback through package trials and documentation reviews.
+Funding was provided by Japan Society for the Promotion of Science (KAKENHI; Nos. 20K06102 and 23H02240).

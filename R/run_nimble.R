@@ -5,8 +5,8 @@
 #' posterior samples, and returns an object compatible with the
 #' \pkg{jagsUI}-style fit object.
 #'
-#' @param data A named list containing the observed data and covariates for JAGS.
-#' @param const A named list of model constants for JAGS.
+#' @param data A named list containing the observed data and covariates for NIMBLE.
+#' @param const A named list of model constants for NIMBLE.
 #' @param inits A function that returns a named list of initial values for the
 #'   model parameters (one set of initial values will be generated per chain).
 #' @param params Character vector of node names to monitor.

@@ -20,9 +20,9 @@ run_nimble(
 )
 }
 \arguments{
-\item{data}{A named list containing the observed data and covariates for JAGS.}
+\item{data}{A named list containing the observed data and covariates for NIMBLE.}
 
-\item{const}{A named list of model constants for JAGS.}
+\item{const}{A named list of model constants for NIMBLE.}
 
 \item{inits}{A function that returns a named list of initial values for the
 model parameters (one set of initial values will be generated per chain).}
