@@ -1,13 +1,11 @@
-# occumb (development version)
-* Fix timezone specification for snapshot testing
-* Add an option to select the NIMBLE engine in `occumb()`
-* Fix a bug in `sample_u()`
-* Make predict tests opt-in via environment variable
-* Add a vignette comparing the performance of the two MCMC engine options
-* Set the requirement for the nimble package to v1.4.2 or later
+## occumb 1.3.0 (2026-04-04)
+* Add an option to select the NIMBLE engine in `occumb()` (thanks to `hoxo-m`).
+* Add a vignette comparing the performance of the JAGS and NIMBLE engines.
+* Fix a bug in `eval_util_L()` and `eval_util_R()` that could cause erroneous errors when species detection probabilities are low.
+* Some internal changes for package testing.
 
 ## occumb 1.2.2 (2026/1/9)
-* This patch release includes internal changes for the anticipated JAGS 5.0.0 release and fixes for math rendering issues in the package vignettes.
+* This patch release includes internal changes for the anticipated JAGS 5.0.0 release (thanks to `martynplummer`) and fixes for math rendering issues in the package vignettes.
 
 ## occumb 1.2.1 (2025/7/16)
 * This patch release only fixes bibliographic information in package documents.

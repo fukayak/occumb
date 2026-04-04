@@ -1,11 +1,13 @@
 Package: occumb
 Title: Site Occupancy Modeling for Environmental DNA Metabarcoding
-Version: 1.2.2.9008
+Version: 1.3.0
 Authors@R: c(
     person("Keiichi", "Fukaya", , "fukayak99@gmail.com", role = c("aut", "cre")),
     person("Ken", "Kellner", role = "cph",
            comment = "summary method for occumbFit class, processing of NIMBLE results, and print method for nimbleSummary class"),
     person("Mika", "Takahashi", , "takahashi.mika@nies.go.jp", role = "aut"),
+    person("Martyn", "Plummer", role = "ctb",
+           comment = "fixes for JAGS 5.0.0 compatibility"),
     person("Koji", "Makiyama", role = "ctb",
            comment = "option to use NIMBLE"),
     person("Kentaro", "Matsuura", role = "ctb",
