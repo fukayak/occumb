@@ -22,7 +22,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/fukayak/occumb/blob/develop/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/fukayak/occumb/blob/main/DESCRIPTION)
 
 Fukaya K, Takahashi M (2026). *occumb: Site Occupancy Modeling for
 Environmental DNA Metabarcoding*. R package version 1.3.0,
