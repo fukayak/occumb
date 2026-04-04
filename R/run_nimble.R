@@ -26,7 +26,8 @@
 #'       \code{FALSE}: no seeding; \code{TRUE}: seed chain i with i;
 #'       numeric vector (\code{length = n.chains}): per-chain seeds.}
 #'     \item{\code{n.cores}}{Number of worker processes when \code{parallel=TRUE}.
-#'       Defaults to \code{parallel::detectCores()}.}
+#'       Defaults to \code{parallel::detectCores() - 1} (minimum 1), capped at
+#'       \code{n.chains}.}
 #'     \item{\code{store.data}}{Logical; if \code{TRUE}, store the input
 #'       \code{data} and generated initial values in the returned object.}
 #'     \item{\code{verbose}}{Logical; if not \code{NULL}, temporarily set

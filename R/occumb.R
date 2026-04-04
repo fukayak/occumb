@@ -105,7 +105,26 @@ setClass("occumbFit", slots = c(fit = "jagsUI",
 #' @param engine Character string specifying the MCMC backend used for model
 #'   fitting. Either `"JAGS"` (default; via \code{\link[jagsUI]{jags}()}) or
 #'   `"NIMBLE"` (via the \pkg{nimble} package).
-#' @param ... Additional arguments passed to \code{\link[jagsUI]{jags}()} function.
+#' @param ... Additional arguments passed to the MCMC engine function.
+#'   When \code{engine = "JAGS"}, these are passed to
+#'   \code{\link[jagsUI]{jags}()}.
+#'   When \code{engine = "NIMBLE"}, the following arguments are accepted:
+#'   \describe{
+#'     \item{\code{n.cores}}{The number of cores used when \code{parallel = TRUE}.
+#'       Defaults to \code{parallel::detectCores() - 1} (minimum 1), capped at
+#'       \code{n.chains}.}
+#'     \item{\code{seed}}{Random seed control for MCMC chains.
+#'       If \code{TRUE}, chain \eqn{i} is seeded with \eqn{i}.
+#'       If a single number, chain \eqn{i} is seeded with \code{seed + i - 1}.
+#'       If a numeric vector of length \code{n.chains}, each element is used
+#'       as the seed for the corresponding chain.
+#'       If \code{FALSE} or unspecified (default), random seeds are generated
+#'       automatically.}
+#'     \item{\code{store.data}}{Logical; if \code{TRUE}, store the input data
+#'       and initial values in the returned object. Defaults to \code{FALSE}.}
+#'     \item{\code{verbose}}{Logical; controls NIMBLE's verbosity.
+#'       If unspecified (default), NIMBLE's own default settings are used.}
+#'   }
 #' @return  An S4 object of the \code{occumbFit} class containing the results of
 #'          the model fitting and the supplied dataset.
 #' @section References:
