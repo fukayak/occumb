@@ -2,6 +2,7 @@
 <url><loc>https://fukayak.github.io/occumb/404.html</loc></url>
 <url><loc>https://fukayak.github.io/occumb/LICENSE.html</loc></url>
 <url><loc>https://fukayak.github.io/occumb/articles/index.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/articles/mcmc_engine_options.html</loc></url>
 <url><loc>https://fukayak.github.io/occumb/articles/model_specification.html</loc></url>
 <url><loc>https://fukayak.github.io/occumb/articles/occumb.html</loc></url>
 <url><loc>https://fukayak.github.io/occumb/authors.html</loc></url>
@@ -21,6 +22,7 @@
 <url><loc>https://fukayak.github.io/occumb/reference/plot-occumbFit-method.html</loc></url>
 <url><loc>https://fukayak.github.io/occumb/reference/plot-occumbGof-method.html</loc></url>
 <url><loc>https://fukayak.github.io/occumb/reference/predict-occumbFit-method.html</loc></url>
+<url><loc>https://fukayak.github.io/occumb/reference/run_nimble.html</loc></url>
 <url><loc>https://fukayak.github.io/occumb/reference/summary-occumbData-method.html</loc></url>
 <url><loc>https://fukayak.github.io/occumb/reference/summary-occumbFit-method.html</loc></url>
 </urlset>

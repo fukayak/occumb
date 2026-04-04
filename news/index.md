@@ -1,12 +1,27 @@
 # Changelog
 
+## occumb 1.3.0 (2026-04-04)
+
+- Add an option to select the NIMBLE engine in
+  [`occumb()`](https://fukayak.github.io/occumb/reference/occumb.md)
+  (thanks to `hoxo-m`).
+- Add a vignette comparing the performance of the JAGS and NIMBLE
+  engines.
+- Fix a bug in
+  [`eval_util_L()`](https://fukayak.github.io/occumb/reference/eval_util_L.md)
+  and
+  [`eval_util_R()`](https://fukayak.github.io/occumb/reference/eval_util_R.md)
+  that could cause erroneous errors when species detection probabilities
+  are low.
+- Some internal changes for package testing.
+
 ## occumb 1.2.2 (2026/1/9)
 
 CRAN release: 2026-01-09
 
 - This patch release includes internal changes for the anticipated JAGS
-  5.0.0 release and fixes for math rendering issues in the package
-  vignettes.
+  5.0.0 release (thanks to `martynplummer`) and fixes for math rendering
+  issues in the package vignettes.
 
 ## occumb 1.2.1 (2025/7/16)
 

@@ -11,7 +11,7 @@ posterior samples."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,7 +23,8 @@ posterior samples."></head><body>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/model_specification.html">Model specification in occumb()</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/mcmc_engine_options.html">Options for MCMC engines in occumb()</a></li>
+    <li><a class="dropdown-item" href="../articles/model_specification.html">Model specification in occumb()</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -38,7 +39,7 @@ posterior samples."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Model-fitting function.</h1>
-      <small class="dont-index">Source: <a href="https://github.com/fukayak/occumb/blob/main/R/occumb.R" class="external-link"><code>R/occumb.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/fukayak/occumb/blob/develop/R/occumb.R" class="external-link"><code>R/occumb.R</code></a></small>
       <div class="d-none name"><code>occumb.Rd</code></div>
     </div>
 
@@ -66,6 +67,7 @@ posterior samples.</p>
 <span>  n.thin <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  n.iter <span class="op">=</span> <span class="fl">20000</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  engine <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"JAGS"</span>, <span class="st">"NIMBLE"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -128,7 +130,8 @@ standard deviation of species-specific parameters.</p></dd>
 
 
 <dt id="arg-n-adapt">n.adapt<a class="anchor" aria-label="anchor" href="#arg-n-adapt"></a></dt>
-<dd><p>Number of iterations to run in the JAGS adaptive phase.</p></dd>
+<dd><p>Number of iterations to run in the JAGS adaptive phase.
+Ignored when <code>engine = "NIMBLE"</code>.</p></dd>
 
 
 <dt id="arg-n-burnin">n.burnin<a class="anchor" aria-label="anchor" href="#arg-n-burnin"></a></dt>
@@ -147,8 +150,40 @@ standard deviation of species-specific parameters.</p></dd>
 <dd><p>If TRUE, run MCMC chains in parallel on multiple CPU cores.</p></dd>
 
 
+<dt id="arg-engine">engine<a class="anchor" aria-label="anchor" href="#arg-engine"></a></dt>
+<dd><p>Character string specifying the MCMC backend used for model
+fitting. Either <code>"JAGS"</code> (default; via <code><a href="https://kenkellner.com/jagsUI/reference/jags.html" class="external-link">jags()</a></code>) or
+<code>"NIMBLE"</code> (via the <span class="pkg">nimble</span> package).</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments passed to <code><a href="https://kenkellner.com/jagsUI/reference/jags.html" class="external-link">jags()</a></code> function.</p></dd>
+<dd><p>Additional arguments passed to the MCMC engine function.
+When <code>engine = "JAGS"</code>, these are passed to
+<code><a href="https://kenkellner.com/jagsUI/reference/jags.html" class="external-link">jags()</a></code>.
+When <code>engine = "NIMBLE"</code>, the following arguments are accepted:</p><dl><dt><code>n.cores</code></dt>
+<dd><p>The number of cores used when <code>parallel = TRUE</code>.
+Defaults to <code>parallel::detectCores() - 1</code> (minimum 1), capped at
+<code>n.chains</code>.</p></dd>
+
+<dt><code>seed</code></dt>
+<dd><p>Random seed control for MCMC chains.
+If <code>TRUE</code>, chain \(i\) is seeded with \(i\).
+If a single number, chain \(i\) is seeded with <code>seed + i - 1</code>.
+If a numeric vector of length <code>n.chains</code>, each element is used
+as the seed for the corresponding chain.
+If <code>FALSE</code> or unspecified (default), random seeds are generated
+automatically.</p></dd>
+
+<dt><code>store.data</code></dt>
+<dd><p>Logical; if <code>TRUE</code>, store the input data
+and initial values in the returned object. Defaults to <code>FALSE</code>.</p></dd>
+
+<dt><code>verbose</code></dt>
+<dd><p>Logical; controls NIMBLE's verbosity.
+If unspecified (default), NIMBLE's own default settings are used.</p></dd>
+
+
+</dl></dd>
 
 </dl></div>
     <div class="section level2">
@@ -205,14 +240,11 @@ for details on the model specifications in <code>occumb()</code>.</p>
 <p>The <code>data</code> argument requires a dataset object to be generated using
 <code>ocumbData()</code>; see the document of <code><a href="occumbData.html">occumbData()</a></code>.</p>
 <p>The model is fit using the <code><a href="https://kenkellner.com/jagsUI/reference/jags.html" class="external-link">jags()</a></code> function of the
-<a href="https://cran.r-project.org/package=jagsUI" class="external-link">jagsUI</a> package, where
+<a href="https://cran.r-project.org/package=jagsUI" class="external-link">jagsUI</a> package (when
+<code>engine = “JAGS”</code>) or the <a href="https://cran.r-project.org/package=nimble" class="external-link">nimble</a>
+package (when <code>engine = “NIMBLE”</code>), where
 Markov chain Monte Carlo (MCMC) methods are used to
 obtain posterior samples of the parameters and latent variables.
-Arguments <code>n.chains</code>, <code>n.adapt</code>, <code>n.burnin</code>, <code>n.thin</code>,
-<code>n.iter</code>, and <code>parallel</code> are passed on to arguments of the
-same name in the <code><a href="https://kenkellner.com/jagsUI/reference/jags.html" class="external-link">jags()</a></code> function.
-See the document of <a href="https://cran.r-project.org/package=jagsUI" class="external-link">jagsUI</a>'s
-<code><a href="https://kenkellner.com/jagsUI/reference/jags.html" class="external-link">jags()</a></code> function for details.
 A set of random initial values is used to perform an MCMC run.</p>
     </div>
     <div class="section level2">

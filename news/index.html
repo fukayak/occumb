@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">occumb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,7 +19,8 @@
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/model_specification.html">Model specification in occumb()</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/mcmc_engine_options.html">Options for MCMC engines in occumb()</a></li>
+    <li><a class="dropdown-item" href="../articles/model_specification.html">Model specification in occumb()</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -34,12 +35,19 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/fukayak/occumb/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/fukayak/occumb/blob/develop/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.3.0" id="occumb-130-2026-04-04">occumb 1.3.0 (2026-04-04)<a class="anchor" aria-label="anchor" href="#occumb-130-2026-04-04"></a></h2>
+<ul><li>Add an option to select the NIMBLE engine in <code><a href="../reference/occumb.html">occumb()</a></code> (thanks to <code>hoxo-m</code>).</li>
+<li>Add a vignette comparing the performance of the JAGS and NIMBLE engines.</li>
+<li>Fix a bug in <code><a href="../reference/eval_util_L.html">eval_util_L()</a></code> and <code><a href="../reference/eval_util_R.html">eval_util_R()</a></code> that could cause erroneous errors when species detection probabilities are low.</li>
+<li>Some internal changes for package testing.</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.2.2" id="occumb-122-202619">occumb 1.2.2 (2026/1/9)<a class="anchor" aria-label="anchor" href="#occumb-122-202619"></a></h2><p class="text-muted">CRAN release: 2026-01-09</p>
-<ul><li>This patch release includes internal changes for the anticipated JAGS 5.0.0 release and fixes for math rendering issues in the package vignettes.</li>
+<ul><li>This patch release includes internal changes for the anticipated JAGS 5.0.0 release (thanks to <code>martynplummer</code>) and fixes for math rendering issues in the package vignettes.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.2.1" id="occumb-121-2025716">occumb 1.2.1 (2025/7/16)<a class="anchor" aria-label="anchor" href="#occumb-121-2025716"></a></h2><p class="text-muted">CRAN release: 2025-07-16</p>

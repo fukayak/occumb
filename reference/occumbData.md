@@ -96,7 +96,7 @@ summary(data)
 #>  Maximum number of replicates per site, K = 2 
 #>  Number of missing observations = 0 
 #>  Number of replicates per site: 2 (average), 0 (sd) 
-#>  Sequencing depth: 9 (average), 2.8 (sd) 
+#>  Sequencing depth: 9 (average), 4.2 (sd) 
 #> 
 #> Species covariates: 
 #>  cov1 (continuous) 
@@ -118,7 +118,7 @@ summary(data_named)
 #>  Maximum number of replicates per site, K = 2 
 #>  Number of missing observations = 0 
 #>  Number of replicates per site: 2 (average), 0 (sd) 
-#>  Sequencing depth: 9 (average), 3.7 (sd) 
+#>  Sequencing depth: 9 (average), 3.5 (sd) 
 #> 
 #> Species covariates: 
 #>  cov1 (continuous) 

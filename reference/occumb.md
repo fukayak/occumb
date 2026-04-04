@@ -23,6 +23,7 @@ occumb(
   n.thin = 10,
   n.iter = 20000,
   parallel = FALSE,
+  engine = c("JAGS", "NIMBLE"),
   ...
 )
 ```
@@ -84,7 +85,8 @@ occumb(
 
 - n.adapt:
 
-  Number of iterations to run in the JAGS adaptive phase.
+  Number of iterations to run in the JAGS adaptive phase. Ignored when
+  `engine = "NIMBLE"`.
 
 - n.burnin:
 
@@ -102,11 +104,43 @@ occumb(
 
   If TRUE, run MCMC chains in parallel on multiple CPU cores.
 
+- engine:
+
+  Character string specifying the MCMC backend used for model fitting.
+  Either `"JAGS"` (default; via
+  [`jags()`](https://kenkellner.com/jagsUI/reference/jags.html)) or
+  `"NIMBLE"` (via the nimble package).
+
 - ...:
 
-  Additional arguments passed to
-  [`jags()`](https://kenkellner.com/jagsUI/reference/jags.html)
-  function.
+  Additional arguments passed to the MCMC engine function. When
+  `engine = "JAGS"`, these are passed to
+  [`jags()`](https://kenkellner.com/jagsUI/reference/jags.html). When
+  `engine = "NIMBLE"`, the following arguments are accepted:
+
+  `n.cores`
+
+  :   The number of cores used when `parallel = TRUE`. Defaults to
+      `parallel::detectCores() - 1` (minimum 1), capped at `n.chains`.
+
+  `seed`
+
+  :   Random seed control for MCMC chains. If `TRUE`, chain \\i\\ is
+      seeded with \\i\\. If a single number, chain \\i\\ is seeded with
+      `seed + i - 1`. If a numeric vector of length `n.chains`, each
+      element is used as the seed for the corresponding chain. If
+      `FALSE` or unspecified (default), random seeds are generated
+      automatically.
+
+  `store.data`
+
+  :   Logical; if `TRUE`, store the input data and initial values in the
+      returned object. Defaults to `FALSE`.
+
+  `verbose`
+
+  :   Logical; controls NIMBLE's verbosity. If unspecified (default),
+      NIMBLE's own default settings are used.
 
 ## Value
 
@@ -169,17 +203,12 @@ The `data` argument requires a dataset object to be generated using
 
 The model is fit using the
 [`jags()`](https://kenkellner.com/jagsUI/reference/jags.html) function
-of the [jagsUI](https://cran.r-project.org/package=jagsUI) package,
-where Markov chain Monte Carlo (MCMC) methods are used to obtain
-posterior samples of the parameters and latent variables. Arguments
-`n.chains`, `n.adapt`, `n.burnin`, `n.thin`, `n.iter`, and `parallel`
-are passed on to arguments of the same name in the
-[`jags()`](https://kenkellner.com/jagsUI/reference/jags.html) function.
-See the document of
-[jagsUI](https://cran.r-project.org/package=jagsUI)'s
-[`jags()`](https://kenkellner.com/jagsUI/reference/jags.html) function
-for details. A set of random initial values is used to perform an MCMC
-run.
+of the [jagsUI](https://cran.r-project.org/package=jagsUI) package (when
+`engine = “JAGS”`) or the
+[nimble](https://cran.r-project.org/package=nimble) package (when
+`engine = “NIMBLE”`), where Markov chain Monte Carlo (MCMC) methods are
+used to obtain posterior samples of the parameters and latent variables.
+A set of random initial values is used to perform an MCMC run.
 
 ## References
 

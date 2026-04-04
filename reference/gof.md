@@ -165,8 +165,8 @@ gof_result <- gof(fit)
 gof_result
 #> Posterior predictive check for an occumbFit object:
 #>  Statistics: Freeman-Tukey 
-#>  p-value:    0.438 
-#>  Discrepancy statistics for observed data:   1.22 (mean), 0.55 (sd) 
-#>  Discrepancy statistics for replicated data: 1.34 (mean), 1.13 (sd) 
+#>  p-value:    0.47175 
+#>  Discrepancy statistics for observed data:   1.18 (mean), 0.61 (sd) 
+#>  Discrepancy statistics for replicated data: 1.32 (mean), 1.1 (sd) 
 # }
 ```
